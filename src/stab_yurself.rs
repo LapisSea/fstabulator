@@ -87,7 +87,10 @@ fn normalize_whitespace(s: &str) -> String {
 }
 
 pub fn read_fstab() -> Result<Vec<Result<StabEntry>>> {
-	let raw = std::fs::read_to_string("/etc/fstab").context("Could not read /etc/fstab")?;
+	let path = "./fstab-dummy";
+	// let path="/etc/fstab";
+	
+	let raw = std::fs::read_to_string(path).context("Could not read /etc/fstab")?;
 	
 	let entries = raw
 		.lines()

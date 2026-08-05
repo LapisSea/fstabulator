@@ -2,12 +2,10 @@ mod stab_yurself;
 
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
-use adw::{
-	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, HeaderBar,
-	LengthUnit,
-};
-use gtk::{Box as GtkBox, Button, Label, ListBox, Orientation, ScrolledWindow, SelectionMode};
+use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup};
+use gtk::{Align, Box as GtkBox, Button, Label, ListBox, Orientation, ScrolledWindow, SelectionMode, Text, Widget};
 use std::cell::Cell;
+use std::fmt::format;
 use std::rc::Rc;
 
 const APP_ID: &str = "org.lapissea.FSTabulator";
@@ -25,10 +23,25 @@ fn build_ui(application: &Application) {
 		.filter_map(|e| e.ok())
 		.collect();
 	
-	let editor_panel = build_editor_panel();
+	let editor_panel = GtkBox::builder()
+		.orientation(Orientation::Vertical)
+		.vexpand(true)
+		.hexpand(true)
+		.spacing(12)
+		.build();
 	
 	let list_panel = build_entry_list(&entries);
-	let split_box = build_split_layout(&list_panel, &editor_panel);
+	let split_box = build_split_layout(&wrap_scroll(&list_panel), &wrap_scroll(&editor_panel));
+	
+	list_panel.connect_row_selected(move |_, row| {
+		while let Some(child) = editor_panel.last_child() {
+			editor_panel.remove(&child);
+		}
+		let Some(row) = row else { return };
+		if row.index() < 0 { return; }
+		let Some(entry) = entries.get(row.index() as usize) else { return };
+		build_editor_panel(&editor_panel, entry);
+	});
 	
 	let content_box = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -41,11 +54,7 @@ fn build_ui(application: &Application) {
 		.build();
 	content_box.append(&split_box);
 	
-	let content_scroll = ScrolledWindow::builder()
-		.child(&content_box)
-		.hexpand(true)
-		.vexpand(true)
-		.build();
+	let content_scroll = wrap_scroll(&content_box);
 	
 	let main_box = GtkBox::builder().orientation(Orientation::Vertical).build();
 	main_box.append(&HeaderBar::new());
@@ -54,8 +63,8 @@ fn build_ui(application: &Application) {
 	let window = ApplicationWindow::builder()
 		.application(application)
 		.title("FSTabulator")
-		.default_width(400)
-		.default_height(300)
+		.default_width(800)
+		.default_height(600)
 		.content(&main_box)
 		.build();
 	
@@ -64,11 +73,20 @@ fn build_ui(application: &Application) {
 	window.present();
 }
 
+fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
+	ScrolledWindow::builder()
+		.child(content)
+		.hexpand(true)
+		.vexpand(true)
+		.build()
+}
+
 fn build_entry_list(entries: &[StabEntry]) -> ListBox {
 	let list_box = ListBox::builder()
 		.selection_mode(SelectionMode::Single)
 		.css_classes(["boxed-list"])
 		.hexpand(true)
+		.valign(Align::Start)
 		.build();
 	let mut first = true;
 	for entry in entries {
@@ -91,9 +109,11 @@ fn build_split_layout(
 	editor_panel: &impl IsA<gtk::Widget>,
 ) -> GtkBox {
 	let split_box = GtkBox::builder()
-		.orientation(Orientation::Horizontal) // default: side-by-side
+		.hexpand(true)
+		.vexpand(true)
+		.orientation(Orientation::Horizontal)
 		.spacing(20)
-		//	.homogeneous(true)
+		.homogeneous(true)
 		.build();
 	
 	split_box.append(list_panel);
@@ -105,7 +125,7 @@ fn build_split_layout(
 fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &GtkBox) {
 	let condition = BreakpointCondition::new_length(
 		adw::BreakpointConditionLengthType::MaxWidth,
-		500.0,
+		600.0,
 		LengthUnit::Sp,
 	);
 	
@@ -115,37 +135,47 @@ fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &Gtk
 		"orientation",
 		Some(&Orientation::Vertical.to_value()),
 	);
+	breakpoint.add_setter(
+		split_box,
+		"homogeneous",
+		Some(&false.to_value()),
+	);
 	
 	window.add_breakpoint(breakpoint);
 }
 
-fn build_editor_panel() -> gtk::Box {
-	let counter_label = Label::builder()
-		.label("yo yo")
-		.wrap(true)
-		.margin_top(24)
-		.margin_bottom(24)
+fn build_editor_panel(editor_panel: &gtk::Box, entry: &StabEntry) {
+	let options = PreferencesGroup::builder()
+		.title("Edit properties")
 		.build();
 	
-	let increment_button = Button::builder().label("Click me").build();
+	editor_panel.append(&options);
 	
-	{
-		let counter_label = counter_label.clone();
-		let click_count = Rc::new(Cell::new(0));
-		increment_button.connect_clicked(move |_| {
-			click_count.set(click_count.get() + 1);
-			counter_label.set_label(&format!("Clicks: {}", click_count.get()));
-		});
+	options.add(&EntryRow::builder()
+		.title("Device").text(&entry.device)
+		.build());
+	
+	options.add(&EntryRow::builder()
+		.title("Mount point").text(&entry.mount_point)
+		.build());
+	
+	options.add(&EntryRow::builder()
+		.title("File system").text(&entry.fs_type)
+		.build());
+	
+	
+	for (i, val) in entry.options.iter().enumerate() {
+		options.add(&EntryRow::builder()
+			.title(format!("Option {i}: ")).text(val)
+			.build());
 	}
 	
+	options.add(&EntryRow::builder()
+		.title("Dump").text(&entry.dump.to_string())
+		.build());
 	
-	let editor_panel = GtkBox::builder()
-		.orientation(Orientation::Vertical) // default: side-by-side
-		.spacing(12)
-		.build();
+	options.add(&EntryRow::builder()
+		.title("Pass").text(&entry.pass.to_string())
+		.build());
 	
-	editor_panel.append(&counter_label);
-	editor_panel.append(&increment_button);
-	
-	editor_panel
 }

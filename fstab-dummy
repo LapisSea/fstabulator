@@ -1,0 +1,79 @@
+# <fs_spec>                                   <mountpoint>           <type>      <options>                                                          <dump> <pass>
+
+# Root filesystems
+UUID=550e8400-e29b-41d4-a716-446655440000     /                      ext4        rw,relatime,errors=remount-ro                                     0      1
+LABEL=BOOT                                    /boot                  ext4        defaults                                                           0      2
+PARTLABEL=EFI                                 /boot/efi              vfat        umask=0077,shortname=winnt                                         0      2
+
+# Separate local filesystems
+UUID=11111111-1111-1111-1111-111111111111     /home                  xfs         rw,noatime,inode64                                                 0      2
+UUID=22222222-2222-2222-2222-222222222222     /var                   ext4        defaults,nodev                                                     0      2
+UUID=33333333-3333-3333-3333-333333333333     /srv                   f2fs        rw,discard                                                         0      2
+
+# Btrfs examples
+UUID=44444444-4444-4444-4444-444444444444     /btrfs-root            btrfs       subvol=@,compress=zstd,ssd,space_cache=v2                          0      2
+UUID=44444444-4444-4444-4444-444444444444     /btrfs-home            btrfs       subvol=@home,compress=zstd                                         0      2
+
+# LVM and device-mapper
+/dev/vg0/data                                 /data                  ext4        defaults                                                           0      2
+/dev/mapper/cryptstore                        /secure                xfs         noatime                                                            0      2
+
+# Disk-by-id and disk-by-path
+/dev/disk/by-id/ata-Samsung_SSD_870_EVO       /ssd                   ext4        defaults                                                           0      2
+/dev/disk/by-path/pci-0000:00:17.0-ata-1      /pathdisk              ext4        defaults                                                           0      2
+
+# NTFS / exFAT
+UUID=55555555-5555-5555-5555-555555555555     /windows               ntfs3       uid=1000,gid=1000,rw                                               0      0
+UUID=66666666-6666-6666-6666-666666666666     /external              exfat       uid=1000,gid=1000,umask=022                                        0      0
+
+# Optical media
+/dev/sr0                                      /media/cdrom           iso9660     ro,noauto,user                                                     0      0
+/dev/sr1                                      /media/dvd             udf         ro,noauto,user                                                     0      0
+
+# Swap
+UUID=77777777-7777-7777-7777-777777777777     none                   swap        sw                                                                 0      0
+
+# tmpfs variants
+tmpfs                                         /tmp                   tmpfs       rw,nosuid,nodev,size=8G,mode=1777                                 0      0
+tmpfs                                         /dev/shm               tmpfs       rw,nosuid,nodev                                                    0      0
+tmpfs                                         /run/user/1000         tmpfs       rw,size=1G                                                         0      0
+
+# Pseudo filesystems
+proc                                          /proc                  proc        defaults                                                           0      0
+sysfs                                         /sys                   sysfs       defaults                                                           0      0
+devpts                                        /dev/pts               devpts      gid=5,mode=620                                                     0      0
+cgroup2                                       /sys/fs/cgroup         cgroup2     defaults                                                           0      0
+securityfs                                    /sys/kernel/security   securityfs  defaults                                                           0      0
+debugfs                                       /sys/kernel/debug      debugfs     defaults                                                           0      0
+tracefs                                       /sys/kernel/tracing    tracefs     defaults                                                           0      0
+configfs                                      /sys/kernel/config     configfs    defaults                                                           0      0
+mqueue                                        /dev/mqueue            mqueue      defaults                                                           0      0
+hugetlbfs                                     /dev/hugepages         hugetlbfs   pagesize=2M                                                        0      0
+
+# NFS
+server.example.com:/exports/home              /net/home              nfs4        rw,hard,intr,vers=4.2                                              0      0
+10.0.0.10:/backup                             /net/backup            nfs         rw,soft,tcp                                                        0      0
+
+# CIFS / SMB
+//fileserver/public                           /mnt/public            cifs        guest,vers=3.1.1                                                   0      0
+//fileserver/private                          /mnt/private           cifs        credentials=/etc/cifs-cred,vers=3.1.1                             0      0
+
+# 9P
+hostshare                                     /mnt/9p                9p          trans=virtio,version=9p2000.L                                      0      0
+
+# SSHFS via FUSE
+user@example.com:/srv/files                   /mnt/sshfs             fuse.sshfs  defaults,_netdev                                                    0      0
+
+# OverlayFS
+overlay                                       /overlay               overlay     lowerdir=/lower,upperdir=/upper,workdir=/work                      0      0
+
+# ZFS datasets
+zroot/ROOT/default                            /zroot                 zfs         zfsutil                                                            0      0
+tank/media                                    /tank                  zfs         zfsutil                                                            0      0
+
+# Special automount examples
+LABEL=ARCHIVE                                 /archive               ext4        noauto,x-systemd.automount                                         0      2
+UUID=88888888-8888-8888-8888-888888888888     /slowdisk              ext4        nofail,x-systemd.device-timeout=30                                 0      2
+
+# Read-only examples
+UUID=99999999-9999-9999-9999-999999999999     /readonly              ext4        ro,nodev,nosuid,noexec                                             0      2
