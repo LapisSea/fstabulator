@@ -27,7 +27,7 @@ impl DeviceKind {
 		DeviceKind::DevicePath,
 		DeviceKind::Network,
 	];
-	
+
 	pub const LOCAL: [DeviceKind; 5] = [
 		DeviceKind::Uuid,
 		DeviceKind::PartUuid,
@@ -35,7 +35,7 @@ impl DeviceKind {
 		DeviceKind::PartLabel,
 		DeviceKind::DevicePath,
 	];
-	
+
 	pub fn label(self) -> &'static str {
 		match self {
 			DeviceKind::Uuid => "UUID",
@@ -47,7 +47,7 @@ impl DeviceKind {
 			DeviceKind::Other => "Other",
 		}
 	}
-	
+
 	pub fn for_fs_type(fs_type: &FsType) -> &'static [DeviceKind] {
 		match fs_type {
 			FsType::Cifs | FsType::Smb3 | FsType::Nfs | FsType::Nfs4 | FsType::FuseSshfs => &[DeviceKind::Network],
@@ -80,7 +80,7 @@ impl DeviceKind {
 			FsType::Other(_) => &DeviceKind::ALL,
 		}
 	}
-	
+
 	pub fn classify(device: &str, allowed: &[DeviceKind]) -> (Self, String) {
 		for &kind in allowed {
 			if let Some(value) = kind.value_of(device) {
@@ -89,7 +89,7 @@ impl DeviceKind {
 		}
 		(DeviceKind::Other, device.to_string())
 	}
-	
+
 	fn value_of(self, device: &str) -> Option<String> {
 		match self {
 			DeviceKind::Uuid => device.strip_prefix("UUID=").map(str::to_string),
@@ -101,7 +101,7 @@ impl DeviceKind {
 			DeviceKind::Other => Some(device.to_string()),
 		}
 	}
-	
+
 	pub fn render(self, value: &str) -> String {
 		match self {
 			DeviceKind::Uuid => format!("UUID={value}"),
@@ -113,51 +113,56 @@ impl DeviceKind {
 	}
 }
 
-pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow) {
+pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
 	let mut kinds = DeviceKind::for_fs_type(&entry.borrow().fs_type).to_vec();
 	if !kinds.contains(&DeviceKind::Other) {
 		kinds.push(DeviceKind::Other);
 	}
-	
+
 	let (initial_kind, initial_value) = DeviceKind::classify(&entry.borrow().device, &kinds);
 	let selected = kinds.iter().position(|k| *k == initial_kind).unwrap();
-	
+
 	let model = StringList::new(&kinds.iter().map(|k| k.label()).collect::<Vec<_>>());
-	
+
 	let dropdown = DropDown::builder().model(&model).selected(selected as u32).build();
-	
+
 	let value_entry = Entry::builder().text(&initial_value).hexpand(true).build();
-	
+
 	let content = GtkBox::builder().orientation(Orientation::Horizontal).spacing(12).hexpand(true).build();
 	content.append(&dropdown);
 	content.append(&value_entry);
-	
+
 	let row = PreferencesRow::builder().title("Device").child(&content).build();
-	
-	let kinds_ref = kinds.clone();
-	let entry_ref = entry.clone();
-	let action_row_ref = action_row.clone();
-	let dropdown_ref = dropdown.clone();
-	value_entry.connect_changed(move |entry| {
-		let kind = kinds_ref[dropdown_ref.selected() as usize];
-		entry_ref.borrow_mut().device = kind.render(&entry.text());
-		render_list_entry(&action_row_ref, &entry_ref.borrow());
-	});
-	
-	let entry_ref = entry.clone();
-	let action_row_ref = action_row.clone();
-	let value_entry = value_entry.clone();
-	dropdown.connect_selected_notify(move |dropdown| {
-		let kind = kinds[dropdown.selected() as usize];
-		if kind == DeviceKind::Other {
-			let full = entry_ref.borrow().device.clone();
-			value_entry.set_text(&full);
-		} else {
-			let value = value_entry.text().to_string();
-			entry_ref.borrow_mut().device = kind.render(&value);
-			render_list_entry(&action_row_ref, &entry_ref.borrow());
-		}
-	});
-	
+
+	{
+		let kinds_ref = kinds.clone();
+		let entry_ref = entry.clone();
+		let action_row_ref = action_row.clone();
+		let dropdown_ref = dropdown.clone();
+		let reset_btn = reset_btn.clone();
+		value_entry.connect_changed(move |entry| {
+			let kind = kinds_ref[dropdown_ref.selected() as usize];
+			entry_ref.borrow_mut().device = kind.render(&entry.text());
+			render_list_entry(&action_row_ref, &entry_ref.borrow(), Some(&reset_btn));
+		});
+	}
+	{
+		let entry = entry.clone();
+		let action_row = action_row.clone();
+		let value_entry = value_entry.clone();
+		let reset_btn = reset_btn.clone();
+		dropdown.connect_selected_notify(move |dropdown| {
+			let kind = kinds[dropdown.selected() as usize];
+			if kind == DeviceKind::Other {
+				let full = entry.borrow().device.clone();
+				value_entry.set_text(&full);
+			} else {
+				let value = value_entry.text().to_string();
+				entry.borrow_mut().device = kind.render(&value);
+				render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+			}
+		});
+	}
+
 	options.add(&row);
 }

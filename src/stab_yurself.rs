@@ -13,6 +13,21 @@ pub struct StabEntrySnapshot {
 	pub dump: u8,
 	pub pass: u8,
 }
+impl fmt::Display for StabEntrySnapshot {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(
+			f,
+			"{} {} {} {} {} {}",
+			self.device,
+			self.mount_point,
+			self.fs_type.to_string(),
+			self.options.join(","),
+			self.dump,
+			self.pass
+		)?;
+		Ok(())
+	}
+}
 
 pub struct StabEntry {
 	pub line: usize,
@@ -26,6 +41,19 @@ pub struct StabEntry {
 }
 
 impl StabEntry {
+	pub fn original(&self) -> &StabEntrySnapshot {
+		&self.original
+	}
+
+	pub fn reset(&mut self) {
+		self.device = self.original.device.clone();
+		self.mount_point = self.original.mount_point.clone();
+		self.fs_type = self.original.fs_type.clone();
+		self.options = self.original.options.clone();
+		self.dump = self.original.dump;
+		self.pass = self.original.pass;
+	}
+
 	pub fn is_changed(&self) -> bool {
 		self.device != self.original.device
 			|| self.mount_point != self.original.mount_point
@@ -132,4 +160,3 @@ pub fn read_fstab() -> Result<Vec<Result<StabEntry>>> {
 
 	Ok(entries)
 }
-

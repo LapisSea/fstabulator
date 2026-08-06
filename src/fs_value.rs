@@ -79,7 +79,7 @@ pub enum FsType {
 	Other(String),
 }
 
-pub fn add_fs_type_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow) {
+pub fn add_fs_type_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
 	let known: Vec<FsType> = FsType::iter().filter(|e| !matches!(e, FsType::Other(_))).collect();
 	let mut labels: Vec<String> = known.iter().map(|e| e.to_string()).collect();
 	labels.push("Other".to_string());
@@ -97,9 +97,10 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>
 	{
 		let entry_ref = entry.clone();
 		let action_row = action_row.clone();
+		let reset_btn = reset_btn.clone();
 		value_entry.connect_changed(move |entry| {
 			entry_ref.borrow_mut().fs_type = FsType::Other(entry.text().to_string());
-			render_list_entry(&action_row, &entry_ref.borrow());
+			render_list_entry(&action_row, &entry_ref.borrow(), Some(&reset_btn));
 		});
 	}
 	{
@@ -107,6 +108,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>
 		let action_row = action_row.clone();
 		let value_entry = value_entry.clone();
 		let known = known.clone();
+		let reset_btn = reset_btn.clone();
 		dropdown.connect_selected_notify(move |dropdown| {
 			let selected = dropdown.selected() as usize;
 			let mut entry = entry.borrow_mut();
@@ -118,7 +120,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>
 			}
 			value_entry.set_visible(is_other);
 			dropdown.set_hexpand(!is_other);
-			render_list_entry(&action_row, &entry);
+			render_list_entry(&action_row, &entry, Some(&reset_btn));
 		});
 	}
 
