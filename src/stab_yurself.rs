@@ -1,11 +1,14 @@
+use crate::fs_value::FsType;
 use anyhow::{Context, Result, bail};
 use std::fmt;
+use std::iter::Iterator;
+use std::str::FromStr;
 
 #[derive(Clone, PartialEq, Eq)]
 pub struct StabEntrySnapshot {
 	pub device: String,
 	pub mount_point: String,
-	pub fs_type: String,
+	pub fs_type: FsType,
 	pub options: Vec<String>,
 	pub dump: u8,
 	pub pass: u8,
@@ -15,7 +18,7 @@ pub struct StabEntry {
 	pub line: usize,
 	pub device: String,
 	pub mount_point: String,
-	pub fs_type: String,
+	pub fs_type: FsType,
 	pub options: Vec<String>,
 	pub dump: u8,
 	pub pass: u8,
@@ -50,7 +53,7 @@ impl StabEntry {
 
 		let device = fields[0].to_string();
 		let mount_point = fields[1].to_string();
-		let fs_type = fields[2].to_string();
+		let fs_type = FsType::from_str(fields[2]).context(format!("Cannot parse fs_type: {}", fields[2]))?;
 		let options: Vec<String> = fields[3].split(',').map(|opt| opt.to_string()).collect();
 
 		let dump = fields[4]
@@ -101,7 +104,7 @@ impl fmt::Display for StabEntry {
 			"{} {} {} {} {} {}",
 			self.device,
 			self.mount_point,
-			self.fs_type,
+			self.fs_type.to_string(),
 			self.options.join(","),
 			self.dump,
 			self.pass
@@ -130,54 +133,3 @@ pub fn read_fstab() -> Result<Vec<Result<StabEntry>>> {
 	Ok(entries)
 }
 
-pub enum FsType {
-	// Ext4(Ext4Options),
-	Btrfs(BtrfsOptions),
-	// Xfs(XfsOptions),
-	// Vfat(VfatOptions),
-	Ntfs3(Ntfs3Options),
-	Cifs(CifsOptions), // Samba
-	// Nfs(NfsOptions),
-	Swap,
-	Unknown { fs_type: String, extra_options: Vec<String> },
-}
-
-pub struct CifsOptions {
-	pub credentials_file: Option<String>,
-	pub username: Option<String>,
-	pub uid: Option<u32>,
-	pub gid: Option<u32>,
-	pub file_mode: Option<String>, // e.g. "0755"
-	pub dir_mode: Option<String>,
-	pub vers: Option<String>,       // SMB protocol version
-	pub extra_options: Vec<String>, // anything unrecognized, preserved verbatim
-}
-
-impl Default for CifsOptions {
-	fn default() -> Self {
-		CifsOptions {
-			credentials_file: None,
-			username: None,
-			uid: None,
-			gid: None,
-			file_mode: Some("0755".into()),
-			dir_mode: Some("0755".into()),
-			vers: Some("3.0".into()),
-			extra_options: Vec::new(),
-		}
-	}
-}
-
-pub struct Ntfs3Options {
-	pub uid: Option<u32>,
-	pub gid: Option<u32>,
-	pub umask: Option<String>,
-	pub windows_names: bool,
-	pub extra_options: Vec<String>,
-}
-
-pub struct BtrfsOptions {
-	pub subvol: Option<String>,
-	pub compress: Option<String>, // "zstd", "lzo", "none"
-	pub extra_options: Vec<String>,
-}

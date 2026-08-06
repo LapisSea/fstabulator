@@ -77,3 +77,6 @@ UUID=88888888-8888-8888-8888-888888888888     /slowdisk              ext4       
 
 # Read-only examples
 UUID=99999999-9999-9999-9999-999999999999     /readonly              ext4        ro,nodev,nosuid,noexec                                             0      2
+
+
+UUID=1234 /tmp/ some-unkown-fs nofail 0 2

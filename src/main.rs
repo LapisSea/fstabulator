@@ -1,8 +1,13 @@
+mod device_value;
+mod fs_value;
 mod stab_yurself;
 
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
-use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
+use adw::{
+	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup,
+	SpinRow,
+};
 use gtk::{Adjustment, Align, Box as GtkBox, ListBox, Orientation, ScrolledWindow, SelectionMode, Widget};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -89,7 +94,7 @@ fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
 	ScrolledWindow::builder().child(content).hexpand(true).vexpand(true).build()
 }
 
-fn render_list_entry(action_row: &ActionRow, entry: &StabEntry) {
+pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry) {
 	action_row.set_title(&format!("Line {}", entry.line));
 	action_row.set_subtitle(&entry.to_string());
 	if entry.is_changed() {
@@ -150,20 +155,13 @@ fn build_editor_panel(editor_panel: &gtk::Box, entry: &Rc<RefCell<StabEntry>>, a
 	let options = PreferencesGroup::builder().title("Edit properties").build();
 
 	editor_panel.append(&options);
-
-	add_editable_row(&options, entry, action_row, "Device", &entry.borrow().device, |entry, value| {
-		entry.device = value.to_string();
-		true
-	});
+	
+	device_value::add_device_row(&options, entry, action_row);
 	add_editable_row(&options, entry, action_row, "Mount point", &entry.borrow().mount_point, |entry, value| {
 		entry.mount_point = value.to_string();
 		true
 	});
-	add_editable_row(&options, entry, action_row, "File system", &entry.borrow().fs_type, |entry, value| {
-		entry.fs_type = value.to_string();
-		true
-	});
-
+	fs_value::add_fs_type_row(&options, entry, action_row);
 	for (i, val) in entry.borrow().options.iter().enumerate() {
 		let apply = move |entry: &mut StabEntry, value: &str| {
 			entry.options[i] = value.to_string();
@@ -179,7 +177,6 @@ fn build_editor_panel(editor_panel: &gtk::Box, entry: &Rc<RefCell<StabEntry>>, a
 		entry.pass = value
 	});
 }
-
 fn add_spin_row(
 	options: &PreferencesGroup,
 	entry: &Rc<RefCell<StabEntry>>,
