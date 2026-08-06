@@ -5,6 +5,7 @@ use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
 use gtk::{Box as GtkBox, DropDown, Entry, Orientation, StringList};
 use std::cell::RefCell;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -111,6 +112,69 @@ impl DeviceKind {
 			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => value.to_string(),
 		}
 	}
+
+	fn by_disk_dir(self) -> Option<&'static str> {
+		match self {
+			DeviceKind::Uuid => Some("/dev/disk/by-uuid"),
+			DeviceKind::PartUuid => Some("/dev/disk/by-partuuid"),
+			DeviceKind::Label => Some("/dev/disk/by-label"),
+			DeviceKind::PartLabel => Some("/dev/disk/by-partlabel"),
+			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => None,
+		}
+	}
+
+	/// Resolve a local device reference to its real block device node.
+	fn resolve_node(self, value: &str) -> Option<PathBuf> {
+		if let Some(dir) = self.by_disk_dir() {
+			std::fs::canonicalize(Path::new(dir).join(value)).ok()
+		} else if self == DeviceKind::DevicePath {
+			std::fs::canonicalize(value).ok()
+		} else {
+			None
+		}
+	}
+
+	/// Find the identifier of `node` (a real block device) for this kind.
+	fn identify_node(self, node: &Path) -> Option<String> {
+		if self == DeviceKind::DevicePath {
+			return Some(friendly_device_path(node));
+		}
+		let dir = self.by_disk_dir()?;
+		for entry in std::fs::read_dir(dir).ok()? {
+			let path = entry.ok()?.path();
+			if std::fs::canonicalize(&path).ok().as_deref() == Some(node) {
+				return path.file_name()?.to_str().map(str::to_string);
+			}
+		}
+		None
+	}
+
+	/// Convert `value` (a reference of kind `self`) into a reference of kind `to`, if possible.
+	pub fn transform(self, value: &str, to: DeviceKind) -> Option<String> {
+		let node = self.resolve_node(value)?;
+		to.identify_node(&node)
+	}
+}
+
+/// Prefer a stable, human-friendly name for a device node over the raw kernel node.
+fn friendly_device_path(node: &Path) -> String {
+	if let Ok(entries) = std::fs::read_dir("/dev/mapper") {
+		for entry in entries.flatten() {
+			let path = entry.path();
+			if std::fs::canonicalize(&path).ok().as_deref() == Some(node) {
+				return path.to_string_lossy().into_owned();
+			}
+		}
+	}
+	if let Ok(entries) = std::fs::read_dir("/dev/disk/by-id") {
+		for entry in entries.flatten() {
+			let path = entry.path();
+			if std::fs::canonicalize(&path).ok().as_deref() == Some(node) {
+				return path.to_string_lossy().into_owned();
+			}
+		}
+	}
+	node.to_string_lossy().into_owned()
 }
 
 pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
@@ -127,22 +191,34 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 	let dropdown = DropDown::builder().model(&model).selected(selected as u32).build();
 
 	let value_entry = Entry::builder().text(&initial_value).hexpand(true).build();
-
-	let content = GtkBox::builder().orientation(Orientation::Horizontal).spacing(12).hexpand(true).build();
-	content.append(&dropdown);
-	content.append(&value_entry);
-
+	
+	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(12).hexpand(true).build();
+	input_row.append(&dropdown);
+	input_row.append(&value_entry);
+	
+	let warning = gtk::Label::new(None);
+	warning.set_xalign(0.0);
+	warning.set_wrap(true);
+	warning.set_visible(false);
+	warning.add_css_class("error");
+	
+	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).hexpand(true).build();
+	content.append(&input_row);
+	content.append(&warning);
+	
 	let row = PreferencesRow::builder().title("Device").child(&content).build();
-
+	
 	{
 		let kinds_ref = kinds.clone();
 		let entry_ref = entry.clone();
 		let action_row_ref = action_row.clone();
 		let dropdown_ref = dropdown.clone();
+		let warning = warning.clone();
 		let reset_btn = reset_btn.clone();
 		value_entry.connect_changed(move |entry| {
 			let kind = kinds_ref[dropdown_ref.selected() as usize];
 			entry_ref.borrow_mut().device = kind.render(&entry.text());
+			warning.set_visible(false);
 			render_list_entry(&action_row_ref, &entry_ref.borrow(), Some(&reset_btn));
 		});
 	}
@@ -150,19 +226,72 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 		let entry = entry.clone();
 		let action_row = action_row.clone();
 		let value_entry = value_entry.clone();
+		let warning = warning.clone();
 		let reset_btn = reset_btn.clone();
 		dropdown.connect_selected_notify(move |dropdown| {
-			let kind = kinds[dropdown.selected() as usize];
-			if kind == DeviceKind::Other {
-				let full = entry.borrow().device.clone();
-				value_entry.set_text(&full);
-			} else {
-				let value = value_entry.text().to_string();
-				entry.borrow_mut().device = kind.render(&value);
-				render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+			let new_kind = kinds[dropdown.selected() as usize];
+			let current_device = entry.borrow().device.clone();
+			let (current_kind, current_value) = DeviceKind::classify(&current_device, &DeviceKind::ALL);
+
+			if new_kind == DeviceKind::Other {
+				value_entry.set_text(&current_device);
+				return;
 			}
+			if new_kind == current_kind {
+				value_entry.set_text(&current_value);
+				return;
+			}
+
+			let both_local = DeviceKind::LOCAL.contains(&current_kind) && DeviceKind::LOCAL.contains(&new_kind);
+			match current_kind.transform(&current_value, new_kind) {
+				Some(value) => {
+					warning.set_visible(false);
+					value_entry.set_text(&value);
+					entry.borrow_mut().device = new_kind.render(&value);
+				}
+				None if both_local => {
+					let value = value_entry.text().to_string();
+					entry.borrow_mut().device = new_kind.render(&value);
+					warning.set_label(&format!(
+						"Could not resolve a {} for {}. The value was kept as-is.",
+						new_kind.label(),
+						current_device
+					));
+					warning.set_visible(true);
+				}
+				None => {
+					let value = value_entry.text().to_string();
+					entry.borrow_mut().device = new_kind.render(&value);
+				}
+			}
+			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
 		});
 	}
-
+	
 	options.add(&row);
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn uuid_to_path_and_back() {
+		let dir = match std::fs::read_dir("/dev/disk/by-uuid") {
+			Ok(dir) => dir,
+			Err(_) => return,
+		};
+		let Some(entry) = dir.filter_map(Result::ok).next() else { return };
+		let uuid = entry.file_name().to_string_lossy().into_owned();
+
+		let Some(path) = DeviceKind::Uuid.transform(&uuid, DeviceKind::DevicePath) else {
+			panic!("could not resolve uuid {uuid}");
+		};
+		assert!(path.starts_with("/dev/"));
+
+		let Some(back) = DeviceKind::DevicePath.transform(&path, DeviceKind::Uuid) else {
+			panic!("could not resolve path {path}");
+		};
+		assert_eq!(back, uuid);
+	}
 }
