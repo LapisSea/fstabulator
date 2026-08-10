@@ -53,31 +53,11 @@ impl DeviceKind {
 		match fs_type {
 			FsType::Cifs | FsType::Smb3 | FsType::Nfs | FsType::Nfs4 | FsType::FuseSshfs => &[DeviceKind::Network],
 			FsType::Iso9660 | FsType::Udf => &[DeviceKind::DevicePath, DeviceKind::Label, DeviceKind::PartLabel],
-			FsType::Tmpfs
-			| FsType::Proc
-			| FsType::Sysfs
-			| FsType::Devpts
-			| FsType::Cgroup2
-			| FsType::Securityfs
-			| FsType::Debugfs
-			| FsType::Tracefs
-			| FsType::Configfs
-			| FsType::Mqueue
-			| FsType::Hugetlbfs
-			| FsType::Devtmpfs
-			| FsType::P9
-			| FsType::Overlay
-			| FsType::Zfs => &[],
-			FsType::Ext2
-			| FsType::Ext3
-			| FsType::Ext4
-			| FsType::Btrfs
-			| FsType::Xfs
-			| FsType::F2fs
-			| FsType::Ntfs3
-			| FsType::Vfat
-			| FsType::Exfat
-			| FsType::Swap => &DeviceKind::LOCAL,
+			FsType::Tmpfs | FsType::Proc | FsType::Sysfs | FsType::Devpts | FsType::Cgroup2 => &[],
+			FsType::Securityfs | FsType::Debugfs | FsType::Tracefs | FsType::Configfs | FsType::Mqueue => &[],
+			FsType::Hugetlbfs | FsType::Devtmpfs | FsType::P9 | FsType::Overlay | FsType::Zfs => &[],
+			FsType::Ext2 | FsType::Ext3 | FsType::Ext4 | FsType::Btrfs | FsType::Xfs | FsType::F2fs => &DeviceKind::LOCAL,
+			FsType::Ntfs3 | FsType::Vfat | FsType::Exfat | FsType::Swap | FsType::Bcachefs => &DeviceKind::LOCAL,
 			FsType::Other(_) => &DeviceKind::ALL,
 		}
 	}
@@ -123,7 +103,6 @@ impl DeviceKind {
 		}
 	}
 
-	/// Resolve a local device reference to its real block device node.
 	fn resolve_node(self, value: &str) -> Option<PathBuf> {
 		if let Some(dir) = self.by_disk_dir() {
 			std::fs::canonicalize(Path::new(dir).join(value)).ok()
@@ -134,47 +113,35 @@ impl DeviceKind {
 		}
 	}
 
-	/// Find the identifier of `node` (a real block device) for this kind.
 	fn identify_node(self, node: &Path) -> Option<String> {
 		if self == DeviceKind::DevicePath {
 			return Some(friendly_device_path(node));
 		}
-		let dir = self.by_disk_dir()?;
-		for entry in std::fs::read_dir(dir).ok()? {
-			let path = entry.ok()?.path();
-			if std::fs::canonicalize(&path).ok().as_deref() == Some(node) {
-				return path.file_name()?.to_str().map(str::to_string);
-			}
-		}
-		None
+		let path = find_node_in_dir(self.by_disk_dir()?, node)?;
+		path.file_name()?.to_str().map(str::to_string)
 	}
 
-	/// Convert `value` (a reference of kind `self`) into a reference of kind `to`, if possible.
+	/// Attempt to transform the value of a device from the current kind in to a
+	/// new one. This way when changing the type of device, it does not become invalid
 	pub fn transform(self, value: &str, to: DeviceKind) -> Option<String> {
 		let node = self.resolve_node(value)?;
 		to.identify_node(&node)
 	}
 }
 
-/// Prefer a stable, human-friendly name for a device node over the raw kernel node.
+fn find_node_in_dir(dir: &str, node: &Path) -> Option<PathBuf> {
+	std::fs::read_dir(dir)
+		.ok()?
+		.flatten()
+		.map(|entry| entry.path())
+		.find(|path| std::fs::canonicalize(path).ok().as_deref() == Some(node))
+}
+
 fn friendly_device_path(node: &Path) -> String {
-	if let Ok(entries) = std::fs::read_dir("/dev/mapper") {
-		for entry in entries.flatten() {
-			let path = entry.path();
-			if std::fs::canonicalize(&path).ok().as_deref() == Some(node) {
-				return path.to_string_lossy().into_owned();
-			}
-		}
-	}
-	if let Ok(entries) = std::fs::read_dir("/dev/disk/by-id") {
-		for entry in entries.flatten() {
-			let path = entry.path();
-			if std::fs::canonicalize(&path).ok().as_deref() == Some(node) {
-				return path.to_string_lossy().into_owned();
-			}
-		}
-	}
-	node.to_string_lossy().into_owned()
+	["/dev/mapper", "/dev/disk/by-id"]
+		.into_iter()
+		.find_map(|dir| find_node_in_dir(dir, node).map(|p| p.to_string_lossy().into_owned()))
+		.unwrap_or_else(|| node.to_string_lossy().into_owned())
 }
 
 pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
@@ -191,23 +158,23 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 	let dropdown = DropDown::builder().model(&model).selected(selected as u32).build();
 
 	let value_entry = Entry::builder().text(&initial_value).hexpand(true).build();
-	
+
 	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(12).hexpand(true).build();
 	input_row.append(&dropdown);
 	input_row.append(&value_entry);
-	
+
 	let warning = gtk::Label::new(None);
 	warning.set_xalign(0.0);
 	warning.set_wrap(true);
 	warning.set_visible(false);
 	warning.add_css_class("error");
-	
+
 	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).hexpand(true).build();
 	content.append(&input_row);
 	content.append(&warning);
-	
+
 	let row = PreferencesRow::builder().title("Device").child(&content).build();
-	
+
 	{
 		let kinds_ref = kinds.clone();
 		let entry_ref = entry.clone();
@@ -267,7 +234,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
 		});
 	}
-	
+
 	options.add(&row);
 }
 

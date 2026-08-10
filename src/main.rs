@@ -1,11 +1,15 @@
 mod device_value;
+mod fs_options;
 mod fs_value;
+mod mount_point_value;
+mod options_value;
 mod stab_yurself;
 
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
-use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
-use gtk::{Adjustment, Align, Box as GtkBox, ListBox, Orientation, ScrolledWindow, SelectionMode, Widget};
+use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
+use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, SelectionMode, Widget};
+use options_value::build_options_group;
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -35,7 +39,7 @@ fn build_ui(application: &Application) {
 
 	let list_panel = build_entry_list(&entries);
 	let split_box = build_split_layout(&wrap_scroll(&list_panel), &wrap_scroll(&editor_panel));
-	
+
 	{
 		let editor_panel = editor_panel.clone();
 		let list_panel_cb = list_panel.clone();
@@ -81,7 +85,6 @@ fn build_ui(application: &Application) {
 	attach_responsive_breakpoint(&window, &split_box);
 
 	let provider = gtk::CssProvider::new();
-	//provider.load_from_data("row.changed { background-color: rgba(255, 180, 0, 0.2); }");
 	gtk::style_context_add_provider_for_display(
 		&gtk::prelude::RootExt::display(&window),
 		&provider,
@@ -95,8 +98,75 @@ fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
 	ScrolledWindow::builder().child(content).hexpand(true).vexpand(true).build()
 }
 
+pub(crate) fn clear_list(list: &ListBox) {
+	while let Some(row) = list.row_at_index(0) {
+		list.remove(&row);
+	}
+}
+
+pub(crate) struct SearchPicker {
+	pub menu_btn: MenuButton,
+	pub popover: Popover,
+	pub list_box: ListBox,
+}
+
+pub(crate) fn build_search_picker(
+	search_placeholder: &str,
+	menu_label: &str,
+	tooltip: &str,
+	populate: impl Fn(&ListBox, &str) + 'static,
+) -> SearchPicker {
+	let search = SearchEntry::builder().placeholder_text(search_placeholder).hexpand(true).build();
+	let list_box = ListBox::builder().css_classes(["boxed-list"]).hexpand(true).valign(Align::Start).build();
+	let scroll = ScrolledWindow::builder()
+		.child(&list_box)
+		.max_content_height(240)
+		.max_content_width(360)
+		.propagate_natural_height(true)
+		.hexpand(true)
+		.build();
+
+	let popover_content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).build();
+	popover_content.append(&search);
+	popover_content.append(&scroll);
+
+	let popover = Popover::builder().child(&popover_content).build();
+
+	let menu_btn = MenuButton::builder().label(menu_label).popover(&popover).build();
+	menu_btn.set_tooltip_text(Some(tooltip));
+
+	let populate = Rc::new(populate);
+	{
+		let list_box = list_box.clone();
+		let search = search.clone();
+		let menu_btn = menu_btn.clone();
+		let populate = populate.clone();
+		popover.connect_visible_notify(move |popover| {
+			if popover.is_visible() {
+				popover.set_size_request(menu_btn.width(), -1);
+				populate(&list_box, "");
+				search.set_text("");
+				search.grab_focus();
+			}
+		});
+	}
+	{
+		let list_box = list_box.clone();
+		let populate = populate.clone();
+		search.connect_search_changed(move |search| {
+			populate(&list_box, &search.text());
+		});
+	}
+
+	SearchPicker { menu_btn, popover, list_box }
+}
+
+fn render_list_entry_title(entry: &StabEntry) -> String {
+	format!("Line {}", entry.line + 1)
+}
+
 pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset_btn: Option<&gtk::Button>) {
-	action_row.set_title(&format!("Line {}", entry.line));
+	action_row.set_title(&render_list_entry_title(entry));
 	let changed = entry.is_changed();
 	action_row.set_subtitle(&render_subtitle(entry));
 	action_row.set_subtitle_lines(if changed { 2 } else { 1 });
@@ -108,6 +178,41 @@ pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset
 	} else {
 		action_row.remove_css_class("changed");
 	}
+	update_nofail_warning(action_row, entry);
+}
+
+const NOFAIL_WARNING_CLASS: &str = "nofail-warning";
+
+fn update_nofail_warning(action_row: &ActionRow, entry: &StabEntry) {
+	if let Some(warning) = find_widget_with_class(action_row.clone().upcast(), NOFAIL_WARNING_CLASS) {
+		action_row.remove(&warning);
+	}
+	if entry.has_option("nofail") {
+		return;
+	}
+	let warning = Image::from_icon_name("dialog-warning-symbolic");
+	warning.add_css_class(NOFAIL_WARNING_CLASS);
+	warning.set_valign(Align::Center);
+	warning.set_tooltip_text(Some(
+		"The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \n\
+		Usually, this is wanted on root and home mounts.",
+	));
+	action_row.add_suffix(&warning);
+}
+
+fn find_widget_with_class(widget: gtk::Widget, class: &str) -> Option<gtk::Widget> {
+	if widget.has_css_class(class) {
+		return Some(widget);
+	}
+	let mut child = widget.first_child();
+	while let Some(child_widget) = child {
+		let next = child_widget.next_sibling();
+		if let Some(found) = find_widget_with_class(child_widget.clone(), class) {
+			return Some(found);
+		}
+		child = next;
+	}
+	None
 }
 
 fn render_subtitle(entry: &StabEntry) -> String {
@@ -161,7 +266,7 @@ fn build_split_layout(list_panel: &impl IsA<gtk::Widget>, editor_panel: &impl Is
 }
 
 fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &GtkBox) {
-	let condition = BreakpointCondition::new_length(adw::BreakpointConditionLengthType::MaxWidth, 600.0, LengthUnit::Sp);
+	let condition = BreakpointCondition::new_length(adw::BreakpointConditionLengthType::MaxWidth, 700.0, LengthUnit::Sp);
 
 	let breakpoint = Breakpoint::new(condition);
 	breakpoint.add_setter(split_box, "orientation", Some(&Orientation::Vertical.to_value()));
@@ -180,47 +285,44 @@ fn build_editor_panel(
 	let reset_btn = gtk::Button::with_label("Reset");
 	reset_btn.set_sensitive(entry.borrow().is_changed());
 
-	let options = PreferencesGroup::builder().title("Edit properties").build();
+	let edit_props = PreferencesGroup::builder().title("Edit properties").build();
+	editor_panel.append(&edit_props);
 
-	editor_panel.append(&options);
-	
-	device_value::add_device_row(&options, entry, action_row, &reset_btn);
-	add_editable_row(
-		&options,
-		entry,
-		action_row,
-		"Mount point",
-		&entry.borrow().mount_point,
-		&reset_btn,
-		|entry, value| {
-			entry.mount_point = value.to_string();
-			true
-		},
-	);
-	fs_value::add_fs_type_row(&options, entry, action_row, &reset_btn);
-	for (i, val) in entry.borrow().options.iter().enumerate() {
-		let apply = move |entry: &mut StabEntry, value: &str| {
-			entry.options[i] = value.to_string();
-			true
-		};
-		add_editable_row(&options, entry, action_row, &format!("Option {i}"), val, &reset_btn, apply);
+	let options_group = PreferencesGroup::builder().title("Options").build();
+	editor_panel.append(&options_group);
+
+	device_value::add_device_row(&edit_props, entry, action_row, &reset_btn);
+	mount_point_value::add_mount_point_row(&edit_props, entry, action_row, &reset_btn);
+	{
+		let (options_group, reset_btn) = (options_group.clone(), reset_btn.clone());
+		let (action_row, entry) = (action_row.clone(), entry.clone());
+		fs_value::add_fs_type_row(&edit_props.clone(), &entry.clone(), &action_row.clone(), &reset_btn.clone(), {
+			move || {
+				build_options_group(&options_group, &entry, &action_row, &reset_btn);
+			}
+		});
 	}
-	
-	add_spin_row(&options, entry, action_row, "Dump", entry.borrow().dump, &reset_btn, |entry, value| {
+
+	add_spin_row(&edit_props, entry, action_row, "Dump", entry.borrow().dump, &reset_btn, |entry, value| {
 		entry.dump = value
 	});
-	add_spin_row(&options, entry, action_row, "Pass", entry.borrow().pass, &reset_btn, |entry, value| {
+	add_spin_row(&edit_props, entry, action_row, "Pass", entry.borrow().pass, &reset_btn, |entry, value| {
 		entry.pass = value
 	});
-	
+
+	build_options_group(&options_group, entry, action_row, &reset_btn);
+
 	editor_panel.append(&reset_btn);
-	
+
 	let entry = entry.clone();
 	let action_row = action_row.clone();
 	let list_box = list_box.clone();
 	let list_row = list_row.clone();
+	let options_group = options_group.clone();
+	let reset_btn_ref = reset_btn.clone();
 	reset_btn.connect_clicked(move |_| {
 		entry.borrow_mut().reset();
+		build_options_group(&options_group, &entry, &action_row, &reset_btn_ref);
 		render_list_entry(&action_row, &entry.borrow(), None);
 		list_box.unselect_all();
 		list_box.select_row(Some(&list_row));
@@ -251,29 +353,6 @@ fn add_spin_row(
 	row.adjustment().connect_value_changed(move |_| {
 		let mut entry = entry.borrow_mut();
 		apply(&mut entry, row_ref.value().round() as u8);
-		render_list_entry(&action_row, &entry, Some(&reset_btn));
-	});
-	options.add(&row);
-}
-
-fn add_editable_row(
-	options: &PreferencesGroup,
-	entry: &Rc<RefCell<StabEntry>>,
-	action_row: &ActionRow,
-	title: &str,
-	initial: &str,
-	reset_btn: &gtk::Button,
-	apply: impl Fn(&mut StabEntry, &str) -> bool + 'static,
-) {
-	let entry = entry.clone();
-	let action_row = action_row.clone();
-	let reset_btn = reset_btn.clone();
-	let row = EntryRow::builder().title(title).text(initial).build();
-	row.connect_changed(move |row| {
-		let mut entry = entry.borrow_mut();
-		if !apply(&mut entry, &row.text()) {
-			return;
-		}
 		render_list_entry(&action_row, &entry, Some(&reset_btn));
 	});
 	options.add(&row);

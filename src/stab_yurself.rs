@@ -15,17 +15,7 @@ pub struct StabEntrySnapshot {
 }
 impl fmt::Display for StabEntrySnapshot {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		write!(
-			f,
-			"{} {} {} {} {} {}",
-			self.device,
-			self.mount_point,
-			self.fs_type.to_string(),
-			self.options.join(","),
-			self.dump,
-			self.pass
-		)?;
-		Ok(())
+		write_entry(f, &self.device, &self.mount_point, &self.fs_type, &self.options, self.dump, self.pass)
 	}
 }
 
@@ -54,6 +44,10 @@ impl StabEntry {
 		self.pass = self.original.pass;
 	}
 
+	pub fn has_option(&self, name: &str) -> bool {
+		self.options.iter().any(|o| o.split('=').next() == Some(name))
+	}
+
 	pub fn is_changed(&self) -> bool {
 		self.device != self.original.device
 			|| self.mount_point != self.original.mount_point
@@ -64,7 +58,7 @@ impl StabEntry {
 	}
 
 	pub fn from(line: usize, raw: &str) -> Result<Self> {
-		let (content, comment) = match raw.split_once('#') {
+		let (content, _comment) = match raw.split_once('#') {
 			Some((before, after)) => (before, Some(normalize_whitespace(after))),
 			None => (raw, None),
 		};
@@ -127,18 +121,12 @@ impl StabEntry {
 
 impl fmt::Display for StabEntry {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		write!(
-			f,
-			"{} {} {} {} {} {}",
-			self.device,
-			self.mount_point,
-			self.fs_type.to_string(),
-			self.options.join(","),
-			self.dump,
-			self.pass
-		)?;
-		Ok(())
+		write_entry(f, &self.device, &self.mount_point, &self.fs_type, &self.options, self.dump, self.pass)
 	}
+}
+
+fn write_entry(f: &mut fmt::Formatter<'_>, device: &str, mount_point: &str, fs_type: &FsType, options: &[String], dump: u8, pass: u8) -> fmt::Result {
+	write!(f, "{} {} {} {} {} {}", device, mount_point, fs_type, options.join(","), dump, pass)
 }
 
 fn normalize_whitespace(s: &str) -> String {
@@ -159,4 +147,28 @@ pub fn read_fstab() -> Result<Vec<Result<StabEntry>>> {
 		.collect::<Vec<_>>();
 
 	Ok(entries)
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	#[test]
+	fn all_dummy_entries_parse_as_stab_entry() {
+		let raw = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/fstab-dummy")).expect("could not read fstab-dummy");
+		let entries: Vec<(usize, Result<StabEntry>)> = raw
+			.lines()
+			.enumerate()
+			.filter(|(_, line)| !line.trim().is_empty() && !line.starts_with('#'))
+			.map(|(line, text)| (line, StabEntry::from(line, text)))
+			.collect();
+
+		assert!(!entries.is_empty(), "fstab-dummy contains no entries");
+		for (line, result) in &entries {
+			if let Err(err) = result {
+				panic!("line {} failed to parse: {err:#}", line + 1);
+			}
+		}
+		assert_eq!(entries.len(), 44, "unexpected number of entries in fstab-dummy");
+	}
 }

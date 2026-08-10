@@ -67,6 +67,9 @@ user@example.com:/srv/files                   /mnt/sshfs             fuse.sshfs 
 # OverlayFS
 overlay                                       /overlay               overlay     lowerdir=/lower,upperdir=/upper,workdir=/work                      0      0
 
+# bcachefs
+UUID=aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa     /bcache                bcachefs    compression=zstd,discard,fsck                                     0      2
+
 # ZFS datasets
 zroot/ROOT/default                            /zroot                 zfs         zfsutil                                                            0      0
 tank/media                                    /tank                  zfs         zfsutil                                                            0      0
