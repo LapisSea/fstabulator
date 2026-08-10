@@ -167,6 +167,7 @@ fn add_option_row(ctx: AddContext) {
 fn make_trash_button(ctx: &AddContext) -> Button {
 	let trash = gtk::Button::from_icon_name("user-trash-symbolic");
 	trash.add_css_class("flat");
+	trash.add_css_class("error");
 	trash.set_valign(Align::Center);
 	trash.set_tooltip_text(Some("Remove option"));
 

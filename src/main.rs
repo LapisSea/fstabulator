@@ -22,16 +22,18 @@ fn main() -> gtk::glib::ExitCode {
 }
 
 fn build_ui(application: &Application) {
-	let entries: Vec<Rc<RefCell<StabEntry>>> = stab_yurself::read_fstab()
-		.unwrap()
-		.into_iter()
-		.filter_map(|e| match e {
-			StabLine::Entry(e) => Some(e),
-			_ => None,
-		})
-		.map(RefCell::new)
-		.map(Rc::new)
-		.collect();
+	let entries: Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>> = Rc::new(RefCell::new(
+		stab_yurself::read_fstab()
+			.unwrap()
+			.into_iter()
+			.filter_map(|e| match e {
+				StabLine::Entry(e) => Some(e),
+				_ => None,
+			})
+			.map(RefCell::new)
+			.map(Rc::new)
+			.collect(),
+	));
 
 	let editor_panel = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -40,12 +42,13 @@ fn build_ui(application: &Application) {
 		.spacing(12)
 		.build();
 
-	let list_panel = build_entry_list(&entries);
+	let list_panel = build_entry_list(&entries, &editor_panel);
 	let split_box = build_split_layout(&wrap_scroll(&list_panel), &wrap_scroll(&editor_panel));
 
 	{
 		let editor_panel = editor_panel.clone();
 		let list_panel_cb = list_panel.clone();
+		let entries = entries.clone();
 		list_panel.connect_row_selected(move |_, row| {
 			while let Some(child) = editor_panel.last_child() {
 				editor_panel.remove(&child);
@@ -54,9 +57,11 @@ fn build_ui(application: &Application) {
 			if row.index() < 0 {
 				return;
 			}
-			let Some(entry) = entries.get(row.index() as usize) else { return };
+			let Some(entry) = entries.borrow().get(row.index() as usize).cloned() else {
+				return;
+			};
 			let Ok(action_row) = row.clone().downcast::<ActionRow>() else { return };
-			build_editor_panel(&editor_panel, entry, &action_row, &list_panel_cb, &row);
+			build_editor_panel(&editor_panel, &entry, &action_row, &list_panel_cb, &row);
 		});
 	}
 
@@ -234,7 +239,7 @@ fn esc(s: &str) -> String {
 	s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 }
 
-fn build_entry_list(entries: &[Rc<RefCell<StabEntry>>]) -> ListBox {
+fn build_entry_list(entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_panel: &gtk::Box) -> ListBox {
 	let list_box = ListBox::builder()
 		.selection_mode(SelectionMode::Single)
 		.css_classes(["boxed-list"])
@@ -242,10 +247,11 @@ fn build_entry_list(entries: &[Rc<RefCell<StabEntry>>]) -> ListBox {
 		.valign(Align::Start)
 		.build();
 	let mut first = true;
-	for entry in entries {
+	for entry in entries.borrow().iter() {
 		let entry = entry.borrow();
 		let row = ActionRow::new();
 		render_list_entry(&row, &entry, None);
+		add_delete_button(&list_box, &row, entries, editor_panel);
 		list_box.append(&row);
 		if first {
 			first = false;
@@ -254,6 +260,93 @@ fn build_entry_list(entries: &[Rc<RefCell<StabEntry>>]) -> ListBox {
 	}
 
 	list_box
+}
+
+fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
+	let key_label = gtk::Label::new(Some(key));
+	key_label.set_xalign(0.0);
+	key_label.add_css_class("dim-label");
+
+	let value_label = gtk::Label::new(Some(value));
+	value_label.set_xalign(0.0);
+	value_label.set_wrap(true);
+	value_label.set_hexpand(true);
+
+	grid.attach(&key_label, 0, row, 1, 1);
+	grid.attach(&value_label, 1, row, 1, 1);
+}
+
+fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_panel: &gtk::Box) {
+	let delete_btn = gtk::Button::from_icon_name("user-trash-symbolic");
+	delete_btn.add_css_class("flat");
+	delete_btn.add_css_class("error");
+	delete_btn.set_valign(Align::Center);
+	delete_btn.set_tooltip_text(Some("Delete entry"));
+
+	row.add_suffix(&delete_btn);
+
+	let list_box = list_box.clone();
+	let row = row.clone();
+	let entries = entries.clone();
+	let editor_panel = editor_panel.clone();
+	let delete_btn_ref = delete_btn.clone();
+	delete_btn.connect_clicked(move |_| {
+		let borrowed_entries = entries.borrow();
+		let entry = borrowed_entries.get(row.index() as usize).map(|e| e.borrow());
+
+		let dialog = adw::AlertDialog::builder().heading("Delete this entry?").build();
+		if let Some(entry) = entry {
+			let grid = gtk::Grid::builder()
+				.column_spacing(16)
+				.row_spacing(6)
+				.halign(Align::Fill)
+				.hexpand(true)
+				.build();
+			let mut grid_row = 0;
+			if let Some(label) = &entry.user_label {
+				add_info_row(&grid, grid_row, "Label", label);
+				grid_row += 1;
+			}
+			add_info_row(&grid, grid_row, "File system", &entry.fs_type.to_string());
+			add_info_row(&grid, grid_row + 1, "Device", &entry.device);
+			add_info_row(&grid, grid_row + 2, "Mount point", &entry.mount_point);
+			dialog.set_extra_child(Some(&grid));
+		} else {
+			dialog.set_body("The entry will be removed from the list.");
+		}
+		dialog.add_response("cancel", "Cancel");
+		dialog.add_response("delete", "Delete");
+		dialog.set_default_response(Some("cancel"));
+		dialog.set_close_response("cancel");
+
+		let list_box = list_box.clone();
+		let row = row.clone();
+		let entries = entries.clone();
+		let editor_panel = editor_panel.clone();
+		dialog.connect_response(None, move |_, response| {
+			if response != "delete" {
+				return;
+			}
+			let index = row.index();
+			if index < 0 {
+				return;
+			}
+			let index = index as usize;
+			list_box.remove(&row);
+			entries.borrow_mut().remove(index);
+			while let Some(child) = editor_panel.last_child() {
+				editor_panel.remove(&child);
+			}
+			let remaining = entries.borrow().len();
+			let new_index = index.min(remaining.saturating_sub(1));
+			if let Some(new_row) = list_box.row_at_index(new_index as i32) {
+				list_box.select_row(Some(&new_row));
+			}
+		});
+
+		let parent = delete_btn_ref.root().and_then(|root| root.downcast::<gtk::Window>().ok());
+		dialog.present(parent.as_ref());
+	});
 }
 
 fn build_split_layout(list_panel: &impl IsA<gtk::Widget>, editor_panel: &impl IsA<gtk::Widget>) -> GtkBox {
@@ -335,13 +428,11 @@ fn build_editor_panel(
 		list_box.select_row(Some(&list_row));
 	});
 }
-fn add_user_label_row(
-	options: &PreferencesGroup,
-	entry: &Rc<RefCell<StabEntry>>,
-	action_row: &ActionRow,
-	reset_btn: &gtk::Button,
-) {
-	let row = EntryRow::builder().title("Label").text(entry.borrow().user_label.as_deref().unwrap_or("")).build();
+fn add_user_label_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
+	let row = EntryRow::builder()
+		.title("Label")
+		.text(entry.borrow().user_label.as_deref().unwrap_or(""))
+		.build();
 	{
 		let entry = entry.clone();
 		let action_row = action_row.clone();
