@@ -17,13 +17,31 @@ pub struct StabEntry {
 }
 
 impl StabEntry {
+	pub fn blank(line: usize) -> Self {
+		StabEntry {
+			line,
+			device: String::new(),
+			mount_point: String::new(),
+			fs_type: FsType::Other(String::new()),
+			options: vec!["defaults".to_string()],
+			dump: 0,
+			pass: 0,
+			original: String::new(),
+			user_label: None,
+		}
+	}
+
 	pub fn original_normalized(&self) -> String {
 		normalize_whitespace(&self.original)
 	}
 
 	pub fn reset(&mut self) {
 		let Ok(original) = Self::from(self.line, &self.original) else {
-			eprintln!("BUG: Could not parse original entry: {}", self.original);
+			if self.original.is_empty() {
+				*self = Self::blank(self.line);
+			} else {
+				eprintln!("BUG: Could not parse original entry: {}", self.original);
+			}
 			return;
 		};
 		self.device = original.device.clone();
@@ -38,10 +56,18 @@ impl StabEntry {
 		self.options.iter().any(|o| o.split('=').next() == Some(name))
 	}
 
+	pub fn is_valid(&self) -> bool {
+		Self::from(self.line, &self.data_to_string()).is_ok()
+	}
+
 	pub fn is_changed(&self) -> bool {
-		let Ok(original) = Self::from(self.line, &self.original) else {
-			eprintln!("BUG: Could not parse original entry: {}", self.original);
-			return true;
+		let original = match Self::from(self.line, &self.original) {
+			Ok(original) => original,
+			Err(_) if self.original.is_empty() => Self::blank(self.line),
+			Err(_) => {
+				eprintln!("BUG: Could not parse original entry: {}", self.original);
+				return true;
+			}
 		};
 		self.device != original.device
 			|| self.mount_point != original.mount_point
@@ -159,8 +185,8 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 }
 
 pub fn read_fstab() -> Result<Vec<StabLine>> {
-	let path = "./fstab-dummy";
-	// let path = "/etc/fstab";
+	// let path = "./fstab-dummy";
+	let path = "/etc/fstab";
 
 	let raw = std::fs::read_to_string(path).context("Could not read /etc/fstab")?;
 
@@ -262,5 +288,21 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 			panic!("expected comment to remain");
 		};
 		assert_eq!(comment, "# stray note");
+	}
+
+	#[test]
+	fn blank_entry_is_invalid_and_parsed_entry_is_valid() {
+		let parsed = StabEntry::from(0, "UUID=1 / ext4 defaults 0 1").unwrap();
+		assert!(parsed.is_valid());
+		assert!(!parsed.is_changed());
+
+		let mut blank = StabEntry::blank(99);
+		assert!(!blank.is_valid());
+		assert!(!blank.is_changed());
+		blank.device = "UUID=2".into();
+		assert!(blank.is_changed());
+		blank.reset();
+		assert_eq!(blank.device, "");
+		assert!(!blank.is_changed());
 	}
 }

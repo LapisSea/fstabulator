@@ -93,6 +93,7 @@ fn build_ui(application: &Application) {
 	attach_responsive_breakpoint(&window, &split_box);
 
 	let provider = gtk::CssProvider::new();
+	provider.load_from_data(".invalid-alert { color: red; }");
 	gtk::style_context_add_provider_for_display(
 		&gtk::prelude::RootExt::display(&window),
 		&provider,
@@ -189,26 +190,42 @@ pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset
 	} else {
 		action_row.remove_css_class("changed");
 	}
-	update_nofail_warning(action_row, entry);
+	update_list_icons(action_row, entry);
 }
 
 const NOFAIL_WARNING_CLASS: &str = "nofail-warning";
+const INVALID_ALERT_CLASS: &str = "invalid-alert";
+const LIST_ICON_CLASSES: [&str; 2] = [NOFAIL_WARNING_CLASS, INVALID_ALERT_CLASS];
 
-fn update_nofail_warning(action_row: &ActionRow, entry: &StabEntry) {
-	if let Some(warning) = find_widget_with_class(action_row.clone().upcast(), NOFAIL_WARNING_CLASS) {
-		action_row.remove(&warning);
+fn make_icon(icon: &str, class: &str) -> Image {
+	let icon = Image::from_icon_name(icon);
+	icon.add_css_class(class);
+	icon.set_margin_end(4);
+	icon.set_valign(Align::Center);
+	icon
+}
+
+fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
+	for class in LIST_ICON_CLASSES {
+		if let Some(icon) = find_widget_with_class(action_row.clone().upcast(), class) {
+			action_row.remove(&icon);
+		}
 	}
-	if entry.has_option("nofail") {
-		return;
+
+	if !entry.has_option("nofail") {
+		let warning = make_icon("dialog-warning-symbolic", NOFAIL_WARNING_CLASS);
+		warning.set_tooltip_text(Some(
+			"The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \n\
+			Usually, this is wanted on root and home mounts.",
+		));
+		action_row.add_suffix(&warning);
 	}
-	let warning = Image::from_icon_name("dialog-warning-symbolic");
-	warning.add_css_class(NOFAIL_WARNING_CLASS);
-	warning.set_valign(Align::Center);
-	warning.set_tooltip_text(Some(
-		"The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \n\
-		Usually, this is wanted on root and home mounts.",
-	));
-	action_row.add_suffix(&warning);
+
+	if !entry.is_valid() {
+		let alert = make_icon("dialog-error-symbolic", INVALID_ALERT_CLASS);
+		alert.set_tooltip_text(Some("This entry is invalid and cannot be parsed."));
+		action_row.add_suffix(&alert);
+	}
 }
 
 fn find_widget_with_class(widget: gtk::Widget, class: &str) -> Option<gtk::Widget> {
@@ -239,6 +256,18 @@ fn esc(s: &str) -> String {
 	s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 }
 
+fn make_list_row(
+	list_box: &ListBox,
+	entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>,
+	editor_panel: &gtk::Box,
+	entry: &Rc<RefCell<StabEntry>>,
+) -> ActionRow {
+	let row = ActionRow::new();
+	add_delete_button(list_box, &row, entries, editor_panel);
+	render_list_entry(&row, &entry.borrow(), None);
+	row
+}
+
 fn build_entry_list(entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_panel: &gtk::Box) -> ListBox {
 	let list_box = ListBox::builder()
 		.selection_mode(SelectionMode::Single)
@@ -248,16 +277,36 @@ fn build_entry_list(entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_p
 		.build();
 	let mut first = true;
 	for entry in entries.borrow().iter() {
-		let entry = entry.borrow();
-		let row = ActionRow::new();
-		render_list_entry(&row, &entry, None);
-		add_delete_button(&list_box, &row, entries, editor_panel);
+		let row = make_list_row(&list_box, entries, editor_panel, entry);
 		list_box.append(&row);
 		if first {
 			first = false;
 			list_box.select_row(Some(&row));
 		}
 	}
+
+	let add_row = gtk::ListBoxRow::new();
+	add_row.set_selectable(false);
+	add_row.set_activatable(false);
+	let add_btn = gtk::Button::builder().label("Add new mount entry").hexpand(true).build();
+	add_btn.add_css_class("flat");
+	add_row.set_child(Some(&add_btn));
+
+	let list_box_ref = list_box.clone();
+	let add_row_ref = add_row.clone();
+	let entries_ref = entries.clone();
+	let editor_panel_ref = editor_panel.clone();
+	add_btn.connect_clicked(move |_| {
+		let line = entries_ref.borrow().iter().map(|e| e.borrow().line).max().map_or(0, |l| l + 1);
+		let new_entry = Rc::new(RefCell::new(StabEntry::blank(line)));
+		entries_ref.borrow_mut().push(new_entry.clone());
+
+		let row = make_list_row(&list_box_ref, &entries_ref, &editor_panel_ref, &new_entry);
+		list_box_ref.insert(&row, add_row_ref.index());
+		list_box_ref.select_row(Some(&row));
+	});
+
+	list_box.append(&add_row);
 
 	list_box
 }
