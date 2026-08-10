@@ -5,9 +5,9 @@ mod mount_point_value;
 mod options_value;
 mod stab_yurself;
 
-use crate::stab_yurself::StabEntry;
+use crate::stab_yurself::{StabEntry, StabLine};
 use adw::prelude::*;
-use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
+use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
 use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, SelectionMode, Widget};
 use options_value::build_options_group;
 use std::cell::RefCell;
@@ -25,7 +25,10 @@ fn build_ui(application: &Application) {
 	let entries: Vec<Rc<RefCell<StabEntry>>> = stab_yurself::read_fstab()
 		.unwrap()
 		.into_iter()
-		.filter_map(|e| e.ok())
+		.filter_map(|e| match e {
+			StabLine::Entry(e) => Some(e),
+			_ => None,
+		})
 		.map(RefCell::new)
 		.map(Rc::new)
 		.collect();
@@ -162,6 +165,9 @@ pub(crate) fn build_search_picker(
 }
 
 fn render_list_entry_title(entry: &StabEntry) -> String {
+	if let Some(label) = &entry.user_label {
+		return label.clone();
+	}
 	format!("Line {}", entry.line + 1)
 }
 
@@ -220,7 +226,7 @@ fn render_subtitle(entry: &StabEntry) -> String {
 	if !entry.is_changed() {
 		return format!("<tt>{current}</tt>");
 	}
-	let original = esc(&entry.original().to_string());
+	let original = esc(&entry.original_normalized());
 	format!("<tt><i>- {original}</i>\n<b>+ {current}</b></tt>")
 }
 
@@ -291,6 +297,7 @@ fn build_editor_panel(
 	let options_group = PreferencesGroup::builder().title("Options").build();
 	editor_panel.append(&options_group);
 
+	add_user_label_row(&edit_props, entry, action_row, &reset_btn);
 	device_value::add_device_row(&edit_props, entry, action_row, &reset_btn);
 	mount_point_value::add_mount_point_row(&edit_props, entry, action_row, &reset_btn);
 	{
@@ -328,6 +335,27 @@ fn build_editor_panel(
 		list_box.select_row(Some(&list_row));
 	});
 }
+fn add_user_label_row(
+	options: &PreferencesGroup,
+	entry: &Rc<RefCell<StabEntry>>,
+	action_row: &ActionRow,
+	reset_btn: &gtk::Button,
+) {
+	let row = EntryRow::builder().title("Label").text(entry.borrow().user_label.as_deref().unwrap_or("")).build();
+	{
+		let entry = entry.clone();
+		let action_row = action_row.clone();
+		let reset_btn = reset_btn.clone();
+		row.connect_changed(move |row| {
+			let text = row.text();
+			let mut entry = entry.borrow_mut();
+			entry.user_label = if text.is_empty() { None } else { Some(text.to_string()) };
+			render_list_entry(&action_row, &entry, Some(&reset_btn));
+		});
+	}
+	options.add(&row);
+}
+
 fn add_spin_row(
 	options: &PreferencesGroup,
 	entry: &Rc<RefCell<StabEntry>>,
