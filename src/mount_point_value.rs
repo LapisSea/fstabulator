@@ -44,7 +44,10 @@ pub fn add_mount_point_row(
 			if let Some(window) = folder_btn.root().and_then(|root| root.downcast::<gtk::Window>().ok()) {
 				dialog.set_transient_for(Some(&window));
 			}
-			let _ = dialog.set_file(&gtk::gio::File::for_path(row.text().as_str()));
+			let text = row.text();
+			if !text.is_empty() {
+				let _ = dialog.set_file(&gtk::gio::File::for_path(text.as_str()));
+			}
 			let row = row.clone();
 			let entry = entry.clone();
 			let action_row = action_row.clone();
