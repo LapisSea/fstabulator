@@ -1,12 +1,55 @@
 use crate::fs_value::FsType;
-use crate::render_list_entry;
 use crate::stab_yurself::StabEntry;
+use crate::{device_value, render_list_entry};
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
 use gtk::{Box as GtkBox, DropDown, Entry, Orientation, StringList};
 use std::cell::RefCell;
+use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct DeviceValue {
+	pub value: String,
+	pub kind: DeviceKind,
+}
+
+impl DeviceValue {
+	pub fn from<T: Into<String>>(value: T, kind: DeviceKind) -> Self {
+		Self::new(value.into(), kind)
+	}
+	pub fn new(value: String, kind: DeviceKind) -> Self {
+		DeviceValue { value, kind }
+	}
+
+	pub fn resolve_node(&self) -> Option<PathBuf> {
+		if let Some(dir) = self.kind.by_disk_dir() {
+			std::fs::canonicalize(Path::new(dir).join(&self.value)).ok()
+		} else if self.kind == DeviceKind::DevicePath {
+			std::fs::canonicalize(&self.value).ok()
+		} else {
+			None
+		}
+	}
+
+	/// Attempt to transform the value of a device from the current kind in to a
+	/// new one. This way when changing the type of device, it does not become invalid
+	pub fn transform(&self, to: DeviceKind) -> Option<DeviceValue> {
+		let node = self.resolve_node()?;
+		to.identify_node(&node).map(|value| Self::new(value, to))
+	}
+
+	pub fn render(&self) -> String {
+		match self.kind {
+			DeviceKind::Uuid => format!("UUID={}", self.value),
+			DeviceKind::PartUuid => format!("PARTUUID={}", self.value),
+			DeviceKind::Label => format!("LABEL={}", self.value),
+			DeviceKind::PartLabel => format!("PARTLABEL={}", self.value),
+			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => self.value.clone(),
+		}
+	}
+}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum DeviceKind {
@@ -40,9 +83,9 @@ impl DeviceKind {
 	pub fn label(self) -> &'static str {
 		match self {
 			DeviceKind::Uuid => "UUID",
-			DeviceKind::PartUuid => "PARTUUID",
-			DeviceKind::Label => "LABEL",
-			DeviceKind::PartLabel => "PARTLABEL",
+			DeviceKind::PartUuid => "Partition UUID",
+			DeviceKind::Label => "Label",
+			DeviceKind::PartLabel => "Partition Label",
 			DeviceKind::DevicePath => "Device path",
 			DeviceKind::Network => "Network location",
 			DeviceKind::Other => "Other",
@@ -62,35 +105,29 @@ impl DeviceKind {
 		}
 	}
 
-	pub fn classify(device: &str, allowed: &[DeviceKind]) -> (Self, String) {
+	pub fn classify(device: &str, allowed: &[DeviceKind]) -> DeviceValue {
 		for &kind in allowed {
 			if let Some(value) = kind.value_of(device) {
-				return (kind, value);
+				return value;
 			}
 		}
-		(DeviceKind::Other, device.to_string())
-	}
-
-	fn value_of(self, device: &str) -> Option<String> {
-		match self {
-			DeviceKind::Uuid => device.strip_prefix("UUID=").map(str::to_string),
-			DeviceKind::PartUuid => device.strip_prefix("PARTUUID=").map(str::to_string),
-			DeviceKind::Label => device.strip_prefix("LABEL=").map(str::to_string),
-			DeviceKind::PartLabel => device.strip_prefix("PARTLABEL=").map(str::to_string),
-			DeviceKind::DevicePath => device.starts_with("/dev/").then(|| device.to_string()),
-			DeviceKind::Network => (device.starts_with("//") || device.contains(":/")).then(|| device.to_string()),
-			DeviceKind::Other => Some(device.to_string()),
+		DeviceValue {
+			kind: DeviceKind::Other,
+			value: device.to_owned(),
 		}
 	}
 
-	pub fn render(self, value: &str) -> String {
-		match self {
-			DeviceKind::Uuid => format!("UUID={value}"),
-			DeviceKind::PartUuid => format!("PARTUUID={value}"),
-			DeviceKind::Label => format!("LABEL={value}"),
-			DeviceKind::PartLabel => format!("PARTLABEL={value}"),
-			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => value.to_string(),
-		}
+	fn value_of(self, device: &str) -> Option<DeviceValue> {
+		let val = match self {
+			DeviceKind::Uuid => device.strip_prefix("UUID="),
+			DeviceKind::PartUuid => device.strip_prefix("PARTUUID="),
+			DeviceKind::Label => device.strip_prefix("LABEL="),
+			DeviceKind::PartLabel => device.strip_prefix("PARTLABEL="),
+			DeviceKind::DevicePath => device.starts_with("/dev/").then(|| device),
+			DeviceKind::Network => (device.starts_with("//") || device.contains(":/")).then(|| device),
+			DeviceKind::Other => Some(device),
+		};
+		val.map(|val| DeviceValue::from(val, self))
 	}
 
 	fn by_disk_dir(self) -> Option<&'static str> {
@@ -103,16 +140,6 @@ impl DeviceKind {
 		}
 	}
 
-	fn resolve_node(self, value: &str) -> Option<PathBuf> {
-		if let Some(dir) = self.by_disk_dir() {
-			std::fs::canonicalize(Path::new(dir).join(value)).ok()
-		} else if self == DeviceKind::DevicePath {
-			std::fs::canonicalize(value).ok()
-		} else {
-			None
-		}
-	}
-
 	fn identify_node(self, node: &Path) -> Option<String> {
 		if self == DeviceKind::DevicePath {
 			return Some(friendly_device_path(node));
@@ -120,21 +147,14 @@ impl DeviceKind {
 		let path = find_node_in_dir(self.by_disk_dir()?, node)?;
 		path.file_name()?.to_str().map(str::to_string)
 	}
-
-	/// Attempt to transform the value of a device from the current kind in to a
-	/// new one. This way when changing the type of device, it does not become invalid
-	pub fn transform(self, value: &str, to: DeviceKind) -> Option<String> {
-		let node = self.resolve_node(value)?;
-		to.identify_node(&node)
-	}
 }
 
 pub fn resolve_local_device(device: &str) -> Option<String> {
-	let (kind, value) = DeviceKind::classify(device, &DeviceKind::LOCAL);
-	if kind == DeviceKind::Other {
-		return None;
+	let value = DeviceKind::classify(device, &DeviceKind::LOCAL);
+	match value.kind {
+		DeviceKind::Other => None,
+		_ => value.resolve_node().map(|p| p.to_string_lossy().into_owned()),
 	}
-	kind.resolve_node(&value).map(|p| p.to_string_lossy().into_owned())
 }
 
 fn find_node_in_dir(dir: &str, node: &Path) -> Option<PathBuf> {
@@ -158,14 +178,14 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 		kinds.push(DeviceKind::Other);
 	}
 
-	let (initial_kind, initial_value) = DeviceKind::classify(&entry.borrow().device, &kinds);
-	let selected = kinds.iter().position(|k| *k == initial_kind).unwrap();
+	let initial = &entry.borrow().device;
+	let selected = kinds.iter().position(|k| *k == initial.kind).unwrap();
 
 	let model = StringList::new(&kinds.iter().map(|k| k.label()).collect::<Vec<_>>());
 
 	let dropdown = DropDown::builder().model(&model).selected(selected as u32).build();
 
-	let value_entry = Entry::builder().text(&initial_value).hexpand(true).build();
+	let value_entry = Entry::builder().text(&initial.value).hexpand(true).build();
 
 	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(12).hexpand(true).build();
 	input_row.append(&dropdown);
@@ -192,7 +212,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 		let reset_btn = reset_btn.clone();
 		value_entry.connect_changed(move |entry| {
 			let kind = kinds_ref[dropdown_ref.selected() as usize];
-			entry_ref.borrow_mut().device = kind.render(&entry.text());
+			entry_ref.borrow_mut().device = DeviceValue::from(entry.text(), kind);
 			warning.set_visible(false);
 			render_list_entry(&action_row_ref, &entry_ref.borrow(), Some(&reset_btn));
 		});
@@ -205,38 +225,36 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 		let reset_btn = reset_btn.clone();
 		dropdown.connect_selected_notify(move |dropdown| {
 			let new_kind = kinds[dropdown.selected() as usize];
-			let current_device = entry.borrow().device.clone();
-			let (current_kind, current_value) = DeviceKind::classify(&current_device, &DeviceKind::ALL);
+			let current = &entry.borrow().device;
 
 			if new_kind == DeviceKind::Other {
-				value_entry.set_text(&current_device);
+				value_entry.set_text(&current.value);
 				return;
 			}
-			if new_kind == current_kind {
-				value_entry.set_text(&current_value);
+			if new_kind == current.kind {
+				value_entry.set_text(&current.value);
 				return;
 			}
 
-			let both_local = DeviceKind::LOCAL.contains(&current_kind) && DeviceKind::LOCAL.contains(&new_kind);
-			match current_kind.transform(&current_value, new_kind) {
-				Some(value) => {
+			let both_local = DeviceKind::LOCAL.contains(&current.kind) && DeviceKind::LOCAL.contains(&new_kind);
+			match current.transform(new_kind) {
+				Some(device) => {
 					warning.set_visible(false);
-					value_entry.set_text(&value);
-					entry.borrow_mut().device = new_kind.render(&value);
+					value_entry.set_text(&device.value);
+					entry.borrow_mut().device = device;
 				}
 				None if both_local => {
-					let value = value_entry.text().to_string();
-					entry.borrow_mut().device = new_kind.render(&value);
+					entry.borrow_mut().device = DeviceValue::from(value_entry.text(), new_kind);
 					warning.set_label(&format!(
 						"Could not resolve a {} for {}. The value was kept as-is.",
 						new_kind.label(),
-						current_device
+						current.value
 					));
 					warning.set_visible(true);
 				}
 				None => {
 					let value = value_entry.text().to_string();
-					entry.borrow_mut().device = new_kind.render(&value);
+					entry.borrow_mut().device = DeviceValue::new(value, new_kind);
 				}
 			}
 			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
@@ -257,16 +275,18 @@ mod tests {
 			Err(_) => return,
 		};
 		let Some(entry) = dir.filter_map(Result::ok).next() else { return };
-		let uuid = entry.file_name().to_string_lossy().into_owned();
+		let uuid = &entry.file_name().to_string_lossy().into_owned();
 
-		let Some(path) = DeviceKind::Uuid.transform(&uuid, DeviceKind::DevicePath) else {
+		let Some(path) = DeviceValue::from(uuid, DeviceKind::Uuid).transform(DeviceKind::DevicePath) else {
 			panic!("could not resolve uuid {uuid}");
 		};
+		assert_eq!(path.kind, DeviceKind::DevicePath);
+		let path = &path.value;
 		assert!(path.starts_with("/dev/"));
 
-		let Some(back) = DeviceKind::DevicePath.transform(&path, DeviceKind::Uuid) else {
+		let Some(back) = DeviceValue::from(path, DeviceKind::DevicePath).transform(DeviceKind::Uuid) else {
 			panic!("could not resolve path {path}");
 		};
-		assert_eq!(back, uuid);
+		assert_eq!(back.value, *uuid);
 	}
 }

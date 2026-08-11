@@ -368,7 +368,7 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &Rc<RefCell<V
 				grid_row += 1;
 			}
 			add_info_row(&grid, grid_row, "File system", &entry.fs_type.to_string());
-			add_info_row(&grid, grid_row + 1, "Device", &entry.device);
+			add_info_row(&grid, grid_row + 1, "Device", &entry.device.value);
 			add_info_row(&grid, grid_row + 2, "Mount point", &entry.mount_point);
 			dialog.set_extra_child(Some(&grid));
 		} else {

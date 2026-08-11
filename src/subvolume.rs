@@ -1,5 +1,6 @@
 use crate::device_value::resolve_local_device;
 use anyhow::{Context, Result, bail};
+use std::path::Path;
 use std::process::Command;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -27,9 +28,12 @@ fn find_mount_point(device: &str) -> Result<Option<String>> {
 	Ok(None)
 }
 
-pub fn list_subvolumes(device: &str) -> Result<Vec<Subvol>> {
-	let Some(mount_point) = find_mount_point(device)? else {
-		bail!("The device '{device}' is not currently mounted, so its subvolumes cannot be listed.");
+pub fn list_subvolumes(device: &Path) -> Result<Vec<Subvol>> {
+	let Some(mount_point) = find_mount_point(device.to_string_lossy().as_ref())? else {
+		bail!(
+			"The device '{}' is not currently mounted, so its subvolumes cannot be listed.",
+			device.display()
+		);
 	};
 
 	let direct = Command::new("btrfs")

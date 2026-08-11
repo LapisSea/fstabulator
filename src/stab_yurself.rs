@@ -1,3 +1,4 @@
+use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
 use anyhow::{Context, Error, Result, bail};
 use std::fmt;
@@ -6,7 +7,7 @@ use std::str::FromStr;
 
 pub struct StabEntry {
 	pub line: usize,
-	pub device: String,
+	pub device: DeviceValue,
 	pub mount_point: String,
 	pub fs_type: FsType,
 	pub options: Vec<String>,
@@ -20,7 +21,7 @@ impl StabEntry {
 	pub fn blank(line: usize) -> Self {
 		StabEntry {
 			line,
-			device: String::new(),
+			device: DeviceValue::from("", DeviceKind::Other),
 			mount_point: String::new(),
 			fs_type: FsType::Other(String::new()),
 			options: vec!["defaults".to_string()],
@@ -105,9 +106,11 @@ impl StabEntry {
 			.parse::<u8>()
 			.with_context(|| format!("line {line}: pass field is not a valid integer"))?;
 
+		let device = DeviceKind::classify(&device, DeviceKind::for_fs_type(&fs_type));
+
 		let entry = StabEntry {
 			line,
-			device: device.clone(),
+			device,
 			mount_point: mount_point.clone(),
 			fs_type: fs_type.clone(),
 			options: options.clone(),
@@ -134,7 +137,7 @@ impl StabEntry {
 	fn data_to_string(&self) -> String {
 		format!(
 			"{} {} {} {} {} {}",
-			&self.device,
+			self.device.render(),
 			&self.mount_point,
 			&self.fs_type,
 			&self.options.join(","),
@@ -299,10 +302,10 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 		let mut blank = StabEntry::blank(99);
 		assert!(!blank.is_valid());
 		assert!(!blank.is_changed());
-		blank.device = "UUID=2".into();
+		blank.device = DeviceValue::from("2", DeviceKind::Uuid);
 		assert!(blank.is_changed());
 		blank.reset();
-		assert_eq!(blank.device, "");
+		assert_eq!(blank.device.value, "");
 		assert!(!blank.is_changed());
 	}
 }

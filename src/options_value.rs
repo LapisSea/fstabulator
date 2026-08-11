@@ -1,4 +1,4 @@
-use crate::device_value::{DeviceKind, resolve_local_device};
+use crate::device_value::{DeviceKind, DeviceValue, resolve_local_device};
 use crate::fs_options::{FsOption, OptionValue};
 use crate::render_list_entry;
 use crate::stab_yurself::StabEntry;
@@ -386,7 +386,7 @@ fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descr
 }
 
 fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) -> MenuButton {
-	let cache: Rc<RefCell<Option<(String, Vec<Subvol>)>>> = Rc::new(RefCell::new(None));
+	let cache: Rc<RefCell<Option<(DeviceValue, Vec<Subvol>)>>> = Rc::new(RefCell::new(None));
 	let displayed: Rc<RefCell<Vec<Subvol>>> = Rc::new(RefCell::new(Vec::new()));
 	let rows: Rc<RefCell<Vec<Option<ActionRow>>>> = Rc::new(RefCell::new(Vec::new()));
 
@@ -398,18 +398,18 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 		move |list: &ListBox, query: &str, error: &gtk::Label| {
 			let mut cache = cache.borrow_mut();
 
-			let raw_device = ctx.entry.borrow().device.clone();
+			let device = ctx.entry.borrow().device.clone();
 
-			let res = match resolve_local_device(&raw_device) {
+			let res: (DeviceValue, Vec<Subvol>) = match device.resolve_node() {
 				None => {
 					error.set_visible(true);
-					error.set_label(&format!("Could not find local device for {raw_device}"));
-					(raw_device, vec![])
+					error.set_label(&format!("Could not find local device for {}", device.render()));
+					(device, vec![])
 				}
-				Some(device) => match cache.as_ref() {
-					Some(res) if cache.as_ref().is_none_or(|(cached, _)| *cached == raw_device) => res.clone(),
+				Some(path) => match cache.as_ref() {
+					Some(res) if cache.as_ref().is_none_or(|(cached, _)| cached == &device) => res.clone(),
 					_ => {
-						let (results, err) = match list_subvolumes(&device) {
+						let (results, err) = match list_subvolumes(&path) {
 							Ok(list) => (list, None),
 							Err(err) => (Vec::new(), Some(format!("{err:#}"))),
 						};
@@ -417,11 +417,11 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 						if let Some(err) = &err {
 							error.set_label(err);
 						}
-						(raw_device, results)
+						(device, results)
 					}
 				},
 			};
-			if (error.is_visible()) {
+			if error.is_visible() {
 				clear_list(list);
 			} else {
 				populate_subvol_list(list, &res.1, query, &rows, &displayed);
