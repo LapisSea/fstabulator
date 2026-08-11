@@ -1,16 +1,10 @@
+use crate::GC;
 use crate::render_list_entry;
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
 use adw::{ActionRow, EntryRow, PreferencesGroup};
-use std::cell::RefCell;
-use std::rc::Rc;
 
-pub fn add_mount_point_row(
-	options: &PreferencesGroup,
-	entry: &Rc<RefCell<StabEntry>>,
-	action_row: &ActionRow,
-	reset_btn: &gtk::Button,
-) {
+pub fn add_mount_point_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
 	let entry = entry.clone();
 	let action_row = action_row.clone();
 	let reset_btn = reset_btn.clone();

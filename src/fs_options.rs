@@ -10,7 +10,7 @@ use crate::fs_value::FsType;
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum BoolType {
 	YesNo,
-	TrueFalse,
+	// TrueFalse,
 	OneZero,
 }
 
@@ -18,7 +18,7 @@ impl BoolType {
 	pub fn values(self) -> (&'static str, &'static str) {
 		match self {
 			BoolType::YesNo => ("yes", "no"),
-			BoolType::TrueFalse => ("true", "false"),
+			// BoolType::TrueFalse => ("true", "false"),
 			BoolType::OneZero => ("1", "0"),
 		}
 	}
@@ -1034,7 +1034,7 @@ mod tests {
 	fn bool_type_parse() {
 		assert_eq!(BoolType::YesNo.parse("yes"), Some(true));
 		assert_eq!(BoolType::YesNo.parse("NO"), Some(false));
-		assert_eq!(BoolType::TrueFalse.parse("TRUE"), Some(true));
+		// assert_eq!(BoolType::TrueFalse.parse("TRUE"), Some(true));
 		assert_eq!(BoolType::OneZero.parse("0"), Some(false));
 		assert_eq!(BoolType::OneZero.parse("garbage"), None);
 	}

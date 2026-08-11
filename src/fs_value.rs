@@ -1,3 +1,4 @@
+use crate::GC;
 use crate::build_search_picker;
 use crate::clear_list;
 use crate::render_list_entry;
@@ -5,8 +6,6 @@ use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
 use gtk::{Align, Box as GtkBox, Entry, ListBox, Orientation};
-use std::cell::RefCell;
-use std::rc::Rc;
 use strum::IntoEnumIterator;
 use strum_macros::{Display, EnumIter, EnumString};
 
@@ -126,16 +125,16 @@ impl FsType {
 
 pub fn add_fs_type_row(
 	options: &PreferencesGroup,
-	entry: &Rc<RefCell<StabEntry>>,
+	entry: &GC<StabEntry>,
 	action_row: &ActionRow,
 	reset_btn: &gtk::Button,
 	on_change: impl Fn() + 'static,
 ) {
 	let known: Vec<FsType> = FsType::iter().filter(|e| !matches!(e, FsType::Other(_))).collect();
 
-	let current = entry.borrow().fs_type.clone();
+	let current = entry.cloned(|e| &e.fs_type);
 
-	let displayed: Rc<RefCell<Vec<FsType>>> = Rc::new(RefCell::new(Vec::new()));
+	let displayed: GC<Vec<FsType>> = GC::new(Vec::new());
 	let populate = {
 		let known = known.clone();
 		let displayed = displayed.clone();
@@ -212,7 +211,7 @@ pub fn add_fs_type_row(
 	}
 }
 
-fn populate_fs_list(list: &ListBox, known: &[FsType], query: &str, displayed: &RefCell<Vec<FsType>>) {
+fn populate_fs_list(list: &ListBox, known: &[FsType], query: &str, displayed: &GC<Vec<FsType>>) {
 	clear_list(list);
 
 	let query = query.trim().to_lowercase();

@@ -11,8 +11,40 @@ use adw::prelude::*;
 use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
 use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, SelectionMode, Widget};
 use options_value::build_options_group;
-use std::cell::RefCell;
+use std::ops::Deref;
 use std::rc::Rc;
+use std::sync::{PoisonError, RwLock, RwLockReadGuard, RwLockWriteGuard};
+
+pub(crate) struct GC<T>(Rc<RwLock<T>>);
+
+impl<T> Clone for GC<T> {
+	fn clone(&self) -> Self {
+		Self(Rc::clone(&self.0))
+	}
+}
+
+impl<T> GC<T> {
+	pub(crate) fn new(value: T) -> Self {
+		Self(Rc::new(RwLock::new(value)))
+	}
+
+	pub(crate) fn borrow(&self) -> RwLockReadGuard<'_, T> {
+		self.0.read().unwrap_or_else(PoisonError::into_inner)
+	}
+
+	pub(crate) fn cloned<F, V: Clone>(&self, get: F) -> V
+	where
+		F: FnOnce(&T) -> &V,
+	{
+		let val = self.0.read().unwrap_or_else(PoisonError::into_inner);
+		let ret = get(&val);
+		ret.clone()
+	}
+
+	pub(crate) fn borrow_mut(&self) -> RwLockWriteGuard<'_, T> {
+		self.0.write().unwrap_or_else(PoisonError::into_inner)
+	}
+}
 
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
@@ -23,7 +55,7 @@ fn main() -> gtk::glib::ExitCode {
 }
 
 fn build_ui(application: &Application) {
-	let entries: Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>> = Rc::new(RefCell::new(
+	let entries: GC<Vec<GC<StabEntry>>> = GC::new(
 		stab_yurself::read_fstab()
 			.unwrap()
 			.into_iter()
@@ -31,10 +63,9 @@ fn build_ui(application: &Application) {
 				StabLine::Entry(e) => Some(e),
 				_ => None,
 			})
-			.map(RefCell::new)
-			.map(Rc::new)
+			.map(GC::new)
 			.collect(),
-	));
+	);
 
 	let editor_panel = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -267,19 +298,14 @@ fn esc(s: &str) -> String {
 	s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 }
 
-fn make_list_row(
-	list_box: &ListBox,
-	entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>,
-	editor_panel: &gtk::Box,
-	entry: &Rc<RefCell<StabEntry>>,
-) -> ActionRow {
+fn make_list_row(list_box: &ListBox, entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box, entry: &GC<StabEntry>) -> ActionRow {
 	let row = ActionRow::new();
 	add_delete_button(list_box, &row, entries, editor_panel);
 	render_list_entry(&row, &entry.borrow(), None);
 	row
 }
 
-fn build_entry_list(entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_panel: &gtk::Box) -> ListBox {
+fn build_entry_list(entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) -> ListBox {
 	let list_box = ListBox::builder()
 		.selection_mode(SelectionMode::Single)
 		.css_classes(["boxed-list"])
@@ -309,7 +335,7 @@ fn build_entry_list(entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_p
 	let editor_panel_ref = editor_panel.clone();
 	add_btn.connect_clicked(move |_| {
 		let line = entries_ref.borrow().iter().map(|e| e.borrow().line).max().map_or(0, |l| l + 1);
-		let new_entry = Rc::new(RefCell::new(StabEntry::blank(line)));
+		let new_entry = GC::new(StabEntry::blank(line));
 		entries_ref.borrow_mut().push(new_entry.clone());
 
 		let row = make_list_row(&list_box_ref, &entries_ref, &editor_panel_ref, &new_entry);
@@ -336,7 +362,7 @@ fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
 	grid.attach(&value_label, 1, row, 1, 1);
 }
 
-fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &Rc<RefCell<Vec<Rc<RefCell<StabEntry>>>>>, editor_panel: &gtk::Box) {
+fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) {
 	let delete_btn = gtk::Button::from_icon_name("user-trash-symbolic");
 	delete_btn.add_css_class("flat");
 	delete_btn.add_css_class("error");
@@ -434,13 +460,7 @@ fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &Gtk
 	window.add_breakpoint(breakpoint);
 }
 
-fn build_editor_panel(
-	editor_panel: &gtk::Box,
-	entry: &Rc<RefCell<StabEntry>>,
-	action_row: &ActionRow,
-	list_box: &ListBox,
-	list_row: &gtk::ListBoxRow,
-) {
+fn build_editor_panel(editor_panel: &gtk::Box, entry: &GC<StabEntry>, action_row: &ActionRow, list_box: &ListBox, list_row: &gtk::ListBoxRow) {
 	let reset_btn = gtk::Button::with_label("Reset");
 	reset_btn.set_sensitive(entry.borrow().is_changed());
 
@@ -488,7 +508,7 @@ fn build_editor_panel(
 		list_box.select_row(Some(&list_row));
 	});
 }
-fn add_user_label_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
+fn add_user_label_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
 	let row = EntryRow::builder()
 		.title("Label")
 		.text(entry.borrow().user_label.as_deref().unwrap_or(""))
@@ -509,7 +529,7 @@ fn add_user_label_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 
 fn add_spin_row(
 	options: &PreferencesGroup,
-	entry: &Rc<RefCell<StabEntry>>,
+	entry: &GC<StabEntry>,
 	action_row: &ActionRow,
 	title: &str,
 	initial: u8,

@@ -1,13 +1,10 @@
 use crate::fs_value::FsType;
 use crate::stab_yurself::StabEntry;
-use crate::{device_value, render_list_entry};
+use crate::{GC, render_list_entry};
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
 use gtk::{Box as GtkBox, DropDown, Entry, Orientation, StringList};
-use std::cell::RefCell;
-use std::fmt::{Display, Formatter};
 use std::path::{Path, PathBuf};
-use std::rc::Rc;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct DeviceValue {
@@ -172,7 +169,7 @@ fn friendly_device_path(node: &Path) -> String {
 		.unwrap_or_else(|| node.to_string_lossy().into_owned())
 }
 
-pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>, action_row: &ActionRow, reset_btn: &gtk::Button) {
+pub fn add_device_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
 	let mut kinds = DeviceKind::for_fs_type(&entry.borrow().fs_type).to_vec();
 	if !kinds.contains(&DeviceKind::Other) {
 		kinds.push(DeviceKind::Other);
@@ -225,7 +222,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &Rc<RefCell<StabEntry>>
 		let reset_btn = reset_btn.clone();
 		dropdown.connect_selected_notify(move |dropdown| {
 			let new_kind = kinds[dropdown.selected() as usize];
-			let current = &entry.borrow().device;
+			let current = entry.cloned(|e| &e.device);
 
 			if new_kind == DeviceKind::Other {
 				value_entry.set_text(&current.value);
