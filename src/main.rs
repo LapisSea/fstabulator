@@ -4,6 +4,7 @@ mod fs_value;
 mod mount_point_value;
 mod options_value;
 mod stab_yurself;
+mod subvolume;
 
 use crate::stab_yurself::{StabEntry, StabLine};
 use adw::prelude::*;
@@ -123,7 +124,7 @@ pub(crate) fn build_search_picker(
 	search_placeholder: &str,
 	menu_label: &str,
 	tooltip: &str,
-	populate: impl Fn(&ListBox, &str) + 'static,
+	populate: impl Fn(&ListBox, &str, &gtk::Label) + 'static,
 ) -> SearchPicker {
 	let search = SearchEntry::builder().placeholder_text(search_placeholder).hexpand(true).build();
 	let list_box = ListBox::builder().css_classes(["boxed-list"]).hexpand(true).valign(Align::Start).build();
@@ -135,9 +136,15 @@ pub(crate) fn build_search_picker(
 		.hexpand(true)
 		.build();
 
+	let error_label = gtk::Label::new(None);
+	error_label.set_xalign(0.0);
+	error_label.set_wrap(true);
+	error_label.set_visible(false);
+
 	let popover_content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).build();
 	popover_content.append(&search);
 	popover_content.append(&scroll);
+	popover_content.append(&error_label);
 
 	let popover = Popover::builder().child(&popover_content).build();
 
@@ -149,11 +156,14 @@ pub(crate) fn build_search_picker(
 		let list_box = list_box.clone();
 		let search = search.clone();
 		let menu_btn = menu_btn.clone();
+		let error_label = error_label.clone();
 		let populate = populate.clone();
 		popover.connect_visible_notify(move |popover| {
 			if popover.is_visible() {
-				popover.set_size_request(menu_btn.width(), -1);
-				populate(&list_box, "");
+				if menu_btn.label().is_some_and(|label| !label.is_empty()) {
+					popover.set_size_request(menu_btn.width(), -1);
+				}
+				populate(&list_box, "", &error_label);
 				search.set_text("");
 				search.grab_focus();
 			}
@@ -161,9 +171,10 @@ pub(crate) fn build_search_picker(
 	}
 	{
 		let list_box = list_box.clone();
+		let error_label = error_label.clone();
 		let populate = populate.clone();
 		search.connect_search_changed(move |search| {
-			populate(&list_box, &search.text());
+			populate(&list_box, &search.text(), &error_label);
 		});
 	}
 

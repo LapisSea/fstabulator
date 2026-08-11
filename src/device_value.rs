@@ -129,6 +129,14 @@ impl DeviceKind {
 	}
 }
 
+pub fn resolve_local_device(device: &str) -> Option<String> {
+	let (kind, value) = DeviceKind::classify(device, &DeviceKind::LOCAL);
+	if kind == DeviceKind::Other {
+		return None;
+	}
+	kind.resolve_node(&value).map(|p| p.to_string_lossy().into_owned())
+}
+
 fn find_node_in_dir(dir: &str, node: &Path) -> Option<PathBuf> {
 	std::fs::read_dir(dir)
 		.ok()?

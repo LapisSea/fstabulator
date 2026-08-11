@@ -50,6 +50,8 @@ pub enum OptionValue {
 	Enum(&'static [&'static str]),
 	/// Arbitrary free-form text (paths, names, labels)
 	String,
+	/// A btrfs subvolume, picked from the subvolumes found on the entry's device
+	Subvol,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -311,8 +313,8 @@ pub const BTRFS_OPTIONS: &[FsOption] = &[
 	opt!("nossd", OptionValue::Toggle, "Disables SSD allocation optimizations."),
 	opt!("ssd_spread", OptionValue::Toggle, "Allocates into larger aligned chunks for low-end SSDs."),
 	opt!("nossd_spread", OptionValue::Toggle, "Disables the ssd_spread allocation scheme."),
-	opt!("subvol", OptionValue::String, "Mounts a subvolume at the given path, not the toplevel.", "@"),
-	opt!("subvolid", OptionValue::Integer, "Mounts the subvolume with the given numeric ID."),
+	opt!("subvol", OptionValue::Subvol, "Mounts a subvolume at the given path, not the toplevel."),
+	opt!("subvolid", OptionValue::Subvol, "Mounts the subvolume with the given numeric ID."),
 	opt!("thread_pool", OptionValue::Integer, "Sets number of worker threads."),
 	opt!("treelog", OptionValue::Toggle, "Enables tree logging for fsync/O_SYNC."),
 	opt!("notreelog", OptionValue::Toggle, "Disables tree logging."),
@@ -1011,8 +1013,8 @@ mod tests {
 			Some(FsOption {
 				name: "subvol",
 				description: "Mounts a subvolume at the given path, not the toplevel.",
-				value: OptionValue::String,
-				default: Some("@")
+				value: OptionValue::Subvol,
+				default: None
 			})
 		);
 	}

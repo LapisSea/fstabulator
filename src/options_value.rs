@@ -1,11 +1,12 @@
-use crate::clear_list;
+use crate::device_value::{DeviceKind, resolve_local_device};
 use crate::fs_options::{FsOption, OptionValue};
 use crate::render_list_entry;
 use crate::stab_yurself::StabEntry;
-use crate::{build_search_picker, fs_options};
+use crate::subvolume::{Subvol, list_subvolumes};
+use crate::{build_search_picker, clear_list, fs_options};
 use adw::prelude::*;
 use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow, SpinRow};
-use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, ListBox, Orientation, StringList};
+use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, Label, ListBox, MenuButton, Orientation, StringList};
 use std::cell::RefCell;
 use std::rc::Rc;
 
@@ -154,6 +155,13 @@ fn add_option_row(ctx: AddContext) {
 			..
 		}) => {
 			add_octal_option_row(ctx.clone(), &trash, &name, description, &current);
+		}
+		Some(FsOption {
+			description,
+			value: OptionValue::Subvol,
+			..
+		}) => {
+			add_subvol_option_row(ctx.clone(), &trash, &name, description, &current);
 		}
 		None
 		| Some(FsOption {
@@ -333,6 +341,162 @@ fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descri
 	});
 }
 
+fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
+	let input = gtk::Entry::builder().text(current).hexpand(true).build();
+	let find_btn = build_subvol_find_button(&ctx, &input, name);
+
+	let title = gtk::Label::builder().label(name).halign(Align::Start).wrap(true).build();
+	let subtitle = gtk::Label::builder().label(description).halign(Align::Start).wrap(true).build();
+	subtitle.add_css_class("subtitle");
+	let text = GtkBox::builder()
+		.orientation(Orientation::Vertical)
+		.margin_top(6)
+		.spacing(3)
+		.valign(Align::Center)
+		.hexpand(true)
+		.build();
+	text.append(&title);
+	text.append(&subtitle);
+	let header = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.spacing(6)
+		.valign(Align::Center)
+		.margin_start(12)
+		.margin_end(12)
+		.build();
+	header.set_size_request(-1, 50);
+	header.append(&text);
+	header.append(trash);
+
+	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
+	input_row.append(&input);
+	input_row.append(&find_btn);
+
+	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).margin_bottom(6).build();
+	content.append(&header);
+	content.append(&input_row);
+	let row = PreferencesRow::builder().child(&content).build();
+	ctx.group.add(&row);
+
+	let ctx = ctx.clone();
+	let name = name.to_string();
+	input.connect_changed(move |input| {
+		set_option(&ctx, format!("{name}={}", input.text()));
+	});
+}
+
+fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) -> MenuButton {
+	let cache: Rc<RefCell<Option<(String, Vec<Subvol>)>>> = Rc::new(RefCell::new(None));
+	let displayed: Rc<RefCell<Vec<Subvol>>> = Rc::new(RefCell::new(Vec::new()));
+	let rows: Rc<RefCell<Vec<Option<ActionRow>>>> = Rc::new(RefCell::new(Vec::new()));
+
+	let picker = build_search_picker("Search subvolumes", "", "Find a subvolume on this device", {
+		let ctx = ctx.clone();
+		let cache = cache.clone();
+		let rows = rows.clone();
+		let displayed = displayed.clone();
+		move |list: &ListBox, query: &str, error: &gtk::Label| {
+			let mut cache = cache.borrow_mut();
+
+			let raw_device = ctx.entry.borrow().device.clone();
+
+			let res = match resolve_local_device(&raw_device) {
+				None => {
+					error.set_visible(true);
+					error.set_label(&format!("Could not find local device for {raw_device}"));
+					(raw_device, vec![])
+				}
+				Some(device) => match cache.as_ref() {
+					Some(res) if cache.as_ref().is_none_or(|(cached, _)| *cached == raw_device) => res.clone(),
+					_ => {
+						let (results, err) = match list_subvolumes(&device) {
+							Ok(list) => (list, None),
+							Err(err) => (Vec::new(), Some(format!("{err:#}"))),
+						};
+						error.set_visible(err.is_some());
+						if let Some(err) = &err {
+							error.set_label(err);
+						}
+						(raw_device, results)
+					}
+				},
+			};
+			if (error.is_visible()) {
+				clear_list(list);
+			} else {
+				populate_subvol_list(list, &res.1, query, &rows, &displayed);
+			}
+			*cache = Some(res);
+		}
+	});
+
+	{
+		let input = input.clone();
+		let popover = picker.popover.clone();
+		let ctx = ctx.clone();
+		let name = name.to_string();
+		let displayed = displayed.clone();
+		picker.list_box.connect_row_activated(move |_, row| {
+			let Some(subvol) = displayed.borrow().get(row.index() as usize).cloned() else {
+				return;
+			};
+			let value = if name == "subvolid" { subvol.id.to_string() } else { subvol.path };
+			input.set_text(&value);
+			set_option(&ctx, format!("{name}={value}"));
+			popover.popdown();
+		});
+	}
+
+	picker.menu_btn.set_icon_name("folder-search-symbolic");
+	picker.menu_btn.add_css_class("flat");
+	picker.menu_btn
+}
+
+fn populate_subvol_list(list: &ListBox, results: &[Subvol], query: &str, rows: &RefCell<Vec<Option<ActionRow>>>, displayed: &RefCell<Vec<Subvol>>) {
+	clear_list(list);
+
+	if results.is_empty() {
+		let row = ActionRow::builder().title("No subvolumes found").build();
+		list.append(&row);
+		*displayed.borrow_mut() = Vec::new();
+		return;
+	}
+
+	let query = query.trim().to_lowercase();
+	let mut indices = Vec::new();
+	for (i, subvol) in results.iter().enumerate() {
+		if query.is_empty() || subvol.path.to_lowercase().contains(&query) || subvol.id.to_string().contains(&query) {
+			indices.push(i);
+		}
+	}
+	if indices.is_empty() {
+		let row = ActionRow::builder().title("No matches").build();
+		list.append(&row);
+		*displayed.borrow_mut() = Vec::new();
+		return;
+	}
+
+	let mut rows = rows.borrow_mut();
+	let mut items = Vec::with_capacity(indices.len());
+	for i in indices {
+		let subvol = &results[i];
+		while rows.len() <= i {
+			rows.push(None);
+		}
+		let row = rows[i].get_or_insert_with(|| {
+			let row = ActionRow::builder()
+				.title(subvol.path.clone())
+				.subtitle(format!("ID {}", subvol.id))
+				.build();
+			row.set_activatable(true);
+			row
+		});
+		list.append(row);
+		items.push(subvol.clone());
+	}
+	*displayed.borrow_mut() = items;
+}
+
 fn add_add_option_row(ctx: AddContext) {
 	let entry_ref = ctx.entry.borrow();
 	let existing: Vec<&str> = entry_ref
@@ -352,7 +516,7 @@ fn add_add_option_row(ctx: AddContext) {
 		let available = available.clone();
 		let rows = rows.clone();
 		let displayed = displayed.clone();
-		move |list: &ListBox, query: &str| populate_option_list(list, &available, query, &rows, &displayed)
+		move |list: &ListBox, query: &str, _error: &gtk::Label| populate_option_list(list, &available, query, &rows, &displayed)
 	};
 	let picker = build_search_picker("Search options", "Add option…", "Choose an option to add to this entry", populate);
 	let menu_btn = picker.menu_btn;
@@ -429,6 +593,7 @@ fn default_option_value(option: FsOption) -> String {
 		OptionValue::Size => format!("{name}=0"),
 		OptionValue::Bool(bool_type) => format!("{name}={}", bool_type.values().0),
 		OptionValue::String => format!("{name}="),
+		OptionValue::Subvol => format!("{name}="),
 	}
 }
 
@@ -459,6 +624,7 @@ mod tests {
 		assert_eq!(default_option_value(opt(OptionValue::Bool(fs_options::BoolType::TrueFalse))), "opt=true");
 		assert_eq!(default_option_value(opt(OptionValue::Bool(fs_options::BoolType::OneZero))), "opt=1");
 		assert_eq!(default_option_value(opt(OptionValue::String)), "opt=");
+		assert_eq!(default_option_value(opt(OptionValue::Subvol)), "opt=");
 	}
 
 	#[test]

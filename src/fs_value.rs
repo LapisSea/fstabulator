@@ -139,7 +139,7 @@ pub fn add_fs_type_row(
 	let populate = {
 		let known = known.clone();
 		let displayed = displayed.clone();
-		move |list: &ListBox, query: &str| populate_fs_list(list, &known, query, &displayed)
+		move |list: &ListBox, query: &str, _error: &gtk::Label| populate_fs_list(list, &known, query, &displayed)
 	};
 	let is_other = matches!(&current, FsType::Other(_));
 	let menu_label = if is_other { "Other" } else { &current.to_string() };
