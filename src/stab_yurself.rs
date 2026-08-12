@@ -10,6 +10,7 @@ use std::string::String;
 use std::time::SystemTime;
 
 pub struct StabEntry {
+	pub active: bool,
 	pub line: usize,
 	pub device: DeviceValue,
 	pub mount_point: String,
@@ -24,6 +25,7 @@ pub struct StabEntry {
 impl StabEntry {
 	pub fn blank(line: usize) -> Self {
 		StabEntry {
+			active: true,
 			line,
 			device: DeviceValue::from("", DeviceKind::Other),
 			mount_point: String::new(),
@@ -49,6 +51,7 @@ impl StabEntry {
 			}
 			return;
 		};
+		self.active = original.active;
 		self.device = original.device.clone();
 		self.mount_point = original.mount_point.clone();
 		self.fs_type = original.fs_type.clone();
@@ -74,7 +77,8 @@ impl StabEntry {
 				return true;
 			}
 		};
-		self.device != original.device
+		self.active != original.active
+			|| self.device != original.device
 			|| self.mount_point != original.mount_point
 			|| self.fs_type != original.fs_type
 			|| self.options != original.options
@@ -83,14 +87,9 @@ impl StabEntry {
 	}
 
 	pub fn from(line: usize, raw: &str) -> Result<Self> {
-		let (content, _comment) = match raw.split_once('#') {
-			Some((before, after)) => (before, Some(normalize_whitespace(after))),
-			None => (raw, None),
-		};
+		let (fields, active) = split(raw);
 
-		let fields: Vec<&str> = content.split_whitespace().collect();
-
-		if fields.len() < 6 {
+		if fields.len() != 6 {
 			bail!(
 				"line {}: expected 6 fields (device, mount_point, fs_type, options, dump, pass), got {}",
 				line,
@@ -113,6 +112,7 @@ impl StabEntry {
 		let device = DeviceKind::classify(&device, DeviceKind::for_fs_type(&fs_type));
 
 		let entry = StabEntry {
+			active,
 			line,
 			device,
 			mount_point: mount_point.clone(),
@@ -139,8 +139,10 @@ impl StabEntry {
 		Ok(entry)
 	}
 	fn data_to_string(&self) -> String {
+		let active_str = if self.active { "" } else { "# " };
 		format!(
-			"{} {} {} {} {} {}",
+			"{}{} {} {} {} {} {}",
+			active_str,
 			self.device.render(),
 			&self.mount_point,
 			&self.fs_type,
@@ -165,7 +167,9 @@ pub enum StabLine {
 }
 
 fn normalize_whitespace(s: &str) -> String {
-	s.split_whitespace().collect::<Vec<_>>().join(" ")
+	let (fields, active) = split(s);
+	let fields = fields.join(" ");
+	if !active { format!("# {fields}") } else { fields }
 }
 
 fn parse_fstab(raw: &str) -> Vec<StabLine> {
@@ -176,13 +180,12 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 			if line.trim().is_empty() {
 				return StabLine::Blank;
 			}
-			if line.starts_with('#') {
-				return StabLine::Comment(line.to_string());
-			}
-
-			StabEntry::from(line_num, line)
-				.map(StabLine::Entry)
-				.unwrap_or_else(|e| StabLine::Unparsable(e, line.to_string()))
+			StabEntry::from(line_num, line).map(StabLine::Entry).unwrap_or_else(|e| {
+				if line.starts_with('#') {
+					return StabLine::Comment(line.to_string());
+				}
+				StabLine::Unparsable(e, line.to_string())
+			})
 		})
 		.collect::<Vec<_>>();
 
@@ -249,7 +252,6 @@ pub fn fstab_to_string(entries: &[StabLine]) -> String {
 		.map(|e| match e {
 			StabLine::Entry(e) => {
 				if e.is_changed() {
-					let mut data = String::new();
 					if let Some(label) = &e.user_label {
 						format!("# {}\n{}", label, e.data_to_string())
 					} else {
@@ -267,12 +269,24 @@ pub fn fstab_to_string(entries: &[StabLine]) -> String {
 		.join("\n")
 }
 
-fn comment_content(comment: &str) -> Option<&str> {
-	comment.strip_prefix('#').map(str::trim).filter(|s| !s.is_empty())
+fn split(raw: &str) -> (Vec<&str>, bool) {
+	let mut fields: Vec<&str> = raw.split_whitespace().collect();
+
+	let active = if let Some(rest) = fields.get(0).and_then(|e| e.strip_prefix("#")) {
+		if rest.trim().is_empty() {
+			fields.remove(0);
+		} else {
+			fields[0] = rest.trim();
+		}
+		false
+	} else {
+		true
+	};
+	(fields, active)
 }
 
-fn comment_looks_like_entry(comment: &str) -> bool {
-	comment_content(comment).is_some_and(|content| StabEntry::from(0, content).is_ok())
+fn comment_content(comment: &str) -> Option<&str> {
+	comment.strip_prefix('#').map(str::trim).filter(|s| !s.is_empty())
 }
 
 fn merge_comments_into_labels(entries: &mut Vec<StabLine>) {
@@ -284,10 +298,6 @@ fn merge_comments_into_labels(entries: &mut Vec<StabLine>) {
 				merged.push(line);
 				continue;
 			};
-			if comment_looks_like_entry(comment) {
-				merged.push(line);
-				continue;
-			}
 			match iter.next() {
 				Some(StabLine::Entry(mut entry)) => {
 					entry.user_label = comment_content(comment).map(str::to_string);
@@ -342,16 +352,18 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 			panic!("expected first line to be an entry");
 		};
 		assert_eq!(first.user_label.as_deref(), Some("First entry note"));
+		assert!(first.active);
 
-		let StabLine::Comment(comment) = &lines[1] else {
-			panic!("expected commented-out entry to remain a comment");
+		let StabLine::Entry(disabled) = &lines[1] else {
+			panic!("expected commented-out entry to become a disabled entry");
 		};
-		assert_eq!(comment, "# /dev/sda1 /mnt ext4 defaults 0 2");
+		assert!(!disabled.active);
 
 		let StabLine::Entry(second) = &lines[2] else {
 			panic!("expected third line to be an entry");
 		};
 		assert_eq!(second.user_label, None);
+		assert!(second.active);
 	}
 
 	#[test]

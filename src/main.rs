@@ -10,7 +10,9 @@ mod subvolume;
 use crate::stab_yurself::{StabEntry, StabLine};
 use adw::gdk::pango;
 use adw::prelude::*;
-use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
+use adw::{
+	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow, SwitchRow,
+};
 use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, Orientation, ScrolledWindow, SelectionMode, Widget};
 use options_value::build_options_group;
 use std::rc::Rc;
@@ -248,7 +250,8 @@ pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset
 
 const NOFAIL_WARNING_CLASS: &str = "nofail-warning";
 const INVALID_ALERT_CLASS: &str = "invalid-alert";
-const LIST_ICON_CLASSES: [&str; 2] = [NOFAIL_WARNING_CLASS, INVALID_ALERT_CLASS];
+const DISABLED_ICON_CLASS: &str = "disabled-icon";
+const LIST_ICON_CLASSES: [&str; 3] = [NOFAIL_WARNING_CLASS, INVALID_ALERT_CLASS, DISABLED_ICON_CLASS];
 
 fn make_icon(icon: &str, class: &str) -> Image {
 	let icon = Image::from_icon_name(icon);
@@ -265,7 +268,13 @@ fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
 		}
 	}
 
-	if !entry.has_option("nofail") {
+	if !entry.active {
+		let disabled = make_icon("emblem-unreadable-symbolic", DISABLED_ICON_CLASS);
+		disabled.set_tooltip_text(Some("This entry is disabled (commented out)."));
+		action_row.add_suffix(&disabled);
+	}
+
+	if entry.active && !entry.has_option("nofail") {
 		let warning = make_icon("dialog-warning-symbolic", NOFAIL_WARNING_CLASS);
 		warning.set_tooltip_text(Some(
 			"The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \n\
@@ -500,6 +509,17 @@ fn build_editor_panel(editor_panel: &gtk::Box, entry: &GC<StabEntry>, action_row
 	add_spin_row(&edit_props, entry, action_row, "Pass", entry.borrow().pass, &reset_btn, |entry, value| {
 		entry.pass = value
 	});
+
+	let active_row = SwitchRow::builder().title("Active").active(entry.borrow().active).build();
+	{
+		let (entry, action_row, reset_btn) = (entry.clone(), action_row.clone(), reset_btn.clone());
+		active_row.connect_active_notify(move |row| {
+			let mut entry = entry.borrow_mut();
+			entry.active = row.is_active();
+			render_list_entry(&action_row, &entry, Some(&reset_btn));
+		});
+	}
+	edit_props.add(&active_row);
 
 	build_options_group(&options_group, entry, action_row, &reset_btn);
 
