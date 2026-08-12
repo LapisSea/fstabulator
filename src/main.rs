@@ -7,6 +7,7 @@ mod stab_yurself;
 mod subvolume;
 
 use crate::stab_yurself::{StabEntry, StabLine};
+use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
 use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, SelectionMode, Widget};
@@ -55,9 +56,25 @@ fn main() -> gtk::glib::ExitCode {
 }
 
 fn build_ui(application: &Application) {
+	let window_build = ApplicationWindow::builder()
+		.application(application)
+		.title("FSTabulator")
+		.default_width(800)
+		.default_height(600);
+
+	let fstab_file = match stab_yurself::read_fstab() {
+		Ok(data) => data,
+		Err(err) => {
+			let main_box = GtkBox::builder().orientation(Orientation::Vertical).build();
+			main_box.append(&HeaderBar::new());
+			build_load_error(&main_box, err);
+			window_build.content(&main_box).build().present();
+			return;
+		}
+	};
+
 	let entries: GC<Vec<GC<StabEntry>>> = GC::new(
-		stab_yurself::read_fstab()
-			.unwrap()
+		fstab_file
 			.into_iter()
 			.filter_map(|e| match e {
 				StabLine::Entry(e) => Some(e),
@@ -114,25 +131,34 @@ fn build_ui(application: &Application) {
 	main_box.append(&HeaderBar::new());
 	main_box.append(&content_scroll);
 
-	let window = ApplicationWindow::builder()
-		.application(application)
-		.title("FSTabulator")
-		.default_width(800)
-		.default_height(600)
-		.content(&main_box)
-		.build();
+	let window = window_build.content(&main_box).build();
 
 	attach_responsive_breakpoint(&window, &split_box);
 
 	let provider = gtk::CssProvider::new();
 	provider.load_from_data(".invalid-alert { color: red; }");
-	gtk::style_context_add_provider_for_display(
-		&gtk::prelude::RootExt::display(&window),
-		&provider,
-		gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-	);
+	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	window.present();
+}
+
+fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
+	let label = gtk::Label::new(Some("Error loading fstab file!"));
+	label.set_margin_top(16);
+	label.set_margin_bottom(8);
+	label.add_css_class("error");
+
+	let text = gtk::Label::new(Some(&format!("{:?}", err)));
+	text.set_selectable(true);
+	text.set_wrap(true);
+	text.set_wrap_mode(pango::WrapMode::Char);
+	text.set_margin_top(8);
+	text.set_margin_bottom(16);
+	text.set_margin_start(16);
+	text.set_margin_end(16);
+
+	main_box.append(&label);
+	main_box.append(&wrap_scroll(&text));
 }
 
 fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
