@@ -1,12 +1,13 @@
 use crate::device_value::DeviceValue;
 use crate::fs_options::{FsOption, OptionValue};
 use crate::render_list_entry;
+use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::stab_yurself::StabEntry;
 use crate::subvolume::{Subvol, list_subvolumes};
-use crate::{GC, build_search_picker, clear_list, fs_options};
+use crate::{GC, fs_options};
 use adw::prelude::*;
 use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow, SpinRow};
-use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, ListBox, MenuButton, Orientation, StringList};
+use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, MenuButton, Orientation, StringList};
 use std::rc::Rc;
 
 pub fn build_options_group(group: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
@@ -386,114 +387,62 @@ fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descr
 
 fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) -> MenuButton {
 	let cache: GC<Option<(DeviceValue, Vec<Subvol>)>> = GC::new(None);
-	let displayed: GC<Vec<Subvol>> = GC::new(Vec::new());
-	let rows: GC<Vec<Option<ActionRow>>> = GC::new(Vec::new());
 
-	let picker = build_search_picker("Search subvolumes", "", "Find a subvolume on this device", {
-		let ctx = ctx.clone();
-		let cache = cache.clone();
-		let rows = rows.clone();
-		let displayed = displayed.clone();
-		move |list: &ListBox, query: &str, error: &gtk::Label| {
-			let mut cache = cache.borrow_mut();
-
+	let dataset = {
+		let (ctx, cache) = (ctx.clone(), cache.clone());
+		move || {
 			let device = ctx.entry.cloned(|e| &e.device);
-
-			let res: (DeviceValue, Vec<Subvol>) = match device.resolve_node() {
-				None => {
-					error.set_visible(true);
-					error.set_label(&format!("Could not find local device for {}", device.render()));
-					(device, vec![])
-				}
-				Some(path) => match cache.as_ref() {
-					Some(res) if cache.as_ref().is_none_or(|(cached, _)| cached == &device) => res.clone(),
-					_ => {
-						let (results, err) = match list_subvolumes(&path) {
-							Ok(list) => (list, None),
-							Err(err) => (Vec::new(), Some(format!("{err:#}"))),
-						};
-						error.set_visible(err.is_some());
-						if let Some(err) = &err {
-							error.set_label(err);
-						}
-						(device, results)
-					}
-				},
+			let Some(path) = device.resolve_node() else {
+				return Err(anyhow::anyhow!("Could not find local device for \"{}\"", device.render()));
 			};
-			if error.is_visible() {
-				clear_list(list);
-			} else {
-				populate_subvol_list(list, &res.1, query, &rows, &displayed);
-			}
-			*cache = Some(res);
+			let mut cache = cache.borrow_mut();
+			let subvols = match cache.as_ref() {
+				Some((cached, subvols)) if cached == &device => subvols.clone(),
+				_ => list_subvolumes(&path)?,
+			};
+			*cache = Some((device, subvols.clone()));
+			Ok(subvols)
 		}
-	});
-
-	{
-		let input = input.clone();
-		let popover = picker.popover.clone();
-		let ctx = ctx.clone();
-		let name = name.to_string();
-		let displayed = displayed.clone();
-		picker.list_box.connect_row_activated(move |_, row| {
-			let Some(subvol) = displayed.borrow().get(row.index() as usize).cloned() else {
-				return;
-			};
+	};
+	let render_row = |subvol: &Subvol| {
+		let row = ActionRow::builder()
+			.title(subvol.path.clone())
+			.subtitle(format!("ID {}", subvol.id))
+			.build();
+		row.set_activatable(true);
+		row.upcast::<gtk::Widget>()
+	};
+	let render_error = |err: &anyhow::Error| {
+		let label = gtk::Label::new(Some(&format!("{err:#}")));
+		label.set_wrap(true);
+		label.upcast::<gtk::Widget>()
+	};
+	let filter = |query: &str, subvol: &Subvol| {
+		let query = query.trim().to_lowercase();
+		query.is_empty() || subvol.path.to_lowercase().contains(&query) || subvol.id.to_string().contains(&query)
+	};
+	let on_select = {
+		let (input, ctx, name) = (input.clone(), ctx.clone(), name.to_string());
+		move |subvol: Subvol, _| {
 			let value = if name == "subvolid" { subvol.id.to_string() } else { subvol.path };
 			input.set_text(&value);
 			set_option(&ctx, format!("{name}={value}"));
-			popover.popdown();
-		});
-	}
+		}
+	};
 
+	let picker = build_search_picker(
+		"Search subvolumes",
+		"",
+		"Find a subvolume on this device",
+		dataset,
+		render_row,
+		ErrorRenderer::Message("Failed to fetch subvolumes"),
+		filter,
+		on_select,
+	);
 	picker.menu_btn.set_icon_name("folder-search-symbolic");
 	picker.menu_btn.add_css_class("flat");
 	picker.menu_btn
-}
-
-fn populate_subvol_list(list: &ListBox, results: &[Subvol], query: &str, rows: &GC<Vec<Option<ActionRow>>>, displayed: &GC<Vec<Subvol>>) {
-	clear_list(list);
-
-	if results.is_empty() {
-		let row = ActionRow::builder().title("No subvolumes found").build();
-		list.append(&row);
-		*displayed.borrow_mut() = Vec::new();
-		return;
-	}
-
-	let query = query.trim().to_lowercase();
-	let mut indices = Vec::new();
-	for (i, subvol) in results.iter().enumerate() {
-		if query.is_empty() || subvol.path.to_lowercase().contains(&query) || subvol.id.to_string().contains(&query) {
-			indices.push(i);
-		}
-	}
-	if indices.is_empty() {
-		let row = ActionRow::builder().title("No matches").build();
-		list.append(&row);
-		*displayed.borrow_mut() = Vec::new();
-		return;
-	}
-
-	let mut rows = rows.borrow_mut();
-	let mut items = Vec::with_capacity(indices.len());
-	for i in indices {
-		let subvol = &results[i];
-		while rows.len() <= i {
-			rows.push(None);
-		}
-		let row = rows[i].get_or_insert_with(|| {
-			let row = ActionRow::builder()
-				.title(subvol.path.clone())
-				.subtitle(format!("ID {}", subvol.id))
-				.build();
-			row.set_activatable(true);
-			row
-		});
-		list.append(row);
-		items.push(subvol.clone());
-	}
-	*displayed.borrow_mut() = items;
 }
 
 fn add_add_option_row(ctx: AddContext) {
@@ -509,67 +458,42 @@ fn add_add_option_row(ctx: AddContext) {
 		.collect();
 	drop(entry_ref);
 
-	let displayed: GC<Vec<FsOption>> = GC::new(Vec::new());
-	let rows: GC<Vec<Option<ActionRow>>> = GC::new(Vec::new());
-	let populate = {
+	let dataset = {
 		let available = available.clone();
-		let rows = rows.clone();
-		let displayed = displayed.clone();
-		move |list: &ListBox, query: &str, _error: &gtk::Label| populate_option_list(list, &available, query, &rows, &displayed)
+		move || Ok(available.clone())
 	};
-	let picker = build_search_picker("Search options", "Add option…", "Choose an option to add to this entry", populate);
+	let render_row = |option: &FsOption| {
+		let row = ActionRow::builder().title(option.name).subtitle(option.description).build();
+		row.set_activatable(true);
+		row.upcast::<gtk::Widget>()
+	};
+	let filter = |query: &str, option: &FsOption| {
+		let query = query.trim().to_lowercase();
+		query.is_empty() || option.name.to_lowercase().contains(&query) || option.description.to_lowercase().contains(&query)
+	};
+	let on_select = {
+		let ctx = ctx.clone();
+		move |option: FsOption, _index: usize| {
+			ctx.entry.borrow_mut().options.push(default_option_value(option));
+			build_options_group(&ctx.group, &ctx.entry, &ctx.action_row, &ctx.reset_btn);
+			render_list_entry(&ctx.action_row, &ctx.entry.borrow(), Some(&ctx.reset_btn));
+		}
+	};
+
+	let picker = build_search_picker(
+		"Search options",
+		"Add option…",
+		"Choose an option to add to this entry",
+		dataset,
+		render_row,
+		ErrorRenderer::Message("Error loading options"),
+		filter,
+		on_select,
+	);
 	let menu_btn = picker.menu_btn;
-	let list_box = picker.list_box;
 
 	let row = PreferencesRow::builder().title("Add option").child(&menu_btn).build();
 	ctx.group.add(&row);
-
-	let displayed = displayed.clone();
-	list_box.connect_row_activated(move |_, row| {
-		let Some(option) = displayed.borrow().get(row.index() as usize).copied() else {
-			return;
-		};
-		ctx.entry.borrow_mut().options.push(default_option_value(option));
-		build_options_group(&ctx.group, &ctx.entry, &ctx.action_row, &ctx.reset_btn);
-		render_list_entry(&ctx.action_row, &ctx.entry.borrow(), Some(&ctx.reset_btn));
-	});
-}
-
-fn populate_option_list(list: &ListBox, available: &[FsOption], query: &str, rows: &GC<Vec<Option<ActionRow>>>, displayed: &GC<Vec<FsOption>>) {
-	clear_list(list);
-
-	let query = query.trim().to_lowercase();
-	let mut matches: Vec<usize> = Vec::new();
-	let mut description_matches: Vec<usize> = Vec::new();
-	if query.is_empty() {
-		matches = (0..available.len()).collect();
-	} else {
-		for (i, option) in available.iter().enumerate() {
-			if option.name.to_lowercase().contains(&query) {
-				matches.push(i);
-			} else if option.description.to_lowercase().contains(&query) {
-				description_matches.push(i);
-			}
-		}
-		matches.extend(description_matches);
-	}
-
-	let mut rows = rows.borrow_mut();
-	let mut items = Vec::with_capacity(matches.len());
-	for i in matches {
-		let option = &available[i];
-		while rows.len() <= i {
-			rows.push(None);
-		}
-		let row = rows[i].get_or_insert_with(|| {
-			let option_row = ActionRow::builder().title(option.name).subtitle(option.description).build();
-			option_row.set_activatable(true);
-			option_row
-		});
-		list.append(row);
-		items.push(*option);
-	}
-	*displayed.borrow_mut() = items;
 }
 
 fn default_option_value(option: FsOption) -> String {

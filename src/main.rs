@@ -3,6 +3,7 @@ mod fs_options;
 mod fs_value;
 mod mount_point_value;
 mod options_value;
+mod search_picker;
 mod stab_yurself;
 mod subvolume;
 
@@ -10,9 +11,8 @@ use crate::stab_yurself::{StabEntry, StabLine};
 use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow};
-use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, SelectionMode, Widget};
+use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, Orientation, ScrolledWindow, SelectionMode, Widget};
 use options_value::build_options_group;
-use std::ops::Deref;
 use std::rc::Rc;
 use std::sync::{PoisonError, RwLock, RwLockReadGuard, RwLockWriteGuard};
 
@@ -228,79 +228,6 @@ fn make_icon_label_button(icon: &str, label: &str) -> gtk::Button {
 
 fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
 	ScrolledWindow::builder().child(content).hexpand(true).vexpand(true).build()
-}
-
-pub(crate) fn clear_list(list: &ListBox) {
-	while let Some(row) = list.row_at_index(0) {
-		list.remove(&row);
-	}
-}
-
-pub(crate) struct SearchPicker {
-	pub menu_btn: MenuButton,
-	pub popover: Popover,
-	pub list_box: ListBox,
-}
-
-pub(crate) fn build_search_picker(
-	search_placeholder: &str,
-	menu_label: &str,
-	tooltip: &str,
-	populate: impl Fn(&ListBox, &str, &gtk::Label) + 'static,
-) -> SearchPicker {
-	let search = SearchEntry::builder().placeholder_text(search_placeholder).hexpand(true).build();
-	let list_box = ListBox::builder().css_classes(["boxed-list"]).hexpand(true).valign(Align::Start).build();
-	let scroll = ScrolledWindow::builder()
-		.child(&list_box)
-		.max_content_height(240)
-		.max_content_width(360)
-		.propagate_natural_height(true)
-		.hexpand(true)
-		.build();
-
-	let error_label = gtk::Label::new(None);
-	error_label.set_xalign(0.0);
-	error_label.set_wrap(true);
-	error_label.set_visible(false);
-
-	let popover_content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).build();
-	popover_content.append(&search);
-	popover_content.append(&scroll);
-	popover_content.append(&error_label);
-
-	let popover = Popover::builder().child(&popover_content).build();
-
-	let menu_btn = MenuButton::builder().label(menu_label).popover(&popover).build();
-	menu_btn.set_tooltip_text(Some(tooltip));
-
-	let populate = Rc::new(populate);
-	{
-		let list_box = list_box.clone();
-		let search = search.clone();
-		let menu_btn = menu_btn.clone();
-		let error_label = error_label.clone();
-		let populate = populate.clone();
-		popover.connect_visible_notify(move |popover| {
-			if popover.is_visible() {
-				if menu_btn.label().is_some_and(|label| !label.is_empty()) {
-					popover.set_size_request(menu_btn.width(), -1);
-				}
-				populate(&list_box, "", &error_label);
-				search.set_text("");
-				search.grab_focus();
-			}
-		});
-	}
-	{
-		let list_box = list_box.clone();
-		let error_label = error_label.clone();
-		let populate = populate.clone();
-		search.connect_search_changed(move |search| {
-			populate(&list_box, &search.text(), &error_label);
-		});
-	}
-
-	SearchPicker { menu_btn, popover, list_box }
 }
 
 pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset_btn: Option<&gtk::Button>) {

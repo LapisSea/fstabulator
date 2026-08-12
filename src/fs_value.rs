@@ -1,11 +1,10 @@
 use crate::GC;
-use crate::build_search_picker;
-use crate::clear_list;
 use crate::render_list_entry;
+use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
-use gtk::{Align, Box as GtkBox, Entry, ListBox, Orientation};
+use gtk::{Align, Box as GtkBox, Entry, Orientation};
 use strum::IntoEnumIterator;
 use strum_macros::{Display, EnumIter, EnumString};
 
@@ -123,6 +122,12 @@ impl FsType {
 	}
 }
 
+#[derive(Clone)]
+enum FsChoice {
+	Known(FsType),
+	Other,
+}
+
 pub fn add_fs_type_row(
 	options: &PreferencesGroup,
 	entry: &GC<StabEntry>,
@@ -130,27 +135,82 @@ pub fn add_fs_type_row(
 	reset_btn: &gtk::Button,
 	on_change: impl Fn() + 'static,
 ) {
-	let known: Vec<FsType> = FsType::iter().filter(|e| !matches!(e, FsType::Other(_))).collect();
+	let choices: Vec<FsChoice> = FsType::iter()
+		.filter(|e| !matches!(e, FsType::Other(_)))
+		.map(FsChoice::Known)
+		.chain([FsChoice::Other])
+		.collect();
 
 	let current = entry.cloned(|e| &e.fs_type);
-
-	let displayed: GC<Vec<FsType>> = GC::new(Vec::new());
-	let populate = {
-		let known = known.clone();
-		let displayed = displayed.clone();
-		move |list: &ListBox, query: &str, _error: &gtk::Label| populate_fs_list(list, &known, query, &displayed)
-	};
 	let is_other = matches!(&current, FsType::Other(_));
-	let menu_label = if is_other { "Other" } else { &current.to_string() };
-	let picker = build_search_picker("Search filesystems", menu_label, "Choose the filesystem type", populate);
-	picker.menu_btn.set_hexpand(true);
-	let menu_btn = picker.menu_btn;
-	let popover = picker.popover;
-	let list_box = picker.list_box;
+	let menu_label = if is_other { "Other".to_string() } else { current.to_string() };
 
 	let value_entry = Entry::builder().hexpand(true).build();
 	value_entry.set_text(&current.to_string());
 	value_entry.set_visible(is_other);
+
+	let menu_btn_holder: GC<Option<gtk::MenuButton>> = GC::new(None);
+
+	let dataset = {
+		let choices = choices.clone();
+		move || Ok(choices.clone())
+	};
+	let render_row = |choice: &FsChoice| {
+		let row = match choice {
+			FsChoice::Known(fs_type) => ActionRow::builder().title(fs_type.to_string()).subtitle(fs_type.description()).build(),
+			FsChoice::Other => ActionRow::builder().title("Other…").build(),
+		};
+		row.set_activatable(true);
+		row.upcast::<gtk::Widget>()
+	};
+	let filter = |query: &str, choice: &FsChoice| match choice {
+		FsChoice::Other => true,
+		FsChoice::Known(fs_type) => {
+			let query = query.trim().to_lowercase();
+			query.is_empty() || fs_type.to_string().to_lowercase().contains(&query)
+		}
+	};
+	let on_select = {
+		let entry = entry.clone();
+		let action_row = action_row.clone();
+		let reset_btn = reset_btn.clone();
+		let value_entry = value_entry.clone();
+		let menu_btn_holder = menu_btn_holder.clone();
+		move |choice: FsChoice, _index: usize| {
+			entry.borrow_mut().fs_type = match choice {
+				FsChoice::Known(fs_type) => fs_type,
+				FsChoice::Other => FsType::Other(value_entry.text().to_string()),
+			};
+			let is_other = matches!(entry.borrow().fs_type, FsType::Other(_));
+			value_entry.set_visible(is_other);
+			if let Some(menu_btn) = menu_btn_holder.borrow().as_ref() {
+				if is_other {
+					menu_btn.set_label("Other");
+				} else {
+					menu_btn.set_label(&entry.borrow().fs_type.to_string());
+				}
+			}
+			if is_other {
+				value_entry.grab_focus();
+			}
+			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+			on_change();
+		}
+	};
+
+	let picker = build_search_picker(
+		"Search filesystems",
+		&menu_label,
+		"Choose the filesystem type",
+		dataset,
+		render_row,
+		ErrorRenderer::Message("Error loading filesystem types"),
+		filter,
+		on_select,
+	);
+	let menu_btn = picker.menu_btn;
+	menu_btn.set_hexpand(true);
+	*menu_btn_holder.borrow_mut() = Some(menu_btn.clone());
 
 	{
 		let entry = entry.clone();
@@ -177,55 +237,4 @@ pub fn add_fs_type_row(
 
 	let row = PreferencesRow::builder().title("File system").child(&content).build();
 	options.add(&row);
-
-	{
-		let displayed = displayed.clone();
-		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
-		let popover = popover.clone();
-		let menu_btn = menu_btn.clone();
-		let value_entry = value_entry.clone();
-		list_box.connect_row_activated(move |_, row| {
-			let index = row.index() as usize;
-			let is_other = index >= displayed.borrow().len();
-			if is_other {
-				entry.borrow_mut().fs_type = FsType::Other(value_entry.text().to_string());
-			} else if let Some(fs_type) = displayed.borrow().get(index).cloned() {
-				entry.borrow_mut().fs_type = fs_type;
-			}
-			let is_other = matches!(entry.borrow().fs_type, FsType::Other(_));
-			value_entry.set_visible(is_other);
-			if is_other {
-				menu_btn.set_label("Other");
-			} else {
-				menu_btn.set_label(&entry.borrow().fs_type.to_string());
-			}
-			if is_other {
-				value_entry.grab_focus();
-			}
-			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
-			popover.popdown();
-			on_change();
-		});
-	}
-}
-
-fn populate_fs_list(list: &ListBox, known: &[FsType], query: &str, displayed: &GC<Vec<FsType>>) {
-	clear_list(list);
-
-	let query = query.trim().to_lowercase();
-	let mut items = Vec::new();
-	for fs_type in known {
-		if query.is_empty() || fs_type.to_string().to_lowercase().contains(&query) {
-			let row = ActionRow::builder().title(fs_type.to_string()).subtitle(fs_type.description()).build();
-			row.set_activatable(true);
-			list.append(&row);
-			items.push(fs_type.clone());
-		}
-	}
-	let other = ActionRow::builder().title("Other…").build();
-	other.set_activatable(true);
-	list.append(&other);
-	*displayed.borrow_mut() = items;
 }
