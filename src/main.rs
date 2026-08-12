@@ -92,7 +92,57 @@ fn build_ui(application: &Application) {
 		.build();
 
 	let list_panel = build_entry_list(&entries, &editor_panel);
-	let split_box = build_split_layout(&wrap_scroll(&list_panel), &wrap_scroll(&editor_panel));
+
+	let file_buttons_panel = GtkBox::builder().orientation(Orientation::Vertical).hexpand(true).spacing(6).build();
+
+	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
+	file_buttons_panel.append(&row);
+
+	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
+	{
+		make_backup_btn.connect_clicked(move |_| {
+			println!("Make backup");
+		});
+	}
+	row.append(&make_backup_btn);
+
+	let restore_backup_btn = make_icon_label_button("document-revert-symbolic", "Restore backup");
+	{
+		restore_backup_btn.connect_clicked(move |_| {
+			println!("Restore backup");
+		});
+	}
+	row.append(&restore_backup_btn);
+
+	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
+	file_buttons_panel.append(&row);
+
+	let save_changes_btn = make_icon_label_button("document-save-symbolic", "Save changes");
+	{
+		save_changes_btn.connect_clicked(move |_| {
+			println!("Save changes");
+		});
+	}
+	row.append(&save_changes_btn);
+
+	let left_panel = GtkBox::builder()
+		.orientation(Orientation::Vertical)
+		.vexpand(true)
+		.hexpand(true)
+		.spacing(12)
+		.build();
+	left_panel.append(
+		&gtk::Label::builder()
+			.label("'/etc/fstab' entries:")
+			.margin_start(20)
+			.halign(Align::Start)
+			.build(),
+	);
+
+	left_panel.append(&wrap_scroll(&list_panel));
+	left_panel.append(&file_buttons_panel);
+
+	let split_box = build_split_layout(&left_panel, &wrap_scroll(&editor_panel));
 
 	{
 		let editor_panel = editor_panel.clone();
@@ -159,6 +209,21 @@ fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
 
 	main_box.append(&label);
 	main_box.append(&wrap_scroll(&text));
+}
+
+fn make_icon_label_button(icon: &str, label: &str) -> gtk::Button {
+	let hbox = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.halign(Align::Center)
+		.spacing(6)
+		.build();
+	hbox.append(&Image::from_icon_name(icon));
+	hbox.append(&gtk::Label::new(Some(label)));
+	let button = gtk::Button::new();
+	button.set_label(&label);
+	button.set_child(Some(&hbox));
+	button.set_hexpand(true);
+	button
 }
 
 fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
@@ -238,15 +303,8 @@ pub(crate) fn build_search_picker(
 	SearchPicker { menu_btn, popover, list_box }
 }
 
-fn render_list_entry_title(entry: &StabEntry) -> String {
-	if let Some(label) = &entry.user_label {
-		return label.clone();
-	}
-	format!("Line {}", entry.line + 1)
-}
-
 pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset_btn: Option<&gtk::Button>) {
-	action_row.set_title(&render_list_entry_title(entry));
+	action_row.set_title(&entry.user_label.as_ref().cloned().unwrap_or_else(|| format!("Line {}", entry.line + 1)));
 	let changed = entry.is_changed();
 	action_row.set_subtitle(&render_subtitle(entry));
 	action_row.set_subtitle_lines(if changed { 2 } else { 1 });

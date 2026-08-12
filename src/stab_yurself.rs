@@ -1,9 +1,13 @@
 use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
 use anyhow::{Context, Error, Result, bail};
+use gtk::prelude::GLAreaExt;
 use std::fmt;
 use std::iter::Iterator;
+use std::path::PathBuf;
 use std::str::FromStr;
+use std::string::String;
+use std::time::SystemTime;
 
 pub struct StabEntry {
 	pub line: usize,
@@ -194,6 +198,73 @@ pub fn read_fstab() -> Result<Vec<StabLine>> {
 	let raw = std::fs::read_to_string(path).context("Could not read /etc/fstab")?;
 
 	Ok(parse_fstab(&raw))
+}
+
+pub fn scan_for_backups() -> Result<Vec<(PathBuf, SystemTime)>> {
+	let folder = "/etc/";
+	let file_base = "fstab.bak_";
+
+	let res: Vec<_> = std::fs::read_dir(folder)?
+		.filter_map(|entry| entry.ok())
+		.filter_map(|entry| {
+			let name = entry.file_name().to_string_lossy().to_string();
+			let time_str = name.strip_prefix(file_base)?;
+			let time = parse_time(time_str)?;
+			Some((entry.path(), time))
+		})
+		.collect();
+	Ok(res)
+}
+
+fn parse_time(time: &str) -> Option<SystemTime> {
+	let parts: Vec<&str> = time.split('T').collect();
+	let standard_rfc3339 = format!("{}T{}", parts.get(0)?, parts.get(1)?.replace('-', ":"));
+	humantime::parse_rfc3339(&standard_rfc3339).ok()
+}
+
+pub fn make_backup() -> Result<()> {
+	let backups = scan_for_backups().context("Could not scan for backups")?;
+
+	if backups.len() >= 3 {
+		let oldest = backups.iter().reduce(|a, b| if a.1 < b.1 { a } else { b }).expect("no backups found");
+		let path = &oldest.0;
+		std::fs::remove_file(path).context(format!("Could not remove backup at {}", path.display()))?;
+	}
+
+	let path = "/etc/fstab.bak";
+	std::fs::copy(
+		path,
+		&format!(
+			"{}_{}",
+			path,
+			humantime::format_rfc3339(SystemTime::now()).to_string().replace(|v| v == ':', "-")
+		),
+	)?;
+	Ok(())
+}
+
+pub fn fstab_to_string(entries: &[StabLine]) -> String {
+	entries
+		.iter()
+		.map(|e| match e {
+			StabLine::Entry(e) => {
+				if e.is_changed() {
+					let mut data = String::new();
+					if let Some(label) = &e.user_label {
+						format!("# {}\n{}", label, e.data_to_string())
+					} else {
+						e.data_to_string()
+					}
+				} else {
+					e.original.clone()
+				}
+			}
+			StabLine::Blank => "\n".to_string(),
+			StabLine::Comment(val) => val.clone(),
+			StabLine::Unparsable(_, val) => val.clone(),
+		})
+		.collect::<Vec<_>>()
+		.join("\n")
 }
 
 fn comment_content(comment: &str) -> Option<&str> {

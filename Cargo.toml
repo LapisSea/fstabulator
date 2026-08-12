@@ -9,3 +9,4 @@ gtk = { version = "0.11.4", package = "gtk4", features = ["v4_8"] }
 anyhow = "1.0.104"
 strum = "0.28.0"
 strum_macros = "0.28.0"
+humantime = "2.4.0"
