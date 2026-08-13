@@ -198,7 +198,7 @@ pub fn add_fs_type_row(
 		}
 	};
 
-	let picker = build_search_picker(
+	let menu_btn = build_search_picker(
 		"Search filesystems",
 		&menu_label,
 		"Choose the filesystem type",
@@ -208,7 +208,6 @@ pub fn add_fs_type_row(
 		filter,
 		on_select,
 	);
-	let menu_btn = picker.menu_btn;
 	menu_btn.set_hexpand(true);
 	*menu_btn_holder.borrow_mut() = Some(menu_btn.clone());
 

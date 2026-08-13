@@ -8,10 +8,6 @@ pub enum ErrorRenderer {
 	Custom(&'static dyn Fn(&anyhow::Error) -> Widget),
 }
 
-pub struct SearchPicker {
-	pub menu_btn: MenuButton,
-}
-
 pub fn build_search_picker<T: Clone + 'static>(
 	search_placeholder: &str,
 	menu_label: &str,
@@ -21,9 +17,9 @@ pub fn build_search_picker<T: Clone + 'static>(
 	render_error: ErrorRenderer,
 	filter: impl Fn(&str, &T) -> bool + 'static,
 	on_select: impl Fn(T, usize) + 'static,
-) -> SearchPicker {
+) -> MenuButton {
 	let render_error: Rc<dyn Fn(&anyhow::Error) -> Widget> = Rc::new(move |err: &anyhow::Error| match &render_error {
-		ErrorRenderer::Message(msg) => gtk::Label::new(Some(&format!("{msg}: {err:#}"))).upcast::<gtk::Widget>(),
+		ErrorRenderer::Message(msg) => gtk::Label::new(Some(&format!("{msg}:\n{err:#}"))).upcast::<gtk::Widget>(),
 		ErrorRenderer::Custom(efn) => efn(err),
 	});
 
@@ -130,7 +126,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 		});
 	}
 
-	SearchPicker { menu_btn }
+	menu_btn
 }
 
 fn clear_list(list: &ListBox) {

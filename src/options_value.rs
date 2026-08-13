@@ -430,7 +430,7 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 		}
 	};
 
-	let picker = build_search_picker(
+	let menu_btn = build_search_picker(
 		"Search subvolumes",
 		"",
 		"Find a subvolume on this device",
@@ -440,9 +440,9 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 		filter,
 		on_select,
 	);
-	picker.menu_btn.set_icon_name("folder-search-symbolic");
-	picker.menu_btn.add_css_class("flat");
-	picker.menu_btn
+	menu_btn.set_icon_name("folder-search-symbolic");
+	menu_btn.add_css_class("flat");
+	menu_btn
 }
 
 fn add_add_option_row(ctx: AddContext) {
@@ -480,7 +480,7 @@ fn add_add_option_row(ctx: AddContext) {
 		}
 	};
 
-	let picker = build_search_picker(
+	let menu_btn = build_search_picker(
 		"Search options",
 		"Add option…",
 		"Choose an option to add to this entry",
@@ -490,7 +490,6 @@ fn add_add_option_row(ctx: AddContext) {
 		filter,
 		on_select,
 	);
-	let menu_btn = picker.menu_btn;
 
 	let row = PreferencesRow::builder().title("Add option").child(&menu_btn).build();
 	ctx.group.add(&row);
