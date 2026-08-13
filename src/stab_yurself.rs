@@ -4,7 +4,7 @@ use anyhow::{Context, Error, Result, bail};
 use gtk::prelude::GLAreaExt;
 use std::fmt;
 use std::iter::Iterator;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::string::String;
 use std::time::SystemTime;
@@ -195,11 +195,11 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 }
 
 pub fn read_fstab() -> Result<Vec<StabLine>> {
-	// let path = "./fstab-dummy";
-	let path = "/etc/fstab";
+	read_fstab_from(Path::new("/etc/fstab"))
+}
 
-	let raw = std::fs::read_to_string(path).context("Could not read /etc/fstab")?;
-
+pub fn read_fstab_from(path: &Path) -> Result<Vec<StabLine>> {
+	let raw = std::fs::read_to_string(path).with_context(|| format!("Could not read {}", path.display()))?;
 	Ok(parse_fstab(&raw))
 }
 
@@ -228,21 +228,33 @@ fn parse_time(time: &str) -> Option<SystemTime> {
 pub fn make_backup() -> Result<()> {
 	let backups = scan_for_backups().context("Could not scan for backups")?;
 
+	let mut commands = Vec::new();
+
 	if backups.len() >= 3 {
 		let oldest = backups.iter().reduce(|a, b| if a.1 < b.1 { a } else { b }).expect("no backups found");
 		let path = &oldest.0;
-		std::fs::remove_file(path).context(format!("Could not remove backup at {}", path.display()))?;
+		commands.push(format!("rm -f '{}'", path.display()));
 	}
 
-	let path = "/etc/fstab.bak";
-	std::fs::copy(
-		path,
-		&format!(
-			"{}_{}",
-			path,
-			humantime::format_rfc3339(SystemTime::now()).to_string().replace(|v| v == ':', "-")
-		),
-	)?;
+	let backup_path = format!(
+		"/etc/fstab.bak_{}",
+		humantime::format_rfc3339(SystemTime::now()).to_string().replace(':', "-")
+	);
+	commands.push(format!("cp /etc/fstab '{}'", backup_path));
+
+	let script = commands.join(" && ");
+
+	let status = std::process::Command::new("pkexec")
+		.arg("sh")
+		.arg("-c")
+		.arg(&script)
+		.status()
+		.context("Could not launch pkexec")?;
+
+	if !status.success() {
+		bail!("pkexec failed: {}", status);
+	}
+
 	Ok(())
 }
 
