@@ -51,7 +51,12 @@ impl PrivilegedService {
 			bail!("The privileged helper is not ready: {}", greeting.error.unwrap_or_default());
 		}
 
-		Ok(Self { _child: child, stdin, stdout, dead: false })
+		Ok(Self {
+			_child: child,
+			stdin,
+			stdout,
+			dead: false,
+		})
 	}
 
 	fn request(&mut self, action: PrivilegedAction) -> Result<PrivilegedResponse> {
@@ -60,7 +65,13 @@ impl PrivilegedService {
 		}
 
 		let request = serde_json::to_string(&action).context("Could not serialize the request")?;
-		if self.stdin.write_all(request.as_bytes()).and_then(|_| self.stdin.write_all(b"\n")).and_then(|_| self.stdin.flush()).is_err() {
+		println!("[AUTH HELPER] Sending request: {}", request);
+		if let Err(err) = self
+			.stdin
+			.write_all(request.as_bytes())
+			.and_then(|_| self.stdin.write_all(b"\n"))
+			.and_then(|_| self.stdin.flush())
+		{
 			self.dead = true;
 			bail!("Could not send the request to the privileged helper.");
 		}
@@ -71,6 +82,7 @@ impl PrivilegedService {
 			self.dead = true;
 			bail!("The privileged helper exited unexpectedly.");
 		}
+		println!("[AUTH HELPER] Received response: {}", line);
 
 		match serde_json::from_str::<ServiceResponse>(&line).context("Could not parse the helper response")? {
 			ServiceResponse::Ok(response) => Ok(response),

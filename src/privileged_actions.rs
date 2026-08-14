@@ -51,9 +51,7 @@ pub(crate) fn execute(action: PrivilegedAction) -> Result<PrivilegedResponse> {
 			write_fstab_to_disk(&content)?;
 			Ok(PrivilegedResponse::Done)
 		}
-		PrivilegedAction::ListSubvolumes(mount_point) => {
-			list_btrfs_subvolumes(&mount_point).map(PrivilegedResponse::Subvolumes)
-		}
+		PrivilegedAction::ListSubvolumes(mount_point) => list_btrfs_subvolumes(&mount_point).map(PrivilegedResponse::Subvolumes),
 	}
 }
 
@@ -119,7 +117,10 @@ mod tests {
 	fn response_protocol_round_trip() {
 		let responses = [
 			PrivilegedResponse::Done,
-			PrivilegedResponse::Subvolumes(vec![Subvol { id: 1, path: "@".to_string() }]),
+			PrivilegedResponse::Subvolumes(vec![Subvol {
+				id: 1,
+				path: "@".to_string(),
+			}]),
 		];
 		for response in responses {
 			let json = serde_json::to_string(&response).unwrap();

@@ -205,7 +205,10 @@ impl StabFile {
 		Ok(Self { path, lines })
 	}
 	pub fn empty() -> Self {
-		Self { path: PathBuf::new(), lines: Vec::new() }
+		Self {
+			path: PathBuf::new(),
+			lines: Vec::new(),
+		}
 	}
 	pub fn entries(&self) -> impl Iterator<Item = &GC<StabEntry>> {
 		self.lines.iter().filter_map(|e| match e {
@@ -218,7 +221,13 @@ impl StabFile {
 	}
 
 	pub fn remove_entry(&mut self, index: usize) -> Option<GC<StabEntry>> {
-		let pos = self.lines.iter().enumerate().filter(|(_, l)| matches!(l, StabLine::Entry(_))).nth(index)?.0;
+		let pos = self
+			.lines
+			.iter()
+			.enumerate()
+			.filter(|(_, l)| matches!(l, StabLine::Entry(_)))
+			.nth(index)?
+			.0;
 		match self.lines.remove(pos) {
 			StabLine::Entry(e) => Some(e),
 			_ => unreachable!(),
