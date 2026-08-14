@@ -4,6 +4,8 @@ mod fs_value;
 mod mount_point_value;
 mod options_value;
 mod popup;
+mod privileged_actions;
+mod privileged_service;
 mod search_picker;
 mod stab_yurself;
 mod subvolume;
@@ -64,6 +66,14 @@ fn register_icon() {
 }
 
 fn main() -> gtk::glib::ExitCode {
+	if std::env::args().any(|arg| arg == "--root-helper") {
+		if let Err(err) = privileged_service::run_root_helper() {
+			eprintln!("root-helper error: {err:#}");
+			std::process::exit(1);
+		}
+		return gtk::glib::ExitCode::SUCCESS;
+	}
+
 	let application = Application::builder().application_id(APP_ID).build();
 	application.connect_activate(build_ui);
 	application.run()
@@ -96,7 +106,7 @@ fn build_ui(application: &Application) {
 
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
 	{
-		make_backup_btn.connect_clicked(move |btn| match stab_yurself::make_backup() {
+		make_backup_btn.connect_clicked(move |btn| match privileged_actions::make_backup() {
 			Ok(()) => popup::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
 			Err(err) => popup::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
 		});
@@ -123,7 +133,7 @@ fn build_ui(application: &Application) {
 					let file = stab_file.borrow();
 					file.to_string()
 				};
-				match stab_yurself::write_fstab(&content) {
+				match privileged_actions::write_fstab(&content) {
 					Ok(()) => {
 						if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
 							popup::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
