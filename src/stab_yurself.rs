@@ -3,7 +3,6 @@ use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
 use anyhow::{Context, Error, Result, bail};
 use std::fmt;
-use std::io::Write;
 use std::path::PathBuf;
 use std::str::FromStr;
 use std::time::SystemTime;
@@ -275,58 +274,6 @@ fn parse_time(time: &str) -> Option<SystemTime> {
 	let parts: Vec<&str> = time.split('T').collect();
 	let standard_rfc3339 = format!("{}T{}", parts.get(0)?, parts.get(1)?.replace('-', ":"));
 	humantime::parse_rfc3339(&standard_rfc3339).ok()
-}
-
-pub fn make_backup() -> Result<()> {
-	let backups = scan_for_backups().context("Could not scan for backups")?;
-
-	let mut commands = Vec::new();
-
-	if backups.len() >= 3 {
-		let oldest = backups.iter().reduce(|a, b| if a.1 < b.1 { a } else { b }).expect("no backups found");
-		let path = &oldest.0;
-		commands.push(format!("rm -f '{}'", path.display()));
-	}
-
-	let backup_path = format!(
-		"/etc/fstab.bak_{}",
-		humantime::format_rfc3339(SystemTime::now()).to_string().replace(':', "-")
-	);
-	commands.push(format!("cp /etc/fstab '{}'", backup_path));
-
-	let script = commands.join(" && ");
-
-	let status = std::process::Command::new("pkexec")
-		.arg("sh")
-		.arg("-c")
-		.arg(&script)
-		.status()
-		.context("Could not launch pkexec")?;
-
-	if !status.success() {
-		bail!("pkexec failed: {}", status);
-	}
-
-	Ok(())
-}
-
-pub fn write_fstab(content: &str) -> Result<()> {
-	let mut child = std::process::Command::new("pkexec")
-		.arg("sh")
-		.arg("-c")
-		.arg("cat > /etc/fstab")
-		.stdin(std::process::Stdio::piped())
-		.spawn()
-		.context("Could not launch pkexec")?;
-
-	child.stdin.take().context("Could not open pkexec stdin")?.write_all(content.as_bytes())?;
-	let status = child.wait().context("Could not wait for pkexec")?;
-
-	if !status.success() {
-		bail!("pkexec failed: {}", status);
-	}
-
-	Ok(())
 }
 
 fn split(raw: &str) -> (Vec<&str>, bool) {

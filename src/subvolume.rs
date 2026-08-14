@@ -49,20 +49,7 @@ pub fn list_subvolumes(device: &Path) -> Result<Vec<Subvol>> {
 		bail!("btrfs could not list subvolumes on '{mount_point}': {}", stderr.trim());
 	}
 
-	let elevated = Command::new("pkexec")
-		.args(["btrfs", "subvolume", "list", &mount_point])
-		.output()
-		.context("The 'btrfs' command needs elevated privileges to list subvolumes, but 'pkexec' could not be run. Is polkit installed?")?;
-	if !elevated.status.success() {
-		let stderr = String::from_utf8_lossy(&elevated.stderr);
-		let reason = if stderr.trim().is_empty() {
-			"the authentication was cancelled or declined".to_string()
-		} else {
-			stderr.trim().to_string()
-		};
-		bail!("btrfs needs elevated privileges to list subvolumes on '{mount_point}': {reason}");
-	}
-	Ok(parse_subvolumes(&String::from_utf8_lossy(&elevated.stdout)))
+	crate::privileged_actions::list_subvolumes(&mount_point)
 }
 
 fn is_permission_error(stderr: &str) -> bool {
@@ -70,7 +57,7 @@ fn is_permission_error(stderr: &str) -> bool {
 	lower.contains("operation not permitted") || lower.contains("permission denied") || lower.contains("not permitted")
 }
 
-fn parse_subvolumes(stdout: &str) -> Vec<Subvol> {
+pub(crate) fn parse_subvolumes(stdout: &str) -> Vec<Subvol> {
 	let mut subvols = Vec::new();
 	for line in stdout.lines() {
 		let fields: Vec<&str> = line.split_whitespace().collect();
