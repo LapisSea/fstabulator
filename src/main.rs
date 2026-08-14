@@ -7,16 +7,20 @@ mod search_picker;
 mod stab_yurself;
 mod subvolume;
 
+use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::stab_yurself::{StabEntry, StabLine};
 use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{
-	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow, SwitchRow,
+	ActionRow, AlertDialog, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup,
+	SpinRow, SwitchRow,
 };
-use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, Orientation, ScrolledWindow, SelectionMode, Widget};
+use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
 use options_value::build_options_group;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::{PoisonError, RwLock, RwLockReadGuard, RwLockWriteGuard};
+use std::time::SystemTime;
 
 pub(crate) struct GC<T>(Rc<RwLock<T>>);
 
@@ -102,19 +106,14 @@ fn build_ui(application: &Application) {
 
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
 	{
-		make_backup_btn.connect_clicked(move |_| {
-			println!("Make backup");
+		make_backup_btn.connect_clicked(move |btn| match stab_yurself::make_backup() {
+			Ok(()) => present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
+			Err(err) => present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
 		});
 	}
 	row.append(&make_backup_btn);
 
-	let restore_backup_btn = make_icon_label_button("document-revert-symbolic", "Restore backup");
-	{
-		restore_backup_btn.connect_clicked(move |_| {
-			println!("Restore backup");
-		});
-	}
-	row.append(&restore_backup_btn);
+	row.append(&build_restore_picker(&entries, &list_panel, &editor_panel));
 
 	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
 	file_buttons_panel.append(&row);
@@ -332,9 +331,18 @@ fn build_entry_list(entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) -
 		.hexpand(true)
 		.valign(Align::Start)
 		.build();
+	populate_list(&list_box, entries, editor_panel);
+	list_box
+}
+
+fn populate_list(list_box: &ListBox, entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) {
+	while let Some(child) = list_box.first_child() {
+		list_box.remove(&child);
+	}
+
 	let mut first = true;
 	for entry in entries.borrow().iter() {
-		let row = make_list_row(&list_box, entries, editor_panel, entry);
+		let row = make_list_row(list_box, entries, editor_panel, entry);
 		list_box.append(&row);
 		if first {
 			first = false;
@@ -364,8 +372,111 @@ fn build_entry_list(entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) -
 	});
 
 	list_box.append(&add_row);
+}
 
-	list_box
+fn present_simple_dialog(widget: &impl IsA<Widget>, heading: &str, body: &str) {
+	let parent = widget.root().and_then(|root| root.downcast::<gtk::Window>().ok());
+	let dialog = AlertDialog::builder().heading(heading).body(body).build();
+	dialog.add_response("ok", "OK");
+	dialog.set_default_response(Some("ok"));
+	dialog.present(parent.as_ref());
+}
+
+fn build_restore_picker(entries: &GC<Vec<GC<StabEntry>>>, list_panel: &ListBox, editor_panel: &gtk::Box) -> MenuButton {
+	let dataset = || match stab_yurself::scan_for_backups() {
+		Ok(ok) => {
+			if ok.is_empty() {
+				Err(anyhow::anyhow!("No backups found"))
+			} else {
+				Ok(ok)
+			}
+		}
+		Err(err) => Err(err),
+	};
+
+	let render_row = |backup: &(PathBuf, SystemTime)| {
+		let time = humantime::format_rfc3339(backup.1).to_string();
+		let row = ActionRow::builder().title(time).subtitle(backup.0.display().to_string()).build();
+		row.set_activatable(true);
+		row.upcast::<Widget>()
+	};
+
+	let filter = |query: &str, backup: &(PathBuf, SystemTime)| {
+		if query.trim().is_empty() {
+			return true;
+		}
+		let query = query.to_lowercase();
+		let time = humantime::format_rfc3339(backup.1).to_string().to_lowercase();
+		backup.0.display().to_string().to_lowercase().contains(&query) || time.contains(&query)
+	};
+
+	let on_select = {
+		let entries = entries.clone();
+		let list_panel = list_panel.clone();
+		let editor_panel = editor_panel.clone();
+		move |backup: (PathBuf, SystemTime), _index| {
+			let changed = entries.borrow().iter().any(|e| e.borrow().is_changed());
+			if !changed {
+				load_backup(&backup.0, &entries, &list_panel, &editor_panel);
+				return;
+			}
+			let dialog = AlertDialog::builder()
+				.heading("Restore backup?")
+				.body("Are you sure? Any changes made will be lost!")
+				.build();
+			dialog.add_response("cancel", "Cancel");
+			dialog.add_response("restore", "Restore");
+			dialog.set_default_response(Some("cancel"));
+			dialog.set_close_response("cancel");
+			let parent = editor_panel.root().and_then(|root| root.downcast::<gtk::Window>().ok());
+			let path = backup.0.clone();
+			let entries = entries.clone();
+			let list_panel = list_panel.clone();
+			let editor_panel = editor_panel.clone();
+			dialog.connect_response(None, move |_, response| {
+				if response == "restore" {
+					load_backup(&path, &entries, &list_panel, &editor_panel);
+				}
+			});
+			dialog.present(parent.as_ref());
+		}
+	};
+
+	let menu_btn = build_search_picker(
+		"Search backups",
+		"Restore backup",
+		"Restore from a backup file",
+		dataset,
+		render_row,
+		ErrorRenderer::Message("Failed to list backups"),
+		filter,
+		on_select,
+	);
+
+	menu_btn.set_hexpand(true);
+	menu_btn
+}
+
+fn load_backup(path: &Path, entries: &GC<Vec<GC<StabEntry>>>, list_panel: &ListBox, editor_panel: &gtk::Box) {
+	let lines = match stab_yurself::read_fstab_from(path) {
+		Ok(lines) => lines,
+		Err(err) => {
+			present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
+			return;
+		}
+	};
+	let new_entries: Vec<GC<StabEntry>> = lines
+		.into_iter()
+		.filter_map(|line| match line {
+			StabLine::Entry(e) => Some(GC::new(e)),
+			_ => None,
+		})
+		.collect();
+	*entries.borrow_mut() = new_entries;
+	while let Some(child) = editor_panel.last_child() {
+		editor_panel.remove(&child);
+	}
+	populate_list(list_panel, entries, editor_panel);
 }
 
 fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {

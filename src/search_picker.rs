@@ -12,7 +12,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 	search_placeholder: &str,
 	menu_label: &str,
 	tooltip: &str,
-	dataset: impl Fn() -> Result<Vec<T>, anyhow::Error> + 'static,
+	dataset: impl Fn() -> anyhow::Result<Vec<T>> + 'static,
 	render_row: impl Fn(&T) -> Widget + 'static,
 	render_error: ErrorRenderer,
 	filter: impl Fn(&str, &T) -> bool + 'static,
@@ -49,7 +49,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 	let menu_btn = MenuButton::builder().label(menu_label).popover(&popover).build();
 	menu_btn.set_tooltip_text(Some(tooltip));
 
-	let dataset: Rc<dyn Fn() -> Result<Vec<T>, anyhow::Error>> = Rc::new(dataset);
+	let dataset: Rc<dyn Fn() -> anyhow::Result<Vec<T>>> = Rc::new(dataset);
 	let render_row: Rc<dyn Fn(&T) -> Widget> = Rc::new(render_row);
 	let filter: Rc<dyn Fn(&str, &T) -> bool> = Rc::new(filter);
 	let on_select: Rc<dyn Fn(T, usize)> = Rc::new(on_select);
