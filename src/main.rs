@@ -55,6 +55,14 @@ impl<T> GC<T> {
 
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
+fn register_icon() {
+	gtk::gio::resources_register_include!("compiled.gresource").expect("Failed to register app resources");
+	if let Some(display) = gtk::gdk::Display::default() {
+		gtk::IconTheme::for_display(&display).add_resource_path("/org/lapissea/FSTabulator/icons");
+	}
+	gtk::Window::set_default_icon_name("fstabulator");
+}
+
 fn main() -> gtk::glib::ExitCode {
 	let application = Application::builder().application_id(APP_ID).build();
 	application.connect_activate(build_ui);
@@ -62,6 +70,8 @@ fn main() -> gtk::glib::ExitCode {
 }
 
 fn build_ui(application: &Application) {
+	register_icon();
+
 	let window_build = ApplicationWindow::builder()
 		.application(application)
 		.title("FSTabulator")
