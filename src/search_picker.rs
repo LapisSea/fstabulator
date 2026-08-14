@@ -1,4 +1,4 @@
-use crate::GC;
+use crate::{GC, clear_children};
 use adw::prelude::*;
 use gtk::{Align, Box as GtkBox, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, Widget};
 use std::rc::Rc;
@@ -129,18 +129,6 @@ pub fn build_search_picker<T: Clone + 'static>(
 	menu_btn
 }
 
-fn clear_list(list: &ListBox) {
-	while let Some(row) = list.row_at_index(0) {
-		list.remove(&row);
-	}
-}
-
-fn clear_children(container: &GtkBox) {
-	while let Some(child) = container.last_child() {
-		container.remove(&child);
-	}
-}
-
 fn render<T: Clone>(
 	search: &SearchEntry,
 	list_box: &ListBox,
@@ -149,7 +137,7 @@ fn render<T: Clone>(
 	filter: &Rc<dyn Fn(&str, &T) -> bool>,
 	render_row: &Rc<dyn Fn(&T) -> Widget>,
 ) {
-	clear_list(list_box);
+	clear_children(list_box);
 	let query = search.text();
 	let mut matches = Vec::new();
 	for item in items.borrow().iter() {

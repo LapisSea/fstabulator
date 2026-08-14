@@ -1,12 +1,10 @@
+use crate::GC;
 use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
 use anyhow::{Context, Error, Result, bail};
-use gtk::prelude::GLAreaExt;
 use std::fmt;
-use std::iter::Iterator;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::str::FromStr;
-use std::string::String;
 use std::time::SystemTime;
 
 pub struct StabEntry {
@@ -162,7 +160,7 @@ impl fmt::Display for StabEntry {
 pub enum StabLine {
 	Blank,
 	Comment(String),
-	Entry(StabEntry),
+	Entry(GC<StabEntry>),
 	Unparsable(Error, String),
 }
 
@@ -180,7 +178,7 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 			if line.trim().is_empty() {
 				return StabLine::Blank;
 			}
-			StabEntry::from(line_num, line).map(StabLine::Entry).unwrap_or_else(|e| {
+			StabEntry::from(line_num, line).map(|e| StabLine::Entry(GC::new(e))).unwrap_or_else(|e| {
 				if line.starts_with('#') {
 					return StabLine::Comment(line.to_string());
 				}
@@ -194,13 +192,46 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 	entries
 }
 
-pub fn read_fstab() -> Result<Vec<StabLine>> {
-	read_fstab_from(Path::new("/etc/fstab"))
+pub struct StabFile {
+	path: PathBuf,
+	pub lines: Vec<StabLine>,
 }
 
-pub fn read_fstab_from(path: &Path) -> Result<Vec<StabLine>> {
-	let raw = std::fs::read_to_string(path).with_context(|| format!("Could not read {}", path.display()))?;
-	Ok(parse_fstab(&raw))
+impl StabFile {
+	pub fn read<P: Into<PathBuf>>(path: P) -> Result<Self> {
+		let path = path.into();
+		let raw = std::fs::read_to_string(&path).with_context(|| format!("Could not read {}", path.display()))?;
+		let lines = parse_fstab(&raw);
+		Ok(Self { path, lines })
+	}
+	pub fn empty() -> Self {
+		Self { path: PathBuf::new(), lines: Vec::new() }
+	}
+	pub fn entries(&self) -> impl Iterator<Item = &GC<StabEntry>> {
+		self.lines.iter().filter_map(|e| match e {
+			StabLine::Entry(e) => Some(e),
+			_ => None,
+		})
+	}
+	pub fn entry_at(&self, index: usize) -> Option<&GC<StabEntry>> {
+		self.entries().nth(index)
+	}
+
+	pub fn remove_entry(&mut self, index: usize) -> Option<GC<StabEntry>> {
+		let pos = self.lines.iter().enumerate().filter(|(_, l)| matches!(l, StabLine::Entry(_))).nth(index)?.0;
+		match self.lines.remove(pos) {
+			StabLine::Entry(e) => Some(e),
+			_ => unreachable!(),
+		}
+	}
+
+	pub fn push_entry(&mut self, entry: StabEntry) {
+		self.lines.push(StabLine::Entry(GC::new(entry)));
+	}
+
+	pub fn is_changed(&self) -> bool {
+		self.entries().any(|e| e.borrow().is_changed())
+	}
 }
 
 pub fn scan_for_backups() -> Result<Vec<(PathBuf, SystemTime)>> {
@@ -263,6 +294,7 @@ pub fn fstab_to_string(entries: &[StabLine]) -> String {
 		.iter()
 		.map(|e| match e {
 			StabLine::Entry(e) => {
+				let e = e.borrow();
 				if e.is_changed() {
 					if let Some(label) = &e.user_label {
 						format!("# {}\n{}", label, e.data_to_string())
@@ -311,8 +343,11 @@ fn merge_comments_into_labels(entries: &mut Vec<StabLine>) {
 				continue;
 			};
 			match iter.next() {
-				Some(StabLine::Entry(mut entry)) => {
-					entry.user_label = comment_content(comment).map(str::to_string);
+				Some(StabLine::Entry(entry)) => {
+					{
+						let mut entry = entry.borrow_mut();
+						entry.user_label = comment_content(comment).map(str::to_string);
+					}
 					merged.push(StabLine::Entry(entry));
 				}
 				other => {
@@ -363,17 +398,20 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 		let StabLine::Entry(first) = &lines[0] else {
 			panic!("expected first line to be an entry");
 		};
+		let first = first.borrow();
 		assert_eq!(first.user_label.as_deref(), Some("First entry note"));
 		assert!(first.active);
 
 		let StabLine::Entry(disabled) = &lines[1] else {
 			panic!("expected commented-out entry to become a disabled entry");
 		};
+		let disabled = disabled.borrow();
 		assert!(!disabled.active);
 
 		let StabLine::Entry(second) = &lines[2] else {
 			panic!("expected third line to be an entry");
 		};
+		let second = second.borrow();
 		assert_eq!(second.user_label, None);
 		assert!(second.active);
 	}

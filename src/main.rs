@@ -3,17 +3,17 @@ mod fs_options;
 mod fs_value;
 mod mount_point_value;
 mod options_value;
+mod popup;
 mod search_picker;
 mod stab_yurself;
 mod subvolume;
 
 use crate::search_picker::{ErrorRenderer, build_search_picker};
-use crate::stab_yurself::{StabEntry, StabLine};
+use crate::stab_yurself::{StabEntry, StabFile};
 use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{
-	ActionRow, AlertDialog, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup,
-	SpinRow, SwitchRow,
+	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow, SwitchRow,
 };
 use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
 use options_value::build_options_group;
@@ -68,27 +68,7 @@ fn build_ui(application: &Application) {
 		.default_width(800)
 		.default_height(600);
 
-	let fstab_file = match stab_yurself::read_fstab() {
-		Ok(data) => data,
-		Err(err) => {
-			let main_box = GtkBox::builder().orientation(Orientation::Vertical).build();
-			main_box.append(&HeaderBar::new());
-			build_load_error(&main_box, err);
-			window_build.content(&main_box).build().present();
-			return;
-		}
-	};
-
-	let entries: GC<Vec<GC<StabEntry>>> = GC::new(
-		fstab_file
-			.into_iter()
-			.filter_map(|e| match e {
-				StabLine::Entry(e) => Some(e),
-				_ => None,
-			})
-			.map(GC::new)
-			.collect(),
-	);
+	let stab_file = GC::new(StabFile::empty());
 
 	let editor_panel = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -97,7 +77,7 @@ fn build_ui(application: &Application) {
 		.spacing(12)
 		.build();
 
-	let list_panel = build_entry_list(&entries, &editor_panel);
+	let list_panel = build_entry_list();
 
 	let file_buttons_panel = GtkBox::builder().orientation(Orientation::Vertical).hexpand(true).spacing(6).build();
 
@@ -107,13 +87,13 @@ fn build_ui(application: &Application) {
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
 	{
 		make_backup_btn.connect_clicked(move |btn| match stab_yurself::make_backup() {
-			Ok(()) => present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
-			Err(err) => present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
+			Ok(()) => popup::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
+			Err(err) => popup::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
 		});
 	}
 	row.append(&make_backup_btn);
 
-	row.append(&build_restore_picker(&entries, &list_panel, &editor_panel));
+	row.append(&build_restore_picker(&stab_file, &list_panel, &editor_panel));
 
 	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
 	file_buttons_panel.append(&row);
@@ -125,6 +105,21 @@ fn build_ui(application: &Application) {
 		});
 	}
 	row.append(&save_changes_btn);
+
+	let revert_changes_btn = make_icon_label_button("edit-undo-symbolic", "Revert changes");
+	{
+		let stab_file = stab_file.clone();
+		let list_panel = list_panel.clone();
+		let editor_panel = editor_panel.clone();
+		popup::connect_clicked_confirm(
+			&revert_changes_btn,
+			"Revert",
+			"Are you sure? Any changes made will be lost!",
+			|| None,
+			move || load_backup(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel),
+		);
+	}
+	row.append(&revert_changes_btn);
 
 	let left_panel = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -148,16 +143,14 @@ fn build_ui(application: &Application) {
 	{
 		let editor_panel = editor_panel.clone();
 		let list_panel_cb = list_panel.clone();
-		let entries = entries.clone();
+		let stab_file = stab_file.clone();
 		list_panel.connect_row_selected(move |_, row| {
-			while let Some(child) = editor_panel.last_child() {
-				editor_panel.remove(&child);
-			}
+			clear_children(&editor_panel);
 			let Some(row) = row else { return };
 			if row.index() < 0 {
 				return;
 			}
-			let Some(entry) = entries.borrow().get(row.index() as usize).cloned() else {
+			let Some(entry) = stab_file.borrow().entry_at(row.index() as usize).cloned() else {
 				return;
 			};
 			let Ok(action_row) = row.clone().downcast::<ActionRow>() else { return };
@@ -189,6 +182,13 @@ fn build_ui(application: &Application) {
 	let provider = gtk::CssProvider::new();
 	provider.load_from_data(".invalid-alert { color: red; }");
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+	if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
+		let error_box = GtkBox::builder().orientation(Orientation::Vertical).build();
+		error_box.append(&HeaderBar::new());
+		build_load_error(&error_box, err);
+		window.set_content(Some(&error_box));
+	}
 
 	window.present();
 }
@@ -317,32 +317,35 @@ fn esc(s: &str) -> String {
 	s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 }
 
-fn make_list_row(list_box: &ListBox, entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box, entry: &GC<StabEntry>) -> ActionRow {
+fn make_list_row(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gtk::Box, entry: &StabEntry) -> ActionRow {
 	let row = ActionRow::new();
-	add_delete_button(list_box, &row, entries, editor_panel);
-	render_list_entry(&row, &entry.borrow(), None);
+	add_delete_button(list_box, &row, stab_file, editor_panel);
+	render_list_entry(&row, entry, None);
 	row
 }
 
-fn build_entry_list(entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) -> ListBox {
-	let list_box = ListBox::builder()
+fn build_entry_list() -> ListBox {
+	ListBox::builder()
 		.selection_mode(SelectionMode::Single)
 		.css_classes(["boxed-list"])
 		.hexpand(true)
 		.valign(Align::Start)
-		.build();
-	populate_list(&list_box, entries, editor_panel);
-	list_box
+		.build()
 }
 
-fn populate_list(list_box: &ListBox, entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) {
-	while let Some(child) = list_box.first_child() {
-		list_box.remove(&child);
+pub(crate) fn clear_children<W: IsA<gtk::Widget>>(widget: &W) {
+	let widget = widget.upcast_ref::<gtk::Widget>();
+	while let Some(child) = widget.first_child() {
+		child.unparent();
 	}
+}
+
+fn populate_list(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gtk::Box) {
+	clear_children(list_box);
 
 	let mut first = true;
-	for entry in entries.borrow().iter() {
-		let row = make_list_row(list_box, entries, editor_panel, entry);
+	for entry in stab_file.borrow().entries() {
+		let row = make_list_row(list_box, stab_file, editor_panel, &entry.borrow());
 		list_box.append(&row);
 		if first {
 			first = false;
@@ -359,14 +362,16 @@ fn populate_list(list_box: &ListBox, entries: &GC<Vec<GC<StabEntry>>>, editor_pa
 
 	let list_box_ref = list_box.clone();
 	let add_row_ref = add_row.clone();
-	let entries_ref = entries.clone();
+	let stab_file_ref = stab_file.clone();
 	let editor_panel_ref = editor_panel.clone();
 	add_btn.connect_clicked(move |_| {
-		let line = entries_ref.borrow().iter().map(|e| e.borrow().line).max().map_or(0, |l| l + 1);
-		let new_entry = GC::new(StabEntry::blank(line));
-		entries_ref.borrow_mut().push(new_entry.clone());
-
-		let row = make_list_row(&list_box_ref, &entries_ref, &editor_panel_ref, &new_entry);
+		let line = {
+			let file = stab_file_ref.borrow();
+			file.entries().map(|e| e.borrow().line).max().map_or(0, |l| l + 1)
+		};
+		let new_entry = StabEntry::blank(line);
+		let row = make_list_row(&list_box_ref, &stab_file_ref, &editor_panel_ref, &new_entry);
+		stab_file_ref.borrow_mut().push_entry(new_entry);
 		list_box_ref.insert(&row, add_row_ref.index());
 		list_box_ref.select_row(Some(&row));
 	});
@@ -374,15 +379,7 @@ fn populate_list(list_box: &ListBox, entries: &GC<Vec<GC<StabEntry>>>, editor_pa
 	list_box.append(&add_row);
 }
 
-fn present_simple_dialog(widget: &impl IsA<Widget>, heading: &str, body: &str) {
-	let parent = widget.root().and_then(|root| root.downcast::<gtk::Window>().ok());
-	let dialog = AlertDialog::builder().heading(heading).body(body).build();
-	dialog.add_response("ok", "OK");
-	dialog.set_default_response(Some("ok"));
-	dialog.present(parent.as_ref());
-}
-
-fn build_restore_picker(entries: &GC<Vec<GC<StabEntry>>>, list_panel: &ListBox, editor_panel: &gtk::Box) -> MenuButton {
+fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) -> MenuButton {
 	let dataset = || match stab_yurself::scan_for_backups() {
 		Ok(ok) => {
 			if ok.is_empty() {
@@ -411,34 +408,27 @@ fn build_restore_picker(entries: &GC<Vec<GC<StabEntry>>>, list_panel: &ListBox, 
 	};
 
 	let on_select = {
-		let entries = entries.clone();
+		let stab_file = stab_file.clone();
 		let list_panel = list_panel.clone();
 		let editor_panel = editor_panel.clone();
 		move |backup: (PathBuf, SystemTime), _index| {
-			let changed = entries.borrow().iter().any(|e| e.borrow().is_changed());
+			let changed = stab_file.borrow().is_changed();
 			if !changed {
-				load_backup(&backup.0, &entries, &list_panel, &editor_panel);
+				load_backup(&backup.0, &stab_file, &list_panel, &editor_panel);
 				return;
 			}
-			let dialog = AlertDialog::builder()
-				.heading("Restore backup?")
-				.body("Are you sure? Any changes made will be lost!")
-				.build();
-			dialog.add_response("cancel", "Cancel");
-			dialog.add_response("restore", "Restore");
-			dialog.set_default_response(Some("cancel"));
-			dialog.set_close_response("cancel");
-			let parent = editor_panel.root().and_then(|root| root.downcast::<gtk::Window>().ok());
 			let path = backup.0.clone();
-			let entries = entries.clone();
+			let stab_file = stab_file.clone();
 			let list_panel = list_panel.clone();
 			let editor_panel = editor_panel.clone();
-			dialog.connect_response(None, move |_, response| {
-				if response == "restore" {
-					load_backup(&path, &entries, &list_panel, &editor_panel);
-				}
-			});
-			dialog.present(parent.as_ref());
+			let parent_widget = editor_panel.clone();
+			popup::confirm_popup(
+				&parent_widget,
+				"Restore",
+				"Are you sure? Any changes made will be lost!",
+				None::<&Widget>,
+				move || load_backup(&path, &stab_file, &list_panel, &editor_panel),
+			);
 		}
 	};
 
@@ -457,26 +447,18 @@ fn build_restore_picker(entries: &GC<Vec<GC<StabEntry>>>, list_panel: &ListBox, 
 	menu_btn
 }
 
-fn load_backup(path: &Path, entries: &GC<Vec<GC<StabEntry>>>, list_panel: &ListBox, editor_panel: &gtk::Box) {
-	let lines = match stab_yurself::read_fstab_from(path) {
-		Ok(lines) => lines,
-		Err(err) => {
-			present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
-			return;
-		}
-	};
-	let new_entries: Vec<GC<StabEntry>> = lines
-		.into_iter()
-		.filter_map(|line| match line {
-			StabLine::Entry(e) => Some(GC::new(e)),
-			_ => None,
-		})
-		.collect();
-	*entries.borrow_mut() = new_entries;
-	while let Some(child) = editor_panel.last_child() {
-		editor_panel.remove(&child);
+fn load_fstab_file(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) -> anyhow::Result<()> {
+	let new_file = StabFile::read(path)?;
+	stab_file.borrow_mut().lines = new_file.lines;
+	clear_children(editor_panel);
+	populate_list(list_panel, stab_file, editor_panel);
+	Ok(())
+}
+
+fn load_backup(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) {
+	if let Err(err) = load_fstab_file(path, stab_file, list_panel, editor_panel) {
+		popup::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
 	}
-	populate_list(list_panel, entries, editor_panel);
 }
 
 fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
@@ -493,7 +475,7 @@ fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
 	grid.attach(&value_label, 1, row, 1, 1);
 }
 
-fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &GC<Vec<GC<StabEntry>>>, editor_panel: &gtk::Box) {
+fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFile>, editor_panel: &gtk::Box) {
 	let delete_btn = gtk::Button::from_icon_name("user-trash-symbolic");
 	delete_btn.add_css_class("flat");
 	delete_btn.add_css_class("error");
@@ -502,17 +484,15 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &GC<Vec<GC<St
 
 	row.add_suffix(&delete_btn);
 
-	let list_box = list_box.clone();
-	let row = row.clone();
-	let entries = entries.clone();
-	let editor_panel = editor_panel.clone();
-	let delete_btn_ref = delete_btn.clone();
-	delete_btn.connect_clicked(move |_| {
-		let borrowed_entries = entries.borrow();
-		let entry = borrowed_entries.get(row.index() as usize).map(|e| e.borrow());
-
-		let dialog = adw::AlertDialog::builder().heading("Delete this entry?").build();
-		if let Some(entry) = entry {
+	let extra_child = {
+		let row = row.clone();
+		let stab_file = stab_file.clone();
+		move || {
+			let file = stab_file.borrow();
+			let Some(entry) = file.entry_at(row.index() as usize) else {
+				return None;
+			};
+			let entry = entry.borrow();
 			let grid = gtk::Grid::builder()
 				.column_spacing(16)
 				.row_spacing(6)
@@ -527,43 +507,33 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, entries: &GC<Vec<GC<St
 			add_info_row(&grid, grid_row, "File system", &entry.fs_type.to_string());
 			add_info_row(&grid, grid_row + 1, "Device", &entry.device.value);
 			add_info_row(&grid, grid_row + 2, "Mount point", &entry.mount_point);
-			dialog.set_extra_child(Some(&grid));
-		} else {
-			dialog.set_body("The entry will be removed from the list.");
+			Some(grid.upcast())
 		}
-		dialog.add_response("cancel", "Cancel");
-		dialog.add_response("delete", "Delete");
-		dialog.set_default_response(Some("cancel"));
-		dialog.set_close_response("cancel");
+	};
 
+	let on_confirm = {
 		let list_box = list_box.clone();
 		let row = row.clone();
-		let entries = entries.clone();
+		let stab_file = stab_file.clone();
 		let editor_panel = editor_panel.clone();
-		dialog.connect_response(None, move |_, response| {
-			if response != "delete" {
-				return;
-			}
+		move || {
 			let index = row.index();
 			if index < 0 {
 				return;
 			}
 			let index = index as usize;
 			list_box.remove(&row);
-			entries.borrow_mut().remove(index);
-			while let Some(child) = editor_panel.last_child() {
-				editor_panel.remove(&child);
-			}
-			let remaining = entries.borrow().len();
+			stab_file.borrow_mut().remove_entry(index);
+			clear_children(&editor_panel);
+			let remaining = stab_file.borrow().entries().count();
 			let new_index = index.min(remaining.saturating_sub(1));
 			if let Some(new_row) = list_box.row_at_index(new_index as i32) {
 				list_box.select_row(Some(&new_row));
 			}
-		});
+		}
+	};
 
-		let parent = delete_btn_ref.root().and_then(|root| root.downcast::<gtk::Window>().ok());
-		dialog.present(parent.as_ref());
-	});
+	popup::connect_clicked_confirm(&delete_btn, "Delete", "Delete this entry?", extra_child, on_confirm);
 }
 
 fn build_split_layout(list_panel: &impl IsA<gtk::Widget>, editor_panel: &impl IsA<gtk::Widget>) -> GtkBox {
