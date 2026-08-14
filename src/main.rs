@@ -100,9 +100,31 @@ fn build_ui(application: &Application) {
 
 	let save_changes_btn = make_icon_label_button("document-save-symbolic", "Save changes");
 	{
-		save_changes_btn.connect_clicked(move |_| {
-			println!("Save changes");
-		});
+		let stab_file = stab_file.clone();
+		let list_panel = list_panel.clone();
+		let editor_panel = editor_panel.clone();
+		popup::connect_clicked_confirm(
+			&save_changes_btn,
+			"Save",
+			"Are you sure you want to write these changes to /etc/fstab?",
+			|| None,
+			move || {
+				let content = {
+					let file = stab_file.borrow();
+					file.to_string()
+				};
+				match stab_yurself::write_fstab(&content) {
+					Ok(()) => {
+						if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
+							popup::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
+							return;
+						}
+						popup::present_simple_dialog(&editor_panel, "Changes saved", "Your changes were written to /etc/fstab.");
+					}
+					Err(err) => popup::present_simple_dialog(&editor_panel, "Could not save", &format!("{err:#}")),
+				}
+			},
+		);
 	}
 	row.append(&save_changes_btn);
 

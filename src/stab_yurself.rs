@@ -3,6 +3,7 @@ use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
 use anyhow::{Context, Error, Result, bail};
 use std::fmt;
+use std::io::Write;
 use std::path::PathBuf;
 use std::str::FromStr;
 use std::time::SystemTime;
@@ -232,6 +233,26 @@ impl StabFile {
 	pub fn is_changed(&self) -> bool {
 		self.entries().any(|e| e.borrow().is_changed())
 	}
+
+	pub fn to_string(&self) -> String {
+		self.lines
+			.iter()
+			.map(|e| match e {
+				StabLine::Entry(e) => {
+					let e = e.borrow();
+					let body = if e.is_changed() { e.data_to_string() } else { e.original.clone() };
+					match &e.user_label {
+						Some(label) => format!("# {}\n{}", label, body),
+						None => body,
+					}
+				}
+				StabLine::Blank => String::new(),
+				StabLine::Comment(val) => val.clone(),
+				StabLine::Unparsable(_, val) => val.clone(),
+			})
+			.collect::<Vec<_>>()
+			.join("\n")
+	}
 }
 
 pub fn scan_for_backups() -> Result<Vec<(PathBuf, SystemTime)>> {
@@ -289,28 +310,23 @@ pub fn make_backup() -> Result<()> {
 	Ok(())
 }
 
-pub fn fstab_to_string(entries: &[StabLine]) -> String {
-	entries
-		.iter()
-		.map(|e| match e {
-			StabLine::Entry(e) => {
-				let e = e.borrow();
-				if e.is_changed() {
-					if let Some(label) = &e.user_label {
-						format!("# {}\n{}", label, e.data_to_string())
-					} else {
-						e.data_to_string()
-					}
-				} else {
-					e.original.clone()
-				}
-			}
-			StabLine::Blank => "\n".to_string(),
-			StabLine::Comment(val) => val.clone(),
-			StabLine::Unparsable(_, val) => val.clone(),
-		})
-		.collect::<Vec<_>>()
-		.join("\n")
+pub fn write_fstab(content: &str) -> Result<()> {
+	let mut child = std::process::Command::new("pkexec")
+		.arg("sh")
+		.arg("-c")
+		.arg("cat > /etc/fstab")
+		.stdin(std::process::Stdio::piped())
+		.spawn()
+		.context("Could not launch pkexec")?;
+
+	child.stdin.take().context("Could not open pkexec stdin")?.write_all(content.as_bytes())?;
+	let status = child.wait().context("Could not wait for pkexec")?;
+
+	if !status.success() {
+		bail!("pkexec failed: {}", status);
+	}
+
+	Ok(())
 }
 
 fn split(raw: &str) -> (Vec<&str>, bool) {
@@ -383,6 +399,14 @@ mod tests {
 			}
 		}
 		assert_eq!(entries.len(), 44, "unexpected number of entries in fstab-dummy");
+	}
+
+	#[test]
+	fn fstab_dummy_round_trip_equals_original() {
+		let path = concat!(env!("CARGO_MANIFEST_DIR"), "/fstab-dummy");
+		let original = std::fs::read_to_string(path).expect("could not read fstab-dummy");
+		let file = StabFile::read(path).expect("could not parse fstab-dummy");
+		assert_eq!(file.to_string(), original);
 	}
 
 	#[test]
