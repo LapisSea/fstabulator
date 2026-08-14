@@ -357,8 +357,14 @@ fn build_entry_list() -> ListBox {
 
 pub(crate) fn clear_children<W: IsA<gtk::Widget>>(widget: &W) {
 	let widget = widget.upcast_ref::<gtk::Widget>();
-	while let Some(child) = widget.first_child() {
-		child.unparent();
+	if let Some(list_box) = widget.downcast_ref::<ListBox>() {
+		while let Some(row) = list_box.row_at_index(0) {
+			list_box.remove(&row);
+		}
+	} else {
+		while let Some(child) = widget.first_child() {
+			child.unparent();
+		}
 	}
 }
 
