@@ -1,9 +1,10 @@
 use crate::device_value::resolve_local_device;
 use anyhow::{Context, Result, bail};
+use serde::{Deserialize, Serialize};
 use std::path::Path;
 use std::process::Command;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Subvol {
 	pub id: u64,
 	pub path: String,

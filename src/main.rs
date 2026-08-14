@@ -5,6 +5,7 @@ mod mount_point_value;
 mod options_value;
 mod popup;
 mod privileged_actions;
+mod privileged_service;
 mod search_picker;
 mod stab_yurself;
 mod subvolume;
@@ -57,6 +58,14 @@ impl<T> GC<T> {
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
 fn main() -> gtk::glib::ExitCode {
+	if std::env::args().any(|arg| arg == "--root-helper") {
+		if let Err(err) = privileged_service::run_root_helper() {
+			eprintln!("root-helper error: {err:#}");
+			std::process::exit(1);
+		}
+		return gtk::glib::ExitCode::SUCCESS;
+	}
+
 	let application = Application::builder().application_id(APP_ID).build();
 	application.connect_activate(build_ui);
 	application.run()
