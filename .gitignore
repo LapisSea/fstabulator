@@ -1,1 +1,16 @@
-/target
+*
+!*/
+!.gitignore
+
+!build.rs
+!Cargo.lock
+!Cargo.toml
+!fstab-dummy
+!install.sh
+!README.md
+!.rustfmt.toml
+
+!src/**
+!.idea/**
+!resources/**
+!icon_concepting/**

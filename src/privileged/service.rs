@@ -1,9 +1,10 @@
-use crate::privileged_actions::{PrivilegedAction, PrivilegedResponse};
 use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
 use std::sync::{Mutex, OnceLock};
+
+use super::actions::{PrivilegedAction, PrivilegedResponse};
 
 #[derive(Serialize, Deserialize)]
 struct Greeting {
@@ -102,7 +103,7 @@ impl PrivilegedService {
 	}
 }
 
-pub fn request(action: PrivilegedAction) -> Result<PrivilegedResponse> {
+pub(super) fn request(action: PrivilegedAction) -> Result<PrivilegedResponse> {
 	static SERVICE: OnceLock<Mutex<Option<PrivilegedService>>> = OnceLock::new();
 
 	let mut slot = SERVICE.get_or_init(|| Mutex::new(None)).lock().unwrap();
@@ -132,7 +133,7 @@ fn ensure_alive(slot: &mut Option<PrivilegedService>) -> Result<()> {
 	Ok(())
 }
 
-pub fn run_root_helper() -> Result<()> {
+pub(crate) fn run_root_helper() -> Result<()> {
 	let ready = is_root();
 	let greeting = Greeting {
 		ready,
@@ -153,7 +154,7 @@ pub fn run_root_helper() -> Result<()> {
 		let line = line.context("Could not read a request from stdin")?;
 		let action: PrivilegedAction = serde_json::from_str(&line).context("Could not parse the request")?;
 
-		let response = match crate::privileged_actions::execute(action) {
+		let response = match super::actions::execute(action) {
 			Ok(response) => ServiceResponse::Ok(response),
 			Err(err) => ServiceResponse::Err(format!("{err:#}")),
 		};

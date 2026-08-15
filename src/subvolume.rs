@@ -50,7 +50,7 @@ pub fn list_subvolumes(device: &Path) -> Result<Vec<Subvol>> {
 		bail!("btrfs could not list subvolumes on '{mount_point}': {}", stderr.trim());
 	}
 
-	crate::privileged_actions::list_subvolumes(&mount_point)
+	crate::privileged::list_subvolumes(&mount_point)
 }
 
 fn is_permission_error(stderr: &str) -> bool {

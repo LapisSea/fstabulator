@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use std::time::SystemTime;
 
+#[derive(Clone)]
 pub struct StabEntry {
 	pub active: bool,
 	pub line: usize,

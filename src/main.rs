@@ -1,28 +1,32 @@
+mod credentials_flow;
 mod device_value;
 mod fs_options;
 mod fs_value;
 mod mount_point_value;
+mod mount_status;
 mod options_value;
 mod popup;
-mod privileged_actions;
-mod privileged_service;
+mod privileged;
 mod search_picker;
 mod stab_yurself;
 mod subvolume;
 
+use crate::mount_status::MountStatus;
 use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::stab_yurself::{StabEntry, StabFile};
 use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{
-	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, SpinRow, SwitchRow,
+	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, PreferencesRow,
+	SpinRow, SwitchRow,
 };
-use gtk::{Adjustment, Align, Box as GtkBox, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
+use fs_value::FsType;
+use gtk::{Adjustment, Align, Box as GtkBox, Button, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
 use options_value::build_options_group;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::{PoisonError, RwLock, RwLockReadGuard, RwLockWriteGuard};
-use std::time::SystemTime;
+use std::time::{Duration, SystemTime};
 
 pub(crate) struct GC<T>(Rc<RwLock<T>>);
 
@@ -55,6 +59,8 @@ impl<T> GC<T> {
 	}
 }
 
+pub(crate) type RebuildEditor = GC<Option<Rc<dyn Fn()>>>;
+
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
 fn register_icon() {
@@ -67,7 +73,7 @@ fn register_icon() {
 
 fn main() -> gtk::glib::ExitCode {
 	if std::env::args().any(|arg| arg == "--root-helper") {
-		if let Err(err) = privileged_service::run_root_helper() {
+		if let Err(err) = privileged::run_root_helper() {
 			eprintln!("root-helper error: {err:#}");
 			std::process::exit(1);
 		}
@@ -106,7 +112,7 @@ fn build_ui(application: &Application) {
 
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
 	{
-		make_backup_btn.connect_clicked(move |btn| match privileged_actions::make_backup() {
+		make_backup_btn.connect_clicked(move |btn| match privileged::make_backup() {
 			Ok(()) => popup::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
 			Err(err) => popup::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
 		});
@@ -133,7 +139,7 @@ fn build_ui(application: &Application) {
 					let file = stab_file.borrow();
 					file.to_string()
 				};
-				match privileged_actions::write_fstab(&content) {
+				match privileged::write_fstab(&content) {
 					Ok(()) => {
 						if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
 							popup::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
@@ -182,10 +188,12 @@ fn build_ui(application: &Application) {
 
 	let split_box = build_split_layout(&left_panel, &wrap_scroll(&editor_panel));
 
+	let rebuild_editor: RebuildEditor = GC::new(None);
 	{
 		let editor_panel = editor_panel.clone();
 		let list_panel_cb = list_panel.clone();
 		let stab_file = stab_file.clone();
+		let rebuild_editor = rebuild_editor.clone();
 		list_panel.connect_row_selected(move |_, row| {
 			clear_children(&editor_panel);
 			let Some(row) = row else { return };
@@ -196,7 +204,20 @@ fn build_ui(application: &Application) {
 				return;
 			};
 			let Ok(action_row) = row.clone().downcast::<ActionRow>() else { return };
-			build_editor_panel(&editor_panel, &entry, &action_row, &list_panel_cb, &row);
+			build_editor_panel(&editor_panel, &entry, &action_row, &list_panel_cb, row, rebuild_editor.clone());
+			let builder: Rc<dyn Fn()> = Rc::new({
+				let editor_panel = editor_panel.clone();
+				let list_panel_cb = list_panel_cb.clone();
+				let entry = entry.clone();
+				let action_row = action_row.clone();
+				let row = row.clone();
+				let rebuild_editor = rebuild_editor.clone();
+				move || {
+					clear_children(&editor_panel);
+					build_editor_panel(&editor_panel, &entry, &action_row, &list_panel_cb, &row, rebuild_editor.clone());
+				}
+			});
+			*rebuild_editor.borrow_mut() = Some(builder);
 		});
 	}
 
@@ -222,7 +243,12 @@ fn build_ui(application: &Application) {
 	attach_responsive_breakpoint(&window, &split_box);
 
 	let provider = gtk::CssProvider::new();
-	provider.load_from_data(".invalid-alert { color: red; }");
+	provider.load_from_data(
+		".invalid-alert { color: red; }\
+		.mount-status-mounted { color: @success_color; }\
+		.mount-status-unmounted { color: @warning_color; }\
+		.mount-status-missing { color: @error_color; }",
+	);
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 	if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
@@ -254,7 +280,7 @@ fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
 	main_box.append(&wrap_scroll(&text));
 }
 
-fn make_icon_label_button(icon: &str, label: &str) -> gtk::Button {
+fn make_icon_label_button(icon: &str, label: &str) -> Button {
 	let hbox = GtkBox::builder()
 		.orientation(Orientation::Horizontal)
 		.halign(Align::Center)
@@ -262,7 +288,7 @@ fn make_icon_label_button(icon: &str, label: &str) -> gtk::Button {
 		.build();
 	hbox.append(&Image::from_icon_name(icon));
 	hbox.append(&gtk::Label::new(Some(label)));
-	let button = gtk::Button::new();
+	let button = Button::new();
 	button.set_label(&label);
 	button.set_child(Some(&hbox));
 	button.set_hexpand(true);
@@ -273,7 +299,7 @@ fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
 	ScrolledWindow::builder().child(content).hexpand(true).vexpand(true).build()
 }
 
-pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset_btn: Option<&gtk::Button>) {
+pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset_btn: Option<&Button>) {
 	action_row.set_title(&entry.user_label.as_ref().cloned().unwrap_or_else(|| format!("Line {}", entry.line + 1)));
 	let changed = entry.is_changed();
 	action_row.set_subtitle(&render_subtitle(entry));
@@ -404,7 +430,7 @@ fn populate_list(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gt
 	let add_row = gtk::ListBoxRow::new();
 	add_row.set_selectable(false);
 	add_row.set_activatable(false);
-	let add_btn = gtk::Button::builder().label("Add new mount entry").hexpand(true).build();
+	let add_btn = Button::builder().label("Add new mount entry").hexpand(true).build();
 	add_btn.add_css_class("flat");
 	add_row.set_child(Some(&add_btn));
 
@@ -524,7 +550,7 @@ fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
 }
 
 fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFile>, editor_panel: &gtk::Box) {
-	let delete_btn = gtk::Button::from_icon_name("user-trash-symbolic");
+	let delete_btn = Button::from_icon_name("user-trash-symbolic");
 	delete_btn.add_css_class("flat");
 	delete_btn.add_css_class("error");
 	delete_btn.set_valign(Align::Center);
@@ -609,8 +635,15 @@ fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &Gtk
 	window.add_breakpoint(breakpoint);
 }
 
-fn build_editor_panel(editor_panel: &gtk::Box, entry: &GC<StabEntry>, action_row: &ActionRow, list_box: &ListBox, list_row: &gtk::ListBoxRow) {
-	let reset_btn = gtk::Button::with_label("Reset");
+fn build_editor_panel(
+	editor_panel: &gtk::Box,
+	entry: &GC<StabEntry>,
+	action_row: &ActionRow,
+	list_box: &ListBox,
+	list_row: &gtk::ListBoxRow,
+	rebuild_editor: RebuildEditor,
+) {
+	let reset_btn = Button::with_label("Reset");
 	reset_btn.set_sensitive(entry.borrow().is_changed());
 
 	let edit_props = PreferencesGroup::builder().title("Edit properties").build();
@@ -654,6 +687,8 @@ fn build_editor_panel(editor_panel: &gtk::Box, entry: &GC<StabEntry>, action_row
 
 	editor_panel.append(&reset_btn);
 
+	add_mount_group(editor_panel, entry, rebuild_editor);
+
 	let entry = entry.clone();
 	let action_row = action_row.clone();
 	let list_box = list_box.clone();
@@ -668,7 +703,166 @@ fn build_editor_panel(editor_panel: &gtk::Box, entry: &GC<StabEntry>, action_row
 		list_box.select_row(Some(&list_row));
 	});
 }
-fn add_user_label_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
+
+fn report_action_outcome(btn: &Button, done: &str, failed: &str, subject: &str, result: anyhow::Result<()>, refresh: &Rc<dyn Fn()>) {
+	match result {
+		Ok(()) => {
+			popup::present_simple_dialog(btn, done, &format!("{done} {subject}."));
+			refresh();
+		}
+		Err(err) => popup::present_simple_dialog(btn, failed, &format!("{err:#}")),
+	}
+}
+
+fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_editor: RebuildEditor) {
+	let group = PreferencesGroup::builder().title("Mount").build();
+	editor_panel.append(&group);
+
+	let status_label = gtk::Label::new(None);
+	status_label.set_xalign(0.5);
+	status_label.set_halign(Align::Center);
+	status_label.set_wrap(true);
+	status_label.add_css_class("monospace");
+	status_label.set_margin_top(6);
+	status_label.set_margin_bottom(6);
+
+	let status_row = PreferencesRow::builder().title("Status").child(&status_label).build();
+	group.add(&status_row);
+
+	let mount_btn = Button::builder().label("Mount").css_classes(["suggested-action"]).build();
+	let remount_btn = Button::builder().label("Remount").build();
+	let unmount_btn = Button::builder().label("Unmount").css_classes(["destructive-action"]).build();
+
+	let buttons = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).hexpand(true).build();
+	for btn in [&mount_btn, &remount_btn, &unmount_btn] {
+		btn.set_hexpand(true);
+		buttons.append(btn);
+	}
+
+	let buttons_row = PreferencesRow::builder().title("Actions").child(&buttons).build();
+	buttons_row.set_activatable(false);
+	group.add(&buttons_row);
+
+	let refresh: Rc<dyn Fn()> = Rc::new({
+		let entry = entry.clone();
+		let status_label = status_label.clone();
+		let mount_btn = mount_btn.clone();
+		let remount_btn = remount_btn.clone();
+		let unmount_btn = unmount_btn.clone();
+		move || {
+			let entry = entry.borrow();
+			let status = mount_status::detect(&entry);
+			let is_swap = entry.fs_type == FsType::Swap;
+			status_label.set_label(status.label());
+			status_label.set_tooltip_text(Some(status.tooltip()));
+			for class in [MountStatus::Mounted, MountStatus::Unmounted, MountStatus::Missing] {
+				status_label.remove_css_class(class.css_class());
+			}
+			status_label.add_css_class(status.css_class());
+			mount_btn.set_sensitive(status != MountStatus::Mounted);
+			remount_btn.set_sensitive(status == MountStatus::Mounted && !is_swap);
+			unmount_btn.set_sensitive(status == MountStatus::Mounted);
+		}
+	});
+	refresh();
+
+	{
+		let group = group.clone();
+		let refresh = refresh.clone();
+		gtk::glib::timeout_add_local(Duration::from_secs(2), move || {
+			if !group.is_mapped() {
+				return gtk::glib::ControlFlow::Break;
+			}
+			refresh();
+			gtk::glib::ControlFlow::Continue
+		});
+	}
+
+	{
+		let entry = entry.clone();
+		let refresh = refresh.clone();
+		let rebuild_editor = rebuild_editor.clone();
+		let btn = mount_btn.clone();
+		popup::connect_clicked_confirm(
+			&mount_btn,
+			"Mount",
+			"Are you sure you want to mount this entry?",
+			|| None,
+			move || {
+				let snapshot = entry.cloned(|e| e);
+				if snapshot.mount_point.trim().is_empty() && snapshot.fs_type != FsType::Swap {
+					popup::present_simple_dialog(&btn, "Cannot mount", "The mount point is empty.");
+					return;
+				}
+				if credentials_flow::needs_credentials(&snapshot) {
+					credentials_flow::mount_with_credentials(&btn, entry.clone(), snapshot.clone(), rebuild_editor.clone(), refresh.clone());
+				} else {
+					let device = credentials_flow::action_device(&snapshot);
+					let is_swap = snapshot.fs_type == FsType::Swap;
+					let fs_type = snapshot.fs_type.to_string();
+					let result = privileged::mount(&snapshot.mount_point, &device, is_swap, &fs_type, None);
+					report_action_outcome(&btn, "Mounted", "Could not mount", &snapshot.mount_point, result, &refresh);
+				}
+			},
+		);
+	}
+	{
+		let entry = entry.clone();
+		let refresh = refresh.clone();
+		let btn = remount_btn.clone();
+		popup::connect_clicked_confirm(
+			&remount_btn,
+			"Remount",
+			"Are you sure you want to remount this entry?",
+			|| None,
+			move || {
+				let (mount_point, is_swap) = {
+					let entry = entry.borrow();
+					(entry.mount_point.clone(), entry.fs_type == FsType::Swap)
+				};
+				if is_swap {
+					popup::present_simple_dialog(&btn, "Cannot remount", "Swap cannot be remounted.");
+					return;
+				}
+				if mount_point.trim().is_empty() {
+					popup::present_simple_dialog(&btn, "Cannot remount", "The mount point is empty.");
+					return;
+				}
+				let result = privileged::remount(&mount_point, is_swap);
+				report_action_outcome(&btn, "Remounted", "Could not remount", &mount_point, result, &refresh);
+			},
+		);
+	}
+	{
+		let entry = entry.clone();
+		let refresh = refresh.clone();
+		let btn = unmount_btn.clone();
+		popup::connect_clicked_confirm(
+			&unmount_btn,
+			"Unmount",
+			"Are you sure you want to unmount this entry?",
+			|| None,
+			move || {
+				let (mount_point, device, is_swap) = {
+					let entry = entry.borrow();
+					(
+						entry.mount_point.clone(),
+						credentials_flow::action_device(&entry),
+						entry.fs_type == FsType::Swap,
+					)
+				};
+				if mount_point.trim().is_empty() && !is_swap {
+					popup::present_simple_dialog(&btn, "Cannot unmount", "The mount point is empty.");
+					return;
+				}
+				let result = privileged::unmount(&mount_point, &device, is_swap);
+				report_action_outcome(&btn, "Unmounted", "Could not unmount", &mount_point, result, &refresh);
+			},
+		);
+	}
+}
+
+fn add_user_label_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &Button) {
 	let row = EntryRow::builder()
 		.title("Label")
 		.text(entry.borrow().user_label.as_deref().unwrap_or(""))
@@ -693,7 +887,7 @@ fn add_spin_row(
 	action_row: &ActionRow,
 	title: &str,
 	initial: u8,
-	reset_btn: &gtk::Button,
+	reset_btn: &Button,
 	apply: impl Fn(&mut StabEntry, u8) + 'static,
 ) {
 	let entry = entry.clone();

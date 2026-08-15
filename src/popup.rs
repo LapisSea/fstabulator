@@ -12,6 +12,17 @@ pub fn present_simple_dialog(widget: &impl IsA<Widget>, heading: &str, body: &st
 	dialog.present(parent.as_ref());
 }
 
+pub fn present_bullet_dialog(widget: &impl IsA<Widget>, heading: &str, body: &str, bullets: &[String]) {
+	let parent = parent_window(widget);
+	let markup = bullets.iter().map(|bullet| format!("• {bullet}")).collect::<Vec<_>>().join("\n");
+	let label = gtk::Label::builder().use_markup(true).label(&markup).wrap(true).xalign(0.0).build();
+	let dialog = AlertDialog::builder().heading(heading).body(body).build();
+	dialog.set_extra_child(Some(&label));
+	dialog.add_response("ok", "OK");
+	dialog.set_default_response(Some("ok"));
+	dialog.present(parent.as_ref());
+}
+
 pub fn confirm_popup(
 	parent_widget: &impl IsA<gtk::Widget>,
 	confirm_choice: &str,
@@ -39,7 +50,7 @@ pub fn confirm_popup(
 	dialog.present(parent.as_ref());
 }
 
-fn parent_window(widget: &impl IsA<Widget>) -> Option<gtk::Window> {
+pub(crate) fn parent_window(widget: &impl IsA<Widget>) -> Option<gtk::Window> {
 	widget.root().and_then(|root| root.downcast::<gtk::Window>().ok())
 }
 

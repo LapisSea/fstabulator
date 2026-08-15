@@ -1,4 +1,5 @@
 use crate::GC;
+use crate::device_value::DeviceKind;
 use crate::render_list_entry;
 use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::stab_yurself::StabEntry;
@@ -82,6 +83,10 @@ pub enum FsType {
 }
 
 impl FsType {
+	pub fn is_network(&self) -> bool {
+		matches!(DeviceKind::for_fs_type(self), [DeviceKind::Network])
+	}
+
 	pub fn description(&self) -> &'static str {
 		match self {
 			FsType::Ext2 => "original non-journaling ext filesystem, still used for small boot partitions",
