@@ -1,7 +1,7 @@
 use crate::GC;
 use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
-use anyhow::{Context, Error, Result, bail};
+use anyhow::{Context, Result, bail};
 use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -41,13 +41,19 @@ impl StabEntry {
 		normalize_whitespace(&self.original)
 	}
 
-	pub fn reset(&mut self) {
-		let Ok(original) = Self::from(self.line, &self.original) else {
-			if self.original.is_empty() {
-				*self = Self::blank(self.line);
-			} else {
+	fn original_or_blank(&self) -> Option<StabEntry> {
+		match Self::from(self.line, &self.original) {
+			Ok(original) => Some(original),
+			Err(_) if self.original.is_empty() => Some(Self::blank(self.line)),
+			Err(_) => {
 				eprintln!("BUG: Could not parse original entry: {}", self.original);
+				None
 			}
+		}
+	}
+
+	pub fn reset(&mut self) {
+		let Some(original) = self.original_or_blank() else {
 			return;
 		};
 		self.active = original.active;
@@ -68,13 +74,8 @@ impl StabEntry {
 	}
 
 	pub fn is_changed(&self) -> bool {
-		let original = match Self::from(self.line, &self.original) {
-			Ok(original) => original,
-			Err(_) if self.original.is_empty() => Self::blank(self.line),
-			Err(_) => {
-				eprintln!("BUG: Could not parse original entry: {}", self.original);
-				return true;
-			}
+		let Some(original) = self.original_or_blank() else {
+			return true;
 		};
 		self.active != original.active
 			|| self.device != original.device
@@ -83,6 +84,13 @@ impl StabEntry {
 			|| self.options != original.options
 			|| self.dump != original.dump
 			|| self.pass != original.pass
+	}
+
+	pub fn mount_point_changed(&self) -> bool {
+		let Some(original) = self.original_or_blank() else {
+			return true;
+		};
+		original.mount_point != self.mount_point
 	}
 
 	pub fn from(line: usize, raw: &str) -> Result<Self> {
@@ -162,7 +170,7 @@ pub enum StabLine {
 	Blank,
 	Comment(String),
 	Entry(GC<StabEntry>),
-	Unparsable(Error, String),
+	Unparsable(String),
 }
 
 fn normalize_whitespace(s: &str) -> String {
@@ -179,12 +187,11 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 			if line.trim().is_empty() {
 				return StabLine::Blank;
 			}
-			StabEntry::from(line_num, line).map(|e| StabLine::Entry(GC::new(e))).unwrap_or_else(|e| {
-				if line.starts_with('#') {
-					return StabLine::Comment(line.to_string());
-				}
-				StabLine::Unparsable(e, line.to_string())
-			})
+			match StabEntry::from(line_num, line) {
+				Ok(e) => StabLine::Entry(GC::new(e)),
+				Err(_) if line.starts_with('#') => StabLine::Comment(line.to_string()),
+				Err(_) => StabLine::Unparsable(line.to_string()),
+			}
 		})
 		.collect::<Vec<_>>();
 
@@ -196,20 +203,36 @@ fn parse_fstab(raw: &str) -> Vec<StabLine> {
 pub struct StabFile {
 	path: PathBuf,
 	pub lines: Vec<StabLine>,
+	pub(crate) reference: String,
 }
 
 impl StabFile {
 	pub fn read<P: Into<PathBuf>>(path: P) -> Result<Self> {
 		let path = path.into();
 		let raw = std::fs::read_to_string(&path).with_context(|| format!("Could not read {}", path.display()))?;
-		let lines = parse_fstab(&raw);
-		Ok(Self { path, lines })
+		let mut file = Self::from_raw(&raw);
+		file.path = path;
+		Ok(file)
+	}
+	pub fn from_raw(raw: &str) -> Self {
+		let lines = parse_fstab(raw);
+		let mut file = Self {
+			path: PathBuf::new(),
+			lines,
+			reference: String::new(),
+		};
+		file.reference = file.to_string();
+		file
 	}
 	pub fn empty() -> Self {
 		Self {
 			path: PathBuf::new(),
 			lines: Vec::new(),
+			reference: String::new(),
 		}
+	}
+	pub fn is_changed(&self) -> bool {
+		self.to_string() != self.reference
 	}
 	pub fn entries(&self) -> impl Iterator<Item = &GC<StabEntry>> {
 		self.lines.iter().filter_map(|e| match e {
@@ -229,18 +252,36 @@ impl StabFile {
 			.filter(|(_, l)| matches!(l, StabLine::Entry(_)))
 			.nth(index)?
 			.0;
-		match self.lines.remove(pos) {
-			StabLine::Entry(e) => Some(e),
-			_ => unreachable!(),
-		}
+		let Some(StabLine::Entry(entry)) = self.lines.get(pos) else {
+			return None;
+		};
+		let entry = entry.clone();
+		self.lines.remove(pos);
+		Some(entry)
 	}
 
 	pub fn push_entry(&mut self, entry: StabEntry) {
 		self.lines.push(StabLine::Entry(GC::new(entry)));
 	}
 
-	pub fn is_changed(&self) -> bool {
-		self.entries().any(|e| e.borrow().is_changed())
+	/// Combine this file's entries with backup, keeps note of what changed between 2 files
+	pub fn overlay_backup(&self, backup: &StabFile) -> Vec<StabLine> {
+		let baseline: Vec<StabEntry> = self.entries().map(|entry| entry.borrow().clone()).collect();
+		backup
+			.lines
+			.iter()
+			.map(|line| match line {
+				StabLine::Entry(backup_entry) => {
+					let backup_entry = backup_entry.borrow();
+					let mut restored = backup_entry.clone();
+					restored.original = match_baseline(&restored, &baseline).map(|entry| entry.original).unwrap_or_default();
+					StabLine::Entry(GC::new(restored))
+				}
+				StabLine::Blank => StabLine::Blank,
+				StabLine::Comment(comment) => StabLine::Comment(comment.clone()),
+				StabLine::Unparsable(raw) => StabLine::Unparsable(raw.clone()),
+			})
+			.collect()
 	}
 
 	pub fn to_string(&self) -> String {
@@ -257,7 +298,7 @@ impl StabFile {
 				}
 				StabLine::Blank => String::new(),
 				StabLine::Comment(val) => val.clone(),
-				StabLine::Unparsable(_, val) => val.clone(),
+				StabLine::Unparsable(val) => val.clone(),
 			})
 			.collect::<Vec<_>>()
 			.join("\n")
@@ -304,6 +345,13 @@ fn split(raw: &str) -> (Vec<&str>, bool) {
 
 fn comment_content(comment: &str) -> Option<&str> {
 	comment.strip_prefix('#').map(str::trim).filter(|s| !s.is_empty())
+}
+
+fn match_baseline(entry: &StabEntry, baseline: &[StabEntry]) -> Option<StabEntry> {
+	let mut candidates = baseline.iter().filter(|candidate| candidate.mount_point == entry.mount_point);
+	let first = candidates.next();
+	let preferred = candidates.find(|candidate| candidate.device == entry.device);
+	preferred.or(first).cloned()
 }
 
 fn merge_comments_into_labels(entries: &mut Vec<StabLine>) {
@@ -421,5 +469,73 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 		blank.reset();
 		assert_eq!(blank.device.value, "");
 		assert!(!blank.is_changed());
+	}
+
+	#[test]
+	fn mount_point_changed_detects_unsaved_change() {
+		let mut entry = StabEntry::from(0, "UUID=1 /mnt/data ext4 defaults 0 2").unwrap();
+		assert!(!entry.mount_point_changed());
+		entry.mount_point = "/mnt/other".to_string();
+		assert!(entry.mount_point_changed());
+		assert!(entry.is_changed());
+
+		let mut blank = StabEntry::blank(0);
+		assert!(!blank.mount_point_changed());
+		blank.mount_point = "/mnt/data".to_string();
+		assert!(blank.mount_point_changed());
+	}
+
+	#[test]
+	fn restoring_backup_keeps_real_fstab_as_original() {
+		let real = "\
+UUID=1 / ext4 defaults 0 1
+UUID=2 /home xfs defaults 0 2
+";
+		let backup = "\
+UUID=1 / ext4 defaults 0 1
+UUID=9 /home xfs defaults 0 2
+UUID=3 /mnt/tmp ext4 defaults 0 2
+";
+		let baseline = StabFile::from_raw(real);
+		let backup_file = StabFile::from_raw(backup);
+		let restored = baseline.overlay_backup(&backup_file);
+
+		let entries: Vec<StabEntry> = restored
+			.iter()
+			.filter_map(|line| match line {
+				StabLine::Entry(entry) => Some(entry.borrow().clone()),
+				_ => None,
+			})
+			.collect();
+
+		assert_eq!(entries.len(), 3);
+		assert!(!entries[0].is_changed(), "identical entry should stay unmodified");
+		assert!(entries[1].is_changed(), "changed device should be reported as modified");
+		assert_eq!(entries[1].original, "UUID=2 /home xfs defaults 0 2");
+		assert_eq!(entries[1].device.value, "9");
+		assert!(entries[2].is_changed(), "entry absent from real fstab should be reported as modified");
+		assert_eq!(entries[2].original, "");
+	}
+
+	#[test]
+	fn file_is_changed_detects_added_removed_and_modified_entries() {
+		let raw = "\
+UUID=1 / ext4 defaults 0 1
+UUID=2 /home xfs defaults 0 2
+";
+		let mut file = StabFile::from_raw(raw);
+		assert!(!file.is_changed(), "freshly parsed file should be unmodified");
+
+		file.remove_entry(0);
+		assert!(file.is_changed(), "removed entry should mark the file as changed");
+
+		let mut file = StabFile::from_raw(raw);
+		file.push_entry(StabEntry::from(2, "UUID=3 /mnt ext4 defaults 0 2").unwrap());
+		assert!(file.is_changed(), "added entry should mark the file as changed");
+
+		let mut file = StabFile::from_raw(raw);
+		let entry = file.entry_at(0).unwrap();
+		entry.borrow_mut().mount_point = "/other".to_string();
+		assert!(file.is_changed(), "modified entry should mark the file as changed");
 	}
 }

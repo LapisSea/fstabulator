@@ -61,6 +61,19 @@ impl<T> GC<T> {
 
 pub(crate) type RebuildEditor = GC<Option<Rc<dyn Fn()>>>;
 
+thread_local! {
+	static FILE_CHANGED_NOTIFIER: std::cell::RefCell<Option<Rc<dyn Fn()>>> = std::cell::RefCell::new(None);
+}
+
+pub(crate) fn refresh_changed_ui() {
+	FILE_CHANGED_NOTIFIER.with(|notifier| {
+		let callback = notifier.borrow().clone();
+		if let Some(callback) = callback {
+			callback();
+		}
+	});
+}
+
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
 fn register_icon() {
@@ -112,9 +125,21 @@ fn build_ui(application: &Application) {
 
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
 	{
-		make_backup_btn.connect_clicked(move |btn| match privileged::make_backup() {
-			Ok(()) => popup::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
-			Err(err) => popup::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
+		let stab_file = stab_file.clone();
+		make_backup_btn.connect_clicked(move |btn| {
+			if !stab_file.borrow().is_changed() {
+				perform_make_backup(btn);
+				return;
+			}
+			let btn = btn.clone();
+			let parent = btn.clone();
+			popup::confirm_popup(
+				&parent,
+				"Make backup",
+				"Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?",
+				None::<&Widget>,
+				move || perform_make_backup(&btn),
+			);
 		});
 	}
 	row.append(&make_backup_btn);
@@ -168,6 +193,18 @@ fn build_ui(application: &Application) {
 		);
 	}
 	row.append(&revert_changes_btn);
+
+	{
+		let stab_file = stab_file.clone();
+		let save_changes_btn = save_changes_btn.clone();
+		let revert_changes_btn = revert_changes_btn.clone();
+		let notifier: Rc<dyn Fn()> = Rc::new(move || {
+			let changed = stab_file.borrow().is_changed();
+			save_changes_btn.set_sensitive(changed);
+			revert_changes_btn.set_sensitive(changed);
+		});
+		FILE_CHANGED_NOTIFIER.with(|cell| *cell.borrow_mut() = Some(notifier));
+	}
 
 	let left_panel = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -280,6 +317,13 @@ fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
 	main_box.append(&wrap_scroll(&text));
 }
 
+fn perform_make_backup(btn: &Button) {
+	match privileged::make_backup() {
+		Ok(()) => popup::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
+		Err(err) => popup::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
+	}
+}
+
 fn make_icon_label_button(icon: &str, label: &str) -> Button {
 	let hbox = GtkBox::builder()
 		.orientation(Orientation::Horizontal)
@@ -313,6 +357,7 @@ pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset
 		action_row.remove_css_class("changed");
 	}
 	update_list_icons(action_row, entry);
+	refresh_changed_ui();
 }
 
 const NOFAIL_WARNING_CLASS: &str = "nofail-warning";
@@ -417,8 +462,10 @@ pub(crate) fn clear_children<W: IsA<gtk::Widget>>(widget: &W) {
 fn populate_list(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gtk::Box) {
 	clear_children(list_box);
 
+	let entries: Vec<GC<StabEntry>> = stab_file.borrow().entries().cloned().collect();
+
 	let mut first = true;
-	for entry in stab_file.borrow().entries() {
+	for entry in &entries {
 		let row = make_list_row(list_box, stab_file, editor_panel, &entry.borrow());
 		list_box.append(&row);
 		if first {
@@ -448,6 +495,7 @@ fn populate_list(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gt
 		stab_file_ref.borrow_mut().push_entry(new_entry);
 		list_box_ref.insert(&row, add_row_ref.index());
 		list_box_ref.select_row(Some(&row));
+		refresh_changed_ui();
 	});
 
 	list_box.append(&add_row);
@@ -486,11 +534,6 @@ fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_p
 		let list_panel = list_panel.clone();
 		let editor_panel = editor_panel.clone();
 		move |backup: (PathBuf, SystemTime), _index| {
-			let changed = stab_file.borrow().is_changed();
-			if !changed {
-				load_backup(&backup.0, &stab_file, &list_panel, &editor_panel);
-				return;
-			}
 			let path = backup.0.clone();
 			let stab_file = stab_file.clone();
 			let list_panel = list_panel.clone();
@@ -501,7 +544,7 @@ fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_p
 				"Restore",
 				"Are you sure? Any changes made will be lost!",
 				None::<&Widget>,
-				move || load_backup(&path, &stab_file, &list_panel, &editor_panel),
+				move || restore_backup(&path, &stab_file, &list_panel, &editor_panel),
 			);
 		}
 	};
@@ -523,14 +566,35 @@ fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_p
 
 fn load_fstab_file(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) -> anyhow::Result<()> {
 	let new_file = StabFile::read(path)?;
-	stab_file.borrow_mut().lines = new_file.lines;
+	*stab_file.borrow_mut() = new_file;
 	clear_children(editor_panel);
 	populate_list(list_panel, stab_file, editor_panel);
+	refresh_changed_ui();
 	Ok(())
 }
 
 fn load_backup(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) {
 	if let Err(err) = load_fstab_file(path, stab_file, list_panel, editor_panel) {
+		popup::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
+	}
+}
+
+fn restore_backup(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) {
+	let result = (|| -> anyhow::Result<()> {
+		let baseline = StabFile::read("/etc/fstab")?;
+		let backup = StabFile::read(path)?;
+		let lines = baseline.overlay_backup(&backup);
+		{
+			let mut file = stab_file.borrow_mut();
+			file.lines = lines;
+			file.reference = baseline.reference;
+		}
+		clear_children(editor_panel);
+		populate_list(list_panel, stab_file, editor_panel);
+		refresh_changed_ui();
+		Ok(())
+	})();
+	if let Err(err) = result {
 		popup::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
 	}
 }
@@ -604,6 +668,7 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFil
 			if let Some(new_row) = list_box.row_at_index(new_index as i32) {
 				list_box.select_row(Some(&new_row));
 			}
+			refresh_changed_ui();
 		}
 	};
 
@@ -653,24 +718,18 @@ fn build_editor_panel(
 	editor_panel.append(&options_group);
 
 	add_user_label_row(&edit_props, entry, action_row, &reset_btn);
-	device_value::add_device_row(&edit_props, entry, action_row, &reset_btn);
+	let device_row = device_value::add_device_row(&edit_props, entry, action_row, &reset_btn);
 	mount_point_value::add_mount_point_row(&edit_props, entry, action_row, &reset_btn);
 	{
-		let (options_group, reset_btn) = (options_group.clone(), reset_btn.clone());
-		let (action_row, entry) = (action_row.clone(), entry.clone());
+		let (entry, action_row, reset_btn) = (entry.clone(), action_row.clone(), reset_btn.clone());
+		let (device_row, options_group) = (device_row.clone(), options_group.clone());
 		fs_value::add_fs_type_row(&edit_props.clone(), &entry.clone(), &action_row.clone(), &reset_btn.clone(), {
 			move || {
+				device_row.refresh_kinds();
 				build_options_group(&options_group, &entry, &action_row, &reset_btn);
 			}
 		});
 	}
-
-	add_spin_row(&edit_props, entry, action_row, "Dump", entry.borrow().dump, &reset_btn, |entry, value| {
-		entry.dump = value
-	});
-	add_spin_row(&edit_props, entry, action_row, "Pass", entry.borrow().pass, &reset_btn, |entry, value| {
-		entry.pass = value
-	});
 
 	let active_row = SwitchRow::builder().title("Active").active(entry.borrow().active).build();
 	{
@@ -689,19 +748,52 @@ fn build_editor_panel(
 
 	add_mount_group(editor_panel, entry, rebuild_editor);
 
+	let fsck_group = PreferencesGroup::builder().title("Extra").build();
+	add_spin_row(
+		&fsck_group,
+		entry,
+		action_row,
+		"Dump",
+		"Controls the dump backup frequency; 0 disables",
+		entry.borrow().dump,
+		&reset_btn,
+		|entry, value| entry.dump = value,
+	);
+	add_spin_row(
+		&fsck_group,
+		entry,
+		action_row,
+		"Pass",
+		"Controls the fsck check order; 0 disables",
+		entry.borrow().pass,
+		&reset_btn,
+		|entry, value| entry.pass = value,
+	);
+	editor_panel.append(&fsck_group);
+
 	let entry = entry.clone();
 	let action_row = action_row.clone();
 	let list_box = list_box.clone();
 	let list_row = list_row.clone();
 	let options_group = options_group.clone();
 	let reset_btn_ref = reset_btn.clone();
+	let device_row = device_row.clone();
 	reset_btn.connect_clicked(move |_| {
 		entry.borrow_mut().reset();
+		device_row.refresh_kinds();
 		build_options_group(&options_group, &entry, &action_row, &reset_btn_ref);
 		render_list_entry(&action_row, &entry.borrow(), None);
 		list_box.unselect_all();
 		list_box.select_row(Some(&list_row));
 	});
+}
+
+fn present_unsaved_changes(btn: &Button, heading: &str, subject: &str) {
+	popup::present_simple_dialog(
+		btn,
+		&format!("Cannot {heading}"),
+		&format!("{subject} has unsaved changes. Save your changes before {heading}ing."),
+	);
 }
 
 fn report_action_outcome(btn: &Button, done: &str, failed: &str, subject: &str, result: anyhow::Result<()>, refresh: &Rc<dyn Fn()>) {
@@ -715,7 +807,7 @@ fn report_action_outcome(btn: &Button, done: &str, failed: &str, subject: &str, 
 }
 
 fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_editor: RebuildEditor) {
-	let group = PreferencesGroup::builder().title("Mount").build();
+	let group = PreferencesGroup::builder().title("Mount actions").build();
 	editor_panel.append(&group);
 
 	let status_label = gtk::Label::new(None);
@@ -794,6 +886,10 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 					popup::present_simple_dialog(&btn, "Cannot mount", "The mount point is empty.");
 					return;
 				}
+				if snapshot.is_changed() {
+					present_unsaved_changes(&btn, "mount", "The entry");
+					return;
+				}
 				if credentials_flow::needs_credentials(&snapshot) {
 					credentials_flow::mount_with_credentials(&btn, entry.clone(), snapshot.clone(), rebuild_editor.clone(), refresh.clone());
 				} else {
@@ -816,9 +912,9 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 			"Are you sure you want to remount this entry?",
 			|| None,
 			move || {
-				let (mount_point, is_swap) = {
+				let (mount_point, is_swap, changed) = {
 					let entry = entry.borrow();
-					(entry.mount_point.clone(), entry.fs_type == FsType::Swap)
+					(entry.mount_point.clone(), entry.fs_type == FsType::Swap, entry.is_changed())
 				};
 				if is_swap {
 					popup::present_simple_dialog(&btn, "Cannot remount", "Swap cannot be remounted.");
@@ -826,6 +922,10 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 				}
 				if mount_point.trim().is_empty() {
 					popup::present_simple_dialog(&btn, "Cannot remount", "The mount point is empty.");
+					return;
+				}
+				if changed {
+					present_unsaved_changes(&btn, "remount", "The entry");
 					return;
 				}
 				let result = privileged::remount(&mount_point, is_swap);
@@ -843,16 +943,21 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 			"Are you sure you want to unmount this entry?",
 			|| None,
 			move || {
-				let (mount_point, device, is_swap) = {
+				let (mount_point, device, is_swap, mount_point_changed) = {
 					let entry = entry.borrow();
 					(
 						entry.mount_point.clone(),
 						credentials_flow::action_device(&entry),
 						entry.fs_type == FsType::Swap,
+						entry.mount_point_changed(),
 					)
 				};
 				if mount_point.trim().is_empty() && !is_swap {
 					popup::present_simple_dialog(&btn, "Cannot unmount", "The mount point is empty.");
+					return;
+				}
+				if mount_point_changed {
+					present_unsaved_changes(&btn, "unmount", "The mount point");
 					return;
 				}
 				let result = privileged::unmount(&mount_point, &device, is_swap);
@@ -886,6 +991,7 @@ fn add_spin_row(
 	entry: &GC<StabEntry>,
 	action_row: &ActionRow,
 	title: &str,
+	subtitle: &str,
 	initial: u8,
 	reset_btn: &Button,
 	apply: impl Fn(&mut StabEntry, u8) + 'static,
@@ -898,6 +1004,7 @@ fn add_spin_row(
 
 	let row = SpinRow::new(Some(&adjustment), 1.0, 0);
 	row.set_title(title);
+	row.set_subtitle(subtitle);
 	row.set_range(0.0, 255.0);
 	row.set_climb_rate(1.0);
 	row.set_numeric(true);

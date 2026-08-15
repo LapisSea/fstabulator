@@ -342,7 +342,7 @@ fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descri
 }
 
 fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
-	let input = gtk::Entry::builder().text(current).hexpand(true).build();
+	let input = gtk::Entry::builder().text(current).hexpand(true).margin_start(12).build();
 	let find_btn = build_subvol_find_button(&ctx, &input, name);
 
 	let title = gtk::Label::builder().label(name).halign(Align::Start).wrap(true).build();

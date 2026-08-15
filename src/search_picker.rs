@@ -8,6 +8,8 @@ pub enum ErrorRenderer {
 	Custom(&'static dyn Fn(&anyhow::Error) -> Widget),
 }
 
+const MAX_LIST_HEIGHT: i32 = 240;
+
 pub fn build_search_picker<T: Clone + 'static>(
 	search_placeholder: &str,
 	menu_label: &str,
@@ -27,7 +29,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 	let list_box = ListBox::builder().css_classes(["boxed-list"]).hexpand(true).valign(Align::Start).build();
 	let scroll = ScrolledWindow::builder()
 		.child(&list_box)
-		.max_content_height(240)
+		.max_content_height(MAX_LIST_HEIGHT)
 		.max_content_width(360)
 		.propagate_natural_height(true)
 		.hexpand(true)
@@ -60,6 +62,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 	{
 		let search = search.clone();
 		let list_box = list_box.clone();
+		let scroll = scroll.clone();
 		let menu_btn = menu_btn.clone();
 		let search_box = search_box.clone();
 		let error_box = error_box.clone();
@@ -83,7 +86,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 					clear_children(&error_box);
 					*items.borrow_mut() = data;
 					search.set_text("");
-					render(&search, &list_box, &items, &shown, &filter, &render_row);
+					render(&search, &list_box, &scroll, &items, &shown, &filter, &render_row);
 					search.grab_focus();
 				}
 				Err(err) => {
@@ -99,12 +102,13 @@ pub fn build_search_picker<T: Clone + 'static>(
 	{
 		let search = search.clone();
 		let list_box = list_box.clone();
+		let scroll = scroll.clone();
 		let items = items.clone();
 		let shown = shown.clone();
 		let filter = filter.clone();
 		let render_row = render_row.clone();
 		search.connect_search_changed(move |search| {
-			render(search, &list_box, &items, &shown, &filter, &render_row);
+			render(search, &list_box, &scroll, &items, &shown, &filter, &render_row);
 		});
 	}
 
@@ -132,6 +136,7 @@ pub fn build_search_picker<T: Clone + 'static>(
 fn render<T: Clone>(
 	search: &SearchEntry,
 	list_box: &ListBox,
+	scroll: &ScrolledWindow,
 	items: &GC<Vec<T>>,
 	shown: &GC<Vec<T>>,
 	filter: &Rc<dyn Fn(&str, &T) -> bool>,
@@ -147,4 +152,6 @@ fn render<T: Clone>(
 		}
 	}
 	*shown.borrow_mut() = matches;
+	let natural = list_box.measure(Orientation::Vertical, -1).1;
+	scroll.set_height_request(if natural > 0 { natural.min(MAX_LIST_HEIGHT) } else { -1 });
 }

@@ -160,11 +160,17 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 					refresh();
 				}
 				Err(err) => {
-					let Some(path) = saved_path.filter(|_| matches!(outcome, CredentialsOutcome::SavedNew(_))) else {
+					let Some(path) = saved_path else {
 						popup::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
 						return;
 					};
 					let filename = path.file_name().and_then(|name| name.to_str()).unwrap_or_default().to_string();
+					let created_this_attempt = matches!(outcome, CredentialsOutcome::SavedNew(_))
+						&& inspect_credentials_file(&filename).map(|info| info.exists).unwrap_or(false);
+					if !created_this_attempt {
+						popup::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
+						return;
+					}
 					popup::confirm_popup(
 						&btn,
 						"Delete credentials",

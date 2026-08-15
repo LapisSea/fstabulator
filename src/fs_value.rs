@@ -6,6 +6,8 @@ use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
 use gtk::{Align, Box as GtkBox, Entry, Orientation};
+use std::rc::Rc;
+use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::{Display, EnumIter, EnumString};
 
@@ -140,6 +142,7 @@ pub fn add_fs_type_row(
 	reset_btn: &gtk::Button,
 	on_change: impl Fn() + 'static,
 ) {
+	let on_change = Rc::new(on_change);
 	let choices: Vec<FsChoice> = FsType::iter()
 		.filter(|e| !matches!(e, FsType::Other(_)))
 		.map(FsChoice::Known)
@@ -181,11 +184,17 @@ pub fn add_fs_type_row(
 		let reset_btn = reset_btn.clone();
 		let value_entry = value_entry.clone();
 		let menu_btn_holder = menu_btn_holder.clone();
+		let on_change = on_change.clone();
 		move |choice: FsChoice, _index: usize| {
-			entry.borrow_mut().fs_type = match choice {
+			let fs_type = match choice {
 				FsChoice::Known(fs_type) => fs_type,
 				FsChoice::Other => FsType::Other(value_entry.text().to_string()),
 			};
+			{
+				let mut entry = entry.borrow_mut();
+				entry.device = entry.device.reclassify_for(&fs_type);
+				entry.fs_type = fs_type;
+			}
 			let is_other = matches!(entry.borrow().fs_type, FsType::Other(_));
 			value_entry.set_visible(is_other);
 			if let Some(menu_btn) = menu_btn_holder.borrow().as_ref() {
@@ -225,6 +234,35 @@ pub fn add_fs_type_row(
 			entry.borrow_mut().fs_type = FsType::Other(value_entry.text().to_string());
 			menu_btn.set_label("Other");
 			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+		});
+	}
+
+	{
+		let entry = entry.clone();
+		let action_row = action_row.clone();
+		let reset_btn = reset_btn.clone();
+		let menu_btn = menu_btn.clone();
+		let value_entry = value_entry.clone();
+		let on_change = on_change.clone();
+		let controller = gtk::EventControllerFocus::new();
+		value_entry.add_controller(controller.clone());
+		controller.connect_leave(move |_| {
+			let text = value_entry.text().trim().to_lowercase();
+			match FsType::from_str(&text) {
+				Ok(FsType::Other(_)) => {}
+				Ok(fs_type) => {
+					{
+						let mut entry = entry.borrow_mut();
+						entry.device = entry.device.reclassify_for(&fs_type);
+						entry.fs_type = fs_type;
+					}
+					menu_btn.set_label(&entry.borrow().fs_type.to_string());
+					value_entry.set_visible(false);
+					render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+					on_change();
+				}
+				Err(_) => {}
+			}
 		});
 	}
 
