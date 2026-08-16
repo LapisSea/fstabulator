@@ -1,6 +1,6 @@
 use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
-use crate::fs_options::{FsOption, OptionValue};
+use crate::fs_options::{FsOption, OptionSpec, OptionValue};
 use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::subvolume::{Subvol, list_subvolumes};
 use crate::{GC, fs_options};
@@ -30,7 +30,7 @@ pub struct AddContext {
 	entry_ctx: EntryContext,
 	group: PreferencesGroup,
 	index: usize,
-	value: String,
+	value: FsOption,
 }
 
 impl AddContext {
@@ -39,7 +39,7 @@ impl AddContext {
 			entry_ctx: entry_ctx.clone(),
 			group: group.clone(),
 			index: 0,
-			value: String::new(),
+			value: FsOption::Named(String::new()),
 		}
 	}
 }
@@ -47,21 +47,21 @@ impl AddContext {
 fn add_option_row(ctx: AddContext) {
 	let trash = make_trash_button(&ctx);
 
-	let (name, current) = ctx
-		.value
-		.split_once('=')
-		.map(|(n, c)| (n.to_string(), c.to_string()))
-		.unwrap_or_else(|| (ctx.value.clone(), String::new()));
+	let name = ctx.value.name().to_string();
+	let current = match &ctx.value {
+		FsOption::Named(_) => String::new(),
+		FsOption::KeyValue(_, value) => value.clone(),
+	};
 
 	let option = fs_options::lookup(&ctx.entry_ctx.entry().borrow().fs_type, &name);
 
 	let row = ActionRow::builder().title(name.as_str()).build();
-	if let Some(FsOption { description, .. }) = option {
+	if let Some(OptionSpec { description, .. }) = option {
 		row.set_subtitle(description);
 	}
 
 	match option {
-		Some(FsOption {
+		Some(OptionSpec {
 			description: _,
 			value: OptionValue::Toggle,
 			..
@@ -69,7 +69,7 @@ fn add_option_row(ctx: AddContext) {
 			row.add_suffix(&trash);
 			ctx.group.add(&row);
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description: _,
 			value: OptionValue::Enum(values),
 			..
@@ -89,13 +89,13 @@ fn add_option_row(ctx: AddContext) {
 				let name = name.clone();
 				dropdown.connect_selected_notify(move |dropdown| {
 					let Some(selected) = model.string(dropdown.selected()) else { return };
-					set_option(&ctx, format!("{name}={selected}"));
+					set_option(&ctx, FsOption::from_kv(name.clone(), selected));
 				});
 			} else {
 				add_free_text_option_row(ctx.clone(), &trash);
 			}
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description: _,
 			value: OptionValue::Bool(bool_type),
 			..
@@ -113,45 +113,45 @@ fn add_option_row(ctx: AddContext) {
 			let name = name.clone();
 			check.connect_toggled(move |check| {
 				let value = if check.is_active() { on } else { off };
-				set_option(&ctx, format!("{name}={value}"));
+				set_option(&ctx, FsOption::from_kv(name.clone(), value));
 			});
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description,
 			value: OptionValue::Integer,
 			..
 		}) => {
 			add_spin_option_row(ctx.clone(), &trash, &name, description, &current, i32::MIN as f64, i32::MAX as f64);
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description,
 			value: OptionValue::IntegerRange(min, max),
 			..
 		}) => {
 			add_spin_option_row(ctx.clone(), &trash, &name, description, &current, min as f64, max as f64);
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description,
 			value: OptionValue::String,
 			..
 		}) => {
 			add_string_option_row(ctx.clone(), &trash, &name, description, &current);
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description,
 			value: OptionValue::Size,
 			..
 		}) => {
 			add_size_option_row(ctx.clone(), &trash, &name, description, &current);
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description,
 			value: OptionValue::Octal,
 			..
 		}) => {
 			add_octal_option_row(ctx.clone(), &trash, &name, description, &current);
 		}
-		Some(FsOption {
+		Some(OptionSpec {
 			description,
 			value: OptionValue::Subvol,
 			..
@@ -159,7 +159,7 @@ fn add_option_row(ctx: AddContext) {
 			add_subvol_option_row(ctx.clone(), &trash, &name, description, &current);
 		}
 		None
-		| Some(FsOption {
+		| Some(OptionSpec {
 			value: OptionValue::Toggle, ..
 		}) => {
 			add_free_text_option_row(ctx.clone(), &trash);
@@ -184,18 +184,18 @@ fn make_trash_button(ctx: &AddContext) -> Button {
 	trash
 }
 
-fn set_option(ctx: &AddContext, value: String) {
+fn set_option(ctx: &AddContext, value: FsOption) {
 	ctx.entry_ctx.entry().borrow_mut().options[ctx.index] = value;
 	ctx.entry_ctx.render();
 }
 
 fn add_free_text_option_row(ctx: AddContext, trash: &gtk::Button) {
-	let row = EntryRow::builder().title("Option").text(ctx.value.as_str()).build();
+	let row = EntryRow::builder().title("Option").text(ctx.value.to_string()).build();
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
 	row.connect_changed(move |row| {
-		set_option(&ctx, row.text().to_string());
+		set_option(&ctx, FsOption::from_raw(&row.text()));
 	});
 }
 
@@ -232,7 +232,7 @@ fn add_string_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descr
 	let ctx = ctx.clone();
 	let name = name.to_string();
 	input.connect_changed(move |input| {
-		set_option(&ctx, format!("{name}={}", input.text()));
+		set_option(&ctx, FsOption::from_kv(name.clone(), input.text()));
 	});
 }
 
@@ -251,7 +251,7 @@ fn add_spin_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	let ctx = ctx.clone();
 	let name = name.to_string();
 	row.adjustment().connect_value_changed(move |adjustment| {
-		set_option(&ctx, format!("{name}={}", adjustment.value().round() as i64));
+		set_option(&ctx, FsOption::from_kv(name.clone(), (adjustment.value().round() as i64).to_string()));
 	});
 }
 
@@ -294,7 +294,7 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 			Some("B") | None => apply_input.text().to_string(),
 			Some(s) => format!("{}{s}", apply_input.text()),
 		};
-		set_option(&ctx, format!("{name}={value}"));
+		set_option(&ctx, FsOption::from_kv(name.clone(), value));
 	});
 	input.connect_changed({
 		let apply = apply.clone();
@@ -330,7 +330,7 @@ fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descri
 			input.set_position(before.chars().count() as i32);
 			return;
 		}
-		set_option(&ctx, format!("{name}={cleaned}"));
+		set_option(&ctx, FsOption::from_kv(name.clone(), cleaned));
 	});
 }
 
@@ -374,7 +374,7 @@ fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descr
 	let ctx = ctx.clone();
 	let name = name.to_string();
 	input.connect_changed(move |input| {
-		set_option(&ctx, format!("{name}={}", input.text()));
+		set_option(&ctx, FsOption::from_kv(name.clone(), input.text()));
 	});
 }
 
@@ -419,7 +419,7 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 		move |subvol: Subvol, _| {
 			let value = if name == "subvolid" { subvol.id.to_string() } else { subvol.path };
 			input.set_text(&value);
-			set_option(&ctx, format!("{name}={value}"));
+			set_option(&ctx, FsOption::from_kv(name.clone(), value));
 		}
 	};
 
@@ -440,12 +440,8 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 
 fn add_add_option_row(ctx: AddContext) {
 	let entry_ref = ctx.entry_ctx.entry().borrow();
-	let existing: Vec<&str> = entry_ref
-		.options
-		.iter()
-		.map(|o| o.split_once('=').map(|(n, _)| n).unwrap_or(o.as_str()))
-		.collect();
-	let available: Vec<FsOption> = fs_options::options_for(&entry_ref.fs_type)
+	let existing: Vec<&str> = entry_ref.options.iter().map(fs_options::FsOption::name).collect();
+	let available: Vec<OptionSpec> = fs_options::options_for(&entry_ref.fs_type)
 		.into_iter()
 		.filter(|o| !existing.contains(&o.name))
 		.collect();
@@ -455,18 +451,18 @@ fn add_add_option_row(ctx: AddContext) {
 		let available = available.clone();
 		move || Ok(available.clone())
 	};
-	let render_row = |option: &FsOption| {
+	let render_row = |option: &OptionSpec| {
 		let row = ActionRow::builder().title(option.name).subtitle(option.description).build();
 		row.set_activatable(true);
 		row.upcast::<gtk::Widget>()
 	};
-	let filter = |query: &str, option: &FsOption| {
+	let filter = |query: &str, option: &OptionSpec| {
 		let query = query.trim().to_lowercase();
 		query.is_empty() || option.name.to_lowercase().contains(&query) || option.description.to_lowercase().contains(&query)
 	};
 	let on_select = {
 		let ctx = ctx.clone();
-		move |option: FsOption, _index: usize| {
+		move |option: OptionSpec, _index: usize| {
 			ctx.entry_ctx.entry().borrow_mut().options.push(default_option_value(option));
 			build_options_group(&ctx.group, &ctx.entry_ctx);
 			ctx.entry_ctx.render();
@@ -488,21 +484,20 @@ fn add_add_option_row(ctx: AddContext) {
 	ctx.group.add(&row);
 }
 
-fn default_option_value(option: FsOption) -> String {
-	let name = option.name;
+fn default_option_value(option: OptionSpec) -> FsOption {
 	if let Some(default) = option.default {
-		return format!("{name}={default}");
+		return FsOption::from_kv(option.name, default);
 	}
 	match option.value {
-		OptionValue::Toggle => name.to_string(),
-		OptionValue::Enum(values) => format!("{name}={}", values.first().copied().unwrap_or_default()),
-		OptionValue::Integer => format!("{name}=0"),
-		OptionValue::IntegerRange(min, max) => format!("{name}={}", 0.clamp(min, max)),
-		OptionValue::Octal => format!("{name}=0"),
-		OptionValue::Size => format!("{name}=0"),
-		OptionValue::Bool(bool_type) => format!("{name}={}", bool_type.values().0),
-		OptionValue::String => format!("{name}="),
-		OptionValue::Subvol => format!("{name}="),
+		OptionValue::Toggle => FsOption::from_named(option.name),
+		OptionValue::Enum(values) => FsOption::from_kv(option.name, values.first().copied().unwrap_or_default()),
+		OptionValue::Integer => FsOption::from_kv(option.name, "0"),
+		OptionValue::IntegerRange(min, max) => FsOption::from_kv(option.name, 0.clamp(min, max).to_string()),
+		OptionValue::Octal => FsOption::from_kv(option.name, "0"),
+		OptionValue::Size => FsOption::from_kv(option.name, "0"),
+		OptionValue::Bool(bool_type) => FsOption::from_kv(option.name, bool_type.values().0),
+		OptionValue::String => FsOption::from_kv(option.name, ""),
+		OptionValue::Subvol => FsOption::from_kv(option.name, ""),
 	}
 }
 
@@ -510,8 +505,8 @@ fn default_option_value(option: FsOption) -> String {
 mod tests {
 	use super::*;
 
-	fn opt(value: OptionValue) -> FsOption {
-		FsOption {
+	fn opt(value: OptionValue) -> OptionSpec {
+		OptionSpec {
 			name: "opt",
 			description: "",
 			value,
@@ -521,19 +516,30 @@ mod tests {
 
 	#[test]
 	fn default_option_values() {
-		assert_eq!(default_option_value(opt(OptionValue::Toggle)), "opt");
-		assert_eq!(default_option_value(opt(OptionValue::Enum(&["a", "b", "c"]))), "opt=a");
-		assert_eq!(default_option_value(opt(OptionValue::Integer)), "opt=0");
-		assert_eq!(default_option_value(opt(OptionValue::IntegerRange(-5, 5))), "opt=0");
-		assert_eq!(default_option_value(opt(OptionValue::IntegerRange(3, 10))), "opt=3");
-		assert_eq!(default_option_value(opt(OptionValue::IntegerRange(-10, -3))), "opt=-3");
-		assert_eq!(default_option_value(opt(OptionValue::Octal)), "opt=0");
-		assert_eq!(default_option_value(opt(OptionValue::Size)), "opt=0");
-		assert_eq!(default_option_value(opt(OptionValue::Bool(fs_options::BoolType::YesNo))), "opt=yes");
-		// assert_eq!(default_option_value(opt(OptionValue::Bool(fs_options::BoolType::TrueFalse))), "opt=true");
-		assert_eq!(default_option_value(opt(OptionValue::Bool(fs_options::BoolType::OneZero))), "opt=1");
-		assert_eq!(default_option_value(opt(OptionValue::String)), "opt=");
-		assert_eq!(default_option_value(opt(OptionValue::Subvol)), "opt=");
+		assert_eq!(default_option_value(opt(OptionValue::Toggle)), FsOption::from_named("opt"));
+		assert_eq!(
+			default_option_value(opt(OptionValue::Enum(&["a", "b", "c"]))),
+			FsOption::from_kv("opt", "a")
+		);
+		assert_eq!(default_option_value(opt(OptionValue::Integer)), FsOption::from_kv("opt", "0"));
+		assert_eq!(default_option_value(opt(OptionValue::IntegerRange(-5, 5))), FsOption::from_kv("opt", "0"));
+		assert_eq!(default_option_value(opt(OptionValue::IntegerRange(3, 10))), FsOption::from_kv("opt", "3"));
+		assert_eq!(
+			default_option_value(opt(OptionValue::IntegerRange(-10, -3))),
+			FsOption::from_kv("opt", "-3")
+		);
+		assert_eq!(default_option_value(opt(OptionValue::Octal)), FsOption::from_kv("opt", "0"));
+		assert_eq!(default_option_value(opt(OptionValue::Size)), FsOption::from_kv("opt", "0"));
+		assert_eq!(
+			default_option_value(opt(OptionValue::Bool(fs_options::BoolType::YesNo))),
+			FsOption::from_kv("opt", "yes")
+		);
+		assert_eq!(
+			default_option_value(opt(OptionValue::Bool(fs_options::BoolType::OneZero))),
+			FsOption::from_kv("opt", "1")
+		);
+		assert_eq!(default_option_value(opt(OptionValue::String)), FsOption::from_kv("opt", ""));
+		assert_eq!(default_option_value(opt(OptionValue::Subvol)), FsOption::from_kv("opt", ""));
 	}
 
 	#[test]
@@ -541,15 +547,37 @@ mod tests {
 		use crate::fs_value::FsType;
 		assert_eq!(
 			default_option_value(fs_options::lookup(&FsType::Btrfs, "compress").unwrap()),
-			"compress=zstd"
+			FsOption::from_kv("compress", "zstd")
 		);
 		assert_eq!(
 			default_option_value(fs_options::lookup(&FsType::Btrfs, "space_cache").unwrap()),
-			"space_cache=v2"
+			FsOption::from_kv("space_cache", "v2")
 		);
-		assert_eq!(default_option_value(fs_options::lookup(&FsType::Ext4, "data").unwrap()), "data=ordered");
-		assert_eq!(default_option_value(fs_options::lookup(&FsType::Tmpfs, "mode").unwrap()), "mode=01777");
-		assert_eq!(default_option_value(fs_options::lookup(&FsType::Overlay, "xino").unwrap()), "xino=auto");
-		assert_eq!(default_option_value(fs_options::lookup(&FsType::Nfs, "vers").unwrap()), "vers=4.2");
+		assert_eq!(
+			default_option_value(fs_options::lookup(&FsType::Ext4, "data").unwrap()),
+			FsOption::from_kv("data", "ordered")
+		);
+		assert_eq!(
+			default_option_value(fs_options::lookup(&FsType::Tmpfs, "mode").unwrap()),
+			FsOption::from_kv("mode", "01777")
+		);
+		assert_eq!(
+			default_option_value(fs_options::lookup(&FsType::Overlay, "xino").unwrap()),
+			FsOption::from_kv("xino", "auto")
+		);
+		assert_eq!(
+			default_option_value(fs_options::lookup(&FsType::Nfs, "vers").unwrap()),
+			FsOption::from_kv("vers", "4.2")
+		);
+	}
+
+	#[test]
+	fn from_raw_and_name() {
+		assert_eq!(FsOption::from_raw("defaults"), FsOption::from_named("defaults"));
+		assert_eq!(FsOption::from_raw("subvol=@home"), FsOption::from_kv("subvol", "@home"));
+		assert_eq!(FsOption::from_raw("a=b=c"), FsOption::from_kv("a", "b=c"));
+		assert_eq!(FsOption::from_raw("").name(), "");
+		assert_eq!(FsOption::from_raw("nofail").name(), "nofail");
+		assert_eq!(FsOption::from_raw("mode=0755").name(), "mode");
 	}
 }

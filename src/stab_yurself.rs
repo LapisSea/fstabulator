@@ -1,7 +1,9 @@
 use crate::GC;
 use crate::device_value::{DeviceKind, DeviceValue};
+use crate::fs_options;
 use crate::fs_value::FsType;
 use anyhow::{Context, Result, bail};
+use fs_options::FsOption;
 use std::fmt;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -14,7 +16,7 @@ pub struct StabEntry {
 	pub device: DeviceValue,
 	pub mount_point: String,
 	pub fs_type: FsType,
-	pub options: Vec<String>,
+	pub options: Vec<FsOption>,
 	pub dump: u8,
 	pub pass: u8,
 	pub original: String,
@@ -29,7 +31,7 @@ impl StabEntry {
 			device: DeviceValue::from("", DeviceKind::Other),
 			mount_point: String::new(),
 			fs_type: FsType::Other(String::new()),
-			options: vec!["defaults".to_string()],
+			options: vec![FsOption::Named("defaults".to_string())],
 			dump: 0,
 			pass: 0,
 			original: String::new(),
@@ -66,7 +68,7 @@ impl StabEntry {
 	}
 
 	pub fn has_option(&self, name: &str) -> bool {
-		self.options.iter().any(|o| o.split('=').next() == Some(name))
+		self.options.iter().any(|o| o.name() == name)
 	}
 
 	pub fn is_valid(&self) -> bool {
@@ -107,7 +109,7 @@ impl StabEntry {
 		let device = fields[0].to_string();
 		let mount_point = fields[1].to_string();
 		let fs_type = FsType::from_str(fields[2]).context(format!("Cannot parse fs_type: {}", fields[2]))?;
-		let options: Vec<String> = fields[3].split(',').map(|opt| opt.to_string()).collect();
+		let options: Vec<FsOption> = fields[3].split(',').map(FsOption::from_raw).collect();
 
 		let dump = fields[4]
 			.parse::<u8>()
@@ -153,7 +155,7 @@ impl StabEntry {
 			self.device.render(),
 			&self.mount_point,
 			&self.fs_type,
-			&self.options.join(","),
+			&self.options.iter().map(|o| o.to_string()).collect::<Vec<_>>().join(","),
 			self.dump,
 			self.pass
 		)

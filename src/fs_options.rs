@@ -6,6 +6,46 @@
 //! since they are accepted by every filesystem.
 
 use crate::fs_value::FsType;
+use std::fmt;
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub enum FsOption {
+	Named(String),
+	KeyValue(String, String),
+}
+
+impl FsOption {
+	pub fn from_raw(raw: &str) -> Self {
+		match raw.split_once('=') {
+			Some((name, value)) => FsOption::KeyValue(name.to_string(), value.to_string()),
+			None => FsOption::Named(raw.to_string()),
+		}
+	}
+
+	pub fn from_kv(name: impl Into<String>, value: impl Into<String>) -> Self {
+		FsOption::KeyValue(name.into(), value.into())
+	}
+
+	pub fn from_named(name: impl Into<String>) -> Self {
+		FsOption::Named(name.into())
+	}
+
+	pub fn name(&self) -> &str {
+		match self {
+			FsOption::Named(name) => name,
+			FsOption::KeyValue(name, _) => name,
+		}
+	}
+}
+
+impl fmt::Display for FsOption {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		match self {
+			FsOption::Named(name) => write!(f, "{name}"),
+			FsOption::KeyValue(name, value) => write!(f, "{name}={value}"),
+		}
+	}
+}
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum BoolType {
@@ -55,7 +95,7 @@ pub enum OptionValue {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub struct FsOption {
+pub struct OptionSpec {
 	pub name: &'static str,
 	pub description: &'static str,
 	pub value: OptionValue,
@@ -64,7 +104,7 @@ pub struct FsOption {
 
 macro_rules! opt {
 	($name:literal, $value:expr, $description:literal) => {
-		FsOption {
+		OptionSpec {
 			name: $name,
 			description: $description,
 			value: $value,
@@ -72,7 +112,7 @@ macro_rules! opt {
 		}
 	};
 	($name:literal, $value:expr, $description:literal, $default:literal) => {
-		FsOption {
+		OptionSpec {
 			name: $name,
 			description: $description,
 			value: $value,
@@ -82,7 +122,7 @@ macro_rules! opt {
 }
 
 #[rustfmt::skip]
-pub const GENERIC_OPTIONS: &[FsOption] = &[
+pub const GENERIC_OPTIONS: &[OptionSpec] = &[
 	opt!("async", OptionValue::Toggle, "All I/O to the filesystem is done asynchronously."),
 	opt!("atime", OptionValue::Toggle, "Update inode access time on every access."),
 	opt!("auto", OptionValue::Toggle, "Can be mounted with the -a (mount all) option."),
@@ -151,7 +191,7 @@ pub const GENERIC_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const EXT2_OPTIONS: &[FsOption] = &[
+pub const EXT2_OPTIONS: &[OptionSpec] = &[
 	opt!("acl", OptionValue::Toggle, "Enables POSIX access control lists."),
 	opt!("noacl", OptionValue::Toggle, "Disables POSIX access control lists."),
 	opt!("bsddf", OptionValue::Toggle, "statfs reports usable blocks minus filesystem overhead."),
@@ -179,7 +219,7 @@ pub const EXT2_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const EXT3_OPTIONS: &[FsOption] = &[
+pub const EXT3_OPTIONS: &[OptionSpec] = &[
 	opt!("barrier", OptionValue::Bool(BoolType::OneZero), "Enables write barriers in the journal code.", "1"),
 	opt!("commit", OptionValue::Integer, "Sets journal commit interval in seconds (default 5).", "5"),
 	opt!("data", OptionValue::Enum(&["journal", "ordered", "writeback"]), "Sets data journaling mode: journal, ordered, or writeback.", "ordered"),
@@ -194,7 +234,7 @@ pub const EXT3_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const EXT4_OPTIONS: &[FsOption] = &[
+pub const EXT4_OPTIONS: &[OptionSpec] = &[
 	opt!("abort", OptionValue::Toggle, "Simulates an ext4_abort() for debugging purposes."),
 	opt!("auto_da_alloc", OptionValue::Toggle, "Forces delayed blocks to disk before rename/truncate commits."),
 	opt!("noauto_da_alloc", OptionValue::Toggle, "Disables forced allocation on rename/truncate."),
@@ -227,7 +267,7 @@ pub const EXT4_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const XFS_OPTIONS: &[FsOption] = &[
+pub const XFS_OPTIONS: &[OptionSpec] = &[
 	opt!("allocsize", OptionValue::Size, "Sets end-of-file preallocation size for buffered I/O."),
 	opt!("attr2", OptionValue::Toggle, "Enables opportunistic inline xattr format; deprecated since 5.10."),
 	opt!("noattr2", OptionValue::Toggle, "Disables attr2 format; deprecated, rejected on CRC filesystems."),
@@ -271,7 +311,7 @@ pub const XFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const BTRFS_OPTIONS: &[FsOption] = &[
+pub const BTRFS_OPTIONS: &[OptionSpec] = &[
 	opt!("acl", OptionValue::Toggle, "Enables POSIX access control lists (default on)."),
 	opt!("noacl", OptionValue::Toggle, "Disables POSIX access control lists."),
 	opt!("autodefrag", OptionValue::Toggle, "Auto-defragments detected small random writes."),
@@ -323,7 +363,7 @@ pub const BTRFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const F2FS_OPTIONS: &[FsOption] = &[
+pub const F2FS_OPTIONS: &[OptionSpec] = &[
 	opt!("active_logs", OptionValue::Enum(&["2", "4", "6"]), "Sets number of active log segments (2, 4, or 6).", "6"),
 	opt!("age_extent_cache", OptionValue::Toggle, "Enables age extent cache for allocation hints."),
 	opt!("alloc_mode", OptionValue::Enum(&["reuse", "default"]), "Sets block allocation policy: reuse or default.", "default"),
@@ -390,7 +430,7 @@ pub const F2FS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const NTFS3_OPTIONS: &[FsOption] = &[
+pub const NTFS3_OPTIONS: &[OptionSpec] = &[
 	opt!("acl", OptionValue::Toggle, "Enables POSIX Access Control List support."),
 	opt!("discard", OptionValue::Toggle, "Enables TRIM support for SSD delete performance."),
 	opt!("dmask", OptionValue::Octal, "Permission mask for directories."),
@@ -410,7 +450,7 @@ pub const NTFS3_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const VFAT_OPTIONS: &[FsOption] = &[
+pub const VFAT_OPTIONS: &[OptionSpec] = &[
 	opt!("allow_utime", OptionValue::Integer, "Relaxes utime() permission checks for changing timestamps."),
 	opt!("blocksize", OptionValue::Enum(&["512", "1024", "2048"]), "Sets the block size; obsolete."),
 	opt!("check", OptionValue::Enum(&["r", "s", "n", "relaxed", "strict", "normal"]), "Sets case-sensitivity checking (strict, relaxed, or normal).", "normal"),
@@ -450,7 +490,7 @@ pub const VFAT_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const EXFAT_OPTIONS: &[FsOption] = &[
+pub const EXFAT_OPTIONS: &[OptionSpec] = &[
 	opt!("allow_utime", OptionValue::Integer, "Relaxes utime() permission checks for changing timestamps."),
 	opt!("codepage", OptionValue::Integer, "Deprecated; accepted but has no effect."),
 	opt!("debug", OptionValue::Toggle, "Deprecated; accepted but has no effect."),
@@ -471,13 +511,13 @@ pub const EXFAT_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const SWAP_OPTIONS: &[FsOption] = &[
+pub const SWAP_OPTIONS: &[OptionSpec] = &[
 	opt!("discard", OptionValue::Toggle, "Enables swap discard; supports discard=once or discard=pages."),
 	opt!("pri", OptionValue::IntegerRange(0, 32767), "Sets the swap device priority (0-32767).", "-1"),
 ];
 
 #[rustfmt::skip]
-pub const CIFS_OPTIONS: &[FsOption] = &[
+pub const CIFS_OPTIONS: &[OptionSpec] = &[
 	opt!("acdirmax", OptionValue::Integer, "Maximum seconds to cache directory attributes.", "1"),
 	opt!("acregmax", OptionValue::Integer, "Maximum seconds to cache regular file attributes.", "1"),
 	opt!("actimeo", OptionValue::Integer, "Seconds to cache file/directory attributes before re-checking.", "1"),
@@ -583,7 +623,7 @@ pub const CIFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const NFS_OPTIONS: &[FsOption] = &[
+pub const NFS_OPTIONS: &[OptionSpec] = &[
 	opt!("ac", OptionValue::Toggle, "Enables attribute caching (default)."),
 	opt!("noac", OptionValue::Toggle, "Disables attribute caching; makes writes synchronous."),
 	opt!("acdirmax", OptionValue::Integer, "Max seconds directory attributes are cached.", "60"),
@@ -648,7 +688,7 @@ pub const NFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const SSHFS_OPTIONS: &[FsOption] = &[
+pub const SSHFS_OPTIONS: &[OptionSpec] = &[
 	opt!("reconnect", OptionValue::Toggle, "Automatically reconnects if the connection is interrupted."),
 	opt!("delay_connect", OptionValue::Toggle, "Delays connecting until the mountpoint is first accessed."),
 	opt!("sshfs_sync", OptionValue::Toggle, "Synchronous writes; slower but more reliable."),
@@ -694,7 +734,7 @@ pub const SSHFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const ISO9660_OPTIONS: &[FsOption] = &[
+pub const ISO9660_OPTIONS: &[OptionSpec] = &[
 	opt!("block", OptionValue::Enum(&["512", "1024", "2048"]), "Sets the block size to 512, 1024, or 2048.", "1024"),
 	opt!("check", OptionValue::Enum(&["relaxed", "strict", "r", "s"]), "Sets filename case checking (relaxed or strict).", "strict"),
 	opt!("conv", OptionValue::String, "Obsolete; may fail or be ignored."),
@@ -713,7 +753,7 @@ pub const ISO9660_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const UDF_OPTIONS: &[FsOption] = &[
+pub const UDF_OPTIONS: &[OptionSpec] = &[
 	opt!("adinicb", OptionValue::Toggle, "Embeds file data in the inode (default)."),
 	opt!("noadinicb", OptionValue::Toggle, "Disables embedding file data in the inode."),
 	opt!("anchor", OptionValue::Integer, "Overrides the standard anchor location (default 256).", "256"),
@@ -740,7 +780,7 @@ pub const UDF_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const TMPFS_OPTIONS: &[FsOption] = &[
+pub const TMPFS_OPTIONS: &[OptionSpec] = &[
 	opt!("gid", OptionValue::Integer, "Sets initial group ID of the root directory.", "0"),
 	opt!("huge", OptionValue::Enum(&["never", "always", "within_size", "advise", "deny", "force"]), "Huge-page policy for files: never, always, within_size, advise.", "never"),
 	opt!("mode", OptionValue::Octal, "Sets initial permissions of the root directory.", "01777"),
@@ -753,17 +793,17 @@ pub const TMPFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const PROC_OPTIONS: &[FsOption] = &[
+pub const PROC_OPTIONS: &[OptionSpec] = &[
 	opt!("gid", OptionValue::Integer, "Group whose members bypass hidepid access restrictions.", "0"),
 	opt!("hidepid", OptionValue::Enum(&["off", "0", "noaccess", "1", "invisible", "2", "ptraceable", "4"]), "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible.", "0"),
 	opt!("pidns", OptionValue::String, "Selects the PID namespace used to translate PIDs (new in 6.16)."),
 	opt!("subset", OptionValue::Enum(&["pid"]), "Shows only the pid subset, hiding other top-level proc files."),
 ];
 
-pub const SYSFS_OPTIONS: &[FsOption] = &[];
+pub const SYSFS_OPTIONS: &[OptionSpec] = &[];
 
 #[rustfmt::skip]
-pub const DEVPTS_OPTIONS: &[FsOption] = &[
+pub const DEVPTS_OPTIONS: &[OptionSpec] = &[
 	opt!("gid", OptionValue::Integer, "Sets group of newly created pseudo-terminals."),
 	opt!("max", OptionValue::IntegerRange(0, 1048576), "Limits the number of pseudo-terminals in this instance.", "1048576"),
 	opt!("mode", OptionValue::Octal, "Sets permissions of newly created pseudo-terminals.", "0600"),
@@ -773,7 +813,7 @@ pub const DEVPTS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const CGROUP2_OPTIONS: &[FsOption] = &[
+pub const CGROUP2_OPTIONS: &[OptionSpec] = &[
 	opt!("favordynmods", OptionValue::Toggle, "Favors dynamic cgroup changes over hot-path fork/exit costs."),
 	opt!("memory_hugetlb_accounting", OptionValue::Toggle, "Counts HugeTLB usage in memory controller accounting."),
 	opt!("memory_localevents", OptionValue::Toggle, "Reports only local memory.events, excluding subtree counts."),
@@ -782,28 +822,28 @@ pub const CGROUP2_OPTIONS: &[FsOption] = &[
 	opt!("pids_localevents", OptionValue::Toggle, "Counts only local fork failures in pids.events.max."),
 ];
 
-pub const SECURITYFS_OPTIONS: &[FsOption] = &[];
+pub const SECURITYFS_OPTIONS: &[OptionSpec] = &[];
 
 #[rustfmt::skip]
-pub const DEBUGFS_OPTIONS: &[FsOption] = &[
+pub const DEBUGFS_OPTIONS: &[OptionSpec] = &[
 	opt!("gid", OptionValue::Integer, "Sets the group of the debugfs mount.", "0"),
 	opt!("mode", OptionValue::Octal, "Sets permissions of the mountpoint.", "0700"),
 	opt!("uid", OptionValue::Integer, "Sets the owner of the debugfs mount.", "0"),
 ];
 
 #[rustfmt::skip]
-pub const TRACEFS_OPTIONS: &[FsOption] = &[
+pub const TRACEFS_OPTIONS: &[OptionSpec] = &[
 	opt!("gid", OptionValue::Integer, "Sets the group of the tracefs mount.", "0"),
 	opt!("mode", OptionValue::Octal, "Sets permissions of the mountpoint.", "0700"),
 	opt!("uid", OptionValue::Integer, "Sets the owner of the tracefs mount.", "0"),
 ];
 
-pub const CONFIGFS_OPTIONS: &[FsOption] = &[];
+pub const CONFIGFS_OPTIONS: &[OptionSpec] = &[];
 
-pub const MQUEUE_OPTIONS: &[FsOption] = &[];
+pub const MQUEUE_OPTIONS: &[OptionSpec] = &[];
 
 #[rustfmt::skip]
-pub const HUGETLBFS_OPTIONS: &[FsOption] = &[
+pub const HUGETLBFS_OPTIONS: &[OptionSpec] = &[
 	opt!("gid", OptionValue::Integer, "Sets group of the filesystem root.", "0"),
 	opt!("min_size", OptionValue::Size, "Reserves a minimum of huge-page memory; mount fails if short."),
 	opt!("mode", OptionValue::Octal, "Sets permissions of the filesystem root.", "0755"),
@@ -814,7 +854,7 @@ pub const HUGETLBFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const P9_OPTIONS: &[FsOption] = &[
+pub const P9_OPTIONS: &[OptionSpec] = &[
 	opt!("access", OptionValue::Enum(&["user", "any", "client"]), "Access mode: user, <uid>, any or client.", "user"),
 	opt!("afid", OptionValue::String, "Authentication fid used by Plan 9 security."),
 	opt!("aname", OptionValue::String, "File tree to access on the server."),
@@ -839,7 +879,7 @@ pub const P9_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const OVERLAY_OPTIONS: &[FsOption] = &[
+pub const OVERLAY_OPTIONS: &[OptionSpec] = &[
 	opt!("datadir+", OptionValue::String, "Appends a data-only lower layer directory (new mount API)."),
 	opt!("fsync", OptionValue::Enum(&["auto", "strict", "volatile"]), "Controls fsync during copy-up: auto, strict, or volatile.", "auto"),
 	opt!("index", OptionValue::Enum(&["on", "off"]), "Use an index to avoid inode collisions: on or off.", "off"),
@@ -859,7 +899,7 @@ pub const OVERLAY_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const ZFS_OPTIONS: &[FsOption] = &[
+pub const ZFS_OPTIONS: &[OptionSpec] = &[
 	opt!("acl", OptionValue::Toggle, "Enable access control lists (legacy alias for acltype)."),
 	opt!("noacl", OptionValue::Toggle, "Disable ACLs (alias for acltype=off)."),
 	opt!("acltype", OptionValue::Enum(&["off", "noacl", "nfsv4", "posix", "posixacl"]), "Select ACL type: off, nfsv4, or posix.", "off"),
@@ -876,7 +916,7 @@ pub const ZFS_OPTIONS: &[FsOption] = &[
 ];
 
 #[rustfmt::skip]
-pub const BCACHEFS_OPTIONS: &[FsOption] = &[
+pub const BCACHEFS_OPTIONS: &[OptionSpec] = &[
 	opt!("acl", OptionValue::Toggle, "Enables POSIX access control lists."),
 	opt!("noacl", OptionValue::Toggle, "Disables POSIX access control lists."),
 	opt!("background_compression", OptionValue::Enum(&["none", "lz4", "gzip", "zstd"]), "Compression type used for background (rebalance) writes.", "none"),
@@ -917,8 +957,8 @@ pub const BCACHEFS_OPTIONS: &[FsOption] = &[
 ];
 
 /// Filesystem-specific options for `fs_type` (without the generic options).
-pub fn specific_options(fs_type: &FsType) -> Vec<FsOption> {
-	let mut options: Vec<FsOption> = Vec::new();
+pub fn specific_options(fs_type: &FsType) -> Vec<OptionSpec> {
+	let mut options: Vec<OptionSpec> = Vec::new();
 	match fs_type {
 		FsType::Ext2 => options.extend_from_slice(EXT2_OPTIONS),
 		FsType::Ext3 => {
@@ -962,10 +1002,10 @@ pub fn specific_options(fs_type: &FsType) -> Vec<FsOption> {
 	options
 }
 
-pub fn options_for(fs_type: &FsType) -> Vec<FsOption> {
+pub fn options_for(fs_type: &FsType) -> Vec<OptionSpec> {
 	let mut specific = specific_options(fs_type);
 	specific.sort_unstable_by_key(|e| e.name.to_ascii_lowercase());
-	let mut options: Vec<FsOption> = GENERIC_OPTIONS
+	let mut options: Vec<OptionSpec> = GENERIC_OPTIONS
 		.iter()
 		.filter(|generic| !specific.iter().any(|s| s.name == generic.name))
 		.copied()
@@ -975,7 +1015,7 @@ pub fn options_for(fs_type: &FsType) -> Vec<FsOption> {
 	specific
 }
 
-pub fn lookup(fs_type: &FsType, name: &str) -> Option<FsOption> {
+pub fn lookup(fs_type: &FsType, name: &str) -> Option<OptionSpec> {
 	options_for(fs_type).into_iter().find(|o| o.name == name)
 }
 
@@ -988,7 +1028,7 @@ mod tests {
 	fn lookup_finds_toggle() {
 		assert_eq!(
 			lookup(&FsType::Ext4, "nofail"),
-			Some(FsOption {
+			Some(OptionSpec {
 				name: "nofail",
 				description: "Do not report errors if the device does not exist.",
 				value: OptionValue::Toggle,
@@ -1001,7 +1041,7 @@ mod tests {
 	fn lookup_finds_fs_specific() {
 		assert_eq!(
 			lookup(&FsType::Ext4, "data"),
-			Some(FsOption {
+			Some(OptionSpec {
 				name: "data",
 				description: "Sets data journaling mode: journal, ordered, or writeback.",
 				value: OptionValue::Enum(&["journal", "ordered", "writeback"]),
@@ -1010,7 +1050,7 @@ mod tests {
 		);
 		assert_eq!(
 			lookup(&FsType::Btrfs, "subvol"),
-			Some(FsOption {
+			Some(OptionSpec {
 				name: "subvol",
 				description: "Mounts a subvolume at the given path, not the toplevel.",
 				value: OptionValue::Subvol,

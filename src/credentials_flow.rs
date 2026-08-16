@@ -1,3 +1,4 @@
+use crate::fs_options;
 use crate::fs_value::FsType;
 use crate::popup;
 use crate::privileged::{CredentialsInfo, MountCredentials, inspect_credentials_file, saved_credentials_path};
@@ -5,6 +6,7 @@ use crate::stab_yurself::StabEntry;
 use crate::{GC, RebuildEditor};
 use adw::prelude::*;
 use adw::{AlertDialog, EntryRow, PasswordEntryRow, SwitchRow};
+use fs_options::FsOption;
 use gtk::{Button, glib};
 use std::cell::RefCell;
 use std::path::PathBuf;
@@ -30,20 +32,16 @@ pub fn action_device(entry: &StabEntry) -> String {
 		.unwrap_or_else(|| entry.device.render())
 }
 
-fn option_value(options: &[String], key: &str) -> Option<String> {
-	options.iter().find_map(|option| {
-		let mut parts = option.splitn(2, '=');
-		if parts.next() == Some(key) {
-			parts.next().map(str::to_string)
-		} else {
-			None
-		}
+fn option_value(options: &[FsOption], key: &str) -> Option<String> {
+	options.iter().find_map(|option| match option {
+		FsOption::KeyValue(name, value) if name == key => Some(value.clone()),
+		_ => None,
 	})
 }
 
 fn set_entry_option(entry: &mut StabEntry, key: &str, value: &str) {
-	let full = format!("{key}={value}");
-	if let Some(pos) = entry.options.iter().position(|option| option.split('=').next() == Some(key)) {
+	let full = FsOption::from_kv(key, value);
+	if let Some(pos) = entry.options.iter().position(|option| option.name() == key) {
 		entry.options[pos] = full;
 	} else {
 		entry.options.push(full);
