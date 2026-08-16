@@ -20,7 +20,7 @@ use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{
 	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, PreferencesRow,
-	SpinRow, SwitchRow,
+	SpinRow, SwitchRow, Toast, ToastOverlay,
 };
 use fs_value::FsType;
 use gtk::{Adjustment, Align, Box as GtkBox, Button, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
@@ -115,6 +115,8 @@ fn build_ui(application: &Application) {
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
 	let save_changes_btn = make_icon_label_button("document-save-symbolic", "Save changes");
 	let revert_changes_btn = make_icon_label_button("edit-undo-symbolic", "Revert changes");
+	save_changes_btn.add_css_class("suggested-action");
+	revert_changes_btn.add_css_class("destructive-action");
 
 	let file_ctx = FileContext::new(
 		stab_file.clone(),
@@ -150,10 +152,12 @@ fn build_ui(application: &Application) {
 	}
 	row.append(&make_backup_btn);
 
+	let toast_overlay = ToastOverlay::new();
 	{
 		let file_ctx = file_ctx.clone();
 		let list_panel = list_panel.clone();
 		let editor_panel = editor_panel.clone();
+		let toast_overlay = toast_overlay.clone();
 		popup::connect_clicked_confirm(
 			&save_changes_btn,
 			"Save",
@@ -170,7 +174,7 @@ fn build_ui(application: &Application) {
 							popup::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
 							return;
 						}
-						popup::present_simple_dialog(&editor_panel, "Changes saved", "Your changes were written to /etc/fstab.");
+						toast_overlay.add_toast(Toast::new("Saved to /etc/fstab"));
 					}
 					Err(err) => popup::present_simple_dialog(&editor_panel, "Could not save", &format!("{err:#}")),
 				}
@@ -268,7 +272,8 @@ fn build_ui(application: &Application) {
 	main_box.append(&HeaderBar::new());
 	main_box.append(&content_scroll);
 
-	let window = window_build.content(&main_box).build();
+	toast_overlay.set_child(Some(&main_box));
+	let window = window_build.content(&toast_overlay).build();
 
 	attach_responsive_breakpoint(&window, &split_box);
 
@@ -277,7 +282,8 @@ fn build_ui(application: &Application) {
 		".invalid-alert { color: red; }\
 		.mount-status-mounted { color: @success_color; }\
 		.mount-status-unmounted { color: @warning_color; }\
-		.mount-status-missing { color: @error_color; }",
+		.mount-status-missing { color: @error_color; }\
+		.mount-point-exists { color: @success_color; }",
 	);
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 

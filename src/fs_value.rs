@@ -169,7 +169,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 		FsChoice::Other => true,
 		FsChoice::Known(fs_type) => {
 			let query = query.trim().to_lowercase();
-			query.is_empty() || fs_type.to_string().to_lowercase().contains(&query)
+			query.is_empty() || fs_type.to_string().to_lowercase().contains(&query) || fs_type.description().to_lowercase().contains(&query)
 		}
 	};
 	let on_select = {
