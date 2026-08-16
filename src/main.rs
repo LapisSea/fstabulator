@@ -1,3 +1,4 @@
+mod context;
 mod credentials_flow;
 mod device_value;
 mod fs_options;
@@ -11,6 +12,7 @@ mod search_picker;
 mod stab_yurself;
 mod subvolume;
 
+use crate::context::{EntryContext, FileContext};
 use crate::mount_status::MountStatus;
 use crate::search_picker::{ErrorRenderer, build_search_picker};
 use crate::stab_yurself::{StabEntry, StabFile};
@@ -60,19 +62,6 @@ impl<T> GC<T> {
 }
 
 pub(crate) type RebuildEditor = GC<Option<Rc<dyn Fn()>>>;
-
-thread_local! {
-	static FILE_CHANGED_NOTIFIER: std::cell::RefCell<Option<Rc<dyn Fn()>>> = std::cell::RefCell::new(None);
-}
-
-pub(crate) fn refresh_changed_ui() {
-	FILE_CHANGED_NOTIFIER.with(|notifier| {
-		let callback = notifier.borrow().clone();
-		if let Some(callback) = callback {
-			callback();
-		}
-	});
-}
 
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
@@ -124,6 +113,23 @@ fn build_ui(application: &Application) {
 	file_buttons_panel.append(&row);
 
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", "Make backup");
+	let save_changes_btn = make_icon_label_button("document-save-symbolic", "Save changes");
+	let revert_changes_btn = make_icon_label_button("edit-undo-symbolic", "Revert changes");
+
+	let file_ctx = FileContext::new(
+		stab_file.clone(),
+		Rc::new({
+			let stab_file = stab_file.clone();
+			let save_changes_btn = save_changes_btn.clone();
+			let revert_changes_btn = revert_changes_btn.clone();
+			move || {
+				let changed = stab_file.borrow().is_changed();
+				save_changes_btn.set_sensitive(changed);
+				revert_changes_btn.set_sensitive(changed);
+			}
+		}),
+	);
+
 	{
 		let stab_file = stab_file.clone();
 		make_backup_btn.connect_clicked(move |btn| {
@@ -144,14 +150,8 @@ fn build_ui(application: &Application) {
 	}
 	row.append(&make_backup_btn);
 
-	row.append(&build_restore_picker(&stab_file, &list_panel, &editor_panel));
-
-	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
-	file_buttons_panel.append(&row);
-
-	let save_changes_btn = make_icon_label_button("document-save-symbolic", "Save changes");
 	{
-		let stab_file = stab_file.clone();
+		let file_ctx = file_ctx.clone();
 		let list_panel = list_panel.clone();
 		let editor_panel = editor_panel.clone();
 		popup::connect_clicked_confirm(
@@ -161,12 +161,12 @@ fn build_ui(application: &Application) {
 			|| None,
 			move || {
 				let content = {
-					let file = stab_file.borrow();
+					let file = file_ctx.file().borrow();
 					file.to_string()
 				};
 				match privileged::write_fstab(&content) {
 					Ok(()) => {
-						if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
+						if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel) {
 							popup::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
 							return;
 						}
@@ -177,11 +177,9 @@ fn build_ui(application: &Application) {
 			},
 		);
 	}
-	row.append(&save_changes_btn);
 
-	let revert_changes_btn = make_icon_label_button("edit-undo-symbolic", "Revert changes");
 	{
-		let stab_file = stab_file.clone();
+		let file_ctx = file_ctx.clone();
 		let list_panel = list_panel.clone();
 		let editor_panel = editor_panel.clone();
 		popup::connect_clicked_confirm(
@@ -189,22 +187,16 @@ fn build_ui(application: &Application) {
 			"Revert",
 			"Are you sure? Any changes made will be lost!",
 			|| None,
-			move || load_backup(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel),
+			move || load_backup(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel),
 		);
 	}
-	row.append(&revert_changes_btn);
 
-	{
-		let stab_file = stab_file.clone();
-		let save_changes_btn = save_changes_btn.clone();
-		let revert_changes_btn = revert_changes_btn.clone();
-		let notifier: Rc<dyn Fn()> = Rc::new(move || {
-			let changed = stab_file.borrow().is_changed();
-			save_changes_btn.set_sensitive(changed);
-			revert_changes_btn.set_sensitive(changed);
-		});
-		FILE_CHANGED_NOTIFIER.with(|cell| *cell.borrow_mut() = Some(notifier));
-	}
+	row.append(&build_restore_picker(&file_ctx, &list_panel, &editor_panel));
+
+	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
+	file_buttons_panel.append(&row);
+	row.append(&save_changes_btn);
+	row.append(&revert_changes_btn);
 
 	let left_panel = GtkBox::builder()
 		.orientation(Orientation::Vertical)
@@ -230,6 +222,7 @@ fn build_ui(application: &Application) {
 		let editor_panel = editor_panel.clone();
 		let list_panel_cb = list_panel.clone();
 		let stab_file = stab_file.clone();
+		let file_ctx = file_ctx.clone();
 		let rebuild_editor = rebuild_editor.clone();
 		list_panel.connect_row_selected(move |_, row| {
 			clear_children(&editor_panel);
@@ -241,17 +234,17 @@ fn build_ui(application: &Application) {
 				return;
 			};
 			let Ok(action_row) = row.clone().downcast::<ActionRow>() else { return };
-			build_editor_panel(&editor_panel, &entry, &action_row, &list_panel_cb, row, rebuild_editor.clone());
+			let entry_ctx = file_ctx.entry(entry, &action_row);
+			build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, row, rebuild_editor.clone());
 			let builder: Rc<dyn Fn()> = Rc::new({
 				let editor_panel = editor_panel.clone();
 				let list_panel_cb = list_panel_cb.clone();
-				let entry = entry.clone();
-				let action_row = action_row.clone();
+				let entry_ctx = entry_ctx.clone();
 				let row = row.clone();
 				let rebuild_editor = rebuild_editor.clone();
 				move || {
 					clear_children(&editor_panel);
-					build_editor_panel(&editor_panel, &entry, &action_row, &list_panel_cb, &row, rebuild_editor.clone());
+					build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, &row, rebuild_editor.clone());
 				}
 			});
 			*rebuild_editor.borrow_mut() = Some(builder);
@@ -288,7 +281,7 @@ fn build_ui(application: &Application) {
 	);
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 
-	if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &stab_file, &list_panel, &editor_panel) {
+	if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel) {
 		let error_box = GtkBox::builder().orientation(Orientation::Vertical).build();
 		error_box.append(&HeaderBar::new());
 		build_load_error(&error_box, err);
@@ -357,7 +350,6 @@ pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset
 		action_row.remove_css_class("changed");
 	}
 	update_list_icons(action_row, entry);
-	refresh_changed_ui();
 }
 
 const NOFAIL_WARNING_CLASS: &str = "nofail-warning";
@@ -430,9 +422,9 @@ fn esc(s: &str) -> String {
 	s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 }
 
-fn make_list_row(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gtk::Box, entry: &StabEntry) -> ActionRow {
+fn make_list_row(list_box: &ListBox, file_ctx: &FileContext, editor_panel: &gtk::Box, entry: &StabEntry) -> ActionRow {
 	let row = ActionRow::new();
-	add_delete_button(list_box, &row, stab_file, editor_panel);
+	add_delete_button(list_box, &row, file_ctx, editor_panel);
 	render_list_entry(&row, entry, None);
 	row
 }
@@ -459,14 +451,14 @@ pub(crate) fn clear_children<W: IsA<gtk::Widget>>(widget: &W) {
 	}
 }
 
-fn populate_list(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gtk::Box) {
+fn populate_list(list_box: &ListBox, file_ctx: &FileContext, editor_panel: &gtk::Box) {
 	clear_children(list_box);
 
-	let entries: Vec<GC<StabEntry>> = stab_file.borrow().entries().cloned().collect();
+	let entries: Vec<GC<StabEntry>> = file_ctx.file().borrow().entries().cloned().collect();
 
 	let mut first = true;
 	for entry in &entries {
-		let row = make_list_row(list_box, stab_file, editor_panel, &entry.borrow());
+		let row = make_list_row(list_box, file_ctx, editor_panel, &entry.borrow());
 		list_box.append(&row);
 		if first {
 			first = false;
@@ -483,25 +475,25 @@ fn populate_list(list_box: &ListBox, stab_file: &GC<StabFile>, editor_panel: &gt
 
 	let list_box_ref = list_box.clone();
 	let add_row_ref = add_row.clone();
-	let stab_file_ref = stab_file.clone();
+	let file_ctx_ref = file_ctx.clone();
 	let editor_panel_ref = editor_panel.clone();
 	add_btn.connect_clicked(move |_| {
 		let line = {
-			let file = stab_file_ref.borrow();
+			let file = file_ctx_ref.file().borrow();
 			file.entries().map(|e| e.borrow().line).max().map_or(0, |l| l + 1)
 		};
 		let new_entry = StabEntry::blank(line);
-		let row = make_list_row(&list_box_ref, &stab_file_ref, &editor_panel_ref, &new_entry);
-		stab_file_ref.borrow_mut().push_entry(new_entry);
+		let row = make_list_row(&list_box_ref, &file_ctx_ref, &editor_panel_ref, &new_entry);
+		file_ctx_ref.file().borrow_mut().push_entry(new_entry);
 		list_box_ref.insert(&row, add_row_ref.index());
 		list_box_ref.select_row(Some(&row));
-		refresh_changed_ui();
+		file_ctx_ref.notify();
 	});
 
 	list_box.append(&add_row);
 }
 
-fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) -> MenuButton {
+fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) -> MenuButton {
 	let dataset = || match stab_yurself::scan_for_backups() {
 		Ok(ok) => {
 			if ok.is_empty() {
@@ -530,12 +522,12 @@ fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_p
 	};
 
 	let on_select = {
-		let stab_file = stab_file.clone();
+		let file_ctx = file_ctx.clone();
 		let list_panel = list_panel.clone();
 		let editor_panel = editor_panel.clone();
 		move |backup: (PathBuf, SystemTime), _index| {
 			let path = backup.0.clone();
-			let stab_file = stab_file.clone();
+			let file_ctx = file_ctx.clone();
 			let list_panel = list_panel.clone();
 			let editor_panel = editor_panel.clone();
 			let parent_widget = editor_panel.clone();
@@ -544,7 +536,7 @@ fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_p
 				"Restore",
 				"Are you sure? Any changes made will be lost!",
 				None::<&Widget>,
-				move || restore_backup(&path, &stab_file, &list_panel, &editor_panel),
+				move || restore_backup(&path, &file_ctx, &list_panel, &editor_panel),
 			);
 		}
 	};
@@ -564,34 +556,34 @@ fn build_restore_picker(stab_file: &GC<StabFile>, list_panel: &ListBox, editor_p
 	menu_btn
 }
 
-fn load_fstab_file(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) -> anyhow::Result<()> {
+fn load_fstab_file(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) -> anyhow::Result<()> {
 	let new_file = StabFile::read(path)?;
-	*stab_file.borrow_mut() = new_file;
+	*file_ctx.file().borrow_mut() = new_file;
 	clear_children(editor_panel);
-	populate_list(list_panel, stab_file, editor_panel);
-	refresh_changed_ui();
+	populate_list(list_panel, file_ctx, editor_panel);
+	file_ctx.notify();
 	Ok(())
 }
 
-fn load_backup(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) {
-	if let Err(err) = load_fstab_file(path, stab_file, list_panel, editor_panel) {
+fn load_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) {
+	if let Err(err) = load_fstab_file(path, file_ctx, list_panel, editor_panel) {
 		popup::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
 	}
 }
 
-fn restore_backup(path: &Path, stab_file: &GC<StabFile>, list_panel: &ListBox, editor_panel: &gtk::Box) {
+fn restore_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) {
 	let result = (|| -> anyhow::Result<()> {
 		let baseline = StabFile::read("/etc/fstab")?;
 		let backup = StabFile::read(path)?;
 		let lines = baseline.overlay_backup(&backup);
 		{
-			let mut file = stab_file.borrow_mut();
+			let mut file = file_ctx.file().borrow_mut();
 			file.lines = lines;
 			file.reference = baseline.reference;
 		}
 		clear_children(editor_panel);
-		populate_list(list_panel, stab_file, editor_panel);
-		refresh_changed_ui();
+		populate_list(list_panel, file_ctx, editor_panel);
+		file_ctx.notify();
 		Ok(())
 	})();
 	if let Err(err) = result {
@@ -613,7 +605,7 @@ fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
 	grid.attach(&value_label, 1, row, 1, 1);
 }
 
-fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFile>, editor_panel: &gtk::Box) {
+fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext, editor_panel: &gtk::Box) {
 	let delete_btn = Button::from_icon_name("user-trash-symbolic");
 	delete_btn.add_css_class("flat");
 	delete_btn.add_css_class("error");
@@ -624,9 +616,9 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFil
 
 	let extra_child = {
 		let row = row.clone();
-		let stab_file = stab_file.clone();
+		let file_ctx = file_ctx.clone();
 		move || {
-			let file = stab_file.borrow();
+			let file = file_ctx.file().borrow();
 			let Some(entry) = file.entry_at(row.index() as usize) else {
 				return None;
 			};
@@ -652,7 +644,7 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFil
 	let on_confirm = {
 		let list_box = list_box.clone();
 		let row = row.clone();
-		let stab_file = stab_file.clone();
+		let file_ctx = file_ctx.clone();
 		let editor_panel = editor_panel.clone();
 		move || {
 			let index = row.index();
@@ -661,14 +653,14 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, stab_file: &GC<StabFil
 			}
 			let index = index as usize;
 			list_box.remove(&row);
-			stab_file.borrow_mut().remove_entry(index);
+			file_ctx.file().borrow_mut().remove_entry(index);
 			clear_children(&editor_panel);
-			let remaining = stab_file.borrow().entries().count();
+			let remaining = file_ctx.file().borrow().entries().count();
 			let new_index = index.min(remaining.saturating_sub(1));
 			if let Some(new_row) = list_box.row_at_index(new_index as i32) {
 				list_box.select_row(Some(&new_row));
 			}
-			refresh_changed_ui();
+			file_ctx.notify();
 		}
 	};
 
@@ -702,14 +694,14 @@ fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &Gtk
 
 fn build_editor_panel(
 	editor_panel: &gtk::Box,
-	entry: &GC<StabEntry>,
-	action_row: &ActionRow,
+	entry_ctx: &EntryContext,
 	list_box: &ListBox,
 	list_row: &gtk::ListBoxRow,
 	rebuild_editor: RebuildEditor,
 ) {
 	let reset_btn = Button::with_label("Reset");
-	reset_btn.set_sensitive(entry.borrow().is_changed());
+	reset_btn.set_sensitive(entry_ctx.entry().borrow().is_changed());
+	entry_ctx.set_reset_btn(&reset_btn);
 
 	let edit_props = PreferencesGroup::builder().title("Edit properties").build();
 	editor_panel.append(&edit_props);
@@ -717,72 +709,63 @@ fn build_editor_panel(
 	let options_group = PreferencesGroup::builder().title("Options").build();
 	editor_panel.append(&options_group);
 
-	add_user_label_row(&edit_props, entry, action_row, &reset_btn);
-	let device_row = device_value::add_device_row(&edit_props, entry, action_row, &reset_btn);
-	mount_point_value::add_mount_point_row(&edit_props, entry, action_row, &reset_btn);
+	add_user_label_row(&edit_props, entry_ctx);
+	let device_row = device_value::add_device_row(&edit_props, entry_ctx);
+	mount_point_value::add_mount_point_row(&edit_props, entry_ctx);
 	{
-		let (entry, action_row, reset_btn) = (entry.clone(), action_row.clone(), reset_btn.clone());
-		let (device_row, options_group) = (device_row.clone(), options_group.clone());
-		fs_value::add_fs_type_row(&edit_props.clone(), &entry.clone(), &action_row.clone(), &reset_btn.clone(), {
+		let (entry_ctx, device_row, options_group) = (entry_ctx.clone(), device_row.clone(), options_group.clone());
+		fs_value::add_fs_type_row(&edit_props.clone(), &entry_ctx.clone(), {
 			move || {
 				device_row.refresh_kinds();
-				build_options_group(&options_group, &entry, &action_row, &reset_btn);
+				build_options_group(&options_group, &entry_ctx);
 			}
 		});
 	}
 
-	let active_row = SwitchRow::builder().title("Active").active(entry.borrow().active).build();
+	let active_row = SwitchRow::builder().title("Active").active(entry_ctx.entry().borrow().active).build();
 	{
-		let (entry, action_row, reset_btn) = (entry.clone(), action_row.clone(), reset_btn.clone());
+		let entry_ctx = entry_ctx.clone();
 		active_row.connect_active_notify(move |row| {
-			let mut entry = entry.borrow_mut();
-			entry.active = row.is_active();
-			render_list_entry(&action_row, &entry, Some(&reset_btn));
+			entry_ctx.entry().borrow_mut().active = row.is_active();
+			entry_ctx.render();
 		});
 	}
 	edit_props.add(&active_row);
 
-	build_options_group(&options_group, entry, action_row, &reset_btn);
+	build_options_group(&options_group, entry_ctx);
 
 	editor_panel.append(&reset_btn);
 
-	add_mount_group(editor_panel, entry, rebuild_editor);
+	add_mount_group(editor_panel, entry_ctx.entry(), rebuild_editor);
 
 	let fsck_group = PreferencesGroup::builder().title("Extra").build();
 	add_spin_row(
 		&fsck_group,
-		entry,
-		action_row,
+		entry_ctx,
 		"Dump",
 		"Controls the dump backup frequency; 0 disables",
-		entry.borrow().dump,
-		&reset_btn,
+		entry_ctx.entry().borrow().dump,
 		|entry, value| entry.dump = value,
 	);
 	add_spin_row(
 		&fsck_group,
-		entry,
-		action_row,
+		entry_ctx,
 		"Pass",
 		"Controls the fsck check order; 0 disables",
-		entry.borrow().pass,
-		&reset_btn,
+		entry_ctx.entry().borrow().pass,
 		|entry, value| entry.pass = value,
 	);
 	editor_panel.append(&fsck_group);
 
-	let entry = entry.clone();
-	let action_row = action_row.clone();
-	let list_box = list_box.clone();
-	let list_row = list_row.clone();
+	let (list_box, list_row) = (list_box.clone(), list_row.clone());
 	let options_group = options_group.clone();
-	let reset_btn_ref = reset_btn.clone();
 	let device_row = device_row.clone();
+	let entry_ctx_ref = entry_ctx.clone();
 	reset_btn.connect_clicked(move |_| {
-		entry.borrow_mut().reset();
+		entry_ctx_ref.entry().borrow_mut().reset();
 		device_row.refresh_kinds();
-		build_options_group(&options_group, &entry, &action_row, &reset_btn_ref);
-		render_list_entry(&action_row, &entry.borrow(), None);
+		build_options_group(&options_group, &entry_ctx_ref);
+		entry_ctx_ref.render();
 		list_box.unselect_all();
 		list_box.select_row(Some(&list_row));
 	});
@@ -967,20 +950,20 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 	}
 }
 
-fn add_user_label_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &Button) {
+fn add_user_label_row(options: &PreferencesGroup, entry_ctx: &EntryContext) {
 	let row = EntryRow::builder()
 		.title("Label")
-		.text(entry.borrow().user_label.as_deref().unwrap_or(""))
+		.text(entry_ctx.entry().borrow().user_label.as_deref().unwrap_or(""))
 		.build();
 	{
-		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
+		let entry_ctx = entry_ctx.clone();
 		row.connect_changed(move |row| {
 			let text = row.text();
-			let mut entry = entry.borrow_mut();
-			entry.user_label = if text.is_empty() { None } else { Some(text.to_string()) };
-			render_list_entry(&action_row, &entry, Some(&reset_btn));
+			{
+				let mut entry = entry_ctx.entry().borrow_mut();
+				entry.user_label = if text.is_empty() { None } else { Some(text.to_string()) };
+			}
+			entry_ctx.render();
 		});
 	}
 	options.add(&row);
@@ -988,17 +971,13 @@ fn add_user_label_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_
 
 fn add_spin_row(
 	options: &PreferencesGroup,
-	entry: &GC<StabEntry>,
-	action_row: &ActionRow,
+	entry_ctx: &EntryContext,
 	title: &str,
 	subtitle: &str,
 	initial: u8,
-	reset_btn: &Button,
 	apply: impl Fn(&mut StabEntry, u8) + 'static,
 ) {
-	let entry = entry.clone();
-	let action_row = action_row.clone();
-	let reset_btn = reset_btn.clone();
+	let entry_ctx = entry_ctx.clone();
 
 	let adjustment = Adjustment::builder().value(f64::from(initial)).step_increment(1.0).build();
 
@@ -1011,9 +990,12 @@ fn add_spin_row(
 	row.set_value(f64::from(initial));
 	let row_ref = row.clone();
 	row.adjustment().connect_value_changed(move |_| {
-		let mut entry = entry.borrow_mut();
-		apply(&mut entry, row_ref.value().round() as u8);
-		render_list_entry(&action_row, &entry, Some(&reset_btn));
+		let value = row_ref.value().round() as u8;
+		{
+			let mut entry = entry_ctx.entry().borrow_mut();
+			apply(&mut entry, value);
+		}
+		entry_ctx.render();
 	});
 	options.add(&row);
 }

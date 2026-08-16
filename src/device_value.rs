@@ -1,8 +1,9 @@
+use crate::GC;
+use crate::context::EntryContext;
 use crate::fs_value::FsType;
 use crate::stab_yurself::StabEntry;
-use crate::{GC, render_list_entry};
 use adw::prelude::*;
-use adw::{ActionRow, PreferencesGroup, PreferencesRow};
+use adw::{PreferencesGroup, PreferencesRow};
 use gtk::{Box as GtkBox, DropDown, Entry, Orientation, StringList};
 use std::path::{Path, PathBuf};
 
@@ -208,7 +209,8 @@ impl DeviceRowController {
 	}
 }
 
-pub fn add_device_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) -> DeviceRowController {
+pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> DeviceRowController {
+	let entry = entry_ctx.entry().clone();
 	let kinds: GC<Vec<DeviceKind>> = GC::new(DeviceKind::for_fs_type(&entry.borrow().fs_type).to_vec());
 	if !kinds.borrow().contains(&DeviceKind::Other) {
 		kinds.borrow_mut().push(DeviceKind::Other);
@@ -246,27 +248,25 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_
 	let row = PreferencesRow::builder().title("Device").child(&content).build();
 
 	{
+		let entry_ctx = entry_ctx.clone();
 		let kinds_ref = kinds.clone();
 		let entry_ref = entry.clone();
-		let action_row_ref = action_row.clone();
 		let dropdown_ref = dropdown.clone();
 		let warning = warning.clone();
-		let reset_btn = reset_btn.clone();
 		value_entry.connect_changed(move |entry| {
 			let Some(&kind) = kinds_ref.borrow().get(dropdown_ref.selected() as usize) else {
 				return;
 			};
 			entry_ref.borrow_mut().device = DeviceValue::from(entry.text(), kind);
 			warning.set_visible(false);
-			render_list_entry(&action_row_ref, &entry_ref.borrow(), Some(&reset_btn));
+			entry_ctx.render();
 		});
 	}
 	{
+		let entry_ctx = entry_ctx.clone();
 		let entry = entry.clone();
-		let action_row = action_row.clone();
 		let value_entry = value_entry.clone();
 		let warning = warning.clone();
-		let reset_btn = reset_btn.clone();
 		let kinds = kinds.clone();
 		dropdown.connect_selected_notify(move |dropdown| {
 			let Some(&new_kind) = kinds.borrow().get(dropdown.selected() as usize) else {
@@ -304,7 +304,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_
 					entry.borrow_mut().device = DeviceValue::new(value, new_kind);
 				}
 			}
-			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+			entry_ctx.render();
 		});
 	}
 

@@ -1,13 +1,9 @@
-use crate::GC;
-use crate::render_list_entry;
-use crate::stab_yurself::StabEntry;
+use crate::context::EntryContext;
 use adw::prelude::*;
-use adw::{ActionRow, EntryRow, PreferencesGroup};
+use adw::{EntryRow, PreferencesGroup};
 
-pub fn add_mount_point_row(options: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
-	let entry = entry.clone();
-	let action_row = action_row.clone();
-	let reset_btn = reset_btn.clone();
+pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext) {
+	let entry = entry_ctx.entry().clone();
 
 	let folder_btn = gtk::Button::from_icon_name("folder-open-symbolic");
 	folder_btn.add_css_class("flat");
@@ -16,20 +12,20 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry: &GC<StabEntry>, ac
 	let row = EntryRow::builder().title("Mount point").text(&entry.borrow().mount_point).build();
 	row.add_suffix(&folder_btn);
 	{
+		let entry_ctx = entry_ctx.clone();
 		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
 		row.connect_changed(move |row| {
-			let mut entry = entry.borrow_mut();
-			entry.mount_point = row.text().to_string();
-			render_list_entry(&action_row, &entry, Some(&reset_btn));
+			{
+				let mut entry = entry.borrow_mut();
+				entry.mount_point = row.text().to_string();
+			}
+			entry_ctx.render();
 		});
 	}
 	{
 		let row = row.clone();
 		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
+		let entry_ctx = entry_ctx.clone();
 		folder_btn.connect_clicked(move |folder_btn| {
 			let dialog = gtk::FileChooserNative::builder()
 				.title("Choose mount point")
@@ -44,16 +40,17 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry: &GC<StabEntry>, ac
 			}
 			let row = row.clone();
 			let entry = entry.clone();
-			let action_row = action_row.clone();
-			let reset_btn = reset_btn.clone();
+			let entry_ctx = entry_ctx.clone();
 			dialog.connect_response(move |dialog, response| {
 				if response == gtk::ResponseType::Accept {
 					if let Some(path) = dialog.file().and_then(|file| file.path()) {
 						let text = path.to_string_lossy().into_owned();
 						row.set_text(&text);
-						let mut entry = entry.borrow_mut();
-						entry.mount_point = text;
-						render_list_entry(&action_row, &entry, Some(&reset_btn));
+						{
+							let mut entry = entry.borrow_mut();
+							entry.mount_point = text;
+						}
+						entry_ctx.render();
 					}
 				}
 			});

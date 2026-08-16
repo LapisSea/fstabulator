@@ -1,8 +1,7 @@
+use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
 use crate::fs_options::{FsOption, OptionValue};
-use crate::render_list_entry;
 use crate::search_picker::{ErrorRenderer, build_search_picker};
-use crate::stab_yurself::StabEntry;
 use crate::subvolume::{Subvol, list_subvolumes};
 use crate::{GC, fs_options};
 use adw::prelude::*;
@@ -10,12 +9,12 @@ use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow, SpinRow};
 use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, MenuButton, Orientation, StringList};
 use std::rc::Rc;
 
-pub fn build_options_group(group: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) {
+pub fn build_options_group(group: &PreferencesGroup, entry_ctx: &EntryContext) {
 	while let Some(row) = group.row(0) {
 		group.remove(&row);
 	}
-	let options = entry.cloned(|w| &w.options);
-	let ctx = AddContext::new(group, entry, action_row, reset_btn);
+	let options = entry_ctx.entry().cloned(|w| &w.options);
+	let ctx = AddContext::new(group, entry_ctx);
 	for (index, value) in options.iter().enumerate() {
 		add_option_row(AddContext {
 			index,
@@ -28,21 +27,17 @@ pub fn build_options_group(group: &PreferencesGroup, entry: &GC<StabEntry>, acti
 
 #[derive(Clone)]
 pub struct AddContext {
+	entry_ctx: EntryContext,
 	group: PreferencesGroup,
-	entry: GC<StabEntry>,
-	action_row: ActionRow,
-	reset_btn: gtk::Button,
 	index: usize,
 	value: String,
 }
 
 impl AddContext {
-	pub fn new(group: &PreferencesGroup, entry: &GC<StabEntry>, action_row: &ActionRow, reset_btn: &gtk::Button) -> Self {
+	pub fn new(group: &PreferencesGroup, entry_ctx: &EntryContext) -> Self {
 		AddContext {
+			entry_ctx: entry_ctx.clone(),
 			group: group.clone(),
-			entry: entry.clone(),
-			action_row: action_row.clone(),
-			reset_btn: reset_btn.clone(),
 			index: 0,
 			value: String::new(),
 		}
@@ -58,7 +53,7 @@ fn add_option_row(ctx: AddContext) {
 		.map(|(n, c)| (n.to_string(), c.to_string()))
 		.unwrap_or_else(|| (ctx.value.clone(), String::new()));
 
-	let option = fs_options::lookup(&ctx.entry.borrow().fs_type, &name);
+	let option = fs_options::lookup(&ctx.entry_ctx.entry().borrow().fs_type, &name);
 
 	let row = ActionRow::builder().title(name.as_str()).build();
 	if let Some(FsOption { description, .. }) = option {
@@ -181,19 +176,17 @@ fn make_trash_button(ctx: &AddContext) -> Button {
 
 	let ctx = ctx.clone();
 	trash.connect_clicked(move |_| {
-		let entry = ctx.entry.clone();
+		let entry = ctx.entry_ctx.entry().clone();
 		entry.borrow_mut().options.remove(ctx.index);
-		let action_row = ctx.action_row.clone();
-		let reset_btn = ctx.reset_btn.clone();
-		build_options_group(&ctx.group, &ctx.entry, &ctx.action_row, &ctx.reset_btn);
-		render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+		build_options_group(&ctx.group, &ctx.entry_ctx);
+		ctx.entry_ctx.render();
 	});
 	trash
 }
 
 fn set_option(ctx: &AddContext, value: String) {
-	ctx.entry.borrow_mut().options[ctx.index] = value;
-	render_list_entry(&ctx.action_row, &ctx.entry.borrow(), Some(&ctx.reset_btn));
+	ctx.entry_ctx.entry().borrow_mut().options[ctx.index] = value;
+	ctx.entry_ctx.render();
 }
 
 fn add_free_text_option_row(ctx: AddContext, trash: &gtk::Button) {
@@ -391,7 +384,7 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 	let dataset = {
 		let (ctx, cache) = (ctx.clone(), cache.clone());
 		move || {
-			let device = ctx.entry.cloned(|e| &e.device);
+			let device = ctx.entry_ctx.entry().cloned(|e| &e.device);
 			let Some(path) = device.resolve_node() else {
 				return Err(anyhow::anyhow!("Could not find local device for \"{}\"", device.render()));
 			};
@@ -446,7 +439,7 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 }
 
 fn add_add_option_row(ctx: AddContext) {
-	let entry_ref = ctx.entry.borrow();
+	let entry_ref = ctx.entry_ctx.entry().borrow();
 	let existing: Vec<&str> = entry_ref
 		.options
 		.iter()
@@ -474,9 +467,9 @@ fn add_add_option_row(ctx: AddContext) {
 	let on_select = {
 		let ctx = ctx.clone();
 		move |option: FsOption, _index: usize| {
-			ctx.entry.borrow_mut().options.push(default_option_value(option));
-			build_options_group(&ctx.group, &ctx.entry, &ctx.action_row, &ctx.reset_btn);
-			render_list_entry(&ctx.action_row, &ctx.entry.borrow(), Some(&ctx.reset_btn));
+			ctx.entry_ctx.entry().borrow_mut().options.push(default_option_value(option));
+			build_options_group(&ctx.group, &ctx.entry_ctx);
+			ctx.entry_ctx.render();
 		}
 	};
 

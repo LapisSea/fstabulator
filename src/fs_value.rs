@@ -1,8 +1,7 @@
 use crate::GC;
+use crate::context::EntryContext;
 use crate::device_value::DeviceKind;
-use crate::render_list_entry;
 use crate::search_picker::{ErrorRenderer, build_search_picker};
-use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
 use adw::{ActionRow, PreferencesGroup, PreferencesRow};
 use gtk::{Align, Box as GtkBox, Entry, Orientation};
@@ -135,13 +134,8 @@ enum FsChoice {
 	Other,
 }
 
-pub fn add_fs_type_row(
-	options: &PreferencesGroup,
-	entry: &GC<StabEntry>,
-	action_row: &ActionRow,
-	reset_btn: &gtk::Button,
-	on_change: impl Fn() + 'static,
-) {
+pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_change: impl Fn() + 'static) {
+	let entry = entry_ctx.entry().clone();
 	let on_change = Rc::new(on_change);
 	let choices: Vec<FsChoice> = FsType::iter()
 		.filter(|e| !matches!(e, FsType::Other(_)))
@@ -179,9 +173,8 @@ pub fn add_fs_type_row(
 		}
 	};
 	let on_select = {
+		let entry_ctx = entry_ctx.clone();
 		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
 		let value_entry = value_entry.clone();
 		let menu_btn_holder = menu_btn_holder.clone();
 		let on_change = on_change.clone();
@@ -207,7 +200,7 @@ pub fn add_fs_type_row(
 			if is_other {
 				value_entry.grab_focus();
 			}
-			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+			entry_ctx.render();
 			on_change();
 		}
 	};
@@ -226,21 +219,19 @@ pub fn add_fs_type_row(
 	*menu_btn_holder.borrow_mut() = Some(menu_btn.clone());
 
 	{
+		let entry_ctx = entry_ctx.clone();
 		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
 		let menu_btn = menu_btn.clone();
 		value_entry.connect_changed(move |value_entry| {
 			entry.borrow_mut().fs_type = FsType::Other(value_entry.text().to_string());
 			menu_btn.set_label("Other");
-			render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+			entry_ctx.render();
 		});
 	}
 
 	{
+		let entry_ctx = entry_ctx.clone();
 		let entry = entry.clone();
-		let action_row = action_row.clone();
-		let reset_btn = reset_btn.clone();
 		let menu_btn = menu_btn.clone();
 		let value_entry = value_entry.clone();
 		let on_change = on_change.clone();
@@ -258,7 +249,7 @@ pub fn add_fs_type_row(
 					}
 					menu_btn.set_label(&entry.borrow().fs_type.to_string());
 					value_entry.set_visible(false);
-					render_list_entry(&action_row, &entry.borrow(), Some(&reset_btn));
+					entry_ctx.render();
 					on_change();
 				}
 				Err(_) => {}
