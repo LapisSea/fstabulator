@@ -1,3 +1,4 @@
+mod block_devices;
 mod context;
 mod credentials_flow;
 mod device_value;
@@ -283,7 +284,8 @@ fn build_ui(application: &Application) {
 		.mount-status-mounted { color: @success_color; }\
 		.mount-status-unmounted { color: @warning_color; }\
 		.mount-status-missing { color: @error_color; }\
-		.mount-point-exists { color: @success_color; }",
+		.mount-point-exists { color: @success_color; }\
+		.connection-ok { color: @success_color; }",
 	);
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 

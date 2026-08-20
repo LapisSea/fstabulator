@@ -1,11 +1,18 @@
 use crate::GC;
+use crate::block_devices::{BlockDeviceInfo, list_block_devices};
 use crate::context::EntryContext;
 use crate::fs_value::FsType;
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
-use adw::{PreferencesGroup, PreferencesRow};
-use gtk::{Box as GtkBox, DropDown, Entry, Orientation, StringList};
+use adw::{Dialog, EntryRow, PreferencesGroup, PreferencesRow};
+use glib::subclass::prelude::*;
+use gtk::{
+	Align, Box as GtkBox, Button, ColumnView, ColumnViewColumn, CustomFilter, DropDown, Entry, FilterListModel, Label, Orientation, ScrolledWindow,
+	SearchEntry, SignalListItemFactory, SingleSelection, StringList,
+};
+use std::cell::RefCell;
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct DeviceValue {
@@ -55,6 +62,118 @@ impl DeviceValue {
 			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => self.value.clone(),
 		}
 	}
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum NetworkStyle {
+	/// A `//server/share` location (CIFS/SMB)
+	Smb,
+	/// A `server:/export` location (NFS, sshfs)
+	HostPath,
+}
+
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct NetworkLocation {
+	pub style: NetworkStyle,
+	pub user: Option<String>,
+	pub host: String,
+	pub port: Option<String>,
+	/// Share or export path after the host. HostPath locations keep the leading `/`.
+	pub path: Option<String>,
+}
+
+impl NetworkLocation {
+	pub fn parse(raw: &str) -> Option<Self> {
+		let raw = raw.trim();
+		if raw.is_empty() {
+			return None;
+		}
+		if let Some(after) = raw.strip_prefix("//") {
+			let (authority, path) = match after.split_once('/') {
+				Some((authority, path)) => (authority, Some(path.to_string())),
+				None => (after, None),
+			};
+			let (user, host, port) = parse_authority(authority)?;
+			return Some(NetworkLocation {
+				style: NetworkStyle::Smb,
+				user,
+				host,
+				port,
+				path,
+			});
+		}
+		let colon = find_colon_outside_brackets(raw)?;
+		let (authority, path) = (&raw[..colon], &raw[colon + 1..]);
+		let (user, host, port) = parse_authority(authority)?;
+		Some(NetworkLocation {
+			style: NetworkStyle::HostPath,
+			user,
+			host,
+			port,
+			path: Some(path.to_string()),
+		})
+	}
+
+	pub fn render(&self) -> String {
+		let host = if self.host.contains(':') {
+			format!("[{}]", self.host)
+		} else {
+			self.host.clone()
+		};
+		let authority = match (&self.user, &self.port) {
+			(Some(user), Some(port)) => format!("{user}@{host}:{port}"),
+			(Some(user), None) => format!("{user}@{host}"),
+			(None, Some(port)) => format!("{host}:{port}"),
+			(None, None) => host,
+		};
+		match self.style {
+			NetworkStyle::Smb => match &self.path {
+				Some(path) => format!("//{authority}/{path}"),
+				None => format!("//{authority}"),
+			},
+			NetworkStyle::HostPath => format!("{authority}:{}", self.path.as_deref().unwrap_or_default()),
+		}
+	}
+}
+
+fn parse_authority(authority: &str) -> Option<(Option<String>, String, Option<String>)> {
+	let (user, rest) = match authority.split_once('@') {
+		Some((user, rest)) => (Some(user.to_string()).filter(|u| !u.is_empty()), rest),
+		None => (None, authority),
+	};
+	let (host, port) = if let Some(inner) = rest.strip_prefix('[') {
+		let close = inner.find(']')?;
+		let host = &inner[..close];
+		let port = inner[close + 1..].strip_prefix(':').map(str::to_string).filter(|p| !p.is_empty());
+		(host.to_string(), port)
+	} else if let Some((host, port)) = rest.rsplit_once(':') {
+		if host.is_empty() || host.contains(':') || port.contains(':') {
+			(rest.to_string(), None)
+		} else if port.is_empty() {
+			(host.to_string(), None)
+		} else {
+			(host.to_string(), Some(port.to_string()))
+		}
+	} else {
+		(rest.to_string(), None)
+	};
+	if host.is_empty() {
+		return None;
+	}
+	Some((user, host, port))
+}
+
+fn find_colon_outside_brackets(s: &str) -> Option<usize> {
+	let mut in_brackets = false;
+	for (i, c) in s.char_indices() {
+		match c {
+			'[' => in_brackets = true,
+			']' => in_brackets = false,
+			':' if !in_brackets => return Some(i),
+			_ => {}
+		}
+	}
+	None
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -178,12 +297,81 @@ fn friendly_device_path(node: &Path) -> String {
 		.unwrap_or_else(|| node.to_string_lossy().into_owned())
 }
 
+fn network_style_for_fs(fs_type: &FsType) -> NetworkStyle {
+	match fs_type {
+		FsType::Cifs | FsType::Smb3 => NetworkStyle::Smb,
+		_ => NetworkStyle::HostPath,
+	}
+}
+
+fn default_port_for_fs(fs_type: &FsType) -> Option<u16> {
+	match fs_type {
+		FsType::Cifs | FsType::Smb3 => Some(445),
+		FsType::Nfs | FsType::Nfs4 => Some(2049),
+		FsType::FuseSshfs => Some(22),
+		_ => None,
+	}
+}
+
+fn resolve_test_port(fs_type: &FsType, port_text: &str) -> Option<u16> {
+	if port_text.is_empty() {
+		return default_port_for_fs(fs_type);
+	}
+	port_text.parse().ok()
+}
+
+fn set_connection_status(label: &Label, text: &str, error: bool) {
+	label.set_label(text);
+	label.remove_css_class("connection-ok");
+	label.remove_css_class("invalid-alert");
+	label.add_css_class(if error { "invalid-alert" } else { "connection-ok" });
+}
+
+fn test_network_connection(host: &str, port: u16) -> Result<(), String> {
+	use std::net::ToSocketAddrs;
+	use std::time::Duration;
+
+	let addr = (host, port)
+		.to_socket_addrs()
+		.map_err(|err| format!("Could not resolve '{host}': {err}"))?
+		.next()
+		.ok_or_else(|| format!("Could not resolve '{host}'."))?;
+	std::net::TcpStream::connect_timeout(&addr, Duration::from_secs(3))
+		.map(|_| ())
+		.map_err(|err| format!("Could not connect to {host}:{port}: {err}"))
+}
+
+const DIALOG_MARGIN: i32 = 16;
+
+fn dialog_content_box() -> GtkBox {
+	GtkBox::builder()
+		.orientation(Orientation::Vertical)
+		.spacing(6)
+		.margin_start(DIALOG_MARGIN)
+		.margin_end(DIALOG_MARGIN)
+		.margin_top(DIALOG_MARGIN)
+		.margin_bottom(DIALOG_MARGIN)
+		.build()
+}
+
+fn close_on_click(btn: &Button, dialog: &Dialog) {
+	let dialog = dialog.clone();
+	btn.connect_clicked(move |_| {
+		dialog.close();
+	});
+}
+
 #[derive(Clone)]
 pub struct DeviceRowController {
 	entry: GC<StabEntry>,
+	entry_ctx: EntryContext,
 	dropdown: DropDown,
 	kinds: GC<Vec<DeviceKind>>,
 	model: StringList,
+	syncing: GC<bool>,
+	style: GC<NetworkStyle>,
+	value_entry: Entry,
+	picker_btn: Button,
 }
 
 impl DeviceRowController {
@@ -206,6 +394,421 @@ impl DeviceRowController {
 			&self.kinds.borrow().iter().map(|k| k.label()).collect::<Vec<_>>(),
 		);
 		self.dropdown.set_selected(selected as u32);
+		self.sync_kind();
+	}
+
+	fn sync_kind(&self) {
+		let kind = self.entry.borrow().device.kind;
+		let show_picker = kind != DeviceKind::Other;
+		*self.syncing.borrow_mut() = true;
+		self.picker_btn.set_visible(show_picker);
+		if show_picker {
+			let icon = if kind == DeviceKind::Network {
+				"preferences-system-symbolic"
+			} else {
+				"drive-harddisk-symbolic"
+			};
+			self.picker_btn.set_icon_name(icon);
+		}
+		let value = self.entry.borrow().device.value.clone();
+		self.value_entry.set_text(&value);
+		*self.syncing.borrow_mut() = false;
+	}
+
+	fn open_network_editor(&self) {
+		let (value, fs_type) = {
+			let entry = self.entry.borrow();
+			(entry.device.value.clone(), entry.fs_type.clone())
+		};
+		let (user, host, port, path, style) = match NetworkLocation::parse(&value) {
+			Some(loc) => (loc.user, loc.host, loc.port, loc.path, loc.style),
+			None => (None, String::new(), None, None, network_style_for_fs(&fs_type)),
+		};
+		*self.style.borrow_mut() = style;
+
+		let user_entry = EntryRow::builder().title("User").text(user.as_deref().unwrap_or("")).build();
+		let host_entry = EntryRow::builder().title("Host").text(&host).build();
+		let port_entry = EntryRow::builder().title("Port").text(port.as_deref().unwrap_or("")).build();
+		let path_entry = EntryRow::builder().title("Path").text(path.as_deref().unwrap_or("")).build();
+
+		let test_btn = Button::with_label("Test connection");
+		let status_label = Label::builder().halign(Align::Start).wrap(true).build();
+		let test_row = GtkBox::builder()
+			.orientation(Orientation::Horizontal)
+			.spacing(6)
+			.valign(Align::Center)
+			.build();
+		test_row.append(&test_btn);
+		test_row.append(&status_label);
+
+		let heading = Label::builder()
+			.label("Network location")
+			.css_classes(["title-1"])
+			.halign(Align::Start)
+			.build();
+
+		let cancel_btn = Button::with_label("Cancel");
+		let save_btn = Button::with_label("Save");
+		save_btn.add_css_class("suggested-action");
+		let buttons = GtkBox::builder()
+			.orientation(Orientation::Horizontal)
+			.spacing(6)
+			.halign(Align::End)
+			.build();
+		buttons.append(&cancel_btn);
+		buttons.append(&save_btn);
+
+		let content = dialog_content_box();
+		content.append(&heading);
+		content.append(&user_entry);
+		content.append(&host_entry);
+		content.append(&port_entry);
+		content.append(&path_entry);
+		content.append(&test_row);
+		content.append(&buttons);
+
+		{
+			let fs_type = fs_type.clone();
+			let test_btn = test_btn.clone();
+			let status_label = status_label.clone();
+			let host_entry = host_entry.clone();
+			let port_entry = port_entry.clone();
+			test_btn.clone().connect_clicked(move |_| {
+				let host = host_entry.text().to_string();
+				let Some(port) = resolve_test_port(&fs_type, &port_entry.text()) else {
+					set_connection_status(&status_label, "Enter a valid port to test.", true);
+					return;
+				};
+				if host.is_empty() {
+					set_connection_status(&status_label, "Enter a host to test.", true);
+					return;
+				}
+				test_btn.set_sensitive(false);
+				set_connection_status(&status_label, "Testing connection…", false);
+				let (tx, rx) = std::sync::mpsc::channel();
+				let (test_btn, status_label) = (test_btn.clone(), status_label.clone());
+				std::thread::spawn(move || {
+					let result = match test_network_connection(&host, port) {
+						Ok(()) => Ok(format!("Connected to {host}:{port}.")),
+						Err(err) => Err(err),
+					};
+					let _ = tx.send(result);
+				});
+				gtk::glib::timeout_add_local(std::time::Duration::from_millis(100), move || match rx.try_recv() {
+					Ok(Ok(message)) => {
+						test_btn.set_sensitive(true);
+						set_connection_status(&status_label, &message, false);
+						gtk::glib::ControlFlow::Break
+					}
+					Ok(Err(err)) => {
+						test_btn.set_sensitive(true);
+						set_connection_status(&status_label, &err, true);
+						gtk::glib::ControlFlow::Break
+					}
+					Err(std::sync::mpsc::TryRecvError::Disconnected) => {
+						test_btn.set_sensitive(true);
+						set_connection_status(&status_label, "Test connection failed.", true);
+						gtk::glib::ControlFlow::Break
+					}
+					Err(_) => gtk::glib::ControlFlow::Continue,
+				});
+			});
+		}
+
+		let dialog = Dialog::builder().child(&content).follows_content_size(true).width_request(400).build();
+
+		close_on_click(&cancel_btn, &dialog);
+
+		{
+			let controller = self.clone();
+			let user_entry = user_entry.clone();
+			let host_entry = host_entry.clone();
+			let port_entry = port_entry.clone();
+			let path_entry = path_entry.clone();
+			let status_label = status_label.clone();
+			let dialog = dialog.clone();
+			save_btn.connect_clicked(move |_| {
+				if controller.apply_network_fields(&user_entry, &host_entry, &port_entry, &path_entry) {
+					dialog.close();
+				} else {
+					set_connection_status(&status_label, "Enter a host to save.", true);
+				}
+			});
+		}
+
+		let parent = crate::popup::parent_window(&self.picker_btn);
+		dialog.present(parent.as_ref());
+	}
+
+	fn apply_network_fields(&self, user: &EntryRow, host: &EntryRow, port: &EntryRow, path: &EntryRow) -> bool {
+		let host = host.text().to_string();
+		if host.is_empty() {
+			return false;
+		}
+		let user = user.text().to_string();
+		let port = port.text().to_string();
+		let path = path.text().to_string();
+		let location = NetworkLocation {
+			style: *self.style.borrow(),
+			user: (!user.is_empty()).then_some(user),
+			host,
+			port: (!port.is_empty()).then_some(port),
+			path: (!path.is_empty()).then_some(path),
+		};
+		self.entry.borrow_mut().device = DeviceValue::from(location.render(), DeviceKind::Network);
+		self.sync_kind();
+		self.entry_ctx.render();
+		true
+	}
+
+	fn open_device_picker(&self) {
+		let kind = self.entry.borrow().device.kind;
+		let mut devices: Vec<BlockDeviceInfo> = match list_block_devices() {
+			Ok(devices) => devices.into_iter().filter(|device| pick_value(device, kind).is_some()).collect(),
+			Err(err) => {
+				crate::popup::present_simple_dialog(&self.picker_btn, "Could not list devices", &format!("{err:#}"));
+				return;
+			}
+		};
+		devices.sort_by_key(|device| pick_value(device, kind));
+
+		let store = gtk::gio::ListStore::new::<DeviceTableRow>();
+		for device in &devices {
+			store.append(&DeviceTableRow::new(device, kind));
+		}
+
+		let query = Rc::new(RefCell::new(String::new()));
+		let filter = CustomFilter::new({
+			let query = query.clone();
+			move |item| {
+				let query = query.borrow().trim().to_lowercase();
+				item.downcast_ref::<DeviceTableRow>()
+					.map(|row| query.is_empty() || filter_row(row, &query))
+					.unwrap_or(true)
+			}
+		});
+		let filter_model = FilterListModel::new(Some(store), Some(filter.clone()));
+		let selection = SingleSelection::new(Some(filter_model.clone()));
+		selection.set_autoselect(false);
+
+		let column_view = ColumnView::builder()
+			.model(&selection)
+			.reorderable(false)
+			.hexpand(true)
+			.vexpand(true)
+			.build();
+		for (title, getter) in device_columns(kind) {
+			column_view.append_column(&make_column(&title, getter));
+		}
+
+		let parent = crate::popup::parent_window(&self.picker_btn);
+		let max_width = parent
+			.as_ref()
+			.map(|window| (window.width() as f64 * 0.95) as i32 - DIALOG_MARGIN * 2)
+			.unwrap_or(600);
+
+		let scroll = ScrolledWindow::builder()
+			.child(&column_view)
+			.max_content_height(300)
+			.max_content_width(max_width)
+			.propagate_natural_height(true)
+			.propagate_natural_width(true)
+			.hexpand(true)
+			.build();
+
+		let search = SearchEntry::builder().placeholder_text("Filter devices…").hexpand(true).build();
+		let empty_label = Label::builder().label("No devices found").halign(Align::Start).visible(false).build();
+
+		let heading = Label::builder()
+			.label(format!("Select {}", kind.label()))
+			.css_classes(["title-1"])
+			.halign(Align::Start)
+			.build();
+		let cancel_btn = Button::with_label("Cancel");
+		cancel_btn.set_halign(Align::End);
+
+		let content = dialog_content_box();
+		content.append(&heading);
+		content.append(&search);
+		content.append(&scroll);
+		content.append(&empty_label);
+		content.append(&cancel_btn);
+		if devices.is_empty() {
+			empty_label.set_visible(true);
+			scroll.set_visible(false);
+		}
+
+		let dialog = Dialog::builder().child(&content).follows_content_size(true).build();
+
+		close_on_click(&cancel_btn, &dialog);
+
+		{
+			let dialog = dialog.clone();
+			let controller = self.clone();
+			selection.connect_selection_changed(move |selection, _, _| {
+				if selection.selected() == gtk::INVALID_LIST_POSITION {
+					return;
+				}
+				let Some(item) = selection.selected_item() else {
+					return;
+				};
+				let Ok(row) = item.downcast::<DeviceTableRow>() else {
+					return;
+				};
+				let kind = controller.entry.borrow().device.kind;
+				controller.entry.borrow_mut().device = DeviceValue::from(row.value(), kind);
+				controller.sync_kind();
+				controller.entry_ctx.render();
+				dialog.close();
+			});
+		}
+
+		{
+			let query = query.clone();
+			let filter = filter.clone();
+			let filter_model = filter_model.clone();
+			let empty_label = empty_label.clone();
+			let scroll = scroll.clone();
+			search.connect_search_changed(move |search| {
+				*query.borrow_mut() = search.text().to_string();
+				filter.changed(gtk::FilterChange::Different);
+				let empty = filter_model.n_items() == 0;
+				empty_label.set_visible(empty);
+				scroll.set_visible(!empty);
+			});
+		}
+
+		dialog.present(parent.as_ref());
+	}
+}
+
+mod imp {
+	use glib::subclass::prelude::*;
+	use std::cell::RefCell;
+
+	#[derive(Default)]
+	pub struct DeviceTableRow {
+		pub value: RefCell<String>,
+		pub name: RefCell<String>,
+		pub size: RefCell<String>,
+		pub label: RefCell<String>,
+		pub fstype: RefCell<String>,
+		pub mount: RefCell<String>,
+		pub model: RefCell<String>,
+	}
+
+	#[glib::object_subclass]
+	impl ObjectSubclass for DeviceTableRow {
+		const NAME: &'static str = "DeviceTableRow";
+		type Type = super::DeviceTableRow;
+		type ParentType = glib::Object;
+	}
+
+	impl ObjectImpl for DeviceTableRow {}
+}
+
+glib::wrapper! {
+	pub struct DeviceTableRow(ObjectSubclass<imp::DeviceTableRow>);
+}
+
+impl DeviceTableRow {
+	fn new(device: &BlockDeviceInfo, kind: DeviceKind) -> Self {
+		let row: DeviceTableRow = glib::Object::builder().build();
+		let imp = row.imp();
+		*imp.value.borrow_mut() = pick_value(device, kind).unwrap_or_default();
+		*imp.name.borrow_mut() = device.name.clone();
+		*imp.size.borrow_mut() = device.size.clone().unwrap_or_default();
+		*imp.label.borrow_mut() = device.label.clone().unwrap_or_default();
+		*imp.fstype.borrow_mut() = device.fstype.clone().unwrap_or_default();
+		*imp.mount.borrow_mut() = device.mountpoints.join(",");
+		*imp.model.borrow_mut() = device.model.clone().unwrap_or_default();
+		row
+	}
+
+	fn value(&self) -> String {
+		self.imp().value.borrow().clone()
+	}
+
+	fn name(&self) -> String {
+		self.imp().name.borrow().clone()
+	}
+
+	fn size(&self) -> String {
+		self.imp().size.borrow().clone()
+	}
+
+	fn label(&self) -> String {
+		self.imp().label.borrow().clone()
+	}
+
+	fn fstype(&self) -> String {
+		self.imp().fstype.borrow().clone()
+	}
+
+	fn mount(&self) -> String {
+		self.imp().mount.borrow().clone()
+	}
+
+	fn model(&self) -> String {
+		self.imp().model.borrow().clone()
+	}
+}
+
+type DeviceColumn = (String, fn(&DeviceTableRow) -> String);
+
+fn device_columns(kind: DeviceKind) -> Vec<DeviceColumn> {
+	vec![
+		(kind.label().to_string(), DeviceTableRow::value),
+		("Device name".to_string(), DeviceTableRow::name),
+		("Size".to_string(), DeviceTableRow::size),
+		("Label".to_string(), DeviceTableRow::label),
+		("File System".to_string(), DeviceTableRow::fstype),
+		("Model".to_string(), DeviceTableRow::model),
+	]
+}
+
+fn make_column(title: &str, getter: fn(&DeviceTableRow) -> String) -> ColumnViewColumn {
+	let factory = SignalListItemFactory::new();
+	factory.connect_setup(move |_, item| {
+		let Some(list_item) = item.downcast_ref::<gtk::ListItem>() else {
+			return;
+		};
+		let label = Label::builder().halign(Align::Start).ellipsize(gtk::pango::EllipsizeMode::End).build();
+		list_item.set_child(Some(&label));
+	});
+	factory.connect_bind(move |_, item| {
+		let Some(list_item) = item.downcast_ref::<gtk::ListItem>() else {
+			return;
+		};
+		let Some(item) = list_item.item().and_then(|item| item.downcast::<DeviceTableRow>().ok()) else {
+			return;
+		};
+		let Some(label) = list_item.child().and_then(|child| child.downcast::<Label>().ok()) else {
+			return;
+		};
+		label.set_text(&getter(&item));
+	});
+	ColumnViewColumn::builder().title(title).factory(&factory).build()
+}
+
+fn filter_row(row: &DeviceTableRow, query: &str) -> bool {
+	row.value().to_lowercase().contains(query)
+		|| row.name().to_lowercase().contains(query)
+		|| row.size().to_lowercase().contains(query)
+		|| row.label().to_lowercase().contains(query)
+		|| row.fstype().to_lowercase().contains(query)
+		|| row.mount().to_lowercase().contains(query)
+		|| row.model().to_lowercase().contains(query)
+}
+
+fn pick_value(device: &BlockDeviceInfo, kind: DeviceKind) -> Option<String> {
+	match kind {
+		DeviceKind::Uuid => device.uuid.clone(),
+		DeviceKind::PartUuid => device.partuuid.clone(),
+		DeviceKind::Label => device.label.clone(),
+		DeviceKind::PartLabel => device.partlabel.clone(),
+		DeviceKind::DevicePath => Some(device.path.clone()),
+		DeviceKind::Network | DeviceKind::Other => None,
 	}
 }
 
@@ -226,96 +829,147 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 	});
 
 	let model = StringList::new(&kinds.borrow().iter().map(|k| k.label()).collect::<Vec<_>>());
+	let dropdown = DropDown::builder().model(&model).selected(selected as u32).valign(Align::Center).build();
 
-	let dropdown = DropDown::builder().model(&model).selected(selected as u32).build();
+	let syncing: GC<bool> = GC::new(false);
+	let style: GC<NetworkStyle> = GC::new(network_style_for_fs(&entry.borrow().fs_type));
 
-	let value_entry = Entry::builder().text(&initial.value).hexpand(true).build();
+	let title = Label::builder().label("Device").halign(Align::Start).wrap(true).build();
+	let text = GtkBox::builder()
+		.orientation(Orientation::Vertical)
+		.margin_top(6)
+		.spacing(3)
+		.valign(Align::Center)
+		.hexpand(true)
+		.build();
+	text.append(&title);
+	let header = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.spacing(6)
+		.valign(Align::Center)
+		.margin_start(12)
+		.margin_end(12)
+		.build();
+	header.set_size_request(-1, 50);
+	header.append(&text);
+	header.append(&dropdown);
 
-	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(12).hexpand(true).build();
-	input_row.append(&dropdown);
+	let value_entry = Entry::builder()
+		.text(&initial.value)
+		.hexpand(true)
+		.margin_start(12)
+		.margin_end(12)
+		.build();
+	let picker_btn = Button::builder()
+		.icon_name("preferences-system-symbolic")
+		.margin_end(12)
+		.tooltip_text("Edit device")
+		.build();
+
+	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(4).build();
 	input_row.append(&value_entry);
+	input_row.append(&picker_btn);
 
-	let warning = gtk::Label::new(None);
-	warning.set_xalign(0.0);
-	warning.set_wrap(true);
-	warning.set_visible(false);
-	warning.add_css_class("error");
+	let warning = Label::builder()
+		.halign(Align::Start)
+		.wrap(true)
+		.visible(false)
+		.css_classes(["error"])
+		.build();
 
-	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).hexpand(true).build();
+	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).margin_bottom(6).build();
+	content.append(&header);
 	content.append(&input_row);
 	content.append(&warning);
+	let row = PreferencesRow::builder().child(&content).activatable(false).build();
 
-	let row = PreferencesRow::builder().title("Device").child(&content).build();
+	options.add(&row);
+
+	let controller = DeviceRowController {
+		entry: entry.clone(),
+		entry_ctx: entry_ctx.clone(),
+		dropdown: dropdown.clone(),
+		kinds,
+		model,
+		syncing,
+		style,
+		value_entry: value_entry.clone(),
+		picker_btn: picker_btn.clone(),
+	};
 
 	{
-		let entry_ctx = entry_ctx.clone();
-		let kinds_ref = kinds.clone();
-		let entry_ref = entry.clone();
-		let dropdown_ref = dropdown.clone();
+		let controller = controller.clone();
 		let warning = warning.clone();
 		value_entry.connect_changed(move |entry| {
-			let Some(&kind) = kinds_ref.borrow().get(dropdown_ref.selected() as usize) else {
+			if *controller.syncing.borrow() {
+				return;
+			}
+			let Some(&kind) = controller.kinds.borrow().get(controller.dropdown.selected() as usize) else {
 				return;
 			};
-			entry_ref.borrow_mut().device = DeviceValue::from(entry.text(), kind);
 			warning.set_visible(false);
-			entry_ctx.render();
+			controller.entry.borrow_mut().device = DeviceValue::from(entry.text(), kind);
+			controller.entry_ctx.render();
 		});
 	}
 	{
-		let entry_ctx = entry_ctx.clone();
-		let entry = entry.clone();
-		let value_entry = value_entry.clone();
+		let controller = controller.clone();
+		picker_btn.connect_clicked(move |_| match controller.entry.borrow().device.kind {
+			DeviceKind::Network => controller.open_network_editor(),
+			kind if DeviceKind::LOCAL.contains(&kind) => controller.open_device_picker(),
+			_ => {}
+		});
+	}
+	{
+		let controller = controller.clone();
 		let warning = warning.clone();
-		let kinds = kinds.clone();
 		dropdown.connect_selected_notify(move |dropdown| {
-			let Some(&new_kind) = kinds.borrow().get(dropdown.selected() as usize) else {
+			let Some(&new_kind) = controller.kinds.borrow().get(dropdown.selected() as usize) else {
 				return;
 			};
-			let current = entry.cloned(|e| &e.device);
+			let current = controller.entry.cloned(|e| &e.device);
 
-			if new_kind == DeviceKind::Other {
-				value_entry.set_text(&current.value);
+			if new_kind == current.kind || new_kind == DeviceKind::Other {
+				controller.sync_kind();
+				controller.entry_ctx.render();
 				return;
 			}
-			if new_kind == current.kind {
-				value_entry.set_text(&current.value);
+
+			if new_kind == DeviceKind::Network {
+				controller.entry.borrow_mut().device = DeviceValue::from(current.value, DeviceKind::Network);
+				controller.sync_kind();
+				controller.entry_ctx.render();
 				return;
 			}
 
 			let both_local = DeviceKind::LOCAL.contains(&current.kind) && DeviceKind::LOCAL.contains(&new_kind);
-			match current.transform(new_kind) {
-				Some(device) => {
-					warning.set_visible(false);
-					value_entry.set_text(&device.value);
-					entry.borrow_mut().device = device;
+			if both_local {
+				match current.transform(new_kind) {
+					Some(device) => {
+						controller.entry.borrow_mut().device = device;
+						warning.set_visible(false);
+					}
+					None => {
+						controller.entry.borrow_mut().device = DeviceValue::from(current.value.clone(), new_kind);
+						warning.set_label(&format!(
+							"Could not resolve a {} for {}. The value was kept as-is.",
+							new_kind.label(),
+							current.value
+						));
+						warning.set_visible(true);
+					}
 				}
-				None if both_local => {
-					entry.borrow_mut().device = DeviceValue::from(value_entry.text(), new_kind);
-					warning.set_label(&format!(
-						"Could not resolve a {} for {}. The value was kept as-is.",
-						new_kind.label(),
-						current.value
-					));
-					warning.set_visible(true);
-				}
-				None => {
-					let value = value_entry.text().to_string();
-					entry.borrow_mut().device = DeviceValue::new(value, new_kind);
-				}
+			} else {
+				controller.entry.borrow_mut().device = DeviceValue::new(current.value, new_kind);
 			}
-			entry_ctx.render();
+			controller.sync_kind();
+			controller.entry_ctx.render();
 		});
 	}
 
-	options.add(&row);
+	controller.sync_kind();
 
-	DeviceRowController {
-		entry: entry.clone(),
-		dropdown,
-		kinds,
-		model,
-	}
+	controller
 }
 
 #[cfg(test)]
@@ -366,5 +1020,90 @@ mod tests {
 			panic!("could not resolve path {path}");
 		};
 		assert_eq!(back.value, *uuid);
+	}
+
+	#[test]
+	fn parse_smb_locations() {
+		let loc = NetworkLocation::parse("//server/share").unwrap();
+		assert_eq!(loc.style, NetworkStyle::Smb);
+		assert_eq!(loc.user, None);
+		assert_eq!(loc.host, "server");
+		assert_eq!(loc.port, None);
+		assert_eq!(loc.path.as_deref(), Some("share"));
+		assert_eq!(loc.render(), "//server/share");
+	}
+
+	#[test]
+	fn parse_smb_user_port_and_ipv6() {
+		let loc = NetworkLocation::parse("//user@server:445/share").unwrap();
+		assert_eq!(loc.style, NetworkStyle::Smb);
+		assert_eq!(loc.user.as_deref(), Some("user"));
+		assert_eq!(loc.host, "server");
+		assert_eq!(loc.port.as_deref(), Some("445"));
+		assert_eq!(loc.path.as_deref(), Some("share"));
+		assert_eq!(loc.render(), "//user@server:445/share");
+
+		let loc = NetworkLocation::parse("//[2001:db8::1]/share").unwrap();
+		assert_eq!(loc.host, "2001:db8::1");
+		assert_eq!(loc.render(), "//[2001:db8::1]/share");
+
+		let loc = NetworkLocation::parse("//[::1]:445/share").unwrap();
+		assert_eq!(loc.host, "::1");
+		assert_eq!(loc.port.as_deref(), Some("445"));
+		assert_eq!(loc.render(), "//[::1]:445/share");
+	}
+
+	#[test]
+	fn parse_host_path_locations() {
+		let loc = NetworkLocation::parse("server:/export/path").unwrap();
+		assert_eq!(loc.style, NetworkStyle::HostPath);
+		assert_eq!(loc.host, "server");
+		assert_eq!(loc.path.as_deref(), Some("/export/path"));
+		assert_eq!(loc.render(), "server:/export/path");
+
+		let loc = NetworkLocation::parse("user@host:/path").unwrap();
+		assert_eq!(loc.user.as_deref(), Some("user"));
+		assert_eq!(loc.host, "host");
+		assert_eq!(loc.path.as_deref(), Some("/path"));
+
+		let loc = NetworkLocation::parse("[2001:db8::1]:/export").unwrap();
+		assert_eq!(loc.host, "2001:db8::1");
+		assert_eq!(loc.path.as_deref(), Some("/export"));
+		assert_eq!(loc.render(), "[2001:db8::1]:/export");
+
+		let loc = NetworkLocation::parse("host:").unwrap();
+		assert_eq!(loc.host, "host");
+		assert_eq!(loc.path.as_deref(), Some(""));
+		assert_eq!(loc.render(), "host:");
+	}
+
+	#[test]
+	fn parse_round_trips() {
+		for raw in [
+			"//server/share",
+			"//user@server/share",
+			"//server:445/share",
+			"//user@server:445/share",
+			"//[::1]/share",
+			"//[::1]:445/share",
+			"server:/export/path",
+			"user@host:/path",
+			"[2001:db8::1]:/export",
+			"host:",
+		] {
+			let Some(loc) = NetworkLocation::parse(raw) else {
+				panic!("failed to parse {raw}");
+			};
+			assert_eq!(loc.render(), raw);
+		}
+	}
+
+	#[test]
+	fn parse_rejects_non_network_values() {
+		assert_eq!(NetworkLocation::parse(""), None);
+		assert_eq!(NetworkLocation::parse("server"), None);
+		assert_eq!(NetworkLocation::parse("/dev/sda1"), None);
+		assert_eq!(NetworkLocation::parse("UUID=abc"), None);
+		assert_eq!(NetworkLocation::parse("//"), None);
 	}
 }
