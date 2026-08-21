@@ -757,6 +757,7 @@ fn report_action_outcome(btn: &Button, done: &str, failed: &str, subject: &str, 
 
 fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_editor: RebuildEditor) {
 	let group = PreferencesGroup::builder().title("Mount actions").build();
+	group.set_visible(entry.borrow().mount_point.trim() != "/");
 	editor_panel.append(&group);
 
 	let status_label = gtk::Label::new(None);
