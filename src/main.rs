@@ -272,7 +272,7 @@ fn build_ui(application: &Application) {
 	attach_responsive_breakpoint(&window, &split_box);
 
 	let provider = gtk::CssProvider::new();
-	provider.load_from_data(
+	provider.load_from_string(
 		".invalid-alert { color: red; }\
 		.mount-status-mounted { color: @success_color; }\
 		.mount-status-unmounted { color: @warning_color; }\

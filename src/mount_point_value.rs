@@ -33,22 +33,17 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 		let (row, entry, entry_ctx) = (row.clone(), entry.clone(), entry_ctx.clone());
 		let exists_icon = exists_icon.clone();
 		folder_btn.connect_clicked(move |folder_btn| {
-			let dialog = gtk::FileChooserNative::builder()
-				.title("Choose mount point")
-				.action(gtk::FileChooserAction::SelectFolder)
-				.build();
-			if let Some(window) = folder_btn.root().and_then(|root| root.downcast::<gtk::Window>().ok()) {
-				dialog.set_transient_for(Some(&window));
-			}
+			let dialog = gtk::FileDialog::builder().title("Choose mount point").build();
 			let text = row.text();
 			if !text.is_empty() {
-				let _ = dialog.set_file(&gtk::gio::File::for_path(text.as_str()));
+				dialog.set_initial_folder(Some(&gtk::gio::File::for_path(text.as_str())));
 			}
+			let parent = folder_btn.root().and_then(|root| root.downcast::<gtk::Window>().ok());
 			let (row, entry, entry_ctx) = (row.clone(), entry.clone(), entry_ctx.clone());
 			let exists_icon = exists_icon.clone();
-			dialog.connect_response(move |dialog, response| {
-				if response == gtk::ResponseType::Accept
-					&& let Some(path) = dialog.file().and_then(|file| file.path())
+			dialog.select_folder(parent.as_ref(), None::<&gtk::gio::Cancellable>, move |result| {
+				if let Ok(file) = result
+					&& let Some(path) = file.path()
 				{
 					let text = path.to_string_lossy().into_owned();
 					row.set_text(&text);
@@ -60,7 +55,6 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 					entry_ctx.render();
 				}
 			});
-			dialog.show();
 		});
 	}
 	options.add(&row);

@@ -7,8 +7,8 @@ use adw::prelude::*;
 use adw::{Dialog, EntryRow, PreferencesGroup, PreferencesRow};
 use glib::subclass::prelude::*;
 use gtk::{
-	Align, Box as GtkBox, Button, ColumnView, ColumnViewColumn, CustomFilter, DropDown, Entry, FilterListModel, Label, Orientation, ScrolledWindow,
-	SearchEntry, SignalListItemFactory, SingleSelection, StringList,
+	Align, Box as GtkBox, Button, ColumnView, ColumnViewColumn, CustomFilter, DropDown, Entry, FilterListModel, Label, ListScrollFlags, Orientation,
+	ScrolledWindow, SearchEntry, SignalListItemFactory, SingleSelection, StringList,
 };
 use std::cell::RefCell;
 use std::path::{Path, PathBuf};
@@ -573,12 +573,20 @@ impl DeviceRowController {
 				return;
 			}
 		};
-		devices.sort_by_key(|device| pick_value(device, kind));
+		devices.sort_by(|a, b| a.name.cmp(&b.name));
 
 		let store = gtk::gio::ListStore::new::<DeviceTableRow>();
 		for device in &devices {
 			store.append(&DeviceTableRow::new(device, kind));
 		}
+
+		let current = self.entry.borrow().device.value.clone();
+		let selected_pos = (0..store.n_items()).find(|&i| {
+			store
+				.item(i)
+				.and_then(|item| item.downcast::<DeviceTableRow>().ok())
+				.is_some_and(|row| row.value() == current)
+		});
 
 		let query = Rc::new(RefCell::new(String::new()));
 		let filter = CustomFilter::new({
@@ -593,6 +601,9 @@ impl DeviceRowController {
 		let filter_model = FilterListModel::new(Some(store), Some(filter.clone()));
 		let selection = SingleSelection::new(Some(filter_model.clone()));
 		selection.set_autoselect(false);
+		if let Some(pos) = selected_pos {
+			selection.set_selected(pos);
+		}
 
 		let column_view = ColumnView::builder()
 			.model(&selection)
@@ -675,6 +686,10 @@ impl DeviceRowController {
 			});
 		}
 
+		if let Some(pos) = selected_pos {
+			let column_view = column_view.clone();
+			gtk::glib::idle_add_local_once(move || column_view.scroll_to(pos, None, ListScrollFlags::FOCUS, None));
+		}
 		dialog.present(parent.as_ref());
 	}
 }
