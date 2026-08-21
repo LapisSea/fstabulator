@@ -153,9 +153,9 @@ impl StabEntry {
 			"{}{} {} {} {} {} {}",
 			active_str,
 			self.device.render(),
-			&self.mount_point,
-			&self.fs_type,
-			&self.options.iter().map(|o| o.to_string()).collect::<Vec<_>>().join(","),
+			self.mount_point,
+			self.fs_type,
+			self.options.iter().map(|o| o.to_string()).collect::<Vec<_>>().join(","),
 			self.dump,
 			self.pass
 		)
@@ -164,7 +164,7 @@ impl StabEntry {
 
 impl fmt::Display for StabEntry {
 	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-		write!(f, "{}", &self.data_to_string())
+		write!(f, "{}", self.data_to_string())
 	}
 }
 
@@ -285,9 +285,12 @@ impl StabFile {
 			})
 			.collect()
 	}
+}
 
-	pub fn to_string(&self) -> String {
-		self.lines
+impl fmt::Display for StabFile {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		let rendered = self
+			.lines
 			.iter()
 			.map(|e| match e {
 				StabLine::Entry(e) => {
@@ -303,7 +306,8 @@ impl StabFile {
 				StabLine::Unparsable(val) => val.clone(),
 			})
 			.collect::<Vec<_>>()
-			.join("\n")
+			.join("\n");
+		f.write_str(&rendered)
 	}
 }
 
@@ -325,14 +329,14 @@ pub fn scan_for_backups() -> Result<Vec<(PathBuf, SystemTime)>> {
 
 fn parse_time(time: &str) -> Option<SystemTime> {
 	let parts: Vec<&str> = time.split('T').collect();
-	let standard_rfc3339 = format!("{}T{}", parts.get(0)?, parts.get(1)?.replace('-', ":"));
+	let standard_rfc3339 = format!("{}T{}", parts.first()?, parts.get(1)?.replace('-', ":"));
 	humantime::parse_rfc3339(&standard_rfc3339).ok()
 }
 
 fn split(raw: &str) -> (Vec<&str>, bool) {
 	let mut fields: Vec<&str> = raw.split_whitespace().collect();
 
-	let active = if let Some(rest) = fields.get(0).and_then(|e| e.strip_prefix("#")) {
+	let active = if let Some(rest) = fields.first().and_then(|e| e.strip_prefix("#")) {
 		if rest.trim().is_empty() {
 			fields.remove(0);
 		} else {
@@ -390,7 +394,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn all_dummy_entries_parse_as_stab_entry() {
+	fn dummy_entries_parse() {
 		let raw = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/fstab-dummy")).expect("could not read fstab-dummy");
 		let entries: Vec<(usize, Result<StabEntry>)> = raw
 			.lines()
@@ -409,7 +413,7 @@ mod tests {
 	}
 
 	#[test]
-	fn fstab_dummy_round_trip_equals_original() {
+	fn dummy_round_trip() {
 		let path = concat!(env!("CARGO_MANIFEST_DIR"), "/fstab-dummy");
 		let original = std::fs::read_to_string(path).expect("could not read fstab-dummy");
 		let file = StabFile::read(path).expect("could not parse fstab-dummy");
@@ -417,7 +421,7 @@ mod tests {
 	}
 
 	#[test]
-	fn comment_before_entry_becomes_user_label() {
+	fn comment_becomes_label() {
 		let raw = "\
 # First entry note
 UUID=550e8400-e29b-41d4-a716-446655440000 / ext4 rw 0 1
@@ -448,7 +452,7 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 	}
 
 	#[test]
-	fn comment_not_followed_by_entry_stays_comment() {
+	fn stray_comment_kept() {
 		let raw = "# stray note\n";
 		let lines = parse_fstab(raw);
 		let StabLine::Comment(comment) = &lines[0] else {
@@ -458,7 +462,7 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 	}
 
 	#[test]
-	fn blank_entry_is_invalid_and_parsed_entry_is_valid() {
+	fn entry_validity() {
 		let parsed = StabEntry::from(0, "UUID=1 / ext4 defaults 0 1").unwrap();
 		assert!(parsed.is_valid());
 		assert!(!parsed.is_changed());
@@ -474,7 +478,7 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 	}
 
 	#[test]
-	fn mount_point_changed_detects_unsaved_change() {
+	fn mount_point_changed() {
 		let mut entry = StabEntry::from(0, "UUID=1 /mnt/data ext4 defaults 0 2").unwrap();
 		assert!(!entry.mount_point_changed());
 		entry.mount_point = "/mnt/other".to_string();
@@ -488,7 +492,7 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 	}
 
 	#[test]
-	fn restoring_backup_keeps_real_fstab_as_original() {
+	fn overlay_backup_matches_baseline() {
 		let real = "\
 UUID=1 / ext4 defaults 0 1
 UUID=2 /home xfs defaults 0 2
@@ -520,7 +524,7 @@ UUID=3 /mnt/tmp ext4 defaults 0 2
 	}
 
 	#[test]
-	fn file_is_changed_detects_added_removed_and_modified_entries() {
+	fn file_is_changed() {
 		let raw = "\
 UUID=1 / ext4 defaults 0 1
 UUID=2 /home xfs defaults 0 2

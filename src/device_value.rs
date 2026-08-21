@@ -46,7 +46,7 @@ impl DeviceValue {
 	}
 
 	pub fn reclassify_for(&self, fs_type: &FsType) -> DeviceValue {
-		let mut reclassified = DeviceKind::classify(&self.render(), &DeviceKind::for_fs_type(fs_type));
+		let mut reclassified = DeviceKind::classify(&self.render(), DeviceKind::for_fs_type(fs_type));
 		if self.kind == DeviceKind::Other && self.value.is_empty() && fs_type.is_network() {
 			reclassified.kind = DeviceKind::Network;
 		}
@@ -248,8 +248,8 @@ impl DeviceKind {
 			DeviceKind::PartUuid => device.strip_prefix("PARTUUID="),
 			DeviceKind::Label => device.strip_prefix("LABEL="),
 			DeviceKind::PartLabel => device.strip_prefix("PARTLABEL="),
-			DeviceKind::DevicePath => device.starts_with("/dev/").then(|| device),
-			DeviceKind::Network => (device.starts_with("//") || device.contains(":/")).then(|| device),
+			DeviceKind::DevicePath => device.starts_with("/dev/").then_some(device),
+			DeviceKind::Network => (device.starts_with("//") || device.contains(":/")).then_some(device),
 			DeviceKind::Other => Some(device),
 		};
 		val.map(|val| DeviceValue::from(val, self))
@@ -374,19 +374,25 @@ pub struct DeviceRowController {
 	picker_btn: Button,
 }
 
+fn kinds_with_selected(fs_type: &FsType, current_kind: DeviceKind) -> (Vec<DeviceKind>, usize) {
+	let mut kinds = DeviceKind::for_fs_type(fs_type).to_vec();
+	if !kinds.contains(&DeviceKind::Other) {
+		kinds.push(DeviceKind::Other);
+	}
+	let selected = match kinds.iter().position(|k| *k == current_kind) {
+		Some(selected) => selected,
+		None => kinds.len() - 1,
+	};
+	(kinds, selected)
+}
+
 impl DeviceRowController {
 	pub fn refresh_kinds(&self) {
-		let device = self.entry.cloned(|e| &e.device);
-		let mut new_kinds = DeviceKind::for_fs_type(&self.entry.borrow().fs_type).to_vec();
-		if !new_kinds.contains(&DeviceKind::Other) {
-			new_kinds.push(DeviceKind::Other);
-		}
-		let selected = new_kinds.iter().position(|k| *k == device.kind).unwrap_or_else(|| {
-			new_kinds
-				.iter()
-				.position(|k| *k == DeviceKind::Other)
-				.expect("Other is always appended to kinds")
-		});
+		let (device, fs_type) = {
+			let entry = self.entry.borrow();
+			(entry.device.clone(), entry.fs_type.clone())
+		};
+		let (new_kinds, selected) = kinds_with_selected(&fs_type, device.kind);
 		*self.kinds.borrow_mut() = new_kinds;
 		self.model.splice(
 			0,
@@ -395,6 +401,12 @@ impl DeviceRowController {
 		);
 		self.dropdown.set_selected(selected as u32);
 		self.sync_kind();
+	}
+
+	fn set_device(&self, device: DeviceValue) {
+		self.entry.borrow_mut().device = device;
+		self.sync_kind();
+		self.entry_ctx.render();
 	}
 
 	fn sync_kind(&self) {
@@ -468,11 +480,8 @@ impl DeviceRowController {
 		content.append(&buttons);
 
 		{
-			let fs_type = fs_type.clone();
-			let test_btn = test_btn.clone();
-			let status_label = status_label.clone();
-			let host_entry = host_entry.clone();
-			let port_entry = port_entry.clone();
+			let (fs_type, test_btn, status_label) = (fs_type.clone(), test_btn.clone(), status_label.clone());
+			let (host_entry, port_entry) = (host_entry.clone(), port_entry.clone());
 			test_btn.clone().connect_clicked(move |_| {
 				let host = host_entry.text().to_string();
 				let Some(port) = resolve_test_port(&fs_type, &port_entry.text()) else {
@@ -520,12 +529,8 @@ impl DeviceRowController {
 		close_on_click(&cancel_btn, &dialog);
 
 		{
-			let controller = self.clone();
-			let user_entry = user_entry.clone();
-			let host_entry = host_entry.clone();
-			let port_entry = port_entry.clone();
-			let path_entry = path_entry.clone();
-			let status_label = status_label.clone();
+			let (controller, user_entry, host_entry) = (self.clone(), user_entry.clone(), host_entry.clone());
+			let (port_entry, path_entry, status_label) = (port_entry.clone(), path_entry.clone(), status_label.clone());
 			let dialog = dialog.clone();
 			save_btn.connect_clicked(move |_| {
 				if controller.apply_network_fields(&user_entry, &host_entry, &port_entry, &path_entry) {
@@ -536,7 +541,7 @@ impl DeviceRowController {
 			});
 		}
 
-		let parent = crate::popup::parent_window(&self.picker_btn);
+		let parent = crate::ui_commons::parent_window(&self.picker_btn);
 		dialog.present(parent.as_ref());
 	}
 
@@ -555,9 +560,7 @@ impl DeviceRowController {
 			port: (!port.is_empty()).then_some(port),
 			path: (!path.is_empty()).then_some(path),
 		};
-		self.entry.borrow_mut().device = DeviceValue::from(location.render(), DeviceKind::Network);
-		self.sync_kind();
-		self.entry_ctx.render();
+		self.set_device(DeviceValue::from(location.render(), DeviceKind::Network));
 		true
 	}
 
@@ -566,7 +569,7 @@ impl DeviceRowController {
 		let mut devices: Vec<BlockDeviceInfo> = match list_block_devices() {
 			Ok(devices) => devices.into_iter().filter(|device| pick_value(device, kind).is_some()).collect(),
 			Err(err) => {
-				crate::popup::present_simple_dialog(&self.picker_btn, "Could not list devices", &format!("{err:#}"));
+				crate::ui_commons::present_simple_dialog(&self.picker_btn, "Could not list devices", &format!("{err:#}"));
 				return;
 			}
 		};
@@ -601,7 +604,7 @@ impl DeviceRowController {
 			column_view.append_column(&make_column(&title, getter));
 		}
 
-		let parent = crate::popup::parent_window(&self.picker_btn);
+		let parent = crate::ui_commons::parent_window(&self.picker_btn);
 		let max_width = parent
 			.as_ref()
 			.map(|window| (window.width() as f64 * 0.95) as i32 - DIALOG_MARGIN * 2)
@@ -643,8 +646,7 @@ impl DeviceRowController {
 		close_on_click(&cancel_btn, &dialog);
 
 		{
-			let dialog = dialog.clone();
-			let controller = self.clone();
+			let (dialog, controller) = (dialog.clone(), self.clone());
 			selection.connect_selection_changed(move |selection, _, _| {
 				if selection.selected() == gtk::INVALID_LIST_POSITION {
 					return;
@@ -656,19 +658,14 @@ impl DeviceRowController {
 					return;
 				};
 				let kind = controller.entry.borrow().device.kind;
-				controller.entry.borrow_mut().device = DeviceValue::from(row.value(), kind);
-				controller.sync_kind();
-				controller.entry_ctx.render();
+				controller.set_device(DeviceValue::from(row.value(), kind));
 				dialog.close();
 			});
 		}
 
 		{
-			let query = query.clone();
-			let filter = filter.clone();
-			let filter_model = filter_model.clone();
-			let empty_label = empty_label.clone();
-			let scroll = scroll.clone();
+			let (query, filter, filter_model) = (query.clone(), filter.clone(), filter_model.clone());
+			let (empty_label, scroll) = (empty_label.clone(), scroll.clone());
 			search.connect_search_changed(move |search| {
 				*query.borrow_mut() = search.text().to_string();
 				filter.changed(gtk::FilterChange::Different);
@@ -814,19 +811,13 @@ fn pick_value(device: &BlockDeviceInfo, kind: DeviceKind) -> Option<String> {
 
 pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> DeviceRowController {
 	let entry = entry_ctx.entry().clone();
-	let kinds: GC<Vec<DeviceKind>> = GC::new(DeviceKind::for_fs_type(&entry.borrow().fs_type).to_vec());
-	if !kinds.borrow().contains(&DeviceKind::Other) {
-		kinds.borrow_mut().push(DeviceKind::Other);
-	}
+	let (kinds_vec, selected) = {
+		let entry = entry.borrow();
+		kinds_with_selected(&entry.fs_type, entry.device.kind)
+	};
+	let kinds: GC<Vec<DeviceKind>> = GC::new(kinds_vec);
 
 	let initial = &entry.borrow().device;
-	let selected = kinds.borrow().iter().position(|k| *k == initial.kind).unwrap_or_else(|| {
-		kinds
-			.borrow()
-			.iter()
-			.position(|k| *k == DeviceKind::Other)
-			.expect("Other is always appended to kinds")
-	});
 
 	let model = StringList::new(&kinds.borrow().iter().map(|k| k.label()).collect::<Vec<_>>());
 	let dropdown = DropDown::builder().model(&model).selected(selected as u32).valign(Align::Center).build();
@@ -834,25 +825,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 	let syncing: GC<bool> = GC::new(false);
 	let style: GC<NetworkStyle> = GC::new(network_style_for_fs(&entry.borrow().fs_type));
 
-	let title = Label::builder().label("Device").halign(Align::Start).wrap(true).build();
-	let text = GtkBox::builder()
-		.orientation(Orientation::Vertical)
-		.margin_top(6)
-		.spacing(3)
-		.valign(Align::Center)
-		.hexpand(true)
-		.build();
-	text.append(&title);
-	let header = GtkBox::builder()
-		.orientation(Orientation::Horizontal)
-		.spacing(6)
-		.valign(Align::Center)
-		.margin_start(12)
-		.margin_end(12)
-		.build();
-	header.set_size_request(-1, 50);
-	header.append(&text);
-	header.append(&dropdown);
+	let header = crate::ui_commons::titled_header("Device", None, &dropdown);
 
 	let value_entry = Entry::builder()
 		.text(&initial.value)
@@ -898,8 +871,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 	};
 
 	{
-		let controller = controller.clone();
-		let warning = warning.clone();
+		let (controller, warning) = (controller.clone(), warning.clone());
 		value_entry.connect_changed(move |entry| {
 			if *controller.syncing.borrow() {
 				return;
@@ -921,8 +893,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 		});
 	}
 	{
-		let controller = controller.clone();
-		let warning = warning.clone();
+		let (controller, warning) = (controller.clone(), warning.clone());
 		dropdown.connect_selected_notify(move |dropdown| {
 			let Some(&new_kind) = controller.kinds.borrow().get(dropdown.selected() as usize) else {
 				return;
@@ -936,9 +907,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 			}
 
 			if new_kind == DeviceKind::Network {
-				controller.entry.borrow_mut().device = DeviceValue::from(current.value, DeviceKind::Network);
-				controller.sync_kind();
-				controller.entry_ctx.render();
+				controller.set_device(DeviceValue::from(current.value, DeviceKind::Network));
 				return;
 			}
 
@@ -946,11 +915,11 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 			if both_local {
 				match current.transform(new_kind) {
 					Some(device) => {
-						controller.entry.borrow_mut().device = device;
+						controller.set_device(device);
 						warning.set_visible(false);
 					}
 					None => {
-						controller.entry.borrow_mut().device = DeviceValue::from(current.value.clone(), new_kind);
+						controller.set_device(DeviceValue::from(current.value.clone(), new_kind));
 						warning.set_label(&format!(
 							"Could not resolve a {} for {}. The value was kept as-is.",
 							new_kind.label(),
@@ -960,10 +929,8 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 					}
 				}
 			} else {
-				controller.entry.borrow_mut().device = DeviceValue::new(current.value, new_kind);
+				controller.set_device(DeviceValue::new(current.value, new_kind));
 			}
-			controller.sync_kind();
-			controller.entry_ctx.render();
 		});
 	}
 
@@ -977,7 +944,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn reclassify_for_switches_kind_with_fs() {
+	fn reclassify_for_fs() {
 		let uuid = DeviceValue::from("abc", DeviceKind::Uuid);
 		let re = uuid.reclassify_for(&FsType::Tmpfs);
 		assert_eq!(re.kind, DeviceKind::Other);
@@ -990,7 +957,7 @@ mod tests {
 	}
 
 	#[test]
-	fn reclassify_for_empty_value_becomes_network_location() {
+	fn reclassify_empty_to_network() {
 		let blank = DeviceValue::from("", DeviceKind::Other);
 		let re = blank.reclassify_for(&FsType::Cifs);
 		assert_eq!(re.kind, DeviceKind::Network);
@@ -1099,7 +1066,7 @@ mod tests {
 	}
 
 	#[test]
-	fn parse_rejects_non_network_values() {
+	fn parse_rejects() {
 		assert_eq!(NetworkLocation::parse(""), None);
 		assert_eq!(NetworkLocation::parse("server"), None);
 		assert_eq!(NetworkLocation::parse("/dev/sda1"), None);

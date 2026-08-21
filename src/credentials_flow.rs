@@ -1,8 +1,8 @@
 use crate::fs_options;
 use crate::fs_value::FsType;
-use crate::popup;
 use crate::privileged::{CredentialsInfo, MountCredentials, inspect_credentials_file, saved_credentials_path};
 use crate::stab_yurself::StabEntry;
+use crate::ui_commons;
 use crate::{GC, RebuildEditor};
 use adw::prelude::*;
 use adw::{AlertDialog, EntryRow, PasswordEntryRow, SwitchRow};
@@ -86,8 +86,7 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 	let device = action_device(&snapshot);
 	let is_swap = snapshot.fs_type == FsType::Swap;
 	let fs_type = snapshot.fs_type.to_string();
-	let btn = btn.clone();
-	let btn_ref = btn.clone();
+	let (btn, btn_ref) = (btn.clone(), btn.clone());
 	let mount_point = snapshot.mount_point.clone();
 	let username = option_value(&snapshot.options, "username");
 	let domain = option_value(&snapshot.options, "domain");
@@ -106,11 +105,11 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 				return;
 			};
 			if credentials.password.is_empty() {
-				popup::present_simple_dialog(&btn, "Cannot mount", "A password is required.");
+				ui_commons::present_simple_dialog(&btn, "Cannot mount", "A password is required.");
 				return;
 			}
 			if credentials.save && credentials.filename.trim().is_empty() {
-				popup::present_simple_dialog(&btn, "Cannot mount", "A credentials file name is required when saving credentials.");
+				ui_commons::present_simple_dialog(&btn, "Cannot mount", "A credentials file name is required when saving credentials.");
 				return;
 			}
 			let filename = credentials.save.then(|| credentials.filename.trim().to_string());
@@ -159,17 +158,17 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 				}
 				Err(err) => {
 					let Some(path) = saved_path else {
-						popup::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
+						ui_commons::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
 						return;
 					};
 					let filename = path.file_name().and_then(|name| name.to_str()).unwrap_or_default().to_string();
 					let created_this_attempt = matches!(outcome, CredentialsOutcome::SavedNew(_))
 						&& inspect_credentials_file(&filename).map(|info| info.exists).unwrap_or(false);
 					if !created_this_attempt {
-						popup::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
+						ui_commons::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
 						return;
 					}
-					popup::confirm_popup(
+					ui_commons::confirm_popup(
 						&btn,
 						"Delete credentials",
 						&format!("{err:#}\n\nWould you like to delete the saved credentials file {}?", path.display()),
@@ -177,8 +176,10 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 						{
 							let btn = btn.clone();
 							move || match crate::privileged::delete_credentials_file(&filename) {
-								Ok(()) => popup::present_simple_dialog(&btn, "Credentials deleted", "The saved credentials file was deleted."),
-								Err(delete_err) => popup::present_simple_dialog(&btn, "Could not delete credentials", &format!("{delete_err:#}")),
+								Ok(()) => ui_commons::present_simple_dialog(&btn, "Credentials deleted", "The saved credentials file was deleted."),
+								Err(delete_err) => {
+									ui_commons::present_simple_dialog(&btn, "Could not delete credentials", &format!("{delete_err:#}"))
+								}
 							}
 						},
 					);
@@ -211,7 +212,7 @@ fn present_mount_success(btn: &Button, mount_point: &str, outcome: &CredentialsO
 			bullets.push("linked login to entry, <b>you must save changes to preserve this</b>".to_string());
 		}
 	}
-	popup::present_bullet_dialog(btn, "Mounted", &format!("Mounted {mount_point}."), &bullets);
+	ui_commons::present_bullet_dialog(btn, "Mounted", &format!("Mounted {mount_point}."), &bullets);
 }
 
 struct CredentialsInput {
@@ -370,7 +371,7 @@ impl CredentialsDialog {
 				}
 			}
 		});
-		dialog.present(popup::parent_window(parent).as_ref());
+		dialog.present(ui_commons::parent_window(parent).as_ref());
 		this
 	}
 

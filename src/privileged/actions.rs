@@ -16,35 +16,17 @@ pub(crate) fn write_fstab(content: &str) -> Result<()> {
 }
 
 pub(crate) fn mount(mount_point: &str, device: &str, is_swap: bool, fs_type: &str, credentials: Option<MountCredentials>) -> Result<()> {
-	let action = MountAction {
-		mount_point: mount_point.to_string(),
-		device: device.to_string(),
-		is_swap,
-		fs_type: fs_type.to_string(),
-		credentials,
-	};
+	let action = MountAction::new(mount_point, device, is_swap, fs_type, credentials);
 	expect_done(request(PrivilegedAction::Mount(action))?)
 }
 
 pub(crate) fn unmount(mount_point: &str, device: &str, is_swap: bool) -> Result<()> {
-	let action = MountAction {
-		mount_point: mount_point.to_string(),
-		device: device.to_string(),
-		is_swap,
-		fs_type: String::new(),
-		credentials: None,
-	};
+	let action = MountAction::new(mount_point, device, is_swap, "", None);
 	expect_done(request(PrivilegedAction::Unmount(action))?)
 }
 
 pub(crate) fn remount(mount_point: &str, is_swap: bool) -> Result<()> {
-	let action = MountAction {
-		mount_point: mount_point.to_string(),
-		device: String::new(),
-		is_swap,
-		fs_type: String::new(),
-		credentials: None,
-	};
+	let action = MountAction::new(mount_point, "", is_swap, "", None);
 	expect_done(request(PrivilegedAction::Remount(action))?)
 }
 
@@ -70,6 +52,18 @@ pub(super) struct MountAction {
 	pub fs_type: String,
 	#[serde(default)]
 	pub credentials: Option<MountCredentials>,
+}
+
+impl MountAction {
+	fn new(mount_point: &str, device: &str, is_swap: bool, fs_type: &str, credentials: Option<MountCredentials>) -> Self {
+		Self {
+			mount_point: mount_point.to_string(),
+			device: device.to_string(),
+			is_swap,
+			fs_type: fs_type.to_string(),
+			credentials,
+		}
+	}
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -177,12 +171,13 @@ fn run_checked(cmd: &str, args: &[&str], input: Option<&str>) -> Result<()> {
 	Ok(())
 }
 
+fn trimmed_or(stderr: &str, default: &str) -> String {
+	let trimmed = stderr.trim();
+	if trimmed.is_empty() { default.to_string() } else { trimmed.to_string() }
+}
+
 fn command_error(cmd: &str, stderr: &str) -> anyhow::Error {
-	let mut reason = if stderr.trim().is_empty() {
-		"the command failed".to_string()
-	} else {
-		stderr.trim().to_string()
-	};
+	let mut reason = trimmed_or(stderr, "the command failed");
 	let lower = reason.to_ascii_lowercase();
 	if lower.contains("password") || lower.contains("passphrase") || lower.contains("no tty") {
 		reason.push_str("\n\nThe mount requested a password, but prompting on the console is disabled. Add credentials (e.g. username=, password= or credentials= options) to the entry, or provide them in the credentials dialog.");
@@ -193,8 +188,9 @@ fn command_error(cmd: &str, stderr: &str) -> anyhow::Error {
 fn create_backup() -> Result<()> {
 	let backups = scan_for_backups().context("Could not scan for backups")?;
 
-	if backups.len() >= 3 {
-		let oldest = backups.iter().reduce(|a, b| if a.1 < b.1 { a } else { b }).expect("no backups found");
+	if backups.len() >= 3
+		&& let Some(oldest) = backups.iter().min_by_key(|backup| backup.1)
+	{
 		std::fs::remove_file(&oldest.0).with_context(|| format!("Could not remove old backup {}", oldest.0.display()))?;
 	}
 
@@ -219,11 +215,7 @@ fn list_btrfs_subvolumes(mount_point: &str) -> Result<Vec<Subvol>> {
 
 	if !output.status.success() {
 		let stderr = String::from_utf8_lossy(&output.stderr);
-		let reason = if stderr.trim().is_empty() {
-			"the listing failed".to_string()
-		} else {
-			stderr.trim().to_string()
-		};
+		let reason = trimmed_or(&stderr, "the listing failed");
 		bail!("btrfs could not list subvolumes on '{mount_point}': {reason}");
 	}
 

@@ -2,7 +2,7 @@ use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 use std::io::{BufRead, BufReader, BufWriter, Write};
 use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
-use std::sync::{Mutex, OnceLock};
+use std::sync::{Mutex, OnceLock, PoisonError};
 
 use super::actions::{PrivilegedAction, PrivilegedResponse};
 
@@ -66,8 +66,7 @@ impl PrivilegedService {
 		}
 
 		let request = serde_json::to_string(&action).context("Could not serialize the request")?;
-		println!("[AUTH HELPER] Sending request: {}", request);
-		if let Err(err) = self
+		if let Err(_err) = self
 			.stdin
 			.write_all(request.as_bytes())
 			.and_then(|_| self.stdin.write_all(b"\n"))
@@ -83,8 +82,6 @@ impl PrivilegedService {
 			self.dead = true;
 			bail!("The privileged helper exited unexpectedly.");
 		}
-		println!("[AUTH HELPER] Received response: {}", line);
-
 		match serde_json::from_str::<ServiceResponse>(&line).context("Could not parse the helper response")? {
 			ServiceResponse::Ok(response) => Ok(response),
 			ServiceResponse::Err(message) => bail!(message),
@@ -106,31 +103,30 @@ impl PrivilegedService {
 pub(super) fn request(action: PrivilegedAction) -> Result<PrivilegedResponse> {
 	static SERVICE: OnceLock<Mutex<Option<PrivilegedService>>> = OnceLock::new();
 
-	let mut slot = SERVICE.get_or_init(|| Mutex::new(None)).lock().unwrap();
+	let mut slot = SERVICE.get_or_init(|| Mutex::new(None)).lock().unwrap_or_else(PoisonError::into_inner);
 
-	ensure_alive(&mut slot)?;
-
-	let result = {
-		let service = slot.as_mut().expect("service was ensured alive");
-		service.request(action.clone())
-	};
-
+	let mut service = ensure_alive(slot.take())?;
+	let result = service.request(action.clone());
+	*slot = Some(service);
 	if !slot.as_ref().is_some_and(|service| service.dead) {
 		return result;
 	}
 
-	*slot = None;
-	ensure_alive(&mut slot)?;
-	let service = slot.as_mut().expect("service was respawned");
-	service.request(action)
+	let mut service = ensure_alive(slot.take())?;
+	let result = service.request(action);
+	*slot = Some(service);
+	result
 }
 
-fn ensure_alive(slot: &mut Option<PrivilegedService>) -> Result<()> {
-	let alive = slot.as_mut().is_some_and(|service| !service.dead && !service.child_exited());
-	if !alive {
-		*slot = Some(PrivilegedService::spawn()?);
+fn ensure_alive(slot: Option<PrivilegedService>) -> Result<PrivilegedService> {
+	let mut service = match slot {
+		Some(service) => service,
+		None => return PrivilegedService::spawn(),
+	};
+	if !service.dead && !service.child_exited() {
+		return Ok(service);
 	}
-	Ok(())
+	PrivilegedService::spawn()
 }
 
 pub(crate) fn run_root_helper() -> Result<()> {

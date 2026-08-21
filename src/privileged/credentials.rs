@@ -207,7 +207,7 @@ mod tests {
 	}
 
 	#[test]
-	fn saved_credentials_file_content_and_dir() {
+	fn saved_credentials_file() {
 		let dir = test_creds_dir();
 		let credentials = MountCredentials {
 			username: Some("bob".to_string()),
@@ -253,7 +253,7 @@ mod tests {
 	}
 
 	#[test]
-	fn inspect_credentials_reports_existing_and_missing() {
+	fn inspect_credentials() {
 		let dir = test_creds_dir();
 		let credentials = MountCredentials {
 			username: Some("alice".to_string()),
@@ -277,7 +277,7 @@ mod tests {
 	}
 
 	#[test]
-	fn saved_credentials_file_rejects_bad_names() {
+	fn reject_bad_names() {
 		let dir = test_creds_dir();
 		let credentials = MountCredentials {
 			username: None,

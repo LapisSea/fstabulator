@@ -1,9 +1,11 @@
 use crate::GC;
 use crate::context::EntryContext;
 use crate::device_value::DeviceKind;
-use crate::search_picker::{ErrorRenderer, build_search_picker};
+use crate::search_picker::SearchPickerBuilder;
+use crate::stab_yurself::StabEntry;
+use crate::ui_commons::{activatable_row, query_matches};
 use adw::prelude::*;
-use adw::{ActionRow, PreferencesGroup, PreferencesRow};
+use adw::{PreferencesGroup, PreferencesRow};
 use gtk::{Align, Box as GtkBox, Entry, Orientation};
 use std::rc::Rc;
 use std::str::FromStr;
@@ -134,6 +136,12 @@ enum FsChoice {
 	Other,
 }
 
+fn apply_fs_type(entry: &GC<StabEntry>, fs_type: FsType) {
+	let mut entry = entry.borrow_mut();
+	entry.device = entry.device.reclassify_for(&fs_type);
+	entry.fs_type = fs_type;
+}
+
 pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_change: impl Fn() + 'static) {
 	let entry = entry_ctx.entry().clone();
 	let on_change = Rc::new(on_change);
@@ -157,37 +165,23 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 		let choices = choices.clone();
 		move || Ok(choices.clone())
 	};
-	let render_row = |choice: &FsChoice| {
-		let row = match choice {
-			FsChoice::Known(fs_type) => ActionRow::builder().title(fs_type.to_string()).subtitle(fs_type.description()).build(),
-			FsChoice::Other => ActionRow::builder().title("Other…").build(),
-		};
-		row.set_activatable(true);
-		row.upcast::<gtk::Widget>()
+	let render_row = |choice: &FsChoice| match choice {
+		FsChoice::Known(fs_type) => activatable_row(fs_type.to_string(), fs_type.description()),
+		FsChoice::Other => activatable_row("Other…", ""),
 	};
 	let filter = |query: &str, choice: &FsChoice| match choice {
 		FsChoice::Other => true,
-		FsChoice::Known(fs_type) => {
-			let query = query.trim().to_lowercase();
-			query.is_empty() || fs_type.to_string().to_lowercase().contains(&query) || fs_type.description().to_lowercase().contains(&query)
-		}
+		FsChoice::Known(fs_type) => query_matches(query, &fs_type.to_string()) || query_matches(query, fs_type.description()),
 	};
 	let on_select = {
-		let entry_ctx = entry_ctx.clone();
-		let entry = entry.clone();
-		let value_entry = value_entry.clone();
-		let menu_btn_holder = menu_btn_holder.clone();
-		let on_change = on_change.clone();
+		let (entry_ctx, entry, value_entry) = (entry_ctx.clone(), entry.clone(), value_entry.clone());
+		let (menu_btn_holder, on_change) = (menu_btn_holder.clone(), on_change.clone());
 		move |choice: FsChoice, _index: usize| {
 			let fs_type = match choice {
 				FsChoice::Known(fs_type) => fs_type,
 				FsChoice::Other => FsType::Other(value_entry.text().to_string()),
 			};
-			{
-				let mut entry = entry.borrow_mut();
-				entry.device = entry.device.reclassify_for(&fs_type);
-				entry.fs_type = fs_type;
-			}
+			apply_fs_type(&entry, fs_type);
 			let is_other = matches!(entry.borrow().fs_type, FsType::Other(_));
 			value_entry.set_visible(is_other);
 			if let Some(menu_btn) = menu_btn_holder.borrow().as_ref() {
@@ -205,23 +199,17 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 		}
 	};
 
-	let menu_btn = build_search_picker(
-		"Search filesystems",
-		&menu_label,
-		"Choose the filesystem type",
-		dataset,
-		render_row,
-		ErrorRenderer::Message("Error loading filesystem types"),
-		filter,
-		on_select,
-	);
+	let menu_btn = SearchPickerBuilder::new(&menu_label, dataset, render_row, on_select)
+		.search_placeholder("Search filesystems")
+		.tooltip("Choose the filesystem type")
+		.error_message("Error loading filesystem types")
+		.filter(filter)
+		.build();
 	menu_btn.set_hexpand(true);
 	*menu_btn_holder.borrow_mut() = Some(menu_btn.clone());
 
 	{
-		let entry_ctx = entry_ctx.clone();
-		let entry = entry.clone();
-		let menu_btn = menu_btn.clone();
+		let (entry_ctx, entry, menu_btn) = (entry_ctx.clone(), entry.clone(), menu_btn.clone());
 		value_entry.connect_changed(move |value_entry| {
 			entry.borrow_mut().fs_type = FsType::Other(value_entry.text().to_string());
 			menu_btn.set_label("Other");
@@ -230,11 +218,8 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 	}
 
 	{
-		let entry_ctx = entry_ctx.clone();
-		let entry = entry.clone();
-		let menu_btn = menu_btn.clone();
-		let value_entry = value_entry.clone();
-		let on_change = on_change.clone();
+		let (entry_ctx, entry, menu_btn) = (entry_ctx.clone(), entry.clone(), menu_btn.clone());
+		let (value_entry, on_change) = (value_entry.clone(), on_change.clone());
 		let controller = gtk::EventControllerFocus::new();
 		value_entry.add_controller(controller.clone());
 		controller.connect_leave(move |_| {
@@ -242,11 +227,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 			match FsType::from_str(&text) {
 				Ok(FsType::Other(_)) => {}
 				Ok(fs_type) => {
-					{
-						let mut entry = entry.borrow_mut();
-						entry.device = entry.device.reclassify_for(&fs_type);
-						entry.fs_type = fs_type;
-					}
+					apply_fs_type(&entry, fs_type);
 					menu_btn.set_label(&entry.borrow().fs_type.to_string());
 					value_entry.set_visible(false);
 					entry_ctx.render();

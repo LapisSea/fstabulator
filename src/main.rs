@@ -7,22 +7,24 @@ mod fs_value;
 mod mount_point_value;
 mod mount_status;
 mod options_value;
-mod popup;
 mod privileged;
 mod search_picker;
 mod stab_yurself;
 mod subvolume;
+mod ui_commons;
 
 use crate::context::{EntryContext, FileContext};
 use crate::mount_status::MountStatus;
-use crate::search_picker::{ErrorRenderer, build_search_picker};
+use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::{StabEntry, StabFile};
+use crate::ui_commons::{activatable_row, clear_children, find_widget_with_class, query_matches, trash_button};
 use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{
 	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, EntryRow, HeaderBar, LengthUnit, PreferencesGroup, PreferencesRow,
 	SpinRow, SwitchRow, Toast, ToastOverlay,
 };
+use anyhow::Context as _;
 use fs_value::FsType;
 use gtk::{Adjustment, Align, Box as GtkBox, Button, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
 use options_value::build_options_group;
@@ -66,12 +68,13 @@ pub(crate) type RebuildEditor = GC<Option<Rc<dyn Fn()>>>;
 
 const APP_ID: &str = "org.lapissea.FSTabulator";
 
-fn register_icon() {
-	gtk::gio::resources_register_include!("compiled.gresource").expect("Failed to register app resources");
+fn register_icon() -> anyhow::Result<()> {
+	gtk::gio::resources_register_include!("compiled.gresource").context("Failed to register app resources")?;
 	if let Some(display) = gtk::gdk::Display::default() {
 		gtk::IconTheme::for_display(&display).add_resource_path("/org/lapissea/FSTabulator/icons");
 	}
 	gtk::Window::set_default_icon_name("fstabulator");
+	Ok(())
 }
 
 fn main() -> gtk::glib::ExitCode {
@@ -89,7 +92,10 @@ fn main() -> gtk::glib::ExitCode {
 }
 
 fn build_ui(application: &Application) {
-	register_icon();
+	if let Err(err) = register_icon() {
+		eprintln!("{err:#}");
+		return;
+	}
 
 	let window_build = ApplicationWindow::builder()
 		.application(application)
@@ -122,9 +128,7 @@ fn build_ui(application: &Application) {
 	let file_ctx = FileContext::new(
 		stab_file.clone(),
 		Rc::new({
-			let stab_file = stab_file.clone();
-			let save_changes_btn = save_changes_btn.clone();
-			let revert_changes_btn = revert_changes_btn.clone();
+			let (stab_file, save_changes_btn, revert_changes_btn) = (stab_file.clone(), save_changes_btn.clone(), revert_changes_btn.clone());
 			move || {
 				let changed = stab_file.borrow().is_changed();
 				save_changes_btn.set_sensitive(changed);
@@ -140,9 +144,8 @@ fn build_ui(application: &Application) {
 				perform_make_backup(btn);
 				return;
 			}
-			let btn = btn.clone();
-			let parent = btn.clone();
-			popup::confirm_popup(
+			let (btn, parent) = (btn.clone(), btn.clone());
+			ui_commons::confirm_popup(
 				&parent,
 				"Make backup",
 				"Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?",
@@ -155,11 +158,9 @@ fn build_ui(application: &Application) {
 
 	let toast_overlay = ToastOverlay::new();
 	{
-		let file_ctx = file_ctx.clone();
-		let list_panel = list_panel.clone();
-		let editor_panel = editor_panel.clone();
+		let (file_ctx, list_panel, editor_panel) = (file_ctx.clone(), list_panel.clone(), editor_panel.clone());
 		let toast_overlay = toast_overlay.clone();
-		popup::connect_clicked_confirm(
+		ui_commons::connect_clicked_confirm(
 			&save_changes_btn,
 			"Save",
 			"Are you sure you want to write these changes to /etc/fstab?",
@@ -172,22 +173,20 @@ fn build_ui(application: &Application) {
 				match privileged::write_fstab(&content) {
 					Ok(()) => {
 						if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel) {
-							popup::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
+							ui_commons::present_simple_dialog(&editor_panel, "Saved, but could not reload", &format!("{err:#}"));
 							return;
 						}
 						toast_overlay.add_toast(Toast::new("Saved to /etc/fstab"));
 					}
-					Err(err) => popup::present_simple_dialog(&editor_panel, "Could not save", &format!("{err:#}")),
+					Err(err) => ui_commons::present_simple_dialog(&editor_panel, "Could not save", &format!("{err:#}")),
 				}
 			},
 		);
 	}
 
 	{
-		let file_ctx = file_ctx.clone();
-		let list_panel = list_panel.clone();
-		let editor_panel = editor_panel.clone();
-		popup::connect_clicked_confirm(
+		let (file_ctx, list_panel, editor_panel) = (file_ctx.clone(), list_panel.clone(), editor_panel.clone());
+		ui_commons::connect_clicked_confirm(
 			&revert_changes_btn,
 			"Revert",
 			"Are you sure? Any changes made will be lost!",
@@ -224,11 +223,8 @@ fn build_ui(application: &Application) {
 
 	let rebuild_editor: RebuildEditor = GC::new(None);
 	{
-		let editor_panel = editor_panel.clone();
-		let list_panel_cb = list_panel.clone();
-		let stab_file = stab_file.clone();
-		let file_ctx = file_ctx.clone();
-		let rebuild_editor = rebuild_editor.clone();
+		let (editor_panel, list_panel_cb, stab_file) = (editor_panel.clone(), list_panel.clone(), stab_file.clone());
+		let (file_ctx, rebuild_editor) = (file_ctx.clone(), rebuild_editor.clone());
 		list_panel.connect_row_selected(move |_, row| {
 			clear_children(&editor_panel);
 			let Some(row) = row else { return };
@@ -242,11 +238,8 @@ fn build_ui(application: &Application) {
 			let entry_ctx = file_ctx.entry(entry, &action_row);
 			build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, row, rebuild_editor.clone());
 			let builder: Rc<dyn Fn()> = Rc::new({
-				let editor_panel = editor_panel.clone();
-				let list_panel_cb = list_panel_cb.clone();
-				let entry_ctx = entry_ctx.clone();
-				let row = row.clone();
-				let rebuild_editor = rebuild_editor.clone();
+				let (editor_panel, list_panel_cb, entry_ctx) = (editor_panel.clone(), list_panel_cb.clone(), entry_ctx.clone());
+				let (row, rebuild_editor) = (row.clone(), rebuild_editor.clone());
 				move || {
 					clear_children(&editor_panel);
 					build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, &row, rebuild_editor.clone());
@@ -320,8 +313,8 @@ fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
 
 fn perform_make_backup(btn: &Button) {
 	match privileged::make_backup() {
-		Ok(()) => popup::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
-		Err(err) => popup::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
+		Ok(()) => ui_commons::present_simple_dialog(btn, "Backup created", "A backup of /etc/fstab was created."),
+		Err(err) => ui_commons::present_simple_dialog(btn, "Could not create backup", &format!("{err:#}")),
 	}
 }
 
@@ -334,7 +327,7 @@ fn make_icon_label_button(icon: &str, label: &str) -> Button {
 	hbox.append(&Image::from_icon_name(icon));
 	hbox.append(&gtk::Label::new(Some(label)));
 	let button = Button::new();
-	button.set_label(&label);
+	button.set_label(label);
 	button.set_child(Some(&hbox));
 	button.set_hexpand(true);
 	button
@@ -345,7 +338,10 @@ fn wrap_scroll(content: &impl IsA<Widget>) -> ScrolledWindow {
 }
 
 pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset_btn: Option<&Button>) {
-	action_row.set_title(&entry.user_label.as_ref().cloned().unwrap_or_else(|| format!("Line {}", entry.line + 1)));
+	match &entry.user_label {
+		Some(label) => action_row.set_title(label),
+		None => action_row.set_title(&format!("Line {}", entry.line + 1)),
+	}
 	let changed = entry.is_changed();
 	action_row.set_subtitle(&render_subtitle(entry));
 	action_row.set_subtitle_lines(if changed { 2 } else { 1 });
@@ -375,7 +371,7 @@ fn make_icon(icon: &str, class: &str) -> Image {
 
 fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
 	for class in LIST_ICON_CLASSES {
-		if let Some(icon) = find_widget_with_class(action_row.clone().upcast(), class) {
+		if let Some(icon) = find_widget_with_class(action_row.clone(), class) {
 			action_row.remove(&icon);
 		}
 	}
@@ -400,21 +396,6 @@ fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
 		alert.set_tooltip_text(Some("This entry is invalid and cannot be parsed."));
 		action_row.add_suffix(&alert);
 	}
-}
-
-fn find_widget_with_class(widget: gtk::Widget, class: &str) -> Option<gtk::Widget> {
-	if widget.has_css_class(class) {
-		return Some(widget);
-	}
-	let mut child = widget.first_child();
-	while let Some(child_widget) = child {
-		let next = child_widget.next_sibling();
-		if let Some(found) = find_widget_with_class(child_widget.clone(), class) {
-			return Some(found);
-		}
-		child = next;
-	}
-	None
 }
 
 fn render_subtitle(entry: &StabEntry) -> String {
@@ -446,19 +427,6 @@ fn build_entry_list() -> ListBox {
 		.build()
 }
 
-pub(crate) fn clear_children<W: IsA<gtk::Widget>>(widget: &W) {
-	let widget = widget.upcast_ref::<gtk::Widget>();
-	if let Some(list_box) = widget.downcast_ref::<ListBox>() {
-		while let Some(row) = list_box.row_at_index(0) {
-			list_box.remove(&row);
-		}
-	} else {
-		while let Some(child) = widget.first_child() {
-			child.unparent();
-		}
-	}
-}
-
 fn populate_list(list_box: &ListBox, file_ctx: &FileContext, editor_panel: &gtk::Box) {
 	clear_children(list_box);
 
@@ -481,9 +449,7 @@ fn populate_list(list_box: &ListBox, file_ctx: &FileContext, editor_panel: &gtk:
 	add_btn.add_css_class("flat");
 	add_row.set_child(Some(&add_btn));
 
-	let list_box_ref = list_box.clone();
-	let add_row_ref = add_row.clone();
-	let file_ctx_ref = file_ctx.clone();
+	let (list_box_ref, add_row_ref, file_ctx_ref) = (list_box.clone(), add_row.clone(), file_ctx.clone());
 	let editor_panel_ref = editor_panel.clone();
 	add_btn.connect_clicked(move |_| {
 		let line = {
@@ -515,31 +481,20 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 
 	let render_row = |backup: &(PathBuf, SystemTime)| {
 		let time = humantime::format_rfc3339(backup.1).to_string();
-		let row = ActionRow::builder().title(time).subtitle(backup.0.display().to_string()).build();
-		row.set_activatable(true);
-		row.upcast::<Widget>()
+		activatable_row(time, backup.0.display().to_string())
 	};
 
 	let filter = |query: &str, backup: &(PathBuf, SystemTime)| {
-		if query.trim().is_empty() {
-			return true;
-		}
-		let query = query.to_lowercase();
-		let time = humantime::format_rfc3339(backup.1).to_string().to_lowercase();
-		backup.0.display().to_string().to_lowercase().contains(&query) || time.contains(&query)
+		let time = humantime::format_rfc3339(backup.1).to_string();
+		query_matches(query, &time) || query_matches(query, &backup.0.display().to_string())
 	};
 
 	let on_select = {
-		let file_ctx = file_ctx.clone();
-		let list_panel = list_panel.clone();
-		let editor_panel = editor_panel.clone();
+		let (file_ctx, list_panel, editor_panel) = (file_ctx.clone(), list_panel.clone(), editor_panel.clone());
 		move |backup: (PathBuf, SystemTime), _index| {
-			let path = backup.0.clone();
-			let file_ctx = file_ctx.clone();
-			let list_panel = list_panel.clone();
-			let editor_panel = editor_panel.clone();
-			let parent_widget = editor_panel.clone();
-			popup::confirm_popup(
+			let (path, file_ctx, list_panel) = (backup.0.clone(), file_ctx.clone(), list_panel.clone());
+			let (editor_panel, parent_widget) = (editor_panel.clone(), editor_panel.clone());
+			ui_commons::confirm_popup(
 				&parent_widget,
 				"Restore",
 				"Are you sure? Any changes made will be lost!",
@@ -549,33 +504,33 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 		}
 	};
 
-	let menu_btn = build_search_picker(
-		"Search backups",
-		"Restore backup",
-		"Restore from a backup file",
-		dataset,
-		render_row,
-		ErrorRenderer::Message("Failed to list backups"),
-		filter,
-		on_select,
-	);
+	let menu_btn = SearchPickerBuilder::new("Restore backup", dataset, render_row, on_select)
+		.search_placeholder("Search backups")
+		.tooltip("Restore from a backup file")
+		.error_message("Failed to list backups")
+		.filter(filter)
+		.build();
 
 	menu_btn.set_hexpand(true);
 	menu_btn
 }
 
-fn load_fstab_file(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) -> anyhow::Result<()> {
-	let new_file = StabFile::read(path)?;
-	*file_ctx.file().borrow_mut() = new_file;
+fn reload_editor(list_panel: &ListBox, file_ctx: &FileContext, editor_panel: &gtk::Box) {
 	clear_children(editor_panel);
 	populate_list(list_panel, file_ctx, editor_panel);
 	file_ctx.notify();
+}
+
+fn load_fstab_file(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) -> anyhow::Result<()> {
+	let new_file = StabFile::read(path)?;
+	*file_ctx.file().borrow_mut() = new_file;
+	reload_editor(list_panel, file_ctx, editor_panel);
 	Ok(())
 }
 
 fn load_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) {
 	if let Err(err) = load_fstab_file(path, file_ctx, list_panel, editor_panel) {
-		popup::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
+		ui_commons::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
 	}
 }
 
@@ -589,14 +544,28 @@ fn restore_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, edi
 			file.lines = lines;
 			file.reference = baseline.reference;
 		}
-		clear_children(editor_panel);
-		populate_list(list_panel, file_ctx, editor_panel);
-		file_ctx.notify();
+		reload_editor(list_panel, file_ctx, editor_panel);
 		Ok(())
 	})();
 	if let Err(err) = result {
-		popup::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
+		ui_commons::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
 	}
+}
+
+fn warn_empty_mount_point(btn: &Button, verb: &str, mount_point: &str, exempt: bool) -> bool {
+	if !exempt && mount_point.trim().is_empty() {
+		ui_commons::present_simple_dialog(btn, &format!("Cannot {verb}"), "The mount point is empty.");
+		return true;
+	}
+	false
+}
+
+fn warn_unsaved_changes(btn: &Button, verb: &str, subject: &str, changed: bool) -> bool {
+	if changed {
+		present_unsaved_changes(btn, verb, subject);
+		return true;
+	}
+	false
 }
 
 fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
@@ -614,22 +583,15 @@ fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
 }
 
 fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext, editor_panel: &gtk::Box) {
-	let delete_btn = Button::from_icon_name("user-trash-symbolic");
-	delete_btn.add_css_class("flat");
-	delete_btn.add_css_class("error");
-	delete_btn.set_valign(Align::Center);
-	delete_btn.set_tooltip_text(Some("Delete entry"));
+	let delete_btn = trash_button("Delete entry");
 
 	row.add_suffix(&delete_btn);
 
 	let extra_child = {
-		let row = row.clone();
-		let file_ctx = file_ctx.clone();
+		let (row, file_ctx) = (row.clone(), file_ctx.clone());
 		move || {
 			let file = file_ctx.file().borrow();
-			let Some(entry) = file.entry_at(row.index() as usize) else {
-				return None;
-			};
+			let entry = file.entry_at(row.index() as usize)?;
 			let entry = entry.borrow();
 			let grid = gtk::Grid::builder()
 				.column_spacing(16)
@@ -650,9 +612,7 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext
 	};
 
 	let on_confirm = {
-		let list_box = list_box.clone();
-		let row = row.clone();
-		let file_ctx = file_ctx.clone();
+		let (list_box, row, file_ctx) = (list_box.clone(), row.clone(), file_ctx.clone());
 		let editor_panel = editor_panel.clone();
 		move || {
 			let index = row.index();
@@ -672,7 +632,7 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext
 		}
 	};
 
-	popup::connect_clicked_confirm(&delete_btn, "Delete", "Delete this entry?", extra_child, on_confirm);
+	ui_commons::connect_clicked_confirm(&delete_btn, "Delete", "Delete this entry?", extra_child, on_confirm);
 }
 
 fn build_split_layout(list_panel: &impl IsA<gtk::Widget>, editor_panel: &impl IsA<gtk::Widget>) -> GtkBox {
@@ -766,9 +726,7 @@ fn build_editor_panel(
 	editor_panel.append(&fsck_group);
 
 	let (list_box, list_row) = (list_box.clone(), list_row.clone());
-	let options_group = options_group.clone();
-	let device_row = device_row.clone();
-	let entry_ctx_ref = entry_ctx.clone();
+	let (options_group, device_row, entry_ctx_ref) = (options_group.clone(), device_row.clone(), entry_ctx.clone());
 	reset_btn.connect_clicked(move |_| {
 		entry_ctx_ref.entry().borrow_mut().reset();
 		device_row.refresh_kinds();
@@ -780,7 +738,7 @@ fn build_editor_panel(
 }
 
 fn present_unsaved_changes(btn: &Button, heading: &str, subject: &str) {
-	popup::present_simple_dialog(
+	ui_commons::present_simple_dialog(
 		btn,
 		&format!("Cannot {heading}"),
 		&format!("{subject} has unsaved changes. Save your changes before {heading}ing."),
@@ -790,10 +748,10 @@ fn present_unsaved_changes(btn: &Button, heading: &str, subject: &str) {
 fn report_action_outcome(btn: &Button, done: &str, failed: &str, subject: &str, result: anyhow::Result<()>, refresh: &Rc<dyn Fn()>) {
 	match result {
 		Ok(()) => {
-			popup::present_simple_dialog(btn, done, &format!("{done} {subject}."));
+			ui_commons::present_simple_dialog(btn, done, &format!("{done} {subject}."));
 			refresh();
 		}
-		Err(err) => popup::present_simple_dialog(btn, failed, &format!("{err:#}")),
+		Err(err) => ui_commons::present_simple_dialog(btn, failed, &format!("{err:#}")),
 	}
 }
 
@@ -827,11 +785,8 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 	group.add(&buttons_row);
 
 	let refresh: Rc<dyn Fn()> = Rc::new({
-		let entry = entry.clone();
-		let status_label = status_label.clone();
-		let mount_btn = mount_btn.clone();
-		let remount_btn = remount_btn.clone();
-		let unmount_btn = unmount_btn.clone();
+		let (entry, status_label, mount_btn) = (entry.clone(), status_label.clone(), mount_btn.clone());
+		let (remount_btn, unmount_btn) = (remount_btn.clone(), unmount_btn.clone());
 		move || {
 			let entry = entry.borrow();
 			let status = mount_status::detect(&entry);
@@ -850,8 +805,7 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 	refresh();
 
 	{
-		let group = group.clone();
-		let refresh = refresh.clone();
+		let (group, refresh) = (group.clone(), refresh.clone());
 		gtk::glib::timeout_add_local(Duration::from_secs(2), move || {
 			if !group.is_mapped() {
 				return gtk::glib::ControlFlow::Break;
@@ -862,23 +816,19 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 	}
 
 	{
-		let entry = entry.clone();
-		let refresh = refresh.clone();
-		let rebuild_editor = rebuild_editor.clone();
+		let (entry, refresh, rebuild_editor) = (entry.clone(), refresh.clone(), rebuild_editor.clone());
 		let btn = mount_btn.clone();
-		popup::connect_clicked_confirm(
+		ui_commons::connect_clicked_confirm(
 			&mount_btn,
 			"Mount",
 			"Are you sure you want to mount this entry?",
 			|| None,
 			move || {
 				let snapshot = entry.cloned(|e| e);
-				if snapshot.mount_point.trim().is_empty() && snapshot.fs_type != FsType::Swap {
-					popup::present_simple_dialog(&btn, "Cannot mount", "The mount point is empty.");
+				if warn_empty_mount_point(&btn, "mount", &snapshot.mount_point, snapshot.fs_type == FsType::Swap) {
 					return;
 				}
-				if snapshot.is_changed() {
-					present_unsaved_changes(&btn, "mount", "The entry");
+				if warn_unsaved_changes(&btn, "mount", "The entry", snapshot.is_changed()) {
 					return;
 				}
 				if credentials_flow::needs_credentials(&snapshot) {
@@ -894,10 +844,8 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 		);
 	}
 	{
-		let entry = entry.clone();
-		let refresh = refresh.clone();
-		let btn = remount_btn.clone();
-		popup::connect_clicked_confirm(
+		let (entry, refresh, btn) = (entry.clone(), refresh.clone(), remount_btn.clone());
+		ui_commons::connect_clicked_confirm(
 			&remount_btn,
 			"Remount",
 			"Are you sure you want to remount this entry?",
@@ -908,15 +856,13 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 					(entry.mount_point.clone(), entry.fs_type == FsType::Swap, entry.is_changed())
 				};
 				if is_swap {
-					popup::present_simple_dialog(&btn, "Cannot remount", "Swap cannot be remounted.");
+					ui_commons::present_simple_dialog(&btn, "Cannot remount", "Swap cannot be remounted.");
 					return;
 				}
-				if mount_point.trim().is_empty() {
-					popup::present_simple_dialog(&btn, "Cannot remount", "The mount point is empty.");
+				if warn_empty_mount_point(&btn, "remount", &mount_point, false) {
 					return;
 				}
-				if changed {
-					present_unsaved_changes(&btn, "remount", "The entry");
+				if warn_unsaved_changes(&btn, "remount", "The entry", changed) {
 					return;
 				}
 				let result = privileged::remount(&mount_point, is_swap);
@@ -925,10 +871,8 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 		);
 	}
 	{
-		let entry = entry.clone();
-		let refresh = refresh.clone();
-		let btn = unmount_btn.clone();
-		popup::connect_clicked_confirm(
+		let (entry, refresh, btn) = (entry.clone(), refresh.clone(), unmount_btn.clone());
+		ui_commons::connect_clicked_confirm(
 			&unmount_btn,
 			"Unmount",
 			"Are you sure you want to unmount this entry?",
@@ -943,12 +887,10 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 						entry.mount_point_changed(),
 					)
 				};
-				if mount_point.trim().is_empty() && !is_swap {
-					popup::present_simple_dialog(&btn, "Cannot unmount", "The mount point is empty.");
+				if warn_empty_mount_point(&btn, "unmount", &mount_point, is_swap) {
 					return;
 				}
-				if mount_point_changed {
-					present_unsaved_changes(&btn, "unmount", "The mount point");
+				if warn_unsaved_changes(&btn, "unmount", "The mount point", mount_point_changed) {
 					return;
 				}
 				let result = privileged::unmount(&mount_point, &device, is_swap);

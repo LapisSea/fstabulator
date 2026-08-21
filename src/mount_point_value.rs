@@ -19,9 +19,7 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 	row.add_suffix(&exists_icon);
 	update_exists_icon(&exists_icon, entry.borrow().mount_point.as_str());
 	{
-		let entry_ctx = entry_ctx.clone();
-		let entry = entry.clone();
-		let exists_icon = exists_icon.clone();
+		let (entry_ctx, entry, exists_icon) = (entry_ctx.clone(), entry.clone(), exists_icon.clone());
 		row.connect_changed(move |row| {
 			{
 				let mut entry = entry.borrow_mut();
@@ -32,9 +30,7 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 		});
 	}
 	{
-		let row = row.clone();
-		let entry = entry.clone();
-		let entry_ctx = entry_ctx.clone();
+		let (row, entry, entry_ctx) = (row.clone(), entry.clone(), entry_ctx.clone());
 		let exists_icon = exists_icon.clone();
 		folder_btn.connect_clicked(move |folder_btn| {
 			let dialog = gtk::FileChooserNative::builder()
@@ -48,22 +44,20 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 			if !text.is_empty() {
 				let _ = dialog.set_file(&gtk::gio::File::for_path(text.as_str()));
 			}
-			let row = row.clone();
-			let entry = entry.clone();
-			let entry_ctx = entry_ctx.clone();
+			let (row, entry, entry_ctx) = (row.clone(), entry.clone(), entry_ctx.clone());
 			let exists_icon = exists_icon.clone();
 			dialog.connect_response(move |dialog, response| {
-				if response == gtk::ResponseType::Accept {
-					if let Some(path) = dialog.file().and_then(|file| file.path()) {
-						let text = path.to_string_lossy().into_owned();
-						row.set_text(&text);
-						{
-							let mut entry = entry.borrow_mut();
-							entry.mount_point = text;
-						}
-						update_exists_icon(&exists_icon, row.text().as_str());
-						entry_ctx.render();
+				if response == gtk::ResponseType::Accept
+					&& let Some(path) = dialog.file().and_then(|file| file.path())
+				{
+					let text = path.to_string_lossy().into_owned();
+					row.set_text(&text);
+					{
+						let mut entry = entry.borrow_mut();
+						entry.mount_point = text;
 					}
+					update_exists_icon(&exists_icon, row.text().as_str());
+					entry_ctx.render();
 				}
 			});
 			dialog.show();

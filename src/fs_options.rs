@@ -50,7 +50,6 @@ impl fmt::Display for FsOption {
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum BoolType {
 	YesNo,
-	// TrueFalse,
 	OneZero,
 }
 
@@ -58,7 +57,6 @@ impl BoolType {
 	pub fn values(self) -> (&'static str, &'static str) {
 		match self {
 			BoolType::YesNo => ("yes", "no"),
-			// BoolType::TrueFalse => ("true", "false"),
 			BoolType::OneZero => ("1", "0"),
 		}
 	}
@@ -1060,7 +1058,7 @@ mod tests {
 	}
 
 	#[test]
-	fn no_duplicate_names_per_fs() {
+	fn no_duplicate_names() {
 		for fs in FsType::iter() {
 			let opts = options_for(&fs);
 			let mut names: Vec<&str> = opts.iter().map(|o| o.name).collect();
@@ -1074,7 +1072,6 @@ mod tests {
 	fn bool_type_parse() {
 		assert_eq!(BoolType::YesNo.parse("yes"), Some(true));
 		assert_eq!(BoolType::YesNo.parse("NO"), Some(false));
-		// assert_eq!(BoolType::TrueFalse.parse("TRUE"), Some(true));
 		assert_eq!(BoolType::OneZero.parse("0"), Some(false));
 		assert_eq!(BoolType::OneZero.parse("garbage"), None);
 	}

@@ -1,7 +1,7 @@
 use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
 use crate::fs_options::{FsOption, OptionSpec, OptionValue};
-use crate::search_picker::{ErrorRenderer, build_search_picker};
+use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
 use crate::{GC, fs_options};
 use adw::prelude::*;
@@ -85,8 +85,7 @@ fn add_option_row(ctx: AddContext) {
 				row.add_suffix(&trash);
 				ctx.group.add(&row);
 
-				let ctx = ctx.clone();
-				let name = name.clone();
+				let (ctx, name) = (ctx.clone(), name.clone());
 				dropdown.connect_selected_notify(move |dropdown| {
 					let Some(selected) = model.string(dropdown.selected()) else { return };
 					set_option(&ctx, FsOption::from_kv(name.clone(), selected));
@@ -109,8 +108,7 @@ fn add_option_row(ctx: AddContext) {
 			row.add_suffix(&trash);
 			ctx.group.add(&row);
 
-			let ctx = ctx.clone();
-			let name = name.clone();
+			let (ctx, name) = (ctx.clone(), name.clone());
 			check.connect_toggled(move |check| {
 				let value = if check.is_active() { on } else { off };
 				set_option(&ctx, FsOption::from_kv(name.clone(), value));
@@ -168,11 +166,7 @@ fn add_option_row(ctx: AddContext) {
 }
 
 fn make_trash_button(ctx: &AddContext) -> Button {
-	let trash = gtk::Button::from_icon_name("user-trash-symbolic");
-	trash.add_css_class("flat");
-	trash.add_css_class("error");
-	trash.set_valign(Align::Center);
-	trash.set_tooltip_text(Some("Remove option"));
+	let trash = crate::ui_commons::trash_button("Remove option");
 
 	let ctx = ctx.clone();
 	trash.connect_clicked(move |_| {
@@ -199,41 +193,35 @@ fn add_free_text_option_row(ctx: AddContext, trash: &gtk::Button) {
 	});
 }
 
-fn add_string_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
-	let input = gtk::Entry::builder().text(current).hexpand(true).margin_start(12).margin_end(12).build();
-	let title = gtk::Label::builder().label(name).halign(Align::Start).wrap(true).build();
-	let subtitle = gtk::Label::builder().label(description).halign(Align::Start).wrap(true).build();
-	subtitle.add_css_class("subtitle");
-	let text = GtkBox::builder()
-		.orientation(Orientation::Vertical)
-		.margin_top(6)
-		.spacing(3)
-		.valign(Align::Center)
-		.hexpand(true)
-		.build();
-	text.append(&title);
-	text.append(&subtitle);
-	let header = GtkBox::builder()
-		.orientation(Orientation::Horizontal)
-		.spacing(6)
-		.valign(Align::Center)
-		.margin_start(12)
-		.margin_end(12)
-		.build();
-	header.set_size_request(-1, 50);
-	header.append(&text);
-	header.append(trash);
+fn add_entry_option_row(
+	ctx: AddContext,
+	trash: &gtk::Button,
+	name: &str,
+	description: &str,
+	input: &gtk::Entry,
+	input_extras: &[&impl IsA<gtk::Widget>],
+) {
+	let header = crate::ui_commons::titled_header(name, Some(description), trash);
+	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
+	input_row.append(input);
+	for extra in input_extras {
+		input_row.append(*extra);
+	}
 	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).margin_bottom(6).build();
 	content.append(&header);
-	content.append(&input);
-	let row = PreferencesRow::builder().child(&content).build();
-	ctx.group.add(&row);
+	content.append(&input_row);
+	ctx.group.add(&PreferencesRow::builder().child(&content).build());
 
 	let ctx = ctx.clone();
 	let name = name.to_string();
 	input.connect_changed(move |input| {
 		set_option(&ctx, FsOption::from_kv(name.clone(), input.text()));
 	});
+}
+
+fn add_string_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
+	let input = gtk::Entry::builder().text(current).hexpand(true).margin_start(12).margin_end(12).build();
+	add_entry_option_row(ctx, trash, name, description, &input, &[] as &[&gtk::Entry]);
 }
 
 fn add_spin_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str, min: f64, max: f64) {
@@ -284,11 +272,9 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
-	let ctx = ctx.clone();
-	let model = model.clone();
+	let (ctx, model) = (ctx.clone(), model.clone());
 	let name = name.to_string();
-	let apply_input = input.clone();
-	let apply_dropdown = dropdown.clone();
+	let (apply_input, apply_dropdown) = (input.clone(), dropdown.clone());
 	let apply = Rc::new(move || {
 		let value = match model.string(apply_dropdown.selected()).as_deref() {
 			Some("B") | None => apply_input.text().to_string(),
@@ -337,45 +323,7 @@ fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descri
 fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
 	let input = gtk::Entry::builder().text(current).hexpand(true).margin_start(12).build();
 	let find_btn = build_subvol_find_button(&ctx, &input, name);
-
-	let title = gtk::Label::builder().label(name).halign(Align::Start).wrap(true).build();
-	let subtitle = gtk::Label::builder().label(description).halign(Align::Start).wrap(true).build();
-	subtitle.add_css_class("subtitle");
-	let text = GtkBox::builder()
-		.orientation(Orientation::Vertical)
-		.margin_top(6)
-		.spacing(3)
-		.valign(Align::Center)
-		.hexpand(true)
-		.build();
-	text.append(&title);
-	text.append(&subtitle);
-	let header = GtkBox::builder()
-		.orientation(Orientation::Horizontal)
-		.spacing(6)
-		.valign(Align::Center)
-		.margin_start(12)
-		.margin_end(12)
-		.build();
-	header.set_size_request(-1, 50);
-	header.append(&text);
-	header.append(trash);
-
-	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
-	input_row.append(&input);
-	input_row.append(&find_btn);
-
-	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).margin_bottom(6).build();
-	content.append(&header);
-	content.append(&input_row);
-	let row = PreferencesRow::builder().child(&content).build();
-	ctx.group.add(&row);
-
-	let ctx = ctx.clone();
-	let name = name.to_string();
-	input.connect_changed(move |input| {
-		set_option(&ctx, FsOption::from_kv(name.clone(), input.text()));
-	});
+	add_entry_option_row(ctx, trash, name, description, &input, &[&find_btn]);
 }
 
 fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) -> MenuButton {
@@ -397,22 +345,9 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 			Ok(subvols)
 		}
 	};
-	let render_row = |subvol: &Subvol| {
-		let row = ActionRow::builder()
-			.title(subvol.path.clone())
-			.subtitle(format!("ID {}", subvol.id))
-			.build();
-		row.set_activatable(true);
-		row.upcast::<gtk::Widget>()
-	};
-	let render_error = |err: &anyhow::Error| {
-		let label = gtk::Label::new(Some(&format!("{err:#}")));
-		label.set_wrap(true);
-		label.upcast::<gtk::Widget>()
-	};
+	let render_row = |subvol: &Subvol| crate::ui_commons::activatable_row(subvol.path.clone(), format!("ID {}", subvol.id));
 	let filter = |query: &str, subvol: &Subvol| {
-		let query = query.trim().to_lowercase();
-		query.is_empty() || subvol.path.to_lowercase().contains(&query) || subvol.id.to_string().contains(&query)
+		crate::ui_commons::query_matches(query, &subvol.path) || crate::ui_commons::query_matches(query, &subvol.id.to_string())
 	};
 	let on_select = {
 		let (input, ctx, name) = (input.clone(), ctx.clone(), name.to_string());
@@ -423,16 +358,12 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 		}
 	};
 
-	let menu_btn = build_search_picker(
-		"Search subvolumes",
-		"",
-		"Find a subvolume on this device",
-		dataset,
-		render_row,
-		ErrorRenderer::Message("Failed to fetch subvolumes"),
-		filter,
-		on_select,
-	);
+	let menu_btn = SearchPickerBuilder::new("", dataset, render_row, on_select)
+		.search_placeholder("Search subvolumes")
+		.tooltip("Find a subvolume on this device")
+		.error_message("Failed to fetch subvolumes")
+		.filter(filter)
+		.build();
 	menu_btn.set_icon_name("folder-search-symbolic");
 	menu_btn.add_css_class("flat");
 	menu_btn
@@ -451,14 +382,9 @@ fn add_add_option_row(ctx: AddContext) {
 		let available = available.clone();
 		move || Ok(available.clone())
 	};
-	let render_row = |option: &OptionSpec| {
-		let row = ActionRow::builder().title(option.name).subtitle(option.description).build();
-		row.set_activatable(true);
-		row.upcast::<gtk::Widget>()
-	};
+	let render_row = |option: &OptionSpec| crate::ui_commons::activatable_row(option.name, option.description);
 	let filter = |query: &str, option: &OptionSpec| {
-		let query = query.trim().to_lowercase();
-		query.is_empty() || option.name.to_lowercase().contains(&query) || option.description.to_lowercase().contains(&query)
+		crate::ui_commons::query_matches(query, option.name) || crate::ui_commons::query_matches(query, option.description)
 	};
 	let on_select = {
 		let ctx = ctx.clone();
@@ -469,16 +395,12 @@ fn add_add_option_row(ctx: AddContext) {
 		}
 	};
 
-	let menu_btn = build_search_picker(
-		"Search options",
-		"Add option…",
-		"Choose an option to add to this entry",
-		dataset,
-		render_row,
-		ErrorRenderer::Message("Error loading options"),
-		filter,
-		on_select,
-	);
+	let menu_btn = SearchPickerBuilder::new("Add option…", dataset, render_row, on_select)
+		.search_placeholder("Search options")
+		.tooltip("Choose an option to add to this entry")
+		.error_message("Error loading options")
+		.filter(filter)
+		.build();
 
 	let row = PreferencesRow::builder().title("Add option").child(&menu_btn).build();
 	ctx.group.add(&row);
@@ -543,7 +465,7 @@ mod tests {
 	}
 
 	#[test]
-	fn documented_defaults_take_precedence() {
+	fn documented_defaults() {
 		use crate::fs_value::FsType;
 		assert_eq!(
 			default_option_value(fs_options::lookup(&FsType::Btrfs, "compress").unwrap()),

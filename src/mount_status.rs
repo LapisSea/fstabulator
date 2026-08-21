@@ -50,7 +50,7 @@ pub fn detect(entry: &StabEntry) -> MountStatus {
 		};
 	}
 
-	if !is_network_fs(entry) && !Path::new(mount_point).exists() {
+	if !entry.fs_type.is_network() && !Path::new(mount_point).exists() {
 		return MountStatus::Missing;
 	}
 
@@ -59,15 +59,6 @@ pub fn detect(entry: &StabEntry) -> MountStatus {
 	} else {
 		MountStatus::Unmounted
 	}
-}
-
-/// Network filesystems cannot be probed for existence locally, so the mount
-/// point is always assumed to exist.
-fn is_network_fs(entry: &StabEntry) -> bool {
-	matches!(
-		entry.fs_type,
-		FsType::Cifs | FsType::Smb3 | FsType::Nfs | FsType::Nfs4 | FsType::FuseSshfs
-	) || matches!(entry.device.kind, DeviceKind::Network)
 }
 
 fn is_mounted_at(entry: &StabEntry, mount_point: &str) -> bool {
@@ -168,7 +159,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn unescape_mount_field_handles_octal_escapes() {
+	fn octal_escapes() {
 		assert_eq!(unescape_mount_field("/mnt/My\\040Docs"), "/mnt/My Docs");
 		assert_eq!(unescape_mount_field("\\040"), " ");
 		assert_eq!(unescape_mount_field("/plain"), "/plain");
@@ -185,7 +176,7 @@ mod tests {
 	}
 
 	#[test]
-	fn nonexistent_local_mount_point_is_missing() {
+	fn local_missing_path() {
 		let mut entry = StabEntry::blank(0);
 		entry.fs_type = FsType::Ext4;
 		entry.device = DeviceValue::from("UUID=deadbeef", DeviceKind::Uuid);
@@ -194,7 +185,7 @@ mod tests {
 	}
 
 	#[test]
-	fn empty_mount_point_is_missing() {
+	fn empty_mount_point() {
 		let entry = StabEntry::blank(0);
 		assert_eq!(detect(&entry), MountStatus::Missing);
 	}
