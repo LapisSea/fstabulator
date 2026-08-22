@@ -40,7 +40,7 @@ impl StabEntry {
 	}
 
 	pub fn original_normalized(&self) -> String {
-		normalize_whitespace(&self.original)
+		normalize_entry_text(&self.original)
 	}
 
 	fn original_or_blank(&self) -> Option<StabEntry> {
@@ -98,6 +98,8 @@ impl StabEntry {
 	pub fn from(line: usize, raw: &str) -> Result<Self> {
 		let (fields, active) = split(raw);
 
+		let fields: Vec<String> = fields.iter().map(|field| unescape_field(field)).collect();
+
 		if fields.len() != 6 {
 			bail!(
 				"line {}: expected 6 fields (device, mount_point, fs_type, options, dump, pass), got {}",
@@ -106,9 +108,9 @@ impl StabEntry {
 			);
 		}
 
-		let device = fields[0].to_string();
-		let mount_point = fields[1].to_string();
-		let fs_type = FsType::from_str(fields[2]).context(format!("Cannot parse fs_type: {}", fields[2]))?;
+		let device = fields[0].clone();
+		let mount_point = fields[1].clone();
+		let fs_type = FsType::from_str(&fields[2]).context(format!("Cannot parse fs_type: {}", fields[2]))?;
 		let options: Vec<FsOption> = fields[3].split(',').map(FsOption::from_raw).collect();
 
 		let dump = fields[4]
@@ -134,9 +136,9 @@ impl StabEntry {
 		};
 
 		let produced = entry.to_string();
-		let expected = normalize_whitespace(raw);
+		let expected = normalize_entry_text(raw);
 
-		if produced != expected {
+		if normalize_entry_text(&produced) != expected {
 			bail!(
 				"line {}: entry did not round-trip cleanly\n  expected: {:?}\n  produced: {:?}",
 				line,
@@ -149,13 +151,14 @@ impl StabEntry {
 	}
 	fn data_to_string(&self) -> String {
 		let active_str = if self.active { "" } else { "# " };
+		let options = self.options.iter().map(|o| o.to_string()).collect::<Vec<_>>().join(",");
 		format!(
 			"{}{} {} {} {} {} {}",
 			active_str,
-			self.device.render(),
-			self.mount_point,
-			self.fs_type,
-			self.options.iter().map(|o| o.to_string()).collect::<Vec<_>>().join(","),
+			escape_field(&self.device.render()),
+			escape_field(&self.mount_point),
+			escape_field(&self.fs_type.to_string()),
+			escape_field(&options),
 			self.dump,
 			self.pass
 		)
@@ -175,10 +178,62 @@ pub enum StabLine {
 	Unparsable(String),
 }
 
-fn normalize_whitespace(s: &str) -> String {
+fn normalize_entry_text(s: &str) -> String {
 	let (fields, active) = split(s);
-	let fields = fields.join(" ");
+	let fields = fields.iter().map(|field| unescape_field(field)).collect::<Vec<_>>().join(" ");
 	if !active { format!("# {fields}") } else { fields }
+}
+
+fn escape_field(input: &str) -> String {
+	let mut out = String::with_capacity(input.len());
+	for c in input.chars() {
+		match c {
+			' ' => out.push_str("\\040"),
+			'\t' => out.push_str("\\011"),
+			'\n' => out.push_str("\\012"),
+			'\\' => out.push_str("\\134"),
+			// unescape_field reads exactly three octal digits (fstab convention),
+			// so whitespace above 0o777 cannot be encoded; left verbatim it makes
+			// the entry fail to re-parse instead of silently corrupting fields.
+			_ if c.is_whitespace() && c <= '\u{01FF}' => out.push_str(&format!("\\{:03o}", c as u32)),
+			_ => out.push(c),
+		}
+	}
+	out
+}
+
+pub(crate) fn unescape_field(input: &str) -> String {
+	let mut out = String::with_capacity(input.len());
+	let mut chars = input.chars();
+	while let Some(c) = chars.next() {
+		if c != '\\' {
+			out.push(c);
+			continue;
+		}
+		let mut code = String::new();
+		let mut interrupted = None;
+		for _ in 0..3 {
+			match chars.next() {
+				Some(d @ '0'..='7') => code.push(d),
+				Some(other) => {
+					interrupted = Some(other);
+					break;
+				}
+				None => break,
+			}
+		}
+		if code.len() == 3 {
+			let decoded = u32::from_str_radix(&code, 8).ok().and_then(char::from_u32).unwrap_or('\u{FFFD}');
+			out.push(decoded);
+		} else {
+			out.push('\\');
+			out.push_str(&code);
+		}
+		if let Some(other) = interrupted {
+			out.push(other);
+		}
+	}
+	out
 }
 
 fn parse_fstab(raw: &str) -> Vec<StabLine> {
@@ -394,6 +449,98 @@ mod tests {
 	use super::*;
 
 	#[test]
+	fn escape_field_encodes_specials() {
+		assert_eq!(escape_field("a b"), "a\\040b");
+		assert_eq!(escape_field("a\tb"), "a\\011b");
+		assert_eq!(escape_field("a\nb"), "a\\012b");
+		assert_eq!(escape_field("a\\b"), "a\\134b");
+		assert_eq!(escape_field("plain/path"), "plain/path");
+
+		assert_eq!(escape_field("a\rb"), "a\\015b");
+		assert_eq!(escape_field("a\u{000b}b"), "a\\013b");
+		assert_eq!(escape_field("a\u{000c}b"), "a\\014b");
+		assert_eq!(escape_field("a\u{0085}b"), "a\\205b");
+		assert_eq!(escape_field("a\u{00a0}b"), "a\\240b");
+		assert!(!escape_field("a b\tc\nd\r\u{00a0}e").chars().any(char::is_whitespace));
+
+		assert_eq!(unescape_field("a\\040b"), "a b");
+		assert_eq!(unescape_field("a\\011b"), "a\tb");
+		assert_eq!(unescape_field("a\\012b"), "a\nb");
+		assert_eq!(unescape_field("a\\134b"), "a\\b");
+		assert_eq!(unescape_field("/plain"), "/plain");
+
+		assert_eq!(unescape_field("a\\04"), "a\\04");
+		assert_eq!(unescape_field("a\\1x"), "a\\1x");
+		assert_eq!(unescape_field("trailing\\"), "trailing\\");
+		assert_eq!(unescape_field("\\040"), " ");
+
+		assert_eq!(escape_field("a\u{1680}b"), "a\u{1680}b");
+	}
+
+	#[test]
+	fn escape_unescape_round_trip() {
+		for value in [
+			"/mnt/my docs",
+			"tab\tinside",
+			"new\nline",
+			"back\\slash",
+			"\\leading",
+			"trailing ",
+			"",
+			"a\\040b",
+			"\040",
+			"cr\rmid",
+			"nbsp\u{00a0}mid",
+			"vt\u{000b}ff\u{000c}",
+		] {
+			assert_eq!(unescape_field(&escape_field(value)), value);
+		}
+	}
+
+	#[test]
+	fn escaped_fields_parse_and_round_trip() {
+		let raw = "LABEL=arch\\040boot /mnt/my\\040docs ext4 rw,x-systemd.automount 0 2";
+		let entry = StabEntry::from(0, raw).unwrap();
+		assert_eq!(entry.device.value, "arch boot");
+		assert_eq!(entry.mount_point, "/mnt/my docs");
+		assert!(entry.is_valid());
+		assert!(!entry.is_changed());
+		assert_eq!(entry.to_string(), raw);
+	}
+
+	#[test]
+	fn non_canonical_escapes_keep_original_bytes() {
+		// \101 decodes to 'A'; not one of the four canonical escapes, but must
+		// still parse and be written back byte-identically while untouched.
+		let raw = "UUID=1 /mnt/a\\101b ext4 defaults 0 2";
+		let mut entry = StabEntry::from(0, raw).unwrap();
+		assert_eq!(entry.mount_point, "/mnt/aAb");
+		assert!(!entry.is_changed());
+
+		entry.mount_point = "/mnt/edited".to_string();
+		assert_eq!(
+			entry.to_string(),
+			"UUID=1 /mnt/edited ext4 defaults 0 2",
+			"editing should rewrite the line canonically"
+		);
+	}
+
+	#[test]
+	fn written_fields_are_escaped() {
+		let mut entry = StabEntry::blank(0);
+		entry.device = DeviceValue::from("my label", DeviceKind::Label);
+		entry.fs_type = FsType::Ext4;
+		entry.mount_point = "/mnt/a b".to_string();
+
+		let rendered = entry.to_string();
+		assert_eq!(rendered, "LABEL=my\\040label /mnt/a\\040b ext4 defaults 0 0");
+
+		let reparsed = StabEntry::from(0, &rendered).unwrap();
+		assert_eq!(reparsed.device.value, "my label");
+		assert_eq!(reparsed.mount_point, "/mnt/a b");
+	}
+
+	#[test]
 	fn dummy_entries_parse() {
 		let raw = std::fs::read_to_string(concat!(env!("CARGO_MANIFEST_DIR"), "/fstab-dummy")).expect("could not read fstab-dummy");
 		let entries: Vec<(usize, Result<StabEntry>)> = raw
@@ -409,7 +556,7 @@ mod tests {
 				panic!("line {} failed to parse: {err:#}", line + 1);
 			}
 		}
-		assert_eq!(entries.len(), 44, "unexpected number of entries in fstab-dummy");
+		assert_eq!(entries.len(), 45, "unexpected number of entries in fstab-dummy");
 	}
 
 	#[test]

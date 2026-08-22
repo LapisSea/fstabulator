@@ -1,6 +1,6 @@
 use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
-use crate::stab_yurself::StabEntry;
+use crate::stab_yurself::{StabEntry, unescape_field};
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -102,42 +102,9 @@ fn read_mounts() -> Option<Vec<(String, String, String)>> {
 		let (Some(source), Some(target), Some(fstype)) = (fields.next(), fields.next(), fields.next()) else {
 			continue;
 		};
-		mounts.push((unescape_mount_field(source), unescape_mount_field(target), fstype.to_string()));
+		mounts.push((unescape_field(source), unescape_field(target), fstype.to_string()));
 	}
 	Some(mounts)
-}
-
-fn unescape_mount_field(s: &str) -> String {
-	let mut out = String::with_capacity(s.len());
-	let mut chars = s.chars();
-	while let Some(c) = chars.next() {
-		if c != '\\' {
-			out.push(c);
-			continue;
-		}
-		let mut octal = String::new();
-		for _ in 0..3 {
-			match chars.next() {
-				Some(d @ '0'..='7') => octal.push(d),
-				Some(other) => {
-					out.push('\\');
-					out.push_str(&octal);
-					out.push(other);
-					octal.clear();
-					break;
-				}
-				None => break,
-			}
-		}
-		if octal.len() == 3 {
-			let value = u32::from_str_radix(&octal, 8).unwrap_or(0);
-			out.push(char::from_u32(value).unwrap_or('\u{FFFD}'));
-		} else {
-			out.push('\\');
-			out.push_str(&octal);
-		}
-	}
-	out
 }
 
 fn is_swap_active(device: &DeviceValue) -> bool {
@@ -157,14 +124,6 @@ fn is_swap_active(device: &DeviceValue) -> bool {
 #[cfg(test)]
 mod tests {
 	use super::*;
-
-	#[test]
-	fn octal_escapes() {
-		assert_eq!(unescape_mount_field("/mnt/My\\040Docs"), "/mnt/My Docs");
-		assert_eq!(unescape_mount_field("\\040"), " ");
-		assert_eq!(unescape_mount_field("/plain"), "/plain");
-		assert_eq!(unescape_mount_field("\\134"), "\\");
-	}
 
 	#[test]
 	fn network_fs_never_reports_missing() {
