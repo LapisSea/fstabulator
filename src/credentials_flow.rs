@@ -170,10 +170,7 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 					}
 					ui_commons::confirm_popup(
 						&btn,
-						None,
-						"Delete credentials",
-						&format!("{err:#}\n\nWould you like to delete the saved credentials file {}?", path.display()),
-						None::<&gtk::Widget>,
+						format!("{err:#}\n\nWould you like to delete the saved credentials file {}?", path.display()),
 						{
 							let btn = btn.clone();
 							move || match crate::privileged::delete_credentials_file(&filename) {
@@ -183,7 +180,9 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 								}
 							}
 						},
-					);
+					)
+					.confirm_choice("Delete credentials")
+					.present();
 				}
 			}
 		},

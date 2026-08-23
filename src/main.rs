@@ -147,12 +147,11 @@ fn build_ui(application: &Application) {
 			let (btn, parent) = (btn.clone(), btn.clone());
 			ui_commons::confirm_popup(
 				&parent,
-				None,
-				"Make backup",
 				"Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?",
-				None::<&Widget>,
 				move || perform_make_backup(&btn),
-			);
+			)
+			.confirm_choice("Make backup")
+			.present();
 		});
 	}
 	row.append(&make_backup_btn);
@@ -497,14 +496,12 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 			let (path, file_ctx, list_panel) = (backup.0.clone(), file_ctx.clone(), list_panel.clone());
 			let (editor_panel, parent_widget) = (editor_panel.clone(), editor_panel.clone());
 			let backup_time = localized_datetime(backup.1);
-			ui_commons::confirm_popup(
-				&parent_widget,
-				Some(&format!("Restore backup from\n{}", backup_time)),
-				"Restore",
-				"Are you sure? Any changes made will be lost!",
-				None::<&Widget>,
-				move || restore_backup(&path, &file_ctx, &list_panel, &editor_panel),
-			);
+			ui_commons::confirm_popup(&parent_widget, "Are you sure? Any changes made will be lost!", move || {
+				restore_backup(&path, &file_ctx, &list_panel, &editor_panel)
+			})
+			.heading(backup_time)
+			.confirm_choice("Restore")
+			.present();
 		}
 	};
 

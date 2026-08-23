@@ -104,39 +104,78 @@ pub fn present_bullet_dialog(widget: &impl IsA<Widget>, heading: &str, body: &st
 	dialog.present(parent.as_ref());
 }
 
-pub fn confirm_popup(
-	parent_widget: &impl IsA<gtk::Widget>,
-	heading: Option<&str>,
-	confirm_choice: &str,
-	message: &str,
-	extra_child: Option<&impl IsA<gtk::Widget>>,
-	on_confirm: impl FnOnce() + 'static,
-) {
-	let dialog = AlertDialog::builder().body(message).build();
-	if let Some(heading) = heading {
-		dialog.set_heading(Some(heading));
+pub struct ConfirmPopupBuilder {
+	parent_widget: Widget,
+	heading: Option<String>,
+	confirm_choice: String,
+	message: String,
+	extra_child: Option<Widget>,
+	on_confirm: Box<dyn FnOnce()>,
+}
+
+impl ConfirmPopupBuilder {
+	pub fn heading(mut self, value: impl Into<String>) -> Self {
+		self.heading = Some(value.into());
+		self
 	}
-	if let Some(child) = extra_child {
-		dialog.set_extra_child(Some(child));
+
+	pub fn confirm_choice(mut self, value: impl Into<String>) -> Self {
+		self.confirm_choice = value.into();
+		self
 	}
-	dialog.add_response("cancel", "Cancel");
-	dialog.add_response("confirm", confirm_choice);
-	dialog.set_default_response(Some("cancel"));
-	dialog.set_close_response("cancel");
-	let parent = parent_window(parent_widget);
-	let on_confirm = RefCell::new(Some(on_confirm));
-	dialog.connect_response(None, move |_, response| {
-		if response == "confirm"
-			&& let Some(on_confirm) = on_confirm.borrow_mut().take()
-		{
-			on_confirm();
+
+	pub fn extra_child(mut self, value: &impl IsA<Widget>) -> Self {
+		self.extra_child = Some(value.clone().upcast());
+		self
+	}
+
+	pub fn present(self) {
+		let Self {
+			parent_widget,
+			heading,
+			confirm_choice,
+			message,
+			extra_child,
+			on_confirm,
+		} = self;
+		let mut dialog_builder = AlertDialog::builder().body(&message);
+		if let Some(heading) = &heading {
+			dialog_builder = dialog_builder.heading(heading.as_str());
 		}
-	});
-	dialog.present(parent.as_ref());
+		let dialog = dialog_builder.build();
+		if let Some(child) = extra_child {
+			dialog.set_extra_child(Some(&child));
+		}
+		dialog.add_response("cancel", "Cancel");
+		dialog.add_response("confirm", &confirm_choice);
+		dialog.set_default_response(Some("cancel"));
+		dialog.set_close_response("cancel");
+		let parent = parent_window(&parent_widget);
+		let on_confirm = RefCell::new(Some(on_confirm));
+		dialog.connect_response(None, move |_, response| {
+			if response == "confirm"
+				&& let Some(on_confirm) = on_confirm.borrow_mut().take()
+			{
+				on_confirm();
+			}
+		});
+		dialog.present(parent.as_ref());
+	}
 }
 
 pub(crate) fn parent_window(widget: &impl IsA<Widget>) -> Option<gtk::Window> {
 	widget.root().and_then(|root| root.downcast::<gtk::Window>().ok())
+}
+
+pub fn confirm_popup(parent_widget: &impl IsA<Widget>, message: impl Into<String>, on_confirm: impl FnOnce() + 'static) -> ConfirmPopupBuilder {
+	ConfirmPopupBuilder {
+		parent_widget: parent_widget.clone().upcast(),
+		heading: None,
+		confirm_choice: "Confirm".into(),
+		message: message.into(),
+		extra_child: None,
+		on_confirm: Box::new(on_confirm),
+	}
 }
 
 pub fn connect_clicked_confirm(
@@ -151,9 +190,14 @@ pub fn connect_clicked_confirm(
 	let on_confirm = Rc::new(RefCell::new(on_confirm));
 	button.connect_clicked(move |_| {
 		let extra_child = extra_child.borrow_mut()();
-		confirm_popup(&button_click, None, confirm_choice, message, extra_child.as_ref(), {
+		let mut popup = confirm_popup(&button_click, message, {
 			let on_confirm = on_confirm.clone();
 			move || on_confirm.borrow_mut()()
-		});
+		})
+		.confirm_choice(confirm_choice);
+		if let Some(extra_child) = extra_child {
+			popup = popup.extra_child(&extra_child);
+		}
+		popup.present();
 	});
 }
