@@ -106,12 +106,16 @@ pub fn present_bullet_dialog(widget: &impl IsA<Widget>, heading: &str, body: &st
 
 pub fn confirm_popup(
 	parent_widget: &impl IsA<gtk::Widget>,
+	heading: Option<&str>,
 	confirm_choice: &str,
 	message: &str,
 	extra_child: Option<&impl IsA<gtk::Widget>>,
 	on_confirm: impl FnOnce() + 'static,
 ) {
 	let dialog = AlertDialog::builder().body(message).build();
+	if let Some(heading) = heading {
+		dialog.set_heading(Some(heading));
+	}
 	if let Some(child) = extra_child {
 		dialog.set_extra_child(Some(child));
 	}
@@ -147,7 +151,7 @@ pub fn connect_clicked_confirm(
 	let on_confirm = Rc::new(RefCell::new(on_confirm));
 	button.connect_clicked(move |_| {
 		let extra_child = extra_child.borrow_mut()();
-		confirm_popup(&button_click, confirm_choice, message, extra_child.as_ref(), {
+		confirm_popup(&button_click, None, confirm_choice, message, extra_child.as_ref(), {
 			let on_confirm = on_confirm.clone();
 			move || on_confirm.borrow_mut()()
 		});

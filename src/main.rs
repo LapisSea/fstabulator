@@ -147,6 +147,7 @@ fn build_ui(application: &Application) {
 			let (btn, parent) = (btn.clone(), btn.clone());
 			ui_commons::confirm_popup(
 				&parent,
+				None,
 				"Make backup",
 				"Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?",
 				None::<&Widget>,
@@ -469,10 +470,11 @@ fn populate_list(list_box: &ListBox, file_ctx: &FileContext, editor_panel: &gtk:
 
 fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) -> MenuButton {
 	let dataset = || match stab_yurself::scan_for_backups() {
-		Ok(ok) => {
+		Ok(mut ok) => {
 			if ok.is_empty() {
 				Err(anyhow::anyhow!("No backups found"))
 			} else {
+				ok.sort_by(|(_, a), (_, b)| b.cmp(a));
 				Ok(ok)
 			}
 		}
@@ -480,12 +482,12 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 	};
 
 	let render_row = |backup: &(PathBuf, SystemTime)| {
-		let time = humantime::format_rfc3339(backup.1).to_string();
+		let time = localized_datetime(backup.1);
 		activatable_row(time, backup.0.display().to_string())
 	};
 
 	let filter = |query: &str, backup: &(PathBuf, SystemTime)| {
-		let time = humantime::format_rfc3339(backup.1).to_string();
+		let time = localized_datetime(backup.1);
 		query_matches(query, &time) || query_matches(query, &backup.0.display().to_string())
 	};
 
@@ -494,8 +496,10 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 		move |backup: (PathBuf, SystemTime), _index| {
 			let (path, file_ctx, list_panel) = (backup.0.clone(), file_ctx.clone(), list_panel.clone());
 			let (editor_panel, parent_widget) = (editor_panel.clone(), editor_panel.clone());
+			let backup_time = localized_datetime(backup.1);
 			ui_commons::confirm_popup(
 				&parent_widget,
+				Some(&format!("Restore backup from\n{}", backup_time)),
 				"Restore",
 				"Are you sure? Any changes made will be lost!",
 				None::<&Widget>,
@@ -532,6 +536,17 @@ fn load_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor
 	if let Err(err) = load_fstab_file(path, file_ctx, list_panel, editor_panel) {
 		ui_commons::present_simple_dialog(editor_panel, "Could not load backup", &format!("{err:#}"));
 	}
+}
+
+fn localized_datetime(time: SystemTime) -> String {
+	let secs = match time.duration_since(SystemTime::UNIX_EPOCH) {
+		Ok(dur) => dur.as_secs() as i64,
+		Err(err) => -(err.duration().as_secs() as i64),
+	};
+	glib::DateTime::from_unix_local(secs)
+		.and_then(|dt| dt.format("%c"))
+		.map(|formatted| formatted.to_string())
+		.unwrap_or_else(|_| humantime::format_rfc3339(time).to_string())
 }
 
 fn restore_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) {
@@ -668,6 +683,7 @@ fn build_editor_panel(
 	rebuild_editor: RebuildEditor,
 ) {
 	let reset_btn = Button::with_label("Reset");
+	reset_btn.add_css_class("destructive-action");
 	reset_btn.set_sensitive(entry_ctx.entry().borrow().is_changed());
 	entry_ctx.set_reset_btn(&reset_btn);
 
