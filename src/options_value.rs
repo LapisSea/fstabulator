@@ -120,7 +120,7 @@ fn add_option_row(ctx: AddContext) {
 			value: OptionValue::Integer,
 			..
 		}) => {
-			add_spin_option_row(ctx.clone(), &trash, &name, description, &current, i32::MIN as f64, i32::MAX as f64);
+			add_digits_option_row(ctx.clone(), &trash, &name, description, &current, |c| c.is_ascii_digit());
 		}
 		Some(OptionSpec {
 			description,
@@ -148,7 +148,7 @@ fn add_option_row(ctx: AddContext) {
 			value: OptionValue::Octal,
 			..
 		}) => {
-			add_octal_option_row(ctx.clone(), &trash, &name, description, &current);
+			add_digits_option_row(ctx.clone(), &trash, &name, description, &current, |c| matches!(c, '0'..='7'));
 		}
 		Some(OptionSpec {
 			description,
@@ -290,7 +290,14 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	dropdown.connect_selected_notify(move |_| apply());
 }
 
-fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
+fn add_digits_option_row(
+	ctx: AddContext,
+	trash: &gtk::Button,
+	name: &str,
+	description: &str,
+	current: &str,
+	valid_digit: impl Fn(char) -> bool + 'static,
+) {
 	let input = gtk::Entry::builder()
 		.text(current)
 		.input_purpose(gtk::InputPurpose::Digits)
@@ -306,13 +313,9 @@ fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descri
 	let name = name.to_string();
 	input.connect_changed(move |input| {
 		let text = input.text();
-		let cleaned: String = text.chars().filter(|c| matches!(c, '0'..='7')).collect();
+		let cleaned: String = text.chars().filter(|c| valid_digit(*c)).collect();
 		if cleaned.as_str() != text.as_str() {
-			let before: String = text
-				.chars()
-				.take(input.position().max(0) as usize)
-				.filter(|c| matches!(c, '0'..='7'))
-				.collect();
+			let before: String = text.chars().take(input.position().max(0) as usize).filter(|c| valid_digit(*c)).collect();
 			input.set_text(&cleaned);
 			input.set_position(before.chars().count() as i32);
 			return;
