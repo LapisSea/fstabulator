@@ -1,6 +1,7 @@
 use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
 use crate::fs_options::{FsOption, OptionSpec, OptionValue};
+use crate::i18n::i18n;
 use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
 use crate::{GC, fs_options};
@@ -57,7 +58,7 @@ fn add_option_row(ctx: AddContext) {
 
 	let row = ActionRow::builder().title(name.as_str()).build();
 	if let Some(OptionSpec { description, .. }) = option {
-		row.set_subtitle(description);
+		row.set_subtitle(i18n(description).as_str());
 	}
 
 	match option {
@@ -166,7 +167,7 @@ fn add_option_row(ctx: AddContext) {
 }
 
 fn make_trash_button(ctx: &AddContext) -> Button {
-	let trash = crate::ui_commons::trash_button("Remove option");
+	let trash = crate::ui_commons::trash_button(i18n("Remove option").as_str());
 
 	let ctx = ctx.clone();
 	trash.connect_clicked(move |_| {
@@ -184,7 +185,7 @@ fn set_option(ctx: &AddContext, value: FsOption) {
 }
 
 fn add_free_text_option_row(ctx: AddContext, trash: &gtk::Button) {
-	let row = EntryRow::builder().title("Option").text(ctx.value.to_string()).build();
+	let row = EntryRow::builder().title(i18n("Option")).text(ctx.value.to_string()).build();
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
@@ -201,7 +202,7 @@ fn add_entry_option_row(
 	input: &gtk::Entry,
 	input_extras: &[&impl IsA<gtk::Widget>],
 ) {
-	let header = crate::ui_commons::titled_header(name, Some(description), trash);
+	let header = crate::ui_commons::titled_header(name, Some(i18n(description).as_str()), trash);
 	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
 	input_row.append(input);
 	for extra in input_extras {
@@ -227,7 +228,7 @@ fn add_string_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descr
 fn add_spin_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str, min: f64, max: f64) {
 	let row = SpinRow::builder()
 		.title(name)
-		.subtitle(description)
+		.subtitle(i18n(description))
 		.value(current.parse::<f64>().unwrap_or_default())
 		.climb_rate(1.0)
 		.numeric(true)
@@ -267,7 +268,7 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	content.append(&input);
 	content.append(&dropdown);
 
-	let row = ActionRow::builder().title(name).subtitle(description).build();
+	let row = ActionRow::builder().title(name).subtitle(i18n(description)).build();
 	row.add_suffix(&content);
 	row.add_suffix(trash);
 	ctx.group.add(&row);
@@ -296,7 +297,7 @@ fn add_octal_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descri
 		.width_chars(6)
 		.build();
 	input.set_valign(Align::Center);
-	let row = ActionRow::builder().title(name).subtitle(description).build();
+	let row = ActionRow::builder().title(name).subtitle(i18n(description)).build();
 	row.add_suffix(&input);
 	row.add_suffix(trash);
 	ctx.group.add(&row);
@@ -359,9 +360,9 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 	};
 
 	let menu_btn = SearchPickerBuilder::new("", dataset, render_row, on_select)
-		.search_placeholder("Search subvolumes")
-		.tooltip("Find a subvolume on this device")
-		.error_message("Failed to fetch subvolumes")
+		.search_placeholder(i18n("Search subvolumes"))
+		.tooltip(i18n("Find a subvolume on this device"))
+		.error_message(i18n("Failed to fetch subvolumes"))
 		.filter(filter)
 		.build();
 	menu_btn.set_icon_name("folder-search-symbolic");
@@ -382,9 +383,9 @@ fn add_add_option_row(ctx: AddContext) {
 		let available = available.clone();
 		move || Ok(available.clone())
 	};
-	let render_row = |option: &OptionSpec| crate::ui_commons::activatable_row(option.name, option.description);
+	let render_row = |option: &OptionSpec| crate::ui_commons::activatable_row(option.name, i18n(option.description));
 	let filter = |query: &str, option: &OptionSpec| {
-		crate::ui_commons::query_matches(query, option.name) || crate::ui_commons::query_matches(query, option.description)
+		crate::ui_commons::query_matches(query, option.name) || crate::ui_commons::query_matches(query, i18n(option.description).as_str())
 	};
 	let on_select = {
 		let ctx = ctx.clone();
@@ -395,14 +396,14 @@ fn add_add_option_row(ctx: AddContext) {
 		}
 	};
 
-	let menu_btn = SearchPickerBuilder::new("Add option…", dataset, render_row, on_select)
-		.search_placeholder("Search options")
-		.tooltip("Choose an option to add to this entry")
-		.error_message("Error loading options")
+	let menu_btn = SearchPickerBuilder::new(i18n("Add option…"), dataset, render_row, on_select)
+		.search_placeholder(i18n("Search options"))
+		.tooltip(i18n("Choose an option to add to this entry"))
+		.error_message(i18n("Error loading options"))
 		.filter(filter)
 		.build();
 
-	let row = PreferencesRow::builder().title("Add option").child(&menu_btn).build();
+	let row = PreferencesRow::builder().title(i18n("Add option")).child(&menu_btn).build();
 	ctx.group.add(&row);
 }
 

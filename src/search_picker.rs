@@ -1,11 +1,12 @@
 use crate::GC;
+use crate::i18n::i18n;
 use crate::ui_commons::clear_children;
 use adw::prelude::*;
 use gtk::{Align, Box as GtkBox, ListBox, MenuButton, Orientation, Popover, ScrolledWindow, SearchEntry, Widget};
 use std::rc::Rc;
 
 pub enum ErrorRenderer {
-	Message(&'static str),
+	Message(String),
 	Custom(&'static dyn Fn(&anyhow::Error) -> Widget),
 }
 
@@ -13,10 +14,10 @@ const MAX_LIST_HEIGHT: i32 = 240;
 
 type Filter<T> = Rc<dyn Fn(&str, &T) -> bool>;
 
-pub struct SearchPickerBuilder<'a, T: Clone + 'static, W: IsA<Widget>> {
-	search_placeholder: &'a str,
-	menu_label: &'a str,
-	tooltip: &'a str,
+pub struct SearchPickerBuilder<T: Clone + 'static, W: IsA<Widget>> {
+	search_placeholder: String,
+	menu_label: String,
+	tooltip: String,
 	dataset: Rc<dyn Fn() -> anyhow::Result<Vec<T>>>,
 	render_row: Rc<dyn Fn(&T) -> W>,
 	render_error: ErrorRenderer,
@@ -24,37 +25,37 @@ pub struct SearchPickerBuilder<'a, T: Clone + 'static, W: IsA<Widget>> {
 	on_select: Rc<dyn Fn(T, usize)>,
 }
 
-impl<'a, T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<'a, T, W> {
+impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 	pub fn new(
-		menu_label: &'a str,
+		menu_label: impl Into<String>,
 		dataset: impl Fn() -> anyhow::Result<Vec<T>> + 'static,
 		render_row: impl Fn(&T) -> W + 'static,
 		on_select: impl Fn(T, usize) + 'static,
 	) -> Self {
 		Self {
-			search_placeholder: "Search",
-			menu_label,
-			tooltip: "",
+			search_placeholder: i18n("Search"),
+			menu_label: menu_label.into(),
+			tooltip: String::new(),
 			dataset: Rc::new(dataset),
 			render_row: Rc::new(render_row),
-			render_error: ErrorRenderer::Message("Failed to load"),
+			render_error: ErrorRenderer::Message(i18n("Failed to load")),
 			filter: None,
 			on_select: Rc::new(on_select),
 		}
 	}
 
-	pub fn search_placeholder(mut self, value: &'a str) -> Self {
-		self.search_placeholder = value;
+	pub fn search_placeholder(mut self, value: impl Into<String>) -> Self {
+		self.search_placeholder = value.into();
 		self
 	}
 
-	pub fn tooltip(mut self, value: &'a str) -> Self {
-		self.tooltip = value;
+	pub fn tooltip(mut self, value: impl Into<String>) -> Self {
+		self.tooltip = value.into();
 		self
 	}
 
-	pub fn error_message(mut self, value: &'static str) -> Self {
-		self.render_error = ErrorRenderer::Message(value);
+	pub fn error_message(mut self, value: impl Into<String>) -> Self {
+		self.render_error = ErrorRenderer::Message(value.into());
 		self
 	}
 
@@ -86,7 +87,7 @@ impl<'a, T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<'a, T, W> {
 			ErrorRenderer::Custom(efn) => efn(err),
 		});
 
-		let search = SearchEntry::builder().placeholder_text(search_placeholder).hexpand(true).build();
+		let search = SearchEntry::builder().placeholder_text(search_placeholder.as_str()).hexpand(true).build();
 		let list_box = ListBox::builder().css_classes(["boxed-list"]).hexpand(true).valign(Align::Start).build();
 		let scroll = ScrolledWindow::builder()
 			.child(&list_box)
@@ -109,9 +110,9 @@ impl<'a, T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<'a, T, W> {
 
 		let popover = Popover::builder().child(&popover_content).build();
 
-		let menu_btn = MenuButton::builder().label(menu_label).popover(&popover).build();
+		let menu_btn = MenuButton::builder().label(menu_label.as_str()).popover(&popover).build();
 		if !tooltip.is_empty() {
-			menu_btn.set_tooltip_text(Some(tooltip));
+			menu_btn.set_tooltip_text(Some(tooltip.as_str()));
 		}
 
 		let render_row: Rc<dyn Fn(&T) -> Widget> = Rc::new(move |item: &T| render_row(item).upcast());

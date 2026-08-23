@@ -14,3 +14,10 @@
 !.idea/**
 !resources/**
 !icon_concepting/**
+
+# i18n: template is source-controlled; compiled catalogs (.mo) and
+# translator work-in-progress stay out until they are added explicitly.
+!po/**
+po/*.mo
+
+!scripts/update-pot.sh

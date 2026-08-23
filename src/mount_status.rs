@@ -1,5 +1,6 @@
 use crate::device_value::{DeviceKind, DeviceValue};
 use crate::fs_value::FsType;
+use crate::i18n::i18n;
 use crate::stab_yurself::{StabEntry, unescape_field};
 use std::path::{Path, PathBuf};
 
@@ -11,11 +12,11 @@ pub enum MountStatus {
 }
 
 impl MountStatus {
-	pub fn label(self) -> &'static str {
+	pub fn label(self) -> String {
 		match self {
-			MountStatus::Mounted => "Mounted",
-			MountStatus::Unmounted => "Unmounted",
-			MountStatus::Missing => "Mount point missing",
+			MountStatus::Mounted => i18n("Mounted"),
+			MountStatus::Unmounted => i18n("Unmounted"),
+			MountStatus::Missing => i18n("Mount point missing"),
 		}
 	}
 
@@ -27,11 +28,11 @@ impl MountStatus {
 		}
 	}
 
-	pub fn tooltip(self) -> &'static str {
+	pub fn tooltip(self) -> String {
 		match self {
-			MountStatus::Mounted => "The device is currently mounted at this mount point.",
-			MountStatus::Unmounted => "The device is not currently mounted at this mount point.",
-			MountStatus::Missing => "This mount point does not exist on the system.",
+			MountStatus::Mounted => i18n("The device is currently mounted at this mount point."),
+			MountStatus::Unmounted => i18n("The device is not currently mounted at this mount point."),
+			MountStatus::Missing => i18n("This mount point does not exist on the system."),
 		}
 	}
 }

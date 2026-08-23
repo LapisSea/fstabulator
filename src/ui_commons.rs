@@ -2,9 +2,11 @@ use adw::ActionRow;
 use adw::AlertDialog;
 use adw::prelude::*;
 use gtk::{Align, Box as GtkBox, Button, ListBox, Orientation, Widget};
-
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use crate::i18n::i18n;
+
 pub(crate) fn trash_button(tooltip: &str) -> Button {
 	let btn = Button::from_icon_name("user-trash-symbolic");
 	btn.add_css_class("flat");
@@ -88,7 +90,7 @@ pub(crate) fn find_widget_with_class<W: IsA<Widget>>(widget: W, class: &str) -> 
 pub fn present_simple_dialog(widget: &impl IsA<Widget>, heading: &str, body: &str) {
 	let parent = parent_window(widget);
 	let dialog = AlertDialog::builder().heading(heading).body(body).build();
-	dialog.add_response("ok", "OK");
+	dialog.add_response("ok", i18n("OK").as_str());
 	dialog.set_default_response(Some("ok"));
 	dialog.present(parent.as_ref());
 }
@@ -99,7 +101,7 @@ pub fn present_bullet_dialog(widget: &impl IsA<Widget>, heading: &str, body: &st
 	let label = gtk::Label::builder().use_markup(true).label(&markup).wrap(true).xalign(0.0).build();
 	let dialog = AlertDialog::builder().heading(heading).body(body).build();
 	dialog.set_extra_child(Some(&label));
-	dialog.add_response("ok", "OK");
+	dialog.add_response("ok", i18n("OK").as_str());
 	dialog.set_default_response(Some("ok"));
 	dialog.present(parent.as_ref());
 }
@@ -146,8 +148,8 @@ impl ConfirmPopupBuilder {
 		if let Some(child) = extra_child {
 			dialog.set_extra_child(Some(&child));
 		}
-		dialog.add_response("cancel", "Cancel");
-		dialog.add_response("confirm", &confirm_choice);
+		dialog.add_response("cancel", i18n("Cancel").as_str());
+		dialog.add_response("confirm", confirm_choice.as_str());
 		dialog.set_default_response(Some("cancel"));
 		dialog.set_close_response("cancel");
 		let parent = parent_window(&parent_widget);
@@ -171,7 +173,7 @@ pub fn confirm_popup(parent_widget: &impl IsA<Widget>, message: impl Into<String
 	ConfirmPopupBuilder {
 		parent_widget: parent_widget.clone().upcast(),
 		heading: None,
-		confirm_choice: "Confirm".into(),
+		confirm_choice: i18n("Confirm"),
 		message: message.into(),
 		extra_child: None,
 		on_confirm: Box::new(on_confirm),
@@ -180,21 +182,23 @@ pub fn confirm_popup(parent_widget: &impl IsA<Widget>, message: impl Into<String
 
 pub fn connect_clicked_confirm(
 	button: &gtk::Button,
-	confirm_choice: &'static str,
-	message: &'static str,
+	confirm_choice: impl Into<String>,
+	message: impl Into<String>,
 	extra_child: impl FnMut() -> Option<gtk::Widget> + 'static,
 	on_confirm: impl FnMut() + 'static,
 ) {
 	let button_click = button.clone();
+	let confirm_choice = confirm_choice.into();
+	let message = message.into();
 	let extra_child = RefCell::new(extra_child);
 	let on_confirm = Rc::new(RefCell::new(on_confirm));
 	button.connect_clicked(move |_| {
 		let extra_child = extra_child.borrow_mut()();
-		let mut popup = confirm_popup(&button_click, message, {
+		let mut popup = confirm_popup(&button_click, message.clone(), {
 			let on_confirm = on_confirm.clone();
 			move || on_confirm.borrow_mut()()
 		})
-		.confirm_choice(confirm_choice);
+		.confirm_choice(confirm_choice.clone());
 		if let Some(extra_child) = extra_child {
 			popup = popup.extra_child(&extra_child);
 		}

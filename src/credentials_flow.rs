@@ -1,5 +1,6 @@
 use crate::fs_options;
 use crate::fs_value::FsType;
+use crate::i18n::{i18n, i18n_fmt};
 use crate::privileged::{CredentialsInfo, MountCredentials, inspect_credentials_file, saved_credentials_path};
 use crate::stab_yurself::StabEntry;
 use crate::ui_commons;
@@ -92,9 +93,10 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 	let domain = option_value(&snapshot.options, "domain");
 	let can_save = matches!(&snapshot.fs_type, FsType::Cifs | FsType::Smb3);
 	let default_filename = default_credentials_filename(&snapshot);
+	let heading = i18n_fmt("Mount {mount_point}", &[("{mount_point}", &mount_point)]);
 	CredentialsDialog::new(
 		&btn_ref,
-		&format!("Mount {}", mount_point),
+		&heading,
 		username.as_deref(),
 		domain.as_deref(),
 		&default_filename,
@@ -105,11 +107,15 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 				return;
 			};
 			if credentials.password.is_empty() {
-				ui_commons::present_simple_dialog(&btn, "Cannot mount", "A password is required.");
+				ui_commons::present_simple_dialog(&btn, i18n("Cannot mount").as_str(), i18n("A password is required.").as_str());
 				return;
 			}
 			if credentials.save && credentials.filename.trim().is_empty() {
-				ui_commons::present_simple_dialog(&btn, "Cannot mount", "A credentials file name is required when saving credentials.");
+				ui_commons::present_simple_dialog(
+					&btn,
+					i18n("Cannot mount").as_str(),
+					i18n("A credentials file name is required when saving credentials.").as_str(),
+				);
 				return;
 			}
 			let filename = credentials.save.then(|| credentials.filename.trim().to_string());
@@ -158,30 +164,34 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 				}
 				Err(err) => {
 					let Some(path) = saved_path else {
-						ui_commons::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
+						ui_commons::present_simple_dialog(&btn, i18n("Could not mount").as_str(), &format!("{err:#}"));
 						return;
 					};
 					let filename = path.file_name().and_then(|name| name.to_str()).unwrap_or_default().to_string();
 					let created_this_attempt = matches!(outcome, CredentialsOutcome::SavedNew(_))
 						&& inspect_credentials_file(&filename).map(|info| info.exists).unwrap_or(false);
 					if !created_this_attempt {
-						ui_commons::present_simple_dialog(&btn, "Could not mount", &format!("{err:#}"));
+						ui_commons::present_simple_dialog(&btn, i18n("Could not mount").as_str(), &format!("{err:#}"));
 						return;
 					}
-					ui_commons::confirm_popup(
-						&btn,
-						format!("{err:#}\n\nWould you like to delete the saved credentials file {}?", path.display()),
-						{
-							let btn = btn.clone();
-							move || match crate::privileged::delete_credentials_file(&filename) {
-								Ok(()) => ui_commons::present_simple_dialog(&btn, "Credentials deleted", "The saved credentials file was deleted."),
-								Err(delete_err) => {
-									ui_commons::present_simple_dialog(&btn, "Could not delete credentials", &format!("{delete_err:#}"))
-								}
+					let delete_question = i18n_fmt(
+						"Would you like to delete the saved credentials file {path}?",
+						&[("{path}", &path.display().to_string())],
+					);
+					ui_commons::confirm_popup(&btn, format!("{err:#}\n\n{delete_question}"), {
+						let btn = btn.clone();
+						move || match crate::privileged::delete_credentials_file(&filename) {
+							Ok(()) => ui_commons::present_simple_dialog(
+								&btn,
+								i18n("Credentials deleted").as_str(),
+								i18n("The saved credentials file was deleted.").as_str(),
+							),
+							Err(delete_err) => {
+								ui_commons::present_simple_dialog(&btn, i18n("Could not delete credentials").as_str(), &format!("{delete_err:#}"))
 							}
-						},
-					)
-					.confirm_choice("Delete credentials")
+						}
+					})
+					.confirm_choice(i18n("Delete credentials"))
 					.present();
 				}
 			}
@@ -192,27 +202,28 @@ pub fn mount_with_credentials(btn: &Button, entry: GC<StabEntry>, snapshot: Stab
 fn present_mount_success(btn: &Button, mount_point: &str, outcome: &CredentialsOutcome) {
 	let mut bullets = Vec::new();
 	match outcome {
-		CredentialsOutcome::NotSaved => bullets.push("login used for this mount only".to_string()),
+		CredentialsOutcome::NotSaved => bullets.push(i18n("login used for this mount only")),
 		CredentialsOutcome::SavedNew(path) => {
-			bullets.push(format!("login saved to {}", glib::markup_escape_text(&path.display().to_string())));
-			bullets.push("linked login to entry, <b>you must save changes to preserve this</b>".to_string());
+			let escaped = glib::markup_escape_text(&path.display().to_string());
+			bullets.push(i18n_fmt("login saved to {path}", &[("{path}", &escaped)]));
+			// xgettext: keep the <b> markup tags intact
+			bullets.push(i18n("linked login to entry, <b>you must save changes to preserve this</b>"));
 		}
 		CredentialsOutcome::Modified(path) => {
-			bullets.push(format!(
-				"updated existing login in {}",
-				glib::markup_escape_text(&path.display().to_string())
-			));
-			bullets.push("linked login to entry, <b>you must save changes to preserve this</b>".to_string());
+			let escaped = glib::markup_escape_text(&path.display().to_string());
+			bullets.push(i18n_fmt("updated existing login in {path}", &[("{path}", &escaped)]));
+			// xgettext: keep the <b> markup tags intact
+			bullets.push(i18n("linked login to entry, <b>you must save changes to preserve this</b>"));
 		}
 		CredentialsOutcome::UsedExisting(path) => {
-			bullets.push(format!(
-				"using existing login from {}",
-				glib::markup_escape_text(&path.display().to_string())
-			));
-			bullets.push("linked login to entry, <b>you must save changes to preserve this</b>".to_string());
+			let escaped = glib::markup_escape_text(&path.display().to_string());
+			bullets.push(i18n_fmt("using existing login from {path}", &[("{path}", &escaped)]));
+			// xgettext: keep the <b> markup tags intact
+			bullets.push(i18n("linked login to entry, <b>you must save changes to preserve this</b>"));
 		}
 	}
-	ui_commons::present_bullet_dialog(btn, "Mounted", &format!("Mounted {mount_point}."), &bullets);
+	let body = i18n_fmt("Mounted {mount_point}.", &[("{mount_point}", mount_point)]);
+	ui_commons::present_bullet_dialog(btn, i18n("Mounted").as_str(), body.as_str(), &bullets);
 }
 
 struct CredentialsInput {
@@ -253,9 +264,12 @@ impl CredentialsDialog {
 		check_existing: impl Fn(&str) -> Option<CredentialsInfo> + 'static,
 		on_submit: impl FnOnce(Option<CredentialsInput>) + 'static,
 	) -> Rc<Self> {
-		let username_row = EntryRow::builder().title("Username").text(prefill_username.unwrap_or("")).build();
-		let password_row = PasswordEntryRow::builder().title("Password").build();
-		let domain_row = EntryRow::builder().title("Domain (optional)").text(prefill_domain.unwrap_or("")).build();
+		let username_row = EntryRow::builder().title(i18n("Username")).text(prefill_username.unwrap_or("")).build();
+		let password_row = PasswordEntryRow::builder().title(i18n("Password")).build();
+		let domain_row = EntryRow::builder()
+			.title(i18n("Domain (optional)"))
+			.text(prefill_domain.unwrap_or(""))
+			.build();
 
 		let extra = gtk::Box::builder().orientation(gtk::Orientation::Vertical).spacing(6).build();
 		extra.append(&username_row);
@@ -263,18 +277,18 @@ impl CredentialsDialog {
 		extra.append(&domain_row);
 
 		let save_switch = SwitchRow::builder()
-			.title("Save for auto-mount")
-			.subtitle("Writes a credentials file referenced from the fstab entry.")
+			.title(i18n("Save for auto-mount"))
+			.subtitle(i18n("Writes a credentials file referenced from the fstab entry."))
 			.active(true)
 			.build();
-		let filename_row = EntryRow::builder().title("Credentials file").text(default_filename).build();
+		let filename_row = EntryRow::builder().title(i18n("Credentials file")).text(default_filename).build();
 		let load_button = Button::builder()
-			.label("Load existing credentials")
+			.label(i18n("Load existing credentials"))
 			.has_frame(false)
 			.visible(false)
 			.build();
 		let warning_label = gtk::Label::builder()
-			.label("Will overwrite the existing file!")
+			.label(i18n("Will overwrite the existing file!"))
 			.wrap(true)
 			.halign(gtk::Align::Start)
 			.visible(false)
@@ -341,11 +355,11 @@ impl CredentialsDialog {
 
 		let dialog = AlertDialog::builder()
 			.heading(heading)
-			.body("This filesystem may require credentials to mount.")
+			.body(i18n("This filesystem may require credentials to mount.").as_str())
 			.build();
 		dialog.set_extra_child(Some(&extra));
-		dialog.add_response("cancel", "Cancel");
-		dialog.add_response("connect", "Connect");
+		dialog.add_response("cancel", i18n("Cancel").as_str());
+		dialog.add_response("connect", i18n("Connect").as_str());
 		dialog.set_default_response(Some("connect"));
 		dialog.set_close_response("cancel");
 

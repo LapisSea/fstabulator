@@ -1,6 +1,7 @@
 use crate::GC;
 use crate::context::EntryContext;
 use crate::device_value::DeviceKind;
+use crate::i18n::i18n;
 use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::StabEntry;
 use crate::ui_commons::{activatable_row, query_matches};
@@ -90,42 +91,42 @@ impl FsType {
 		matches!(DeviceKind::for_fs_type(self), [DeviceKind::Network])
 	}
 
-	pub fn description(&self) -> &'static str {
+	pub fn description(&self) -> String {
 		match self {
-			FsType::Ext2 => "original non-journaling ext filesystem, still used for small boot partitions",
-			FsType::Ext3 => "ext2 with journaling added for crash-recovery reliability",
-			FsType::Ext4 => "default Linux journaling filesystem with extents and very large volume support",
-			FsType::Btrfs => "copy-on-write filesystem with snapshots, subvolumes, and RAID",
-			FsType::Xfs => "SGI-developed 64-bit journaling filesystem for high performance and large files",
-			FsType::F2fs => "flash-friendly filesystem designed for NAND flash storage",
-			FsType::Ntfs3 => "Linux kernel driver providing read/write access to Windows NTFS volumes",
-			FsType::Vfat => "FAT filesystem variant with long filename support for removable media",
-			FsType::Exfat => "Microsoft filesystem for large removable drives and SD cards over 32 GB",
-			FsType::Swap => "disk space acting as virtual memory when physical RAM is exhausted",
-			FsType::Cifs => "network filesystem using the SMB protocol for Windows and NAS file shares",
-			FsType::Smb3 => "modern, secure dialect of SMB used for Windows, Azure, and NAS shares",
-			FsType::Nfs => "network filesystem for sharing files across machines over the network",
-			FsType::Nfs4 => "newer NFS version adding security, statefulness, and better locking",
-			FsType::FuseSshfs => "mounts a remote directory over SSH using SFTP, running in userspace via FUSE",
-			FsType::Iso9660 => "standard filesystem format for CD-ROM optical media",
-			FsType::Udf => "Universal Disk Format for writable optical discs like DVDs and Blu-rays",
-			FsType::Tmpfs => "virtual filesystem storing files in RAM and swap for temporary in-memory data",
-			FsType::Proc => "virtual filesystem exposing kernel and process information as files",
-			FsType::Sysfs => "virtual filesystem exposing kernel objects, devices, and their attributes to userspace",
-			FsType::Devpts => "virtual filesystem providing pseudo-terminal device nodes under /dev/pts",
-			FsType::Cgroup2 => "virtual filesystem for the unified cgroup v2 hierarchy, managing resource limits and accounting",
-			FsType::Securityfs => "virtual filesystem backing security modules such as SELinux and IMA integrity interfaces",
-			FsType::Debugfs => "virtual filesystem exporting arbitrary kernel debugging data with no ABI stability guarantees",
-			FsType::Tracefs => "virtual filesystem holding ftrace control and trace-output files under /sys/kernel/tracing",
-			FsType::Configfs => "virtual filesystem where userspace creates and configures kernel objects via mkdir and rmdir",
-			FsType::Mqueue => "POSIX message queue IPC exposed as files at /dev/mqueue",
-			FsType::Hugetlbfs => "interface to huge page memory, mounted at /dev/hugepages",
-			FsType::Devtmpfs => "populates /dev with device nodes automatically at boot",
-			FsType::P9 => "Plan 9 remote filesystem protocol, used for host-to-VM file sharing",
-			FsType::Overlay => "union filesystem stacking upper/lower layers, used by containers",
-			FsType::Zfs => "OpenZFS copy-on-write filesystem with integrated volume management",
-			FsType::Bcachefs => "copy-on-write, multi-device filesystem with built-in caching, compression, and checksumming",
-			FsType::Other(_) => "a custom filesystem type",
+			FsType::Ext2 => i18n("original non-journaling ext filesystem, still used for small boot partitions"),
+			FsType::Ext3 => i18n("ext2 with journaling added for crash-recovery reliability"),
+			FsType::Ext4 => i18n("default Linux journaling filesystem with extents and very large volume support"),
+			FsType::Btrfs => i18n("copy-on-write filesystem with snapshots, subvolumes, and RAID"),
+			FsType::Xfs => i18n("SGI-developed 64-bit journaling filesystem for high performance and large files"),
+			FsType::F2fs => i18n("flash-friendly filesystem designed for NAND flash storage"),
+			FsType::Ntfs3 => i18n("Linux kernel driver providing read/write access to Windows NTFS volumes"),
+			FsType::Vfat => i18n("FAT filesystem variant with long filename support for removable media"),
+			FsType::Exfat => i18n("Microsoft filesystem for large removable drives and SD cards over 32 GB"),
+			FsType::Swap => i18n("disk space acting as virtual memory when physical RAM is exhausted"),
+			FsType::Cifs => i18n("network filesystem using the SMB protocol for Windows and NAS file shares"),
+			FsType::Smb3 => i18n("modern, secure dialect of SMB used for Windows, Azure, and NAS shares"),
+			FsType::Nfs => i18n("network filesystem for sharing files across machines over the network"),
+			FsType::Nfs4 => i18n("newer NFS version adding security, statefulness, and better locking"),
+			FsType::FuseSshfs => i18n("mounts a remote directory over SSH using SFTP, running in userspace via FUSE"),
+			FsType::Iso9660 => i18n("standard filesystem format for CD-ROM optical media"),
+			FsType::Udf => i18n("Universal Disk Format for writable optical discs like DVDs and Blu-rays"),
+			FsType::Tmpfs => i18n("virtual filesystem storing files in RAM and swap for temporary in-memory data"),
+			FsType::Proc => i18n("virtual filesystem exposing kernel and process information as files"),
+			FsType::Sysfs => i18n("virtual filesystem exposing kernel objects, devices, and their attributes to userspace"),
+			FsType::Devpts => i18n("virtual filesystem providing pseudo-terminal device nodes under /dev/pts"),
+			FsType::Cgroup2 => i18n("virtual filesystem for the unified cgroup v2 hierarchy, managing resource limits and accounting"),
+			FsType::Securityfs => i18n("virtual filesystem backing security modules such as SELinux and IMA integrity interfaces"),
+			FsType::Debugfs => i18n("virtual filesystem exporting arbitrary kernel debugging data with no ABI stability guarantees"),
+			FsType::Tracefs => i18n("virtual filesystem holding ftrace control and trace-output files under /sys/kernel/tracing"),
+			FsType::Configfs => i18n("virtual filesystem where userspace creates and configures kernel objects via mkdir and rmdir"),
+			FsType::Mqueue => i18n("POSIX message queue IPC exposed as files at /dev/mqueue"),
+			FsType::Hugetlbfs => i18n("interface to huge page memory, mounted at /dev/hugepages"),
+			FsType::Devtmpfs => i18n("populates /dev with device nodes automatically at boot"),
+			FsType::P9 => i18n("Plan 9 remote filesystem protocol, used for host-to-VM file sharing"),
+			FsType::Overlay => i18n("union filesystem stacking upper/lower layers, used by containers"),
+			FsType::Zfs => i18n("OpenZFS copy-on-write filesystem with integrated volume management"),
+			FsType::Bcachefs => i18n("copy-on-write, multi-device filesystem with built-in caching, compression, and checksumming"),
+			FsType::Other(_) => i18n("a custom filesystem type"),
 		}
 	}
 }
@@ -153,7 +154,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 
 	let current = entry.cloned(|e| &e.fs_type);
 	let is_other = matches!(&current, FsType::Other(_));
-	let menu_label = if is_other { "Other".to_string() } else { current.to_string() };
+	let menu_label = if is_other { i18n("Other") } else { current.to_string() };
 
 	let value_entry = Entry::builder().hexpand(true).build();
 	value_entry.set_text(&current.to_string());
@@ -167,11 +168,11 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 	};
 	let render_row = |choice: &FsChoice| match choice {
 		FsChoice::Known(fs_type) => activatable_row(fs_type.to_string(), fs_type.description()),
-		FsChoice::Other => activatable_row("Other…", ""),
+		FsChoice::Other => activatable_row(i18n("Other…"), ""),
 	};
 	let filter = |query: &str, choice: &FsChoice| match choice {
 		FsChoice::Other => true,
-		FsChoice::Known(fs_type) => query_matches(query, &fs_type.to_string()) || query_matches(query, fs_type.description()),
+		FsChoice::Known(fs_type) => query_matches(query, &fs_type.to_string()) || query_matches(query, fs_type.description().as_str()),
 	};
 	let on_select = {
 		let (entry_ctx, entry, value_entry) = (entry_ctx.clone(), entry.clone(), value_entry.clone());
@@ -186,7 +187,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 			value_entry.set_visible(is_other);
 			if let Some(menu_btn) = menu_btn_holder.borrow().as_ref() {
 				if is_other {
-					menu_btn.set_label("Other");
+					menu_btn.set_label(i18n("Other").as_str());
 				} else {
 					menu_btn.set_label(&entry.borrow().fs_type.to_string());
 				}
@@ -199,10 +200,10 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 		}
 	};
 
-	let menu_btn = SearchPickerBuilder::new(&menu_label, dataset, render_row, on_select)
-		.search_placeholder("Search filesystems")
-		.tooltip("Choose the filesystem type")
-		.error_message("Error loading filesystem types")
+	let menu_btn = SearchPickerBuilder::new(menu_label, dataset, render_row, on_select)
+		.search_placeholder(i18n("Search filesystems"))
+		.tooltip(i18n("Choose the filesystem type"))
+		.error_message(i18n("Error loading filesystem types"))
 		.filter(filter)
 		.build();
 	menu_btn.set_hexpand(true);
@@ -212,7 +213,7 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 		let (entry_ctx, entry, menu_btn) = (entry_ctx.clone(), entry.clone(), menu_btn.clone());
 		value_entry.connect_changed(move |value_entry| {
 			entry.borrow_mut().fs_type = FsType::Other(value_entry.text().to_string());
-			menu_btn.set_label("Other");
+			menu_btn.set_label(i18n("Other").as_str());
 			entry_ctx.render();
 		});
 	}
@@ -238,7 +239,8 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 		});
 	}
 
-	let title_label = gtk::Label::new(Some("File system:"));
+	let title_text = i18n("File system:");
+	let title_label = gtk::Label::new(Some(title_text.as_str()));
 	title_label.set_xalign(0.0);
 	title_label.set_valign(Align::Center);
 	title_label.set_margin_start(12);
@@ -249,6 +251,6 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 	content.append(&menu_btn);
 	content.append(&value_entry);
 
-	let row = PreferencesRow::builder().title("File system").child(&content).build();
+	let row = PreferencesRow::builder().title(i18n("File system")).child(&content).build();
 	options.add(&row);
 }

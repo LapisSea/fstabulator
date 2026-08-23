@@ -1,0 +1,3434 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the fstabulator package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: fstabulator 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
+"POT-Creation-Date: 2026-08-23 10:26+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/credentials_flow.rs:110 src/credentials_flow.rs:116 src/main.rs:581
+msgid "Cannot mount"
+msgstr ""
+
+#: src/credentials_flow.rs:110
+msgid "A password is required."
+msgstr ""
+
+#: src/credentials_flow.rs:117
+msgid "A credentials file name is required when saving credentials."
+msgstr ""
+
+#: src/credentials_flow.rs:167 src/credentials_flow.rs:174 src/main.rs:877
+msgid "Could not mount"
+msgstr ""
+
+#: src/credentials_flow.rs:188
+msgid "Credentials deleted"
+msgstr ""
+
+#: src/credentials_flow.rs:189
+msgid "The saved credentials file was deleted."
+msgstr ""
+
+#: src/credentials_flow.rs:193
+msgid "Could not delete credentials"
+msgstr ""
+
+#: src/credentials_flow.rs:198
+msgid "Delete credentials"
+msgstr ""
+
+#: src/credentials_flow.rs:209
+msgid "login used for this mount only"
+msgstr ""
+
+#. xgettext: keep the <b> markup tags intact
+#: src/credentials_flow.rs:214 src/credentials_flow.rs:220
+#: src/credentials_flow.rs:226
+msgid "linked login to entry, <b>you must save changes to preserve this</b>"
+msgstr ""
+
+#: src/credentials_flow.rs:230 src/main.rs:877 src/mount_status.rs:17
+msgid "Mounted"
+msgstr ""
+
+#: src/credentials_flow.rs:271
+msgid "Username"
+msgstr ""
+
+#: src/credentials_flow.rs:272
+msgid "Password"
+msgstr ""
+
+#: src/credentials_flow.rs:273
+msgid "Domain (optional)"
+msgstr ""
+
+#: src/credentials_flow.rs:281
+msgid "Save for auto-mount"
+msgstr ""
+
+#: src/credentials_flow.rs:282
+msgid "Writes a credentials file referenced from the fstab entry."
+msgstr ""
+
+#: src/credentials_flow.rs:285
+msgid "Credentials file"
+msgstr ""
+
+#: src/credentials_flow.rs:287
+msgid "Load existing credentials"
+msgstr ""
+
+#: src/credentials_flow.rs:292
+msgid "Will overwrite the existing file!"
+msgstr ""
+
+#: src/credentials_flow.rs:359
+msgid "This filesystem may require credentials to mount."
+msgstr ""
+
+#: src/credentials_flow.rs:362 src/device_value.rs:468 src/device_value.rs:650
+#: src/ui_commons.rs:151
+msgid "Cancel"
+msgstr ""
+
+#: src/credentials_flow.rs:363
+msgid "Connect"
+msgstr ""
+
+#: src/device_value.rs:447
+msgid "User"
+msgstr ""
+
+#: src/device_value.rs:448
+msgid "Host"
+msgstr ""
+
+#: src/device_value.rs:449
+msgid "Port"
+msgstr ""
+
+#: src/device_value.rs:450
+msgid "Path"
+msgstr ""
+
+#: src/device_value.rs:452
+msgid "Test connection"
+msgstr ""
+
+#: src/device_value.rs:463
+msgid "Network location"
+msgstr ""
+
+#: src/device_value.rs:469 src/main.rs:168
+msgid "Save"
+msgstr ""
+
+#: src/device_value.rs:494
+msgid "Enter a valid port to test."
+msgstr ""
+
+#: src/device_value.rs:498
+msgid "Enter a host to test."
+msgstr ""
+
+#: src/device_value.rs:502
+msgid "Testing connection…"
+msgstr ""
+
+#: src/device_value.rs:528
+msgid "Test connection failed."
+msgstr ""
+
+#: src/device_value.rs:548
+msgid "Enter a host to save."
+msgstr ""
+
+#: src/device_value.rs:581
+msgid "Could not list devices"
+msgstr ""
+
+#: src/device_value.rs:642
+msgid "Filter devices…"
+msgstr ""
+
+#: src/device_value.rs:643
+msgid "No devices found"
+msgstr ""
+
+#: src/device_value.rs:783
+msgid "Device name"
+msgstr ""
+
+#: src/device_value.rs:784
+msgid "Size"
+msgstr ""
+
+#: src/device_value.rs:785 src/main.rs:645 src/main.rs:943
+msgid "Label"
+msgstr ""
+
+#: src/device_value.rs:786
+msgid "File System"
+msgstr ""
+
+#: src/device_value.rs:787
+msgid "Model"
+msgstr ""
+
+#: src/device_value.rs:872
+msgid "Edit device"
+msgstr ""
+
+#: src/fs_options.rs:124
+msgid "All I/O to the filesystem is done asynchronously."
+msgstr ""
+
+#: src/fs_options.rs:125
+msgid "Update inode access time on every access."
+msgstr ""
+
+#: src/fs_options.rs:126
+msgid "Can be mounted with the -a (mount all) option."
+msgstr ""
+
+#: src/fs_options.rs:127
+msgid "Remount a subtree elsewhere; mount only that subtree."
+msgstr ""
+
+#: src/fs_options.rs:128
+msgid "Comment field; ignored by the mount command."
+msgstr ""
+
+#: src/fs_options.rs:129
+msgid "Set the SELinux context for the whole filesystem."
+msgstr ""
+
+#: src/fs_options.rs:130
+msgid "Use default options: rw, suid, dev, exec, auto, nouser, async."
+msgstr ""
+
+#: src/fs_options.rs:131
+msgid "Set the default SELinux context for unlabeled files."
+msgstr ""
+
+#: src/fs_options.rs:132
+msgid "Interpret character or block special devices on the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:133
+msgid "Update directory access times on reads."
+msgstr ""
+
+#: src/fs_options.rs:134
+msgid "Make all directory updates synchronous."
+msgstr ""
+
+#: src/fs_options.rs:135
+msgid "Permit execution of binaries on the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:136
+msgid "Set the SELinux context for the filesystem being mounted."
+msgstr ""
+
+#: src/fs_options.rs:137
+msgid "Allow mounting by a user whose group matches the device's group."
+msgstr ""
+
+#: src/fs_options.rs:138
+msgid "Increment the inode version on every inode modification."
+msgstr ""
+
+#: src/fs_options.rs:139
+msgid "Update on-disk timestamps lazily, flushing them later."
+msgstr ""
+
+#: src/fs_options.rs:140
+msgid "Mount the file through a loop device."
+msgstr ""
+
+#: src/fs_options.rs:141
+msgid "Turn off the silent flag (verbose errors)."
+msgstr ""
+
+#: src/fs_options.rs:142
+msgid "Allow mandatory locking on the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:143
+msgid "Atomically move a mounted tree to a new location."
+msgstr ""
+
+#: src/fs_options.rs:144
+msgid "Do not update inode access times on reads."
+msgstr ""
+
+#: src/fs_options.rs:145
+msgid "Can only be mounted explicitly, never with -a."
+msgstr ""
+
+#: src/fs_options.rs:146
+msgid "Do not interpret character or block special devices."
+msgstr ""
+
+#: src/fs_options.rs:147
+msgid "Do not update directory access times."
+msgstr ""
+
+#: src/fs_options.rs:148
+msgid "Do not permit execution of binaries on the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:149
+msgid "Do not report errors if the device does not exist."
+msgstr ""
+
+#: src/fs_options.rs:150
+msgid "Do not increment the inode version counter."
+msgstr ""
+
+#: src/fs_options.rs:151
+msgid "Do not use the lazytime feature; flush timestamps at once."
+msgstr ""
+
+#: src/fs_options.rs:152
+msgid "Do not allow mandatory locking on the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:153
+msgid "Do not use the relatime feature."
+msgstr ""
+
+#: src/fs_options.rs:154
+msgid "Do not honor setuid or setgid bits or file capabilities."
+msgstr ""
+
+#: src/fs_options.rs:155
+msgid "Do not follow symbolic links when resolving paths."
+msgstr ""
+
+#: src/fs_options.rs:156
+msgid "Use the kernel's default access-time behavior."
+msgstr ""
+
+#: src/fs_options.rs:157
+msgid "Only root may mount the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:158
+msgid "Mount only after the network is available."
+msgstr ""
+
+#: src/fs_options.rs:159
+msgid "Allow mounting by the owner of the device."
+msgstr ""
+
+#: src/fs_options.rs:160
+msgid "Make the mount private (no propagation to other mounts)."
+msgstr ""
+
+#: src/fs_options.rs:161
+msgid "Remount a subtree and all its submounts elsewhere."
+msgstr ""
+
+#: src/fs_options.rs:162 src/fs_options.rs:909
+msgid "Update access times relative to modify or change time."
+msgstr ""
+
+#: src/fs_options.rs:163
+msgid "Attempt to remount an already-mounted filesystem."
+msgstr ""
+
+#: src/fs_options.rs:164
+msgid "Mount the filesystem read-only."
+msgstr ""
+
+#: src/fs_options.rs:165
+msgid "Set the SELinux context of the filesystem's root inode."
+msgstr ""
+
+#: src/fs_options.rs:166
+msgid "Make the mount and its submounts private."
+msgstr ""
+
+#: src/fs_options.rs:167
+msgid "Make the mount and its submounts shared."
+msgstr ""
+
+#: src/fs_options.rs:168
+msgid "Make the mount and its submounts slaves of their master."
+msgstr ""
+
+#: src/fs_options.rs:169
+msgid "Make the mount and its submounts unbindable."
+msgstr ""
+
+#: src/fs_options.rs:170
+msgid "Mount the filesystem read-write."
+msgstr ""
+
+#: src/fs_options.rs:171
+msgid "Turn on the silent flag (suppress errors)."
+msgstr ""
+
+#: src/fs_options.rs:172
+msgid "Make the mount a slave of its master (receive propagation)."
+msgstr ""
+
+#: src/fs_options.rs:173
+msgid "Make the mount shared with peer mounts."
+msgstr ""
+
+#: src/fs_options.rs:174
+msgid "Update access times on every access (full atime)."
+msgstr ""
+
+#: src/fs_options.rs:175
+msgid "Honor setuid or setgid bits and file capabilities."
+msgstr ""
+
+#: src/fs_options.rs:176
+msgid "All I/O to the filesystem is done synchronously."
+msgstr ""
+
+#: src/fs_options.rs:177
+msgid "Make the mount unbindable."
+msgstr ""
+
+#: src/fs_options.rs:178
+msgid "Allow an ordinary user to mount the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:179
+msgid "Allow every user to mount and unmount the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:180
+msgid "Restrict automatic filesystem detection to the listed types."
+msgstr ""
+
+#: src/fs_options.rs:181
+msgid "Set the group that may unmount the mount."
+msgstr ""
+
+#: src/fs_options.rs:182
+msgid "Create an idmapped mount using the given ID mapping."
+msgstr ""
+
+#: src/fs_options.rs:183
+msgid "Create the mountpoint directory if it does not exist."
+msgstr ""
+
+#: src/fs_options.rs:184
+msgid "Set the mountpoint directory mode after mounting."
+msgstr ""
+
+#: src/fs_options.rs:185
+msgid "Do not canonicalize mount source and target paths."
+msgstr ""
+
+#: src/fs_options.rs:186
+msgid "Do not create a loop device even if the source is a regular file."
+msgstr ""
+
+#: src/fs_options.rs:187
+msgid "Set the owner that may unmount the mount."
+msgstr ""
+
+#: src/fs_options.rs:188
+msgid "Mount a subdirectory of the filesystem instead of its root."
+msgstr ""
+
+#: src/fs_options.rs:193 src/fs_options.rs:918
+msgid "Enables POSIX access control lists."
+msgstr ""
+
+#: src/fs_options.rs:194 src/fs_options.rs:314 src/fs_options.rs:413
+#: src/fs_options.rs:919
+msgid "Disables POSIX access control lists."
+msgstr ""
+
+#: src/fs_options.rs:195
+msgid "statfs reports usable blocks minus filesystem overhead."
+msgstr ""
+
+#: src/fs_options.rs:196
+msgid "statfs reports total blocks including overhead."
+msgstr ""
+
+#: src/fs_options.rs:197
+msgid "Performs mount-time checking; only check=none supported now."
+msgstr ""
+
+#: src/fs_options.rs:198
+msgid "Skips checking at mount time (default)."
+msgstr ""
+
+#: src/fs_options.rs:199
+msgid "Prints debugging info upon each (re)mount."
+msgstr ""
+
+#: src/fs_options.rs:200
+msgid "Sets behavior on errors: continue, remount-ro, or panic."
+msgstr ""
+
+#: src/fs_options.rs:201
+msgid "New files inherit the group ID of their parent directory."
+msgstr ""
+
+#: src/fs_options.rs:202 src/fs_options.rs:280
+msgid "Same as grpid."
+msgstr ""
+
+#: src/fs_options.rs:203
+msgid "New files take the creating process's fsgid (default)."
+msgstr ""
+
+#: src/fs_options.rs:204 src/fs_options.rs:282
+msgid "Same as nogrpid."
+msgstr ""
+
+#: src/fs_options.rs:205
+msgid "Enables group quota support."
+msgstr ""
+
+#: src/fs_options.rs:206
+msgid "Enables user quota support."
+msgstr ""
+
+#: src/fs_options.rs:207
+msgid "Enables user quota support (same as usrquota)."
+msgstr ""
+
+#: src/fs_options.rs:208
+msgid "Disables all quota support."
+msgstr ""
+
+#: src/fs_options.rs:209
+msgid "Disables 32-bit UIDs/GIDs for old-kernel compatibility."
+msgstr ""
+
+#: src/fs_options.rs:210
+msgid "Uses the old inode allocator instead of Orlov."
+msgstr ""
+
+#: src/fs_options.rs:211
+msgid "Uses the Orlov allocator for new inodes (default)."
+msgstr ""
+
+#: src/fs_options.rs:212
+msgid "Group ID allowed to use reserved filesystem blocks."
+msgstr ""
+
+#: src/fs_options.rs:213
+msgid "User ID allowed to use reserved filesystem blocks."
+msgstr ""
+
+#: src/fs_options.rs:214
+msgid "Mounts using an alternate superblock number (recovery)."
+msgstr ""
+
+#: src/fs_options.rs:215
+msgid "Enables \"user.\" extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:216
+msgid "Disables \"user.\" extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:221
+msgid "Enables write barriers in the journal code."
+msgstr ""
+
+#: src/fs_options.rs:222
+msgid "Sets journal commit interval in seconds (default 5)."
+msgstr ""
+
+#: src/fs_options.rs:223
+msgid "Sets data journaling mode: journal, ordered, or writeback."
+msgstr ""
+
+#: src/fs_options.rs:224
+msgid "Action on data errors in ordered mode: abort or ignore."
+msgstr ""
+
+#: src/fs_options.rs:225
+msgid "Sets the group quota database file for journaled quotas."
+msgstr ""
+
+#: src/fs_options.rs:226
+msgid "Specifies external journal device by major/minor number."
+msgstr ""
+
+#: src/fs_options.rs:227
+msgid "Specifies external journal device by device path."
+msgstr ""
+
+#: src/fs_options.rs:228 src/fs_options.rs:408
+msgid "Sets quota format: vfsold, vfsv0, or vfsv1."
+msgstr ""
+
+#: src/fs_options.rs:229
+msgid "Does not load the journal on mount."
+msgstr ""
+
+#: src/fs_options.rs:230
+msgid "Does not load the journal on mount (same as noload)."
+msgstr ""
+
+#: src/fs_options.rs:231
+msgid "Sets the user quota database file for journaled quotas."
+msgstr ""
+
+#: src/fs_options.rs:236
+msgid "Simulates an ext4_abort() for debugging purposes."
+msgstr ""
+
+#: src/fs_options.rs:237
+msgid "Forces delayed blocks to disk before rename/truncate commits."
+msgstr ""
+
+#: src/fs_options.rs:238
+msgid "Disables forced allocation on rename/truncate."
+msgstr ""
+
+#: src/fs_options.rs:239
+msgid "Tracks metadata blocks internally (debug; off by default)."
+msgstr ""
+
+#: src/fs_options.rs:240
+msgid "Disables internal metadata block tracking."
+msgstr ""
+
+#: src/fs_options.rs:241
+msgid "Defers block allocation until write-out time."
+msgstr ""
+
+#: src/fs_options.rs:242
+msgid "Disables delayed allocation."
+msgstr ""
+
+#: src/fs_options.rs:243
+msgid "Uses inode mutex for DIO reads (default)."
+msgstr ""
+
+#: src/fs_options.rs:244
+msgid "Avoids inode mutex for DIO reads for scalability."
+msgstr ""
+
+#: src/fs_options.rs:245 src/fs_options.rs:460 src/fs_options.rs:495
+msgid "Issues discard/TRIM commands when blocks are freed."
+msgstr ""
+
+#: src/fs_options.rs:246
+msgid "Disables issuing discard/TRIM commands."
+msgstr ""
+
+#: src/fs_options.rs:247
+msgid ""
+"Sets the case-insensitive lookup charset for casefolded directories (e.g. "
+"utf8-12.1)."
+msgstr ""
+
+#: src/fs_options.rs:248
+msgid "Sets flags controlling casefold behavior (e.g. strict)."
+msgstr ""
+
+#: src/fs_options.rs:249
+msgid ""
+"Enables fast commits, a lightweight journaling mode for lower commit latency."
+msgstr ""
+
+#: src/fs_options.rs:250
+msgid "Tunes the lazy inode-table initialization speed."
+msgstr ""
+
+#: src/fs_options.rs:251
+msgid "Does not initialize inode tables in the background."
+msgstr ""
+
+#: src/fs_options.rs:252
+msgid "Max inode table blocks pre-read during mount."
+msgstr ""
+
+#: src/fs_options.rs:253
+msgid "Enables 64-bit inode version support."
+msgstr ""
+
+#: src/fs_options.rs:254
+msgid "Writes commit block without waiting for descriptors."
+msgstr ""
+
+#: src/fs_options.rs:255
+msgid "Enables checksumming of journal transactions."
+msgstr ""
+
+#: src/fs_options.rs:256
+msgid "Disables journal transaction checksumming."
+msgstr ""
+
+#: src/fs_options.rs:257
+msgid "Sets I/O priority for journal commits (0-7)."
+msgstr ""
+
+#: src/fs_options.rs:258
+msgid "Max microseconds to wait to batch sync-write operations."
+msgstr ""
+
+#: src/fs_options.rs:259
+msgid "Limits maximum directory size in kilobytes."
+msgstr ""
+
+#: src/fs_options.rs:260
+msgid "Minimum commit time for batch optimization (us)."
+msgstr ""
+
+#: src/fs_options.rs:261
+msgid "Disables write barriers."
+msgstr ""
+
+#: src/fs_options.rs:262
+msgid "Disables mbcache for extended attribute deduplication."
+msgstr ""
+
+#: src/fs_options.rs:263
+msgid "Enables project quota support."
+msgstr ""
+
+#: src/fs_options.rs:264
+msgid "Sets stripe width (blocks) for mballoc allocation alignment."
+msgstr ""
+
+#: src/fs_options.rs:269
+msgid "Sets end-of-file preallocation size for buffered I/O."
+msgstr ""
+
+#: src/fs_options.rs:270
+msgid "Enables opportunistic inline xattr format; deprecated since 5.10."
+msgstr ""
+
+#: src/fs_options.rs:271
+msgid "Disables attr2 format; deprecated, rejected on CRC filesystems."
+msgstr ""
+
+#: src/fs_options.rs:272
+msgid "Sets direct-access mode: never, always, or inode."
+msgstr ""
+
+#: src/fs_options.rs:273
+msgid "Issues commands to reclaim freed blocks (SSD-friendly)."
+msgstr ""
+
+#: src/fs_options.rs:274
+msgid "Disables issuing discard commands."
+msgstr ""
+
+#: src/fs_options.rs:275
+msgid "Applies filestreams allocation mode to whole filesystem."
+msgstr ""
+
+#: src/fs_options.rs:276
+msgid "Enables group quota accounting without enforcement."
+msgstr ""
+
+#: src/fs_options.rs:277
+msgid "Enables group quota accounting and enforcement."
+msgstr ""
+
+#: src/fs_options.rs:278
+msgid "Same as gquota."
+msgstr ""
+
+#: src/fs_options.rs:279
+msgid "New files inherit the parent directory's group ID."
+msgstr ""
+
+#: src/fs_options.rs:281
+msgid "New files take the process's fsgid (default)."
+msgstr ""
+
+#: src/fs_options.rs:283
+msgid "Keeps empty inode clusters on disk; deprecated since 5.10."
+msgstr ""
+
+#: src/fs_options.rs:284
+msgid "Recycles empty inode clusters; deprecated since 5.10."
+msgstr ""
+
+#: src/fs_options.rs:285
+msgid "Restricts inode numbers to 32 bits."
+msgstr ""
+
+#: src/fs_options.rs:286
+msgid "Allows 64-bit inode numbers (default)."
+msgstr ""
+
+#: src/fs_options.rs:287
+msgid "Reports swidth/allocsize as st_blksize."
+msgstr ""
+
+#: src/fs_options.rs:288
+msgid "Reports minimal st_blksize (default)."
+msgstr ""
+
+#: src/fs_options.rs:289
+msgid "Sets number of in-memory log buffers (2-8)."
+msgstr ""
+
+#: src/fs_options.rs:290
+msgid "Sets size of each in-memory log buffer."
+msgstr ""
+
+#: src/fs_options.rs:291
+msgid "Uses an external log (metadata journal) device."
+msgstr ""
+
+#: src/fs_options.rs:292
+msgid "Skips stripe-unit alignment for data allocations."
+msgstr ""
+
+#: src/fs_options.rs:293
+msgid "Mounts without running log recovery (read-only)."
+msgstr ""
+
+#: src/fs_options.rs:294
+msgid "Skips duplicate-UUID mount detection."
+msgstr ""
+
+#: src/fs_options.rs:295
+msgid "Forcibly turns off all quota accounting and enforcement."
+msgstr ""
+
+#: src/fs_options.rs:296
+msgid "Enables project quota accounting and enforcement."
+msgstr ""
+
+#: src/fs_options.rs:297
+msgid "Enables project quota accounting without enforcement."
+msgstr ""
+
+#: src/fs_options.rs:298
+msgid "Same as pquota."
+msgstr ""
+
+#: src/fs_options.rs:299 src/fs_options.rs:306
+msgid "Enables user quota accounting without enforcement."
+msgstr ""
+
+#: src/fs_options.rs:300 src/fs_options.rs:305
+msgid "Enables user quota accounting and enforcement."
+msgstr ""
+
+#: src/fs_options.rs:301
+msgid "Uses an external realtime-section device."
+msgstr ""
+
+#: src/fs_options.rs:302
+msgid "Sets stripe unit in 512-byte blocks."
+msgstr ""
+
+#: src/fs_options.rs:303
+msgid "Rounds data allocations up to stripe-width boundaries."
+msgstr ""
+
+#: src/fs_options.rs:304
+msgid "Sets stripe width in 512-byte blocks."
+msgstr ""
+
+#: src/fs_options.rs:307
+msgid "Same as uquota."
+msgstr ""
+
+#: src/fs_options.rs:308
+msgid "Runs filesystem namespace operations synchronously."
+msgstr ""
+
+#: src/fs_options.rs:313
+msgid "Enables POSIX access control lists (default on)."
+msgstr ""
+
+#: src/fs_options.rs:315
+msgid "Auto-defragments detected small random writes."
+msgstr ""
+
+#: src/fs_options.rs:316
+msgid "Disables automatic file defragmentation."
+msgstr ""
+
+#: src/fs_options.rs:317
+msgid "Ensures writes flush to permanent storage at checkpoints."
+msgstr ""
+
+#: src/fs_options.rs:318
+msgid "Disables write barriers; risks corruption on crash."
+msgstr ""
+
+#: src/fs_options.rs:319
+msgid "Clears and rebuilds the free space cache."
+msgstr ""
+
+#: src/fs_options.rs:320
+msgid "Sets transaction commit interval in seconds (default 30)."
+msgstr ""
+
+#: src/fs_options.rs:321
+msgid "Enables data compression (zlib, lzo, or zstd)."
+msgstr ""
+
+#: src/fs_options.rs:322
+msgid "Always attempts compression, even if ineffective."
+msgstr ""
+
+#: src/fs_options.rs:323
+msgid "Enables data copy-on-write for new files."
+msgstr ""
+
+#: src/fs_options.rs:324
+msgid "Disables data COW (implies nodatasum, no compression)."
+msgstr ""
+
+#: src/fs_options.rs:325
+msgid "Enables data checksumming."
+msgstr ""
+
+#: src/fs_options.rs:326
+msgid "Disables data checksumming."
+msgstr ""
+
+#: src/fs_options.rs:327
+msgid "Allows mount with fewer devices than RAID requires."
+msgstr ""
+
+#: src/fs_options.rs:328
+msgid "Scans the given device for btrfs during mount."
+msgstr ""
+
+#: src/fs_options.rs:329
+msgid "Discards freed file blocks (TRIM)."
+msgstr ""
+
+#: src/fs_options.rs:330
+msgid "Disables discarding of freed blocks."
+msgstr ""
+
+#: src/fs_options.rs:331
+msgid "Enables verbose output for ENOSPC conditions."
+msgstr ""
+
+#: src/fs_options.rs:332
+msgid "Disables verbose ENOSPC output."
+msgstr ""
+
+#: src/fs_options.rs:333
+msgid "Sets action on fatal errors: bug or panic."
+msgstr ""
+
+#: src/fs_options.rs:334
+msgid "Flushes all prior-transaction data at each commit."
+msgstr ""
+
+#: src/fs_options.rs:335
+msgid "Disables forced full flush on commit."
+msgstr ""
+
+#: src/fs_options.rs:336
+msgid "Intentionally fragments block groups (debug builds only)."
+msgstr ""
+
+#: src/fs_options.rs:337
+msgid "Max bytes that can be inlined in a metadata leaf."
+msgstr ""
+
+#: src/fs_options.rs:338
+msgid "Allocates one metadata chunk per N data chunks."
+msgstr ""
+
+#: src/fs_options.rs:339
+msgid "Does not replay the tree log (same as norecovery)."
+msgstr ""
+
+#: src/fs_options.rs:340
+msgid "Does not attempt recovery at mount time."
+msgstr ""
+
+#: src/fs_options.rs:341
+msgid "Forces rebuild of the UUID tree."
+msgstr ""
+
+#: src/fs_options.rs:345
+msgid ""
+"Applies recovery workarounds: usebackuproot, nologreplay, ignorebadroots, "
+"ignore*sums, or all (read-only)."
+msgstr ""
+
+#: src/fs_options.rs:347
+msgid "Skips automatic resume of an interrupted balance."
+msgstr ""
+
+#: src/fs_options.rs:348
+msgid "Enables free space caching (v1 or v2)."
+msgstr ""
+
+#: src/fs_options.rs:349
+msgid "Disables the free space cache."
+msgstr ""
+
+#: src/fs_options.rs:350
+msgid "Enables SSD allocation optimizations."
+msgstr ""
+
+#: src/fs_options.rs:351
+msgid "Disables SSD allocation optimizations."
+msgstr ""
+
+#: src/fs_options.rs:352
+msgid "Allocates into larger aligned chunks for low-end SSDs."
+msgstr ""
+
+#: src/fs_options.rs:353
+msgid "Disables the ssd_spread allocation scheme."
+msgstr ""
+
+#: src/fs_options.rs:354
+msgid "Mounts a subvolume at the given path, not the toplevel."
+msgstr ""
+
+#: src/fs_options.rs:355
+msgid "Mounts the subvolume with the given numeric ID."
+msgstr ""
+
+#: src/fs_options.rs:356
+msgid "Sets number of worker threads."
+msgstr ""
+
+#: src/fs_options.rs:357
+msgid "Enables tree logging for fsync/O_SYNC."
+msgstr ""
+
+#: src/fs_options.rs:358
+msgid "Disables tree logging."
+msgstr ""
+
+#: src/fs_options.rs:359
+msgid "Tries backup roots if the tree root is bad; removed since 7.3."
+msgstr ""
+
+#: src/fs_options.rs:360
+msgid "Lets subvolume owners delete their own subvolumes."
+msgstr ""
+
+#: src/fs_options.rs:365
+msgid "Sets number of active log segments (2, 4, or 6)."
+msgstr ""
+
+#: src/fs_options.rs:366
+msgid "Enables age extent cache for allocation hints."
+msgstr ""
+
+#: src/fs_options.rs:367
+msgid "Sets block allocation policy: reuse or default."
+msgstr ""
+
+#: src/fs_options.rs:368
+msgid "Enables age-threshold background garbage collection."
+msgstr ""
+
+#: src/fs_options.rs:369
+msgid "Turns background garbage collection on/off/sync."
+msgstr ""
+
+#: src/fs_options.rs:370
+msgid "Allows cache_flush commands to be issued."
+msgstr ""
+
+#: src/fs_options.rs:371
+msgid "Skips cache_flush commands if storage guarantees order."
+msgstr ""
+
+#: src/fs_options.rs:372
+msgid "Enables or disables checkpointing (disable/enable)."
+msgstr ""
+
+#: src/fs_options.rs:373
+msgid "Merges concurrent checkpoint requests via a daemon."
+msgstr ""
+
+#: src/fs_options.rs:374
+msgid "Disables checkpoint merge feature."
+msgstr ""
+
+#: src/fs_options.rs:375
+msgid "Selects compression algorithm (lzo, lz4, zstd)."
+msgstr ""
+
+#: src/fs_options.rs:376
+msgid "Caches compressed blocks to improve read hit ratio."
+msgstr ""
+
+#: src/fs_options.rs:377
+msgid "Verifies checksums of compressed clusters."
+msgstr ""
+
+#: src/fs_options.rs:378
+msgid "Adds extensions whose files are auto-compressed."
+msgstr ""
+
+#: src/fs_options.rs:379
+msgid "Sets compress cluster size in 4KB units."
+msgstr ""
+
+#: src/fs_options.rs:380
+msgid "Sets compression mode: fs (auto) or user (manual)."
+msgstr ""
+
+#: src/fs_options.rs:381
+msgid "Flushes data before checkpoint to persist regular files."
+msgstr ""
+
+#: src/fs_options.rs:382
+msgid "Ignores mkfs extension list for cold-file detection."
+msgstr ""
+
+#: src/fs_options.rs:383
+msgid "Disables the roll-forward recovery routine."
+msgstr ""
+
+#: src/fs_options.rs:384
+msgid "Enables real-time discard/TRIM commands."
+msgstr ""
+
+#: src/fs_options.rs:385
+msgid "Disables real-time discard."
+msgstr ""
+
+#: src/fs_options.rs:386
+msgid "Sets discard alignment unit: block, segment, or section."
+msgstr ""
+
+#: src/fs_options.rs:387
+msgid "Sets behavior on critical errors: panic, continue, remount-ro."
+msgstr ""
+
+#: src/fs_options.rs:388
+msgid "Enables the rb-tree extent cache (default)."
+msgstr ""
+
+#: src/fs_options.rs:389
+msgid "Disables the extent cache."
+msgstr ""
+
+#: src/fs_options.rs:390
+msgid "Reduces mount time at the cost of normal performance."
+msgstr ""
+
+#: src/fs_options.rs:391
+msgid "Enables fault injection at a given rate (testing)."
+msgstr ""
+
+#: src/fs_options.rs:392
+msgid "Configures which fault types to inject (testing)."
+msgstr ""
+
+#: src/fs_options.rs:393
+msgid "Merges concurrent cache_flush commands."
+msgstr ""
+
+#: src/fs_options.rs:394
+msgid "Sets fsync policy: posix, strict, or nobarrier."
+msgstr ""
+
+#: src/fs_options.rs:395
+msgid "Handles foreground GC in the background GC thread."
+msgstr ""
+
+#: src/fs_options.rs:396
+msgid "Disables GC merge feature."
+msgstr ""
+
+#: src/fs_options.rs:397
+msgid "Points to group journaled quota file."
+msgstr ""
+
+#: src/fs_options.rs:398
+msgid "Enables group disk quota accounting."
+msgstr ""
+
+#: src/fs_options.rs:399
+msgid "Allocates segments heap-based from disk end; deprecated."
+msgstr ""
+
+#: src/fs_options.rs:400
+msgid "Disables heap-based allocation; deprecated."
+msgstr ""
+
+#: src/fs_options.rs:401
+msgid "Stores small file data inside the inode block."
+msgstr ""
+
+#: src/fs_options.rs:402
+msgid "Stores directory entries inside the inode block."
+msgstr ""
+
+#: src/fs_options.rs:403
+msgid "Disables the inline dentry feature."
+msgstr ""
+
+#: src/fs_options.rs:404
+msgid "Enables inline extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:405
+msgid "Disables inline extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:406
+msgid "Sets the inline xattr size."
+msgstr ""
+
+#: src/fs_options.rs:407
+msgid "Uses blk-crypto for inline encryption hardware."
+msgstr ""
+
+#: src/fs_options.rs:409
+msgid "Sets casefold directory lookup: perf, compat, or auto."
+msgstr ""
+
+#: src/fs_options.rs:410
+msgid "Sets memory mode: normal or low."
+msgstr ""
+
+#: src/fs_options.rs:411
+msgid "Sets block allocation mode: adaptive or lfs."
+msgstr ""
+
+#: src/fs_options.rs:412
+msgid "Enables faster full/empty NAT block access."
+msgstr ""
+
+#: src/fs_options.rs:414
+msgid "Disables the inline data feature."
+msgstr ""
+
+#: src/fs_options.rs:415
+msgid "Disables roll-forward recovery and mounts read-only."
+msgstr ""
+
+#: src/fs_options.rs:416
+msgid "Disables user extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:417
+msgid "Disables all plain disk quota options."
+msgstr ""
+
+#: src/fs_options.rs:418
+msgid "Points to project journaled quota file."
+msgstr ""
+
+#: src/fs_options.rs:419
+msgid "Enables project quota accounting."
+msgstr ""
+
+#: src/fs_options.rs:420
+msgid "Enables plain user disk quota accounting."
+msgstr ""
+
+#: src/fs_options.rs:421
+msgid "Sets reserved nodes for privileged-user allocation."
+msgstr ""
+
+#: src/fs_options.rs:422
+msgid "Sets reserved space (%) for privileged-user allocation."
+msgstr ""
+
+#: src/fs_options.rs:423
+msgid "Group ID with access to reserved blocks and nodes."
+msgstr ""
+
+#: src/fs_options.rs:424
+msgid "User ID with access to reserved blocks and nodes."
+msgstr ""
+
+#: src/fs_options.rs:425
+msgid "Enables dummy fscrypt context for testing."
+msgstr ""
+
+#: src/fs_options.rs:426
+msgid "Points to user journaled quota file."
+msgstr ""
+
+#: src/fs_options.rs:427
+msgid "Enables user disk quota accounting."
+msgstr ""
+
+#: src/fs_options.rs:432
+msgid "Enables POSIX Access Control List support."
+msgstr ""
+
+#: src/fs_options.rs:433
+msgid "Enables TRIM support for SSD delete performance."
+msgstr ""
+
+#: src/fs_options.rs:434 src/fs_options.rs:461 src/fs_options.rs:496
+msgid "Permission mask for directories."
+msgstr ""
+
+#: src/fs_options.rs:435
+msgid "Permission mask for files."
+msgstr ""
+
+#: src/fs_options.rs:436
+msgid "Forces mounting even if the volume is dirty (not recommended)."
+msgstr ""
+
+#: src/fs_options.rs:437
+msgid "Default group ID for created files and directories."
+msgstr ""
+
+#: src/fs_options.rs:438
+msgid "Sets the HIDDEN attribute for names starting with a dot."
+msgstr ""
+
+#: src/fs_options.rs:439
+msgid "Charset used to translate path strings to Unicode."
+msgstr ""
+
+#: src/fs_options.rs:440
+msgid "Hides files with the Windows HIDDEN attribute."
+msgstr ""
+
+#: src/fs_options.rs:441
+msgid "Preallocates space to reduce write fragmentation."
+msgstr ""
+
+#: src/fs_options.rs:442
+msgid "Shows all NTFS meta-files (system files)."
+msgstr ""
+
+#: src/fs_options.rs:443
+msgid "Creates new files as sparse."
+msgstr ""
+
+#: src/fs_options.rs:444
+msgid "Marks files with the SYSTEM attribute as immutable."
+msgstr ""
+
+#: src/fs_options.rs:445
+msgid "Default user ID for created files and directories."
+msgstr ""
+
+#: src/fs_options.rs:446 src/fs_options.rs:506
+msgid "Default permission mask for files and directories."
+msgstr ""
+
+#: src/fs_options.rs:447
+msgid "Rejects filenames not allowed by Windows."
+msgstr ""
+
+#: src/fs_options.rs:452 src/fs_options.rs:492
+msgid "Relaxes utime() permission checks for changing timestamps."
+msgstr ""
+
+#: src/fs_options.rs:453
+msgid "Sets the block size; obsolete."
+msgstr ""
+
+#: src/fs_options.rs:454
+msgid "Sets case-sensitivity checking (strict, relaxed, or normal)."
+msgstr ""
+
+#: src/fs_options.rs:455
+msgid "Sets codepage for converting to shortname characters."
+msgstr ""
+
+#: src/fs_options.rs:456 src/fs_options.rs:738
+msgid "Obsolete; may fail or be ignored."
+msgstr ""
+
+#: src/fs_options.rs:457
+msgid "Obsolete; forces use of a CVF compressed-volume module."
+msgstr ""
+
+#: src/fs_options.rs:458
+msgid "Obsolete; passes an option to the CVF module."
+msgstr ""
+
+#: src/fs_options.rs:459
+msgid "Enables debug output; unused by current implementation."
+msgstr ""
+
+#: src/fs_options.rs:462
+msgid "Uses DOS 1.x BIOS Parameter Block defaults for small floppies."
+msgstr ""
+
+#: src/fs_options.rs:463
+msgid "Forces DOS dot conventions on filenames (obsolete)."
+msgstr ""
+
+#: src/fs_options.rs:464
+msgid "Forces Unix-style names without DOS dots (obsolete)."
+msgstr ""
+
+#: src/fs_options.rs:465
+msgid "Allows dots in 8.3 short names (obsolete)."
+msgstr ""
+
+#: src/fs_options.rs:466
+msgid "Sets FAT behavior on errors: panic, continue, or remount-ro."
+msgstr ""
+
+#: src/fs_options.rs:467
+msgid "Forces FAT type 12, 16, or 32, overriding auto-detection."
+msgstr ""
+
+#: src/fs_options.rs:468
+msgid "Flushes data to disk earlier than normal."
+msgstr ""
+
+#: src/fs_options.rs:469 src/fs_options.rs:498
+msgid "Permission mask for regular files."
+msgstr ""
+
+#: src/fs_options.rs:470
+msgid "Group ID applied to all files."
+msgstr ""
+
+#: src/fs_options.rs:471 src/fs_options.rs:500
+msgid "Charset converting filenames between disk and Unicode."
+msgstr ""
+
+#: src/fs_options.rs:472
+msgid "Enables NFS export support (stale_rw or nostale_ro)."
+msgstr ""
+
+#: src/fs_options.rs:473
+msgid "Deprecated; use shortname=win95 instead."
+msgstr ""
+
+#: src/fs_options.rs:474
+msgid "Skips the ~number tail in 8.3 aliases when possible."
+msgstr ""
+
+#: src/fs_options.rs:475
+msgid "Obsolete; allowed files differing only in case."
+msgstr ""
+
+#: src/fs_options.rs:476
+msgid "Suppresses warning messages and chmod/chown errors."
+msgstr ""
+
+#: src/fs_options.rs:477
+msgid "Treats the FAT read-only attribute as read-only for directories."
+msgstr ""
+
+#: src/fs_options.rs:478
+msgid "Sets 8.3 short-name display/create mode (lower, win95, winnt, mixed)."
+msgstr ""
+
+#: src/fs_options.rs:479
+msgid "Allows execute permission only for .EXE, .COM, or .BAT files."
+msgstr ""
+
+#: src/fs_options.rs:480
+msgid "Treats the FAT system attribute as the immutable flag."
+msgstr ""
+
+#: src/fs_options.rs:481
+msgid "Sets minute offset converting FAT local time to UTC."
+msgstr ""
+
+#: src/fs_options.rs:482
+msgid "Interprets timestamps as UTC instead of local time."
+msgstr ""
+
+#: src/fs_options.rs:483
+msgid "Owner user ID applied to all files."
+msgstr ""
+
+#: src/fs_options.rs:484
+msgid "Permission mask for files and directories."
+msgstr ""
+
+#: src/fs_options.rs:485
+msgid "Escapes unhandled Unicode characters as :XXXX sequences."
+msgstr ""
+
+#: src/fs_options.rs:486
+msgid "Uses the free-cluster count stored in FSINFO."
+msgstr ""
+
+#: src/fs_options.rs:487
+msgid "Use UTF-8 to encode long file names."
+msgstr ""
+
+#: src/fs_options.rs:493 src/fs_options.rs:494 src/fs_options.rs:502
+#: src/fs_options.rs:507
+msgid "Deprecated; accepted but has no effect."
+msgstr ""
+
+#: src/fs_options.rs:497
+msgid "Sets behavior on errors: panic, continue, or remount-ro."
+msgstr ""
+
+#: src/fs_options.rs:499
+msgid "Default group ID applied to all files."
+msgstr ""
+
+#: src/fs_options.rs:501
+msgid "Keeps trailing periods in path components and filenames."
+msgstr ""
+
+#: src/fs_options.rs:503
+msgid "Uses the system timezone for timestamps lacking a valid offset."
+msgstr ""
+
+#: src/fs_options.rs:504
+msgid "Sets minute offset converting timestamps to UTC."
+msgstr ""
+
+#: src/fs_options.rs:505
+msgid "Default user ID applied to all files."
+msgstr ""
+
+#: src/fs_options.rs:508
+msgid "Creates directories with zero size, allocating no cluster."
+msgstr ""
+
+#: src/fs_options.rs:513
+msgid "Enables swap discard; supports discard=once or discard=pages."
+msgstr ""
+
+#: src/fs_options.rs:514
+msgid "Sets the swap device priority (0-32767)."
+msgstr ""
+
+#: src/fs_options.rs:519
+msgid "Maximum seconds to cache directory attributes."
+msgstr ""
+
+#: src/fs_options.rs:520
+msgid "Maximum seconds to cache regular file attributes."
+msgstr ""
+
+#: src/fs_options.rs:521
+msgid "Seconds to cache file/directory attributes before re-checking."
+msgstr ""
+
+#: src/fs_options.rs:522 src/fs_options.rs:554
+msgid "Sets the destination IP address of the server."
+msgstr ""
+
+#: src/fs_options.rs:523
+msgid "Members of this group open files with backup intent."
+msgstr ""
+
+#: src/fs_options.rs:524
+msgid "This user opens files with backup intent."
+msgstr ""
+
+#: src/fs_options.rs:525
+msgid "Overrides the default block size reported on SMB3 files."
+msgstr ""
+
+#: src/fs_options.rs:526
+msgid "Cache mode for file data: none, strict or loose."
+msgstr ""
+
+#: src/fs_options.rs:527
+msgid "Maps CIFS/NTFS ACLs and SIDs to/from Linux permissions."
+msgstr ""
+
+#: src/fs_options.rs:528
+msgid "Max seconds to defer the final SMB3 file close."
+msgstr ""
+
+#: src/fs_options.rs:529
+msgid "Enables experimental SMB 3.1.1 message compression."
+msgstr ""
+
+#: src/fs_options.rs:530 src/fs_options.rs:531
+msgid "Reads username/password from a credentials file."
+msgstr ""
+
+#: src/fs_options.rs:532
+msgid "Uid owning the credentials cache (useful with krb5)."
+msgstr ""
+
+#: src/fs_options.rs:533
+msgid "Overrides the default mode for directories."
+msgstr ""
+
+#: src/fs_options.rs:534 src/fs_options.rs:535 src/fs_options.rs:619
+msgid "Sets the user's domain (workgroup)."
+msgstr ""
+
+#: src/fs_options.rs:536
+msgid "Auto-guesses the server domain from the NTLM challenge."
+msgstr ""
+
+#: src/fs_options.rs:537
+msgid "Keeps unsupported permissions in memory only; unreliable."
+msgstr ""
+
+#: src/fs_options.rs:538
+msgid "Seconds between keepalive echo requests."
+msgstr ""
+
+#: src/fs_options.rs:539
+msgid "Min encrypted-read size before offloading decryption."
+msgstr ""
+
+#: src/fs_options.rs:540
+msgid "Overrides the default mode for regular files."
+msgstr ""
+
+#: src/fs_options.rs:541
+msgid "Ignores server gid and always uses the gid value."
+msgstr ""
+
+#: src/fs_options.rs:542
+msgid "Ignores server uid and always uses the uid value."
+msgstr ""
+
+#: src/fs_options.rs:543
+msgid "Always uses CIFS-style mandatory locks."
+msgstr ""
+
+#: src/fs_options.rs:544
+msgid "Enables local disk caching via FS-Cache."
+msgstr ""
+
+#: src/fs_options.rs:545
+msgid "Default gid owning files when the server gives none."
+msgstr ""
+
+#: src/fs_options.rs:546
+msgid "Don't prompt for a password; mount as guest."
+msgstr ""
+
+#: src/fs_options.rs:547
+msgid "Keeps the share root directory handle cached."
+msgstr ""
+
+#: src/fs_options.rs:548
+msgid "Ms the server reserves handles after failover."
+msgstr ""
+
+#: src/fs_options.rs:549
+msgid "Hangs when the server crashes instead of erroring."
+msgstr ""
+
+#: src/fs_options.rs:550
+msgid "Extracts uid/gid from a special SID instead of mapping."
+msgstr ""
+
+#: src/fs_options.rs:551
+msgid "Synonym for nocase; case-insensitive matching."
+msgstr ""
+
+#: src/fs_options.rs:552
+msgid "Allow interrupts while hung; currently unimplemented."
+msgstr ""
+
+#: src/fs_options.rs:553
+msgid "Charset for converting path names to/from Unicode."
+msgstr ""
+
+#: src/fs_options.rs:555
+msgid "Enables Unix Extensions (synonym for posix/unix)."
+msgstr ""
+
+#: src/fs_options.rs:556
+msgid "Checks cached leases locally instead of querying server."
+msgstr ""
+
+#: src/fs_options.rs:557
+msgid "Translates reserved Windows filename characters."
+msgstr ""
+
+#: src/fs_options.rs:558
+msgid "Maps reserved characters per Microsoft Services For Mac."
+msgstr ""
+
+#: src/fs_options.rs:559
+msgid "Maximum number of cached directories per share."
+msgstr ""
+
+#: src/fs_options.rs:560
+msgid "Number of multichannel transport connections (max 16)."
+msgstr ""
+
+#: src/fs_options.rs:561
+msgid "Maximum SMB2 credits the client can hold."
+msgstr ""
+
+#: src/fs_options.rs:562
+msgid "Enables Minshall+French symlink support."
+msgstr ""
+
+#: src/fs_options.rs:563
+msgid "Uses multiple transport connections for one session."
+msgstr ""
+
+#: src/fs_options.rs:564
+msgid "Maps each user's access to individual credentials."
+msgstr ""
+
+#: src/fs_options.rs:565
+msgid "Client netbios name used for port 139 connections."
+msgstr ""
+
+#: src/fs_options.rs:566
+msgid "Disables POSIX ACL operations."
+msgstr ""
+
+#: src/fs_options.rs:567
+msgid "Uses fixed kernel socket buffer sizes."
+msgstr ""
+
+#: src/fs_options.rs:568
+msgid "Don't send byte-range lock requests to the server."
+msgstr ""
+
+#: src/fs_options.rs:569
+msgid "Requests case-insensitive path name matching."
+msgstr ""
+
+#: src/fs_options.rs:570
+msgid "Don't follow Distributed FileSystem referrals."
+msgstr ""
+
+#: src/fs_options.rs:571
+msgid "Disables caching of the share root handle."
+msgstr ""
+
+#: src/fs_options.rs:572
+msgid "Don't allow interrupts; currently unimplemented."
+msgstr ""
+
+#: src/fs_options.rs:573
+msgid "Don't request leases/oplocks when opening files."
+msgstr ""
+
+#: src/fs_options.rs:574 src/fs_options.rs:585
+msgid "Disables Unix Extensions (synonym for noposix)."
+msgstr ""
+
+#: src/fs_options.rs:575
+msgid "Don't translate reserved filename characters."
+msgstr ""
+
+#: src/fs_options.rs:576
+msgid "Disables client-side permission checking."
+msgstr ""
+
+#: src/fs_options.rs:577
+msgid "Disables persistent handles."
+msgstr ""
+
+#: src/fs_options.rs:578
+msgid "Disables Unix Extensions for this mount."
+msgstr ""
+
+#: src/fs_options.rs:579
+msgid "Don't negotiate POSIX-style pathnames."
+msgstr ""
+
+#: src/fs_options.rs:580
+msgid "Disables resilient handles."
+msgstr ""
+
+#: src/fs_options.rs:581
+msgid "Client generates inode numbers locally."
+msgstr ""
+
+#: src/fs_options.rs:582
+msgid "Lets the server set uid/gid on new files."
+msgstr ""
+
+#: src/fs_options.rs:583
+msgid "Never reuses existing sockets for new mounts."
+msgstr ""
+
+#: src/fs_options.rs:584
+msgid "Don't flush to the server on fsync()."
+msgstr ""
+
+#: src/fs_options.rs:586
+msgid "Disables getfattr/setfattr xattr operations."
+msgstr ""
+
+#: src/fs_options.rs:587
+msgid "Specifies the CIFS password (alias of password)."
+msgstr ""
+
+#: src/fs_options.rs:588 src/fs_options.rs:590
+msgid "Specifies an alternate password for password rotation."
+msgstr ""
+
+#: src/fs_options.rs:589
+msgid "Specifies the CIFS password."
+msgstr ""
+
+#: src/fs_options.rs:591
+msgid "Enables client-side permission checking (default)."
+msgstr ""
+
+#: src/fs_options.rs:592 src/fs_options.rs:597
+msgid "Keeps opened files across reconnections."
+msgstr ""
+
+#: src/fs_options.rs:593
+msgid "Port to connect to the CIFS server."
+msgstr ""
+
+#: src/fs_options.rs:594
+msgid "Enables Unix Extensions for this mount."
+msgstr ""
+
+#: src/fs_options.rs:595
+msgid "Allows POSIX-style pathnames (inverse of noposixpaths)."
+msgstr ""
+
+#: src/fs_options.rs:596
+msgid "Uses SMB Direct over an RDMA adapter."
+msgstr ""
+
+#: src/fs_options.rs:598
+msgid "Maximum bytes requested in each read request."
+msgstr ""
+
+#: src/fs_options.rs:599
+msgid "Forwards the opening pid on read/write operations."
+msgstr ""
+
+#: src/fs_options.rs:600
+msgid "Encrypts traffic at the SMB layer (SMB3+)."
+msgstr ""
+
+#: src/fs_options.rs:604
+msgid ""
+"Sets the session security mode (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, "
+"ntlmv2i, ntlmssp, ntlmsspi)."
+msgstr ""
+
+#: src/fs_options.rs:606
+msgid "Server netbios name for old port 139 servers."
+msgstr ""
+
+#: src/fs_options.rs:607
+msgid "Uses inode numbers returned by the server."
+msgstr ""
+
+#: src/fs_options.rs:608
+msgid "Sets uid/gid of processes on newly created files."
+msgstr ""
+
+#: src/fs_options.rs:609
+msgid "Creates device/fifo files in Services for Unix format."
+msgstr ""
+
+#: src/fs_options.rs:610
+msgid "Ignores unrecognized mount options following it."
+msgstr ""
+
+#: src/fs_options.rs:611
+msgid "Mounts a specific snapshot of the remote share."
+msgstr ""
+
+#: src/fs_options.rs:612
+msgid "Returns errors instead of hanging when server crashes."
+msgstr ""
+
+#: src/fs_options.rs:613
+msgid "Default uid owning files when the server gives none."
+msgstr ""
+
+#: src/fs_options.rs:614
+msgid "Enables Unix Extensions (synonym for posix)."
+msgstr ""
+
+#: src/fs_options.rs:615
+msgid "Namespace in which kernel upcalls are handled."
+msgstr ""
+
+#: src/fs_options.rs:616
+msgid "Specifies the SMB username (alias of username)."
+msgstr ""
+
+#: src/fs_options.rs:617
+msgid "Specifies the SMB username to connect as."
+msgstr ""
+
+#: src/fs_options.rs:618
+msgid "SMB protocol version (e.g. 1.0, 2.1, 3.1.1)."
+msgstr ""
+
+#: src/fs_options.rs:620
+msgid "Maximum bytes sent in each write request."
+msgstr ""
+
+#: src/fs_options.rs:625
+msgid "Enables attribute caching (default)."
+msgstr ""
+
+#: src/fs_options.rs:626
+msgid "Disables attribute caching; makes writes synchronous."
+msgstr ""
+
+#: src/fs_options.rs:627
+msgid "Max seconds directory attributes are cached."
+msgstr ""
+
+#: src/fs_options.rs:628
+msgid "Min seconds directory attributes are cached."
+msgstr ""
+
+#: src/fs_options.rs:629
+msgid "Max seconds regular file attributes are cached."
+msgstr ""
+
+#: src/fs_options.rs:630
+msgid "Min seconds regular file attributes are cached."
+msgstr ""
+
+#: src/fs_options.rs:631
+msgid "Sets all attribute-cache timeouts to this value."
+msgstr ""
+
+#: src/fs_options.rs:632
+msgid "Enables the NFSACL sideband protocol."
+msgstr ""
+
+#: src/fs_options.rs:633
+msgid "Disables the NFSACL sideband protocol."
+msgstr ""
+
+#: src/fs_options.rs:634
+msgid "Retries a failed mount in the background."
+msgstr ""
+
+#: src/fs_options.rs:635
+msgid "Fails the mount in the foreground (default)."
+msgstr ""
+
+#: src/fs_options.rs:636
+msgid "Client IP advertised for NFSv4.0 callbacks."
+msgstr ""
+
+#: src/fs_options.rs:637
+msgid "Uses close-to-open cache coherence semantics."
+msgstr ""
+
+#: src/fs_options.rs:638
+msgid "Disables close-to-open cache coherence."
+msgstr ""
+
+#: src/fs_options.rs:639
+msgid "Caches read-only pages on local disk via FS-Cache."
+msgstr ""
+
+#: src/fs_options.rs:640
+msgid "Disables FS-Cache local disk caching."
+msgstr ""
+
+#: src/fs_options.rs:641
+msgid "Retries requests indefinitely after server timeouts."
+msgstr ""
+
+#: src/fs_options.rs:642
+msgid "Allow interrupts while hung; ignored after kernel 2.6.25."
+msgstr ""
+
+#: src/fs_options.rs:643
+msgid "Don't allow interrupts; ignored after kernel 2.6.25."
+msgstr ""
+
+#: src/fs_options.rs:644
+msgid "Treats flock/POSIX locks as local only."
+msgstr ""
+
+#: src/fs_options.rs:645
+msgid "Uses the NLM protocol to lock files on the server."
+msgstr ""
+
+#: src/fs_options.rs:646
+msgid "Don't use NLM locking; locks are local only."
+msgstr ""
+
+#: src/fs_options.rs:647
+msgid "Directory-entry cache mode: all, none, pos or positive."
+msgstr ""
+
+#: src/fs_options.rs:648
+msgid "Max connections to IPs of one NFSv4.1+ server."
+msgstr ""
+
+#: src/fs_options.rs:649
+msgid "Uses TSM-compatible ID for NFSv4 migration."
+msgstr ""
+
+#: src/fs_options.rs:650
+msgid "Uses legacy client ID string (default)."
+msgstr ""
+
+#: src/fs_options.rs:651
+msgid "NFSv4 protocol minor version number."
+msgstr ""
+
+#: src/fs_options.rs:652
+msgid "Hostname running the mountd service."
+msgstr ""
+
+#: src/fs_options.rs:653
+msgid "Port of the server's mountd service."
+msgstr ""
+
+#: src/fs_options.rs:654
+msgid "Transport used to contact mountd (udp/tcp)."
+msgstr ""
+
+#: src/fs_options.rs:655
+msgid "RPC version used to contact mountd."
+msgstr ""
+
+#: src/fs_options.rs:656
+msgid "Maximum length of a pathname component."
+msgstr ""
+
+#: src/fs_options.rs:657
+msgid "Number of connections to establish to the server."
+msgstr ""
+
+#: src/fs_options.rs:658
+msgid "NFS protocol version (synonym of vers)."
+msgstr ""
+
+#: src/fs_options.rs:659
+msgid "Disables rounding buffered writes to page boundaries."
+msgstr ""
+
+#: src/fs_options.rs:660
+msgid "Disables READDIRPLUS requests."
+msgstr ""
+
+#: src/fs_options.rs:661
+msgid "Port of the server's NFS service."
+msgstr ""
+
+#: src/fs_options.rs:662
+msgid "Transport protocol: udp, tcp or rdma."
+msgstr ""
+
+#: src/fs_options.rs:663
+msgid "Uses RDMA transport (synonym for proto=rdma)."
+msgstr ""
+
+#: src/fs_options.rs:664
+msgid "Enables READDIRPLUS requests."
+msgstr ""
+
+#: src/fs_options.rs:665
+msgid "Uses privileged source ports (default)."
+msgstr ""
+
+#: src/fs_options.rs:666
+msgid "Uses non-privileged source ports."
+msgstr ""
+
+#: src/fs_options.rs:667
+msgid "Number of retries before further recovery action."
+msgstr ""
+
+#: src/fs_options.rs:668
+msgid "Minutes to retry a failed mount before giving up."
+msgstr ""
+
+#: src/fs_options.rs:669
+msgid "Maximum bytes per network read request."
+msgstr ""
+
+#: src/fs_options.rs:670
+msgid "Maximum bytes per network write request."
+msgstr ""
+
+#: src/fs_options.rs:671
+msgid "Security flavors: none, sys, krb5, krb5i or krb5p."
+msgstr ""
+
+#: src/fs_options.rs:672
+msgid "Shares one data/attribute cache across mounts."
+msgstr ""
+
+#: src/fs_options.rs:673
+msgid "Gives each mount its own cache."
+msgstr ""
+
+#: src/fs_options.rs:674
+msgid "Ignores unrecognized mount options."
+msgstr ""
+
+#: src/fs_options.rs:675
+msgid "Returns EIO after retrans retries."
+msgstr ""
+
+#: src/fs_options.rs:676
+msgid "Returns ETIMEDOUT after retrans retries."
+msgstr ""
+
+#: src/fs_options.rs:677
+msgid "Serves cached data when revalidation times out."
+msgstr ""
+
+#: src/fs_options.rs:678
+msgid "Don't fall back to cache when revalidation fails."
+msgstr ""
+
+#: src/fs_options.rs:679
+msgid "Uses TCP transport (synonym for proto=tcp)."
+msgstr ""
+
+#: src/fs_options.rs:680
+msgid "Deciseconds to wait before retrying a request."
+msgstr ""
+
+#: src/fs_options.rs:681
+msgid "Probes NFSv4.1 session trunking on new mounts."
+msgstr ""
+
+#: src/fs_options.rs:682
+msgid "Disables session trunking discovery (default)."
+msgstr ""
+
+#: src/fs_options.rs:683
+msgid "Uses UDP transport (synonym for proto=udp)."
+msgstr ""
+
+#: src/fs_options.rs:684
+msgid "NFS protocol version (alternative to nfsvers)."
+msgstr ""
+
+#: src/fs_options.rs:685
+msgid "Transport security policy: none, tls or mtls."
+msgstr ""
+
+#: src/fs_options.rs:690
+msgid "Automatically reconnects if the connection is interrupted."
+msgstr ""
+
+#: src/fs_options.rs:691
+msgid "Delays connecting until the mountpoint is first accessed."
+msgstr ""
+
+#: src/fs_options.rs:692
+msgid "Synchronous writes; slower but more reliable."
+msgstr ""
+
+#: src/fs_options.rs:693
+msgid "Disables speculative read-ahead beyond requested data."
+msgstr ""
+
+#: src/fs_options.rs:694
+msgid "Synchronous readdir; slower but more reliable."
+msgstr ""
+
+#: src/fs_options.rs:695
+msgid "Enables workarounds for broken SFTP servers."
+msgstr ""
+
+#: src/fs_options.rs:696
+msgid "UID/GID mapping mode: none, user or file."
+msgstr ""
+
+#: src/fs_options.rs:697
+msgid "File of username:uid mappings for idmap=file."
+msgstr ""
+
+#: src/fs_options.rs:698
+msgid "File of groupname:gid mappings for idmap=file."
+msgstr ""
+
+#: src/fs_options.rs:699
+msgid "Handles missing idmap entries: ignore or error."
+msgstr ""
+
+#: src/fs_options.rs:700
+msgid "Command to run instead of ssh."
+msgstr ""
+
+#: src/fs_options.rs:701
+msgid "SSH protocol version to use (default 2)."
+msgstr ""
+
+#: src/fs_options.rs:702
+msgid "Path to the sftp server or subsystem."
+msgstr ""
+
+#: src/fs_options.rs:703
+msgid "Connects directly to a port, bypassing SSH."
+msgstr ""
+
+#: src/fs_options.rs:704
+msgid "Connects via vsock to CID:PORT, bypassing SSH."
+msgstr ""
+
+#: src/fs_options.rs:705
+msgid "Communicates over stdin/stdout, bypassing the network."
+msgstr ""
+
+#: src/fs_options.rs:706
+msgid "Makes link(2) fail with ENOSYS."
+msgstr ""
+
+#: src/fs_options.rs:707
+msgid "Turns absolute symlinks relative on the client."
+msgstr ""
+
+#: src/fs_options.rs:708
+msgid "Presents server symlinks as regular files."
+msgstr ""
+
+#: src/fs_options.rs:709
+msgid "Don't check that the remote directory exists."
+msgstr ""
+
+#: src/fs_options.rs:710
+msgid "Reads the password from stdin (for pam_mount only)."
+msgstr ""
+
+#: src/fs_options.rs:711
+msgid "Enables or disables the SSHFS directory cache."
+msgstr ""
+
+#: src/fs_options.rs:712
+msgid "Maximum size of the directory cache."
+msgstr ""
+
+#: src/fs_options.rs:713
+msgid "Timeout in seconds for the directory cache."
+msgstr ""
+
+#: src/fs_options.rs:714
+msgid "Timeout for cached attributes."
+msgstr ""
+
+#: src/fs_options.rs:715
+msgid "Timeout for cached symlinks."
+msgstr ""
+
+#: src/fs_options.rs:716
+msgid "Timeout for cached directory names."
+msgstr ""
+
+#: src/fs_options.rs:717
+msgid "Interval for cleaning the directory cache."
+msgstr ""
+
+#: src/fs_options.rs:718
+msgid "Interval for forced cleaning when full."
+msgstr ""
+
+#: src/fs_options.rs:719
+msgid "Disables the kernel page cache for file content."
+msgstr ""
+
+#: src/fs_options.rs:720
+msgid "Maximum number of simultaneous SSH connections."
+msgstr ""
+
+#: src/fs_options.rs:721
+msgid "Allows all users to access the mount."
+msgstr ""
+
+#: src/fs_options.rs:722
+msgid "Allows root access in addition to the mounter."
+msgstr ""
+
+#: src/fs_options.rs:723
+msgid "Unmounts automatically when the process exits."
+msgstr ""
+
+#: src/fs_options.rs:724
+msgid "Lets the kernel enforce permission checks."
+msgstr ""
+
+#: src/fs_options.rs:725
+msgid "Caches file data in kernel without invalidation on open."
+msgstr ""
+
+#: src/fs_options.rs:726
+msgid "Invalidates kernel data cache when file mtime changes."
+msgstr ""
+
+#: src/fs_options.rs:727
+msgid "Uses filesystem-provided inode numbers."
+msgstr ""
+
+#: src/fs_options.rs:728
+msgid "Allows mounting over non-empty directories (obsolete, now default)."
+msgstr ""
+
+#: src/fs_options.rs:729
+msgid "Source string shown in /proc/mounts and mtab."
+msgstr ""
+
+#: src/fs_options.rs:730
+msgid "Maximum size of read requests (bytes)."
+msgstr ""
+
+#: src/fs_options.rs:731
+msgid "Maximum size of write requests (bytes)."
+msgstr ""
+
+#: src/fs_options.rs:736
+msgid "Sets the block size to 512, 1024, or 2048."
+msgstr ""
+
+#: src/fs_options.rs:737
+msgid "Sets filename case checking (relaxed or strict)."
+msgstr ""
+
+#: src/fs_options.rs:739
+msgid "Ignores high-order bits of file lengths (files limited to 16 MB)."
+msgstr ""
+
+#: src/fs_options.rs:740
+msgid "Group ID given to all files."
+msgstr ""
+
+#: src/fs_options.rs:741
+msgid "Charset converting Joliet Unicode names to 8-bit characters."
+msgstr ""
+
+#: src/fs_options.rs:742
+msgid "Sets non-Rock Ridge name translation (normal, off, or acorn)."
+msgstr ""
+
+#: src/fs_options.rs:743
+msgid "Sets default permission mode for non-Rock Ridge files."
+msgstr ""
+
+#: src/fs_options.rs:744
+msgid "Disables Microsoft Joliet extensions."
+msgstr ""
+
+#: src/fs_options.rs:745
+msgid "Disables Rock Ridge extensions."
+msgstr ""
+
+#: src/fs_options.rs:746
+msgid "Sets the sector where the session begins."
+msgstr ""
+
+#: src/fs_options.rs:747
+msgid "Selects the session on a multisession CD."
+msgstr ""
+
+#: src/fs_options.rs:748
+msgid "User ID given to all files."
+msgstr ""
+
+#: src/fs_options.rs:749
+msgid "Shows hidden and associated files."
+msgstr ""
+
+#: src/fs_options.rs:750
+msgid "Converts 16-bit Unicode CD names to UTF-8."
+msgstr ""
+
+#: src/fs_options.rs:755
+msgid "Embeds file data in the inode (default)."
+msgstr ""
+
+#: src/fs_options.rs:756
+msgid "Disables embedding file data in the inode."
+msgstr ""
+
+#: src/fs_options.rs:757
+msgid "Overrides the standard anchor location (default 256)."
+msgstr ""
+
+#: src/fs_options.rs:758
+msgid "Sets the block size."
+msgstr ""
+
+#: src/fs_options.rs:759
+msgid "Sets default permission mode for directories."
+msgstr ""
+
+#: src/fs_options.rs:760 src/fs_options.rs:768 src/fs_options.rs:769
+#: src/fs_options.rs:777
+msgid "Unimplemented and ignored."
+msgstr ""
+
+#: src/fs_options.rs:761
+msgid "Sets the default group for all files."
+msgstr ""
+
+#: src/fs_options.rs:762
+msgid "Sets the NLS character set for filenames."
+msgstr ""
+
+#: src/fs_options.rs:763
+msgid "Sets the last block of the filesystem."
+msgstr ""
+
+#: src/fs_options.rs:764
+msgid "Uses long UDF address descriptors (default)."
+msgstr ""
+
+#: src/fs_options.rs:765
+msgid "Sets default permission mode for non-directory files."
+msgstr ""
+
+#: src/fs_options.rs:766
+msgid "Unsets strict UDF conformance."
+msgstr ""
+
+#: src/fs_options.rs:767
+msgid "Skips volume recognition sequence and mounts anyway."
+msgstr ""
+
+#: src/fs_options.rs:770
+msgid "Selects the session on multisession optical media."
+msgstr ""
+
+#: src/fs_options.rs:771
+msgid "Uses short UDF address descriptors."
+msgstr ""
+
+#: src/fs_options.rs:772
+msgid "Sets the default user for all files."
+msgstr ""
+
+#: src/fs_options.rs:773
+msgid "Masks out permissions from all inodes read."
+msgstr ""
+
+#: src/fs_options.rs:774
+msgid "Shows deleted files in listings."
+msgstr ""
+
+#: src/fs_options.rs:775
+msgid "Shows otherwise hidden files."
+msgstr ""
+
+#: src/fs_options.rs:776
+msgid "Uses the UTF-8 character set."
+msgstr ""
+
+#: src/fs_options.rs:782
+msgid "Sets initial group ID of the root directory."
+msgstr ""
+
+#: src/fs_options.rs:783
+msgid "Huge-page policy for files: never, always, within_size, advise."
+msgstr ""
+
+#: src/fs_options.rs:784
+msgid "Sets initial permissions of the root directory."
+msgstr ""
+
+#: src/fs_options.rs:785
+msgid "Sets NUMA memory allocation policy for all files."
+msgstr ""
+
+#: src/fs_options.rs:786
+msgid "Disables swap; files cannot be swapped out."
+msgstr ""
+
+#: src/fs_options.rs:787
+msgid "Same as size, but expressed in blocks of PAGE_SIZE."
+msgstr ""
+
+#: src/fs_options.rs:788
+msgid "Maximum number of inodes for this instance."
+msgstr ""
+
+#: src/fs_options.rs:789
+msgid "Upper size limit, e.g. 8m or 50%; 0 removes the limit."
+msgstr ""
+
+#: src/fs_options.rs:790
+msgid "Sets initial user ID of the root directory."
+msgstr ""
+
+#: src/fs_options.rs:795
+msgid "Group whose members bypass hidepid access restrictions."
+msgstr ""
+
+#: src/fs_options.rs:796
+msgid "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible."
+msgstr ""
+
+#: src/fs_options.rs:797
+msgid "Selects the PID namespace used to translate PIDs (new in 6.16)."
+msgstr ""
+
+#: src/fs_options.rs:798
+msgid "Shows only the pid subset, hiding other top-level proc files."
+msgstr ""
+
+#: src/fs_options.rs:805
+msgid "Sets group of newly created pseudo-terminals."
+msgstr ""
+
+#: src/fs_options.rs:806
+msgid "Limits the number of pseudo-terminals in this instance."
+msgstr ""
+
+#: src/fs_options.rs:807
+msgid "Sets permissions of newly created pseudo-terminals."
+msgstr ""
+
+#: src/fs_options.rs:808
+msgid "Creates a private instance with independent pty index space."
+msgstr ""
+
+#: src/fs_options.rs:809
+msgid "Sets the mode of the instance's ptmx device node."
+msgstr ""
+
+#: src/fs_options.rs:810
+msgid "Sets owner of newly created pseudo-terminals."
+msgstr ""
+
+#: src/fs_options.rs:815
+msgid "Favors dynamic cgroup changes over hot-path fork/exit costs."
+msgstr ""
+
+#: src/fs_options.rs:816
+msgid "Counts HugeTLB usage in memory controller accounting."
+msgstr ""
+
+#: src/fs_options.rs:817
+msgid "Reports only local memory.events, excluding subtree counts."
+msgstr ""
+
+#: src/fs_options.rs:818
+msgid "Applies memory.min/low protection recursively to subtrees."
+msgstr ""
+
+#: src/fs_options.rs:819
+msgid "Treats cgroup namespaces as delegation boundaries."
+msgstr ""
+
+#: src/fs_options.rs:820
+msgid "Counts only local fork failures in pids.events.max."
+msgstr ""
+
+#: src/fs_options.rs:827
+msgid "Sets the group of the debugfs mount."
+msgstr ""
+
+#: src/fs_options.rs:828 src/fs_options.rs:835
+msgid "Sets permissions of the mountpoint."
+msgstr ""
+
+#: src/fs_options.rs:829
+msgid "Sets the owner of the debugfs mount."
+msgstr ""
+
+#: src/fs_options.rs:834
+msgid "Sets the group of the tracefs mount."
+msgstr ""
+
+#: src/fs_options.rs:836
+msgid "Sets the owner of the tracefs mount."
+msgstr ""
+
+#: src/fs_options.rs:845
+msgid "Sets group of the filesystem root."
+msgstr ""
+
+#: src/fs_options.rs:846
+msgid "Reserves a minimum of huge-page memory; mount fails if short."
+msgstr ""
+
+#: src/fs_options.rs:847
+msgid "Sets permissions of the filesystem root."
+msgstr ""
+
+#: src/fs_options.rs:848
+msgid "Maximum number of inodes the filesystem can use."
+msgstr ""
+
+#: src/fs_options.rs:849
+msgid "Uses the given huge-page size for this mount."
+msgstr ""
+
+#: src/fs_options.rs:850
+msgid "Maximum huge-page memory the filesystem may use."
+msgstr ""
+
+#: src/fs_options.rs:851
+msgid "Sets owner of the filesystem root."
+msgstr ""
+
+#: src/fs_options.rs:856
+msgid "Access mode: user, <uid>, any or client."
+msgstr ""
+
+#: src/fs_options.rs:857
+msgid "Authentication fid used by Plan 9 security."
+msgstr ""
+
+#: src/fs_options.rs:858
+msgid "File tree to access on the server."
+msgstr ""
+
+#: src/fs_options.rs:859
+msgid "Caching policy: none, readahead, mmap, loose or fscache."
+msgstr ""
+
+#: src/fs_options.rs:860
+msgid "Tag for the persistent fscache."
+msgstr ""
+
+#: src/fs_options.rs:861
+msgid "Debug level as a bitmask."
+msgstr ""
+
+#: src/fs_options.rs:862
+msgid "Attempts to mount with this gid."
+msgstr ""
+
+#: src/fs_options.rs:863
+msgid "Attempts to mount as this uid."
+msgstr ""
+
+#: src/fs_options.rs:864
+msgid "Bypasses the page cache on all reads/writes."
+msgstr ""
+
+#: src/fs_options.rs:865
+msgid "Ignores qid.version==0 as a cache marker."
+msgstr ""
+
+#: src/fs_options.rs:866
+msgid "Bytes used for 9p packet payload."
+msgstr ""
+
+#: src/fs_options.rs:867
+msgid "Ms to retain negative dentries in cache."
+msgstr ""
+
+#: src/fs_options.rs:868
+msgid "Forces legacy 9p2000 mode (no extensions)."
+msgstr ""
+
+#: src/fs_options.rs:869
+msgid "Don't map special files; shows them as normal files."
+msgstr ""
+
+#: src/fs_options.rs:870
+msgid "Don't offer xattr functions on this mount."
+msgstr ""
+
+#: src/fs_options.rs:871
+msgid "Port to connect to on the remote server."
+msgstr ""
+
+#: src/fs_options.rs:872
+msgid "File descriptor for reading with trans=fd."
+msgstr ""
+
+#: src/fs_options.rs:873
+msgid "Transport: unix, tcp, fd, virtio, rdma or usbg."
+msgstr ""
+
+#: src/fs_options.rs:874
+msgid "User name to mount as on the server."
+msgstr ""
+
+#: src/fs_options.rs:875
+msgid "9p protocol version: 9p2000, 9p2000.u or 9p2000.L."
+msgstr ""
+
+#: src/fs_options.rs:876
+msgid "File descriptor for writing with trans=fd."
+msgstr ""
+
+#: src/fs_options.rs:881
+msgid "Appends a data-only lower layer directory (new mount API)."
+msgstr ""
+
+#: src/fs_options.rs:882
+msgid "Controls fsync during copy-up: auto, strict, or volatile."
+msgstr ""
+
+#: src/fs_options.rs:883
+msgid "Use an index to avoid inode collisions: on or off."
+msgstr ""
+
+#: src/fs_options.rs:884
+msgid "Colon-separated list of lower-layer directories."
+msgstr ""
+
+#: src/fs_options.rs:885
+msgid "Copy up only metadata first, deferring data copy: on or off."
+msgstr ""
+
+#: src/fs_options.rs:886
+msgid "Make the overlay mountable via NFS: on or off."
+msgstr ""
+
+#: src/fs_options.rs:887
+msgid "Record the caller's credentials for permission checks."
+msgstr ""
+
+#: src/fs_options.rs:888
+msgid "Redirect directories on rename: on, off, follow, or nofollow."
+msgstr ""
+
+#: src/fs_options.rs:889
+msgid "Directory used as the upper (writable) layer."
+msgstr ""
+
+#: src/fs_options.rs:890
+msgid "Use the user.overlay.* xattr namespace instead of trusted.overlay.*."
+msgstr ""
+
+#: src/fs_options.rs:891
+msgid "Control the overlay UUID and fsid: null, off, on, or auto."
+msgstr ""
+
+#: src/fs_options.rs:892
+msgid "Verify metacopy digests with fs-verity: off, on, or require."
+msgstr ""
+
+#: src/fs_options.rs:893
+msgid "Prefer performance over durability; data not crash-safe."
+msgstr ""
+
+#: src/fs_options.rs:894
+msgid "Scratch directory on the same filesystem as upperdir."
+msgstr ""
+
+#: src/fs_options.rs:895
+msgid "Appends an additional work directory (new mount API)."
+msgstr ""
+
+#: src/fs_options.rs:896
+msgid "Compose unique inode numbers across layers: on, off, or auto."
+msgstr ""
+
+#: src/fs_options.rs:901
+msgid "Enable access control lists (legacy alias for acltype)."
+msgstr ""
+
+#: src/fs_options.rs:902
+msgid "Disable ACLs (alias for acltype=off)."
+msgstr ""
+
+#: src/fs_options.rs:903
+msgid "Select ACL type: off, nfsv4, or posix."
+msgstr ""
+
+#: src/fs_options.rs:904
+msgid "Enable mandatory locking (alias for nbmand=on)."
+msgstr ""
+
+#: src/fs_options.rs:905
+msgid "Disable mandatory locking (alias for nbmand=off)."
+msgstr ""
+
+#: src/fs_options.rs:906
+msgid "Mount with non-blocking mandatory locks."
+msgstr ""
+
+#: src/fs_options.rs:907
+msgid "Allow mounting over a non-empty or busy directory."
+msgstr ""
+
+#: src/fs_options.rs:908
+msgid "Enable POSIX ACLs (alias for acltype=posix)."
+msgstr ""
+
+#: src/fs_options.rs:910
+msgid "Disable relative access-time updates (plain atime)."
+msgstr ""
+
+#: src/fs_options.rs:911
+msgid "Enable extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:912
+msgid "Disable extended attributes."
+msgstr ""
+
+#: src/fs_options.rs:913
+msgid "Private flag marking the mount as managed by ZFS."
+msgstr ""
+
+#: src/fs_options.rs:920
+msgid "Compression type used for background (rebalance) writes."
+msgstr ""
+
+#: src/fs_options.rs:921
+msgid "Target device/label to move data to in the background."
+msgstr ""
+
+#: src/fs_options.rs:922
+msgid "Compression type used for foreground writes."
+msgstr ""
+
+#: src/fs_options.rs:923
+msgid "Checksum type used for data writes."
+msgstr ""
+
+#: src/fs_options.rs:924
+msgid "Number of replicas to keep for user data."
+msgstr ""
+
+#: src/fs_options.rs:925
+msgid "Allows mounting with data degraded (missing a replica)."
+msgstr ""
+
+#: src/fs_options.rs:926
+msgid "Allows mounting even when data would be missing."
+msgstr ""
+
+#: src/fs_options.rs:927
+msgid "Enables discard/TRIM support on member devices."
+msgstr ""
+
+#: src/fs_options.rs:928
+msgid "Enables erasure coding."
+msgstr ""
+
+#: src/fs_options.rs:929
+msgid ""
+"Action to take on filesystem inconsistency: continue, fix_safe, panic, or ro."
+msgstr ""
+
+#: src/fs_options.rs:930
+msgid "Fixes fsck errors without prompting during mount."
+msgstr ""
+
+#: src/fs_options.rs:931
+msgid "Preferred target device/label for foreground writes."
+msgstr ""
+
+#: src/fs_options.rs:932
+msgid "Runs fsck during mount."
+msgstr ""
+
+#: src/fs_options.rs:933
+msgid "Enables inline data extents for small files (default on)."
+msgstr ""
+
+#: src/fs_options.rs:934
+msgid "Restricts new inode numbers to 32 bits."
+msgstr ""
+
+#: src/fs_options.rs:935
+msgid "Milliseconds before an automatic journal commit (default 1000)."
+msgstr ""
+
+#: src/fs_options.rs:936
+msgid "Disables journal flush on sync/fsync."
+msgstr ""
+
+#: src/fs_options.rs:937
+msgid "Milliseconds before automatic journal reclaim."
+msgstr ""
+
+#: src/fs_options.rs:938
+msgid "Checksum type used for metadata writes."
+msgstr ""
+
+#: src/fs_options.rs:939
+msgid "Number of replicas to keep for metadata (journal and btree)."
+msgstr ""
+
+#: src/fs_options.rs:940
+msgid "Preferred target device/label for metadata writes."
+msgstr ""
+
+#: src/fs_options.rs:941
+msgid ""
+"Issues no writes at all, even for journal replay (super read-only mode)."
+msgstr ""
+
+#: src/fs_options.rs:942
+msgid "Doesn't open member devices in exclusive mode."
+msgstr ""
+
+#: src/fs_options.rs:943
+msgid "Does not replay the journal on mount (not recommended)."
+msgstr ""
+
+#: src/fs_options.rs:944
+msgid "Target device/label data is copied to on read."
+msgstr ""
+
+#: src/fs_options.rs:945
+msgid "Rate-limits error messages during fsck."
+msgstr ""
+
+#: src/fs_options.rs:946
+msgid "Mounts the filesystem in read-only mode."
+msgstr ""
+
+#: src/fs_options.rs:947
+msgid "Uses the CPU id for the high bits of new inode numbers."
+msgstr ""
+
+#: src/fs_options.rs:948
+msgid "Hash function used for string hash tables (directories and xattrs)."
+msgstr ""
+
+#: src/fs_options.rs:949
+msgid "Prints extra debugging info during mount/recovery."
+msgstr ""
+
+#: src/fs_options.rs:950
+msgid "Upgrades the on-disk format to the latest version on mount."
+msgstr ""
+
+#: src/fs_options.rs:951
+msgid "Stores full 128-bit cryptographic MACs instead of the default 80-bit."
+msgstr ""
+
+#: src/fs_options.rs:952
+msgid "Enables group quotas."
+msgstr ""
+
+#: src/fs_options.rs:953
+msgid "Enables project quotas."
+msgstr ""
+
+#: src/fs_options.rs:954
+msgid "Enables user quotas."
+msgstr ""
+
+#: src/fs_value.rs:96
+msgid ""
+"original non-journaling ext filesystem, still used for small boot partitions"
+msgstr ""
+
+#: src/fs_value.rs:97
+msgid "ext2 with journaling added for crash-recovery reliability"
+msgstr ""
+
+#: src/fs_value.rs:98
+msgid ""
+"default Linux journaling filesystem with extents and very large volume "
+"support"
+msgstr ""
+
+#: src/fs_value.rs:99
+msgid "copy-on-write filesystem with snapshots, subvolumes, and RAID"
+msgstr ""
+
+#: src/fs_value.rs:100
+msgid ""
+"SGI-developed 64-bit journaling filesystem for high performance and large "
+"files"
+msgstr ""
+
+#: src/fs_value.rs:101
+msgid "flash-friendly filesystem designed for NAND flash storage"
+msgstr ""
+
+#: src/fs_value.rs:102
+msgid "Linux kernel driver providing read/write access to Windows NTFS volumes"
+msgstr ""
+
+#: src/fs_value.rs:103
+msgid "FAT filesystem variant with long filename support for removable media"
+msgstr ""
+
+#: src/fs_value.rs:104
+msgid "Microsoft filesystem for large removable drives and SD cards over 32 GB"
+msgstr ""
+
+#: src/fs_value.rs:105
+msgid "disk space acting as virtual memory when physical RAM is exhausted"
+msgstr ""
+
+#: src/fs_value.rs:106
+msgid ""
+"network filesystem using the SMB protocol for Windows and NAS file shares"
+msgstr ""
+
+#: src/fs_value.rs:107
+msgid "modern, secure dialect of SMB used for Windows, Azure, and NAS shares"
+msgstr ""
+
+#: src/fs_value.rs:108
+msgid "network filesystem for sharing files across machines over the network"
+msgstr ""
+
+#: src/fs_value.rs:109
+msgid "newer NFS version adding security, statefulness, and better locking"
+msgstr ""
+
+#: src/fs_value.rs:110
+msgid ""
+"mounts a remote directory over SSH using SFTP, running in userspace via FUSE"
+msgstr ""
+
+#: src/fs_value.rs:111
+msgid "standard filesystem format for CD-ROM optical media"
+msgstr ""
+
+#: src/fs_value.rs:112
+msgid "Universal Disk Format for writable optical discs like DVDs and Blu-rays"
+msgstr ""
+
+#: src/fs_value.rs:113
+msgid ""
+"virtual filesystem storing files in RAM and swap for temporary in-memory data"
+msgstr ""
+
+#: src/fs_value.rs:114
+msgid "virtual filesystem exposing kernel and process information as files"
+msgstr ""
+
+#: src/fs_value.rs:115
+msgid ""
+"virtual filesystem exposing kernel objects, devices, and their attributes to "
+"userspace"
+msgstr ""
+
+#: src/fs_value.rs:116
+msgid ""
+"virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
+msgstr ""
+
+#: src/fs_value.rs:118
+msgid ""
+"virtual filesystem for the unified cgroup v2 hierarchy, managing resource "
+"limits and accounting"
+msgstr ""
+
+#: src/fs_value.rs:120
+msgid ""
+"virtual filesystem backing security modules such as SELinux and IMA "
+"integrity interfaces"
+msgstr ""
+
+#: src/fs_value.rs:121
+msgid ""
+"virtual filesystem exporting arbitrary kernel debugging data with no ABI "
+"stability guarantees"
+msgstr ""
+
+#: src/fs_value.rs:122
+msgid ""
+"virtual filesystem holding ftrace control and trace-output files under /sys/"
+"kernel/tracing"
+msgstr ""
+
+#: src/fs_value.rs:123
+msgid ""
+"virtual filesystem where userspace creates and configures kernel objects via "
+"mkdir and rmdir"
+msgstr ""
+
+#: src/fs_value.rs:124
+msgid "POSIX message queue IPC exposed as files at /dev/mqueue"
+msgstr ""
+
+#: src/fs_value.rs:125
+msgid "interface to huge page memory, mounted at /dev/hugepages"
+msgstr ""
+
+#: src/fs_value.rs:126
+msgid "populates /dev with device nodes automatically at boot"
+msgstr ""
+
+#: src/fs_value.rs:127
+msgid "Plan 9 remote filesystem protocol, used for host-to-VM file sharing"
+msgstr ""
+
+#: src/fs_value.rs:128
+msgid "union filesystem stacking upper/lower layers, used by containers"
+msgstr ""
+
+#: src/fs_value.rs:129
+msgid "OpenZFS copy-on-write filesystem with integrated volume management"
+msgstr ""
+
+#: src/fs_value.rs:130
+msgid ""
+"copy-on-write, multi-device filesystem with built-in caching, compression, "
+"and checksumming"
+msgstr ""
+
+#: src/fs_value.rs:131
+msgid "a custom filesystem type"
+msgstr ""
+
+#: src/fs_value.rs:159 src/fs_value.rs:192 src/fs_value.rs:218
+msgid "Other"
+msgstr ""
+
+#: src/fs_value.rs:173
+msgid "Other…"
+msgstr ""
+
+#: src/fs_value.rs:206
+msgid "Search filesystems"
+msgstr ""
+
+#: src/fs_value.rs:207
+msgid "Choose the filesystem type"
+msgstr ""
+
+#: src/fs_value.rs:208
+msgid "Error loading filesystem types"
+msgstr ""
+
+#: src/fs_value.rs:244
+msgid "File system:"
+msgstr ""
+
+#: src/fs_value.rs:256 src/main.rs:648
+msgid "File system"
+msgstr ""
+
+#: src/main.rs:125 src/main.rs:156
+msgid "Make backup"
+msgstr ""
+
+#: src/main.rs:126
+msgid "Save changes"
+msgstr ""
+
+#: src/main.rs:127
+msgid "Revert changes"
+msgstr ""
+
+#: src/main.rs:153
+msgid ""
+"Your changes have not been saved yet. The backup will reflect the saved /etc/"
+"fstab, not your unsaved changes. Continue?"
+msgstr ""
+
+#: src/main.rs:169
+msgid "Are you sure you want to write these changes to /etc/fstab?"
+msgstr ""
+
+#: src/main.rs:179
+msgid "Saved, but could not reload"
+msgstr ""
+
+#: src/main.rs:182
+msgid "Saved to /etc/fstab"
+msgstr ""
+
+#: src/main.rs:184
+msgid "Could not save"
+msgstr ""
+
+#: src/main.rs:194
+msgid "Revert"
+msgstr ""
+
+#: src/main.rs:195 src/main.rs:503
+msgid "Are you sure? Any changes made will be lost!"
+msgstr ""
+
+#: src/main.rs:216
+msgid "'/etc/fstab' entries:"
+msgstr ""
+
+#: src/main.rs:299
+msgid "Error loading fstab file!"
+msgstr ""
+
+#: src/main.rs:319
+msgid "Backup created"
+msgstr ""
+
+#: src/main.rs:319
+msgid "A backup of /etc/fstab was created."
+msgstr ""
+
+#: src/main.rs:320
+msgid "Could not create backup"
+msgstr ""
+
+#: src/main.rs:384
+msgid "This entry is disabled (commented out)."
+msgstr ""
+
+#: src/main.rs:391
+msgid ""
+"The system may refuse to boot without this drive. If this is not intended, "
+"add the 'nofail' option. \n"
+"Usually, this is wanted on root and home mounts."
+msgstr ""
+
+#: src/main.rs:400
+msgid "This entry is invalid and cannot be parsed."
+msgstr ""
+
+#: src/main.rs:452
+msgid "Add new mount entry"
+msgstr ""
+
+#: src/main.rs:507
+msgid "Restore"
+msgstr ""
+
+#: src/main.rs:512
+msgid "Restore backup"
+msgstr ""
+
+#: src/main.rs:513
+msgid "Search backups"
+msgstr ""
+
+#: src/main.rs:514
+msgid "Restore from a backup file"
+msgstr ""
+
+#: src/main.rs:515
+msgid "Failed to list backups"
+msgstr ""
+
+#: src/main.rs:538 src/main.rs:567
+msgid "Could not load backup"
+msgstr ""
+
+#: src/main.rs:582 src/main.rs:895
+msgid "Cannot remount"
+msgstr ""
+
+#: src/main.rs:583
+msgid "Cannot unmount"
+msgstr ""
+
+#: src/main.rs:589
+msgid "The entry has unsaved changes. Save your changes before mounting."
+msgstr ""
+
+#: src/main.rs:590
+msgid "The entry has unsaved changes. Save your changes before remounting."
+msgstr ""
+
+#: src/main.rs:591
+msgid ""
+"The mount point has unsaved changes. Save your changes before unmounting."
+msgstr ""
+
+#: src/main.rs:598
+msgid "The mount point is empty."
+msgstr ""
+
+#: src/main.rs:627
+msgid "Delete entry"
+msgstr ""
+
+#: src/main.rs:649
+msgid "Device"
+msgstr ""
+
+#: src/main.rs:650 src/mount_point_value.rs:18
+msgid "Mount point"
+msgstr ""
+
+#: src/main.rs:676
+msgid "Delete"
+msgstr ""
+
+#: src/main.rs:676
+msgid "Delete this entry?"
+msgstr ""
+
+#: src/main.rs:711
+msgid "Reset"
+msgstr ""
+
+#: src/main.rs:716
+msgid "Edit properties"
+msgstr ""
+
+#: src/main.rs:719
+msgid "Options"
+msgstr ""
+
+#: src/main.rs:735
+msgid "Active"
+msgstr ""
+
+#: src/main.rs:751
+msgid "Extra"
+msgstr ""
+
+#: src/main.rs:755
+msgid "Dump"
+msgstr ""
+
+#: src/main.rs:756
+msgid "Controls the dump backup frequency; 0 disables"
+msgstr ""
+
+#: src/main.rs:763
+msgid "Pass"
+msgstr ""
+
+#: src/main.rs:764
+msgid "Controls the fsck check order; 0 disables"
+msgstr ""
+
+#: src/main.rs:793
+msgid "Mount actions"
+msgstr ""
+
+#: src/main.rs:805
+msgid "Status"
+msgstr ""
+
+#: src/main.rs:808 src/main.rs:858
+msgid "Mount"
+msgstr ""
+
+#: src/main.rs:809 src/main.rs:886
+msgid "Remount"
+msgstr ""
+
+#: src/main.rs:810 src/main.rs:914
+msgid "Unmount"
+msgstr ""
+
+#: src/main.rs:818
+msgid "Actions"
+msgstr ""
+
+#: src/main.rs:859
+msgid "Are you sure you want to mount this entry?"
+msgstr ""
+
+#: src/main.rs:887
+msgid "Are you sure you want to remount this entry?"
+msgstr ""
+
+#: src/main.rs:895
+msgid "Swap cannot be remounted."
+msgstr ""
+
+#: src/main.rs:906
+msgid "Remounted"
+msgstr ""
+
+#: src/main.rs:906
+msgid "Could not remount"
+msgstr ""
+
+#: src/main.rs:915
+msgid "Are you sure you want to unmount this entry?"
+msgstr ""
+
+#: src/main.rs:935 src/mount_status.rs:18
+msgid "Unmounted"
+msgstr ""
+
+#: src/main.rs:935
+msgid "Could not unmount"
+msgstr ""
+
+#: src/mount_point_value.rs:12
+msgid "Choose folder"
+msgstr ""
+
+#: src/mount_point_value.rs:37
+msgid "Choose mount point"
+msgstr ""
+
+#: src/mount_point_value.rs:67
+msgid "Path exists"
+msgstr ""
+
+#: src/mount_point_value.rs:67
+msgid "Path does not exist"
+msgstr ""
+
+#: src/mount_status.rs:19
+msgid "Mount point missing"
+msgstr ""
+
+#: src/mount_status.rs:33
+msgid "The device is currently mounted at this mount point."
+msgstr ""
+
+#: src/mount_status.rs:34
+msgid "The device is not currently mounted at this mount point."
+msgstr ""
+
+#: src/mount_status.rs:35
+msgid "This mount point does not exist on the system."
+msgstr ""
+
+#: src/options_value.rs:170
+msgid "Remove option"
+msgstr ""
+
+#: src/options_value.rs:188
+msgid "Option"
+msgstr ""
+
+#: src/options_value.rs:363
+msgid "Search subvolumes"
+msgstr ""
+
+#: src/options_value.rs:364
+msgid "Find a subvolume on this device"
+msgstr ""
+
+#: src/options_value.rs:365
+msgid "Failed to fetch subvolumes"
+msgstr ""
+
+#: src/options_value.rs:399
+msgid "Add option…"
+msgstr ""
+
+#: src/options_value.rs:400
+msgid "Search options"
+msgstr ""
+
+#: src/options_value.rs:401
+msgid "Choose an option to add to this entry"
+msgstr ""
+
+#: src/options_value.rs:402
+msgid "Error loading options"
+msgstr ""
+
+#: src/options_value.rs:406
+msgid "Add option"
+msgstr ""
+
+#: src/search_picker.rs:36
+msgid "Search"
+msgstr ""
+
+#: src/search_picker.rs:41
+msgid "Failed to load"
+msgstr ""
+
+#: src/ui_commons.rs:93 src/ui_commons.rs:104
+msgid "OK"
+msgstr ""
+
+#: src/ui_commons.rs:176
+msgid "Confirm"
+msgstr ""

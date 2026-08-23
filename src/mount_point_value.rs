@@ -1,4 +1,5 @@
 use crate::context::EntryContext;
+use crate::i18n::i18n;
 use adw::prelude::*;
 use adw::{EntryRow, PreferencesGroup};
 use std::path::Path;
@@ -8,13 +9,13 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 
 	let folder_btn = gtk::Button::from_icon_name("folder-open-symbolic");
 	folder_btn.add_css_class("flat");
-	folder_btn.set_tooltip_text(Some("Choose folder"));
+	folder_btn.set_tooltip_text(Some(i18n("Choose folder").as_str()));
 
 	let exists_icon = gtk::Image::from_icon_name("object-select-symbolic");
 	exists_icon.add_css_class("mount-point-exists");
 	exists_icon.set_valign(gtk::Align::Center);
 
-	let row = EntryRow::builder().title("Mount point").text(&entry.borrow().mount_point).build();
+	let row = EntryRow::builder().title(i18n("Mount point")).text(&entry.borrow().mount_point).build();
 	row.add_suffix(&folder_btn);
 	row.add_suffix(&exists_icon);
 	update_exists_icon(&exists_icon, entry.borrow().mount_point.as_str());
@@ -33,7 +34,7 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 		let (row, entry, entry_ctx) = (row.clone(), entry.clone(), entry_ctx.clone());
 		let exists_icon = exists_icon.clone();
 		folder_btn.connect_clicked(move |folder_btn| {
-			let dialog = gtk::FileDialog::builder().title("Choose mount point").build();
+			let dialog = gtk::FileDialog::builder().title(i18n("Choose mount point")).build();
 			let text = row.text();
 			if !text.is_empty() {
 				dialog.set_initial_folder(Some(&gtk::gio::File::for_path(text.as_str())));
@@ -63,5 +64,5 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 fn update_exists_icon(icon: &gtk::Image, mount_point: &str) {
 	let exists = Path::new(mount_point.trim()).is_dir();
 	icon.set_visible(exists);
-	icon.set_tooltip_text(Some(if exists { "Path exists" } else { "Path does not exist" }));
+	icon.set_tooltip_text(Some(if exists { i18n("Path exists") } else { i18n("Path does not exist") }.as_str()));
 }

@@ -2,6 +2,7 @@ use crate::GC;
 use crate::block_devices::{BlockDeviceInfo, list_block_devices};
 use crate::context::EntryContext;
 use crate::fs_value::FsType;
+use crate::i18n::{i18n, i18n_fmt};
 use crate::stab_yurself::StabEntry;
 use adw::prelude::*;
 use adw::{Dialog, EntryRow, PreferencesGroup, PreferencesRow};
@@ -333,12 +334,17 @@ fn test_network_connection(host: &str, port: u16) -> Result<(), String> {
 
 	let addr = (host, port)
 		.to_socket_addrs()
-		.map_err(|err| format!("Could not resolve '{host}': {err}"))?
+		.map_err(|err| i18n_fmt("Could not resolve '{host}': {err}", &[("{host}", host), ("{err}", &err.to_string())]))?
 		.next()
-		.ok_or_else(|| format!("Could not resolve '{host}'."))?;
+		.ok_or_else(|| i18n_fmt("Could not resolve '{host}'.", &[("{host}", host)]))?;
 	std::net::TcpStream::connect_timeout(&addr, Duration::from_secs(3))
 		.map(|_| ())
-		.map_err(|err| format!("Could not connect to {host}:{port}: {err}"))
+		.map_err(|err| {
+			i18n_fmt(
+				"Could not connect to {host}:{port}: {err}",
+				&[("{host}", host), ("{port}", &port.to_string()), ("{err}", &err.to_string())],
+			)
+		})
 }
 
 const DIALOG_MARGIN: i32 = 16;
@@ -438,12 +444,12 @@ impl DeviceRowController {
 		};
 		*self.style.borrow_mut() = style;
 
-		let user_entry = EntryRow::builder().title("User").text(user.as_deref().unwrap_or("")).build();
-		let host_entry = EntryRow::builder().title("Host").text(&host).build();
-		let port_entry = EntryRow::builder().title("Port").text(port.as_deref().unwrap_or("")).build();
-		let path_entry = EntryRow::builder().title("Path").text(path.as_deref().unwrap_or("")).build();
+		let user_entry = EntryRow::builder().title(i18n("User")).text(user.as_deref().unwrap_or("")).build();
+		let host_entry = EntryRow::builder().title(i18n("Host")).text(&host).build();
+		let port_entry = EntryRow::builder().title(i18n("Port")).text(port.as_deref().unwrap_or("")).build();
+		let path_entry = EntryRow::builder().title(i18n("Path")).text(path.as_deref().unwrap_or("")).build();
 
-		let test_btn = Button::with_label("Test connection");
+		let test_btn = Button::with_label(i18n("Test connection").as_str());
 		let status_label = Label::builder().halign(Align::Start).wrap(true).build();
 		let test_row = GtkBox::builder()
 			.orientation(Orientation::Horizontal)
@@ -454,13 +460,13 @@ impl DeviceRowController {
 		test_row.append(&status_label);
 
 		let heading = Label::builder()
-			.label("Network location")
+			.label(i18n("Network location"))
 			.css_classes(["title-1"])
 			.halign(Align::Start)
 			.build();
 
-		let cancel_btn = Button::with_label("Cancel");
-		let save_btn = Button::with_label("Save");
+		let cancel_btn = Button::with_label(i18n("Cancel").as_str());
+		let save_btn = Button::with_label(i18n("Save").as_str());
 		save_btn.add_css_class("suggested-action");
 		let buttons = GtkBox::builder()
 			.orientation(Orientation::Horizontal)
@@ -485,20 +491,23 @@ impl DeviceRowController {
 			test_btn.clone().connect_clicked(move |_| {
 				let host = host_entry.text().to_string();
 				let Some(port) = resolve_test_port(&fs_type, &port_entry.text()) else {
-					set_connection_status(&status_label, "Enter a valid port to test.", true);
+					set_connection_status(&status_label, i18n("Enter a valid port to test.").as_str(), true);
 					return;
 				};
 				if host.is_empty() {
-					set_connection_status(&status_label, "Enter a host to test.", true);
+					set_connection_status(&status_label, i18n("Enter a host to test.").as_str(), true);
 					return;
 				}
 				test_btn.set_sensitive(false);
-				set_connection_status(&status_label, "Testing connection…", false);
+				set_connection_status(&status_label, i18n("Testing connection…").as_str(), false);
 				let (tx, rx) = std::sync::mpsc::channel();
 				let (test_btn, status_label) = (test_btn.clone(), status_label.clone());
 				std::thread::spawn(move || {
 					let result = match test_network_connection(&host, port) {
-						Ok(()) => Ok(format!("Connected to {host}:{port}.")),
+						Ok(()) => Ok(i18n_fmt(
+							"Connected to {host}:{port}.",
+							&[("{host}", &host), ("{port}", &port.to_string())],
+						)),
 						Err(err) => Err(err),
 					};
 					let _ = tx.send(result);
@@ -506,17 +515,17 @@ impl DeviceRowController {
 				gtk::glib::timeout_add_local(std::time::Duration::from_millis(100), move || match rx.try_recv() {
 					Ok(Ok(message)) => {
 						test_btn.set_sensitive(true);
-						set_connection_status(&status_label, &message, false);
+						set_connection_status(&status_label, message.as_str(), false);
 						gtk::glib::ControlFlow::Break
 					}
 					Ok(Err(err)) => {
 						test_btn.set_sensitive(true);
-						set_connection_status(&status_label, &err, true);
+						set_connection_status(&status_label, err.as_str(), true);
 						gtk::glib::ControlFlow::Break
 					}
 					Err(std::sync::mpsc::TryRecvError::Disconnected) => {
 						test_btn.set_sensitive(true);
-						set_connection_status(&status_label, "Test connection failed.", true);
+						set_connection_status(&status_label, i18n("Test connection failed.").as_str(), true);
 						gtk::glib::ControlFlow::Break
 					}
 					Err(_) => gtk::glib::ControlFlow::Continue,
@@ -536,7 +545,7 @@ impl DeviceRowController {
 				if controller.apply_network_fields(&user_entry, &host_entry, &port_entry, &path_entry) {
 					dialog.close();
 				} else {
-					set_connection_status(&status_label, "Enter a host to save.", true);
+					set_connection_status(&status_label, i18n("Enter a host to save.").as_str(), true);
 				}
 			});
 		}
@@ -569,7 +578,7 @@ impl DeviceRowController {
 		let mut devices: Vec<BlockDeviceInfo> = match list_block_devices() {
 			Ok(devices) => devices.into_iter().filter(|device| pick_value(device, kind).is_some()).collect(),
 			Err(err) => {
-				crate::ui_commons::present_simple_dialog(&self.picker_btn, "Could not list devices", &format!("{err:#}"));
+				crate::ui_commons::present_simple_dialog(&self.picker_btn, i18n("Could not list devices").as_str(), &format!("{err:#}"));
 				return;
 			}
 		};
@@ -630,15 +639,22 @@ impl DeviceRowController {
 			.hexpand(true)
 			.build();
 
-		let search = SearchEntry::builder().placeholder_text("Filter devices…").hexpand(true).build();
-		let empty_label = Label::builder().label("No devices found").halign(Align::Start).visible(false).build();
+		let search = SearchEntry::builder()
+			.placeholder_text(i18n("Filter devices…").as_str())
+			.hexpand(true)
+			.build();
+		let empty_label = Label::builder()
+			.label(i18n("No devices found"))
+			.halign(Align::Start)
+			.visible(false)
+			.build();
 
 		let heading = Label::builder()
-			.label(format!("Select {}", kind.label()))
+			.label(i18n_fmt("Select {kind}", &[("{kind}", kind.label())]))
 			.css_classes(["title-1"])
 			.halign(Align::Start)
 			.build();
-		let cancel_btn = Button::with_label("Cancel");
+		let cancel_btn = Button::with_label(i18n("Cancel").as_str());
 		cancel_btn.set_halign(Align::End);
 
 		let content = dialog_content_box();
@@ -770,12 +786,12 @@ type DeviceColumn = (String, fn(&DeviceTableRow) -> String);
 
 fn device_columns(kind: DeviceKind) -> Vec<DeviceColumn> {
 	vec![
-		(kind.label().to_string(), DeviceTableRow::value),
-		("Device name".to_string(), DeviceTableRow::name),
-		("Size".to_string(), DeviceTableRow::size),
-		("Label".to_string(), DeviceTableRow::label),
-		("File System".to_string(), DeviceTableRow::fstype),
-		("Model".to_string(), DeviceTableRow::model),
+		(i18n(kind.label()), DeviceTableRow::value),
+		(i18n("Device name"), DeviceTableRow::name),
+		(i18n("Size"), DeviceTableRow::size),
+		(i18n("Label"), DeviceTableRow::label),
+		(i18n("File System"), DeviceTableRow::fstype),
+		(i18n("Model"), DeviceTableRow::model),
 	]
 }
 
@@ -834,7 +850,16 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 
 	let initial = &entry.borrow().device;
 
-	let model = StringList::new(&kinds.borrow().iter().map(|k| k.label()).collect::<Vec<_>>());
+	let model = StringList::new(
+		&kinds
+			.borrow()
+			.iter()
+			.map(|k| i18n(k.label()))
+			.collect::<Vec<_>>()
+			.iter()
+			.map(String::as_str)
+			.collect::<Vec<_>>(),
+	);
 	let dropdown = DropDown::builder().model(&model).selected(selected as u32).valign(Align::Center).build();
 
 	let syncing: GC<bool> = GC::new(false);
@@ -851,7 +876,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 	let picker_btn = Button::builder()
 		.icon_name("preferences-system-symbolic")
 		.margin_end(12)
-		.tooltip_text("Edit device")
+		.tooltip_text(i18n("Edit device"))
 		.build();
 
 	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(4).build();
@@ -935,10 +960,9 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 					}
 					None => {
 						controller.set_device(DeviceValue::from(current.value.clone(), new_kind));
-						warning.set_label(&format!(
-							"Could not resolve a {} for {}. The value was kept as-is.",
-							new_kind.label(),
-							current.value
+						warning.set_label(&i18n_fmt(
+							"Could not resolve a {kind} for {value}. The value was kept as-is.",
+							&[("{kind}", new_kind.label()), ("{value}", &current.value)],
 						));
 						warning.set_visible(true);
 					}
