@@ -5,16 +5,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-23 10:27+0200\n"
-"PO-Revision-Date: 2026-08-23 00:00+0200\n"
+"POT-Creation-Date: 2026-08-24 04:16+0200\n"
+"PO-Revision-Date: 2026-08-24 00:00+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#, rust-format
+msgid "Mount {mount_point}"
+msgstr "Montiraj {mount_point}"
 
 msgid "Cannot mount"
 msgstr "Montiranje nije moguće"
@@ -27,6 +30,10 @@ msgstr "Naziv datoteke s vjerodajnicama potreban je pri spremanju vjerodajnica."
 
 msgid "Could not mount"
 msgstr "Nije moguće montirati"
+
+#, rust-format
+msgid "Would you like to delete the saved credentials file {path}?"
+msgstr "Želite li izbrisati spremljenu datoteku s vjerodajnicama {path}?"
 
 msgid "Credentials deleted"
 msgstr "Vjerodajnice su izbrisane"
@@ -43,9 +50,25 @@ msgstr "Izbriši vjerodajnice"
 msgid "login used for this mount only"
 msgstr "prijava koja se koristi samo za ovo montiranje"
 
+#, rust-format
+msgid "login saved to {path}"
+msgstr "prijava spremljena u {path}"
+
 #. xgettext: keep the <b> markup tags intact
 msgid "linked login to entry, <b>you must save changes to preserve this</b>"
 msgstr "prijava je povezana s unosom, <b>morate spremiti promjene da biste to sačuvali</b>"
+
+#, rust-format
+msgid "updated existing login in {path}"
+msgstr "ažurirana postojeća prijava u {path}"
+
+#, rust-format
+msgid "using existing login from {path}"
+msgstr "koristi se postojeća prijava iz {path}"
+
+#, rust-format
+msgid "Mounted {mount_point}."
+msgstr "Montirano {mount_point}."
 
 msgid "Mounted"
 msgstr "Montirano"
@@ -83,6 +106,18 @@ msgstr "Odustani"
 msgid "Connect"
 msgstr "Poveži se"
 
+#, rust-format
+msgid "Could not resolve '{host}': {err}"
+msgstr "Nije moguće rezolvirati '{host}': {err}"
+
+#, rust-format
+msgid "Could not resolve '{host}'."
+msgstr "Nije moguće rezolvirati '{host}'."
+
+#, rust-format
+msgid "Could not connect to {host}:{port}: {err}"
+msgstr "Nije moguće povezati se s {host}:{port}: {err}"
+
 msgid "User"
 msgstr "Korisnik"
 
@@ -101,9 +136,6 @@ msgstr "Testiraj vezu"
 msgid "Network location"
 msgstr "Mrežna lokacija"
 
-msgid "Save"
-msgstr "Spremi"
-
 msgid "Enter a valid port to test."
 msgstr "Unesite ispravan priključak za testiranje."
 
@@ -112,6 +144,10 @@ msgstr "Unesite poslužitelj za testiranje."
 
 msgid "Testing connection…"
 msgstr "Testiranje veze…"
+
+#, rust-format
+msgid "Connected to {host}:{port}."
+msgstr "Povezano s {host}:{port}."
 
 msgid "Test connection failed."
 msgstr "Testiranje veze nije uspjelo."
@@ -127,6 +163,10 @@ msgstr "Filtriraj uređaje…"
 
 msgid "No devices found"
 msgstr "Nije pronađen nijedan uređaj"
+
+#, rust-format
+msgid "Select {kind}"
+msgstr "Odaberite {kind}"
 
 msgid "Device name"
 msgstr "Naziv uređaja"
@@ -145,6 +185,74 @@ msgstr "Model"
 
 msgid "Edit device"
 msgstr "Uredi uređaj"
+
+#, rust-format
+msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
+msgstr "Nije moguće rezolvirati {kind} za {value}. Vrijednost je ostala nepromijenjena."
+
+msgid "Could not parse entry"
+msgstr "Nije moguće obraditi unos"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Točka montiranja ne postoji: {point}"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "Nepoznat datotečni sustav: {fs_type}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Nepoznata opcija: {option}"
+
+msgid "No problems detected"
+msgstr "Nema otkrivenih problema"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "Nepoznat tip uređaja: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "Uređaj ne postoji: {device}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} ne smije imati vrijednost"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} bi trebala biti jedna od: {values}"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} bi trebala biti jedna od: {values}, uz mogućnost da joj slijedi razina"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} bi trebala biti broj"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} bi trebala biti broj između {min} i {max}"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} bi trebala biti oktalni broj"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} bi trebala biti broj s jedinicom veličine, na primjer 16K"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} bi trebala biti {on} ili {off}"
+
+msgid "Edit as text"
+msgstr "Uredi kao tekst"
+
+msgid "Edit the raw fstab line. Problems with its values are listed below."
+msgstr "Uredi sirovi redak fstaba. Problemi s vrijednostima navedeni su ispod."
 
 msgid "All I/O to the filesystem is done asynchronously."
 msgstr "Sve U/I operacije na datotečnom sustavu izvode se asinkrono."
@@ -318,67 +426,67 @@ msgid "Restrict automatic filesystem detection to the listed types."
 msgstr "Ograničava automatsko prepoznavanje datotečnog sustava na navedene vrste."
 
 msgid "Set the group that may unmount the mount."
-msgstr "Postavlja grupu koja smije odmontirati montiranje."
+msgstr "Postavlja grupu koja smije odmontirati ovo montiranje."
 
 msgid "Create an idmapped mount using the given ID mapping."
-msgstr "Stvara idmapped montiranje koristeći zadano ID mapiranje."
+msgstr "Kreira idmapped montiranje pomoću zadane ID preslikavanja."
 
 msgid "Create the mountpoint directory if it does not exist."
-msgstr "Stvara direktorij točke montiranja ako ne postoji."
+msgstr "Kreira direktorij točke montiranja ako ne postoji."
 
 msgid "Set the mountpoint directory mode after mounting."
-msgstr "Postavlja dozvole direktorija točke montiranja nakon montiranja."
+msgstr "Postavlja način direktorija točke montiranja nakon montiranja."
 
 msgid "Do not canonicalize mount source and target paths."
-msgstr "Ne kanonizira putanje izvora i cilja montiranja."
+msgstr "Ne normalizira staze izvora i odredišta montiranja."
 
 msgid "Do not create a loop device even if the source is a regular file."
-msgstr "Ne stvara loop uređaj čak i ako je izvor obična datoteka."
+msgstr "Ne kreira loop uređaj čak ni ako je izvor obična datoteka."
 
 msgid "Set the owner that may unmount the mount."
-msgstr "Postavlja vlasnika koji smije odmontirati montiranje."
+msgstr "Postavlja vlasnika koji smije odmontirati ovo montiranje."
 
 msgid "Mount a subdirectory of the filesystem instead of its root."
-msgstr "Montira poddirektorij datotečnog sustava umjesto njegova korijena."
+msgstr "Montira poddirektorij datotečnog sustava umjesto njegovog korijena."
 
 msgid "Enables POSIX access control lists."
-msgstr "Omogućuje POSIX liste kontrole pristupa."
+msgstr "Omogućuje POSIX liste upravljanja pristupom."
 
 msgid "Disables POSIX access control lists."
-msgstr "Onemogućuje POSIX liste kontrole pristupa."
+msgstr "Isključuje POSIX liste upravljanja pristupom."
 
 msgid "statfs reports usable blocks minus filesystem overhead."
-msgstr "statfs prijavljuje upotrebljive blokove oduzevši režiju datotečnog sustava."
+msgstr "statfs prijavljuje upotrebljive blokove bez troškova datotečnog sustava."
 
 msgid "statfs reports total blocks including overhead."
-msgstr "statfs prijavljuje ukupne blokove uključujući režiju."
+msgstr "statfs prijavljuje ukupni broj blokova uključujući troškove."
 
 msgid "Performs mount-time checking; only check=none supported now."
-msgstr "Izvodi provjeru prilikom montiranja; trenutačno je podržano samo check=none."
+msgstr "Obavlja provjeru pri montiranju; trenutno se podržava samo check=none."
 
 msgid "Skips checking at mount time (default)."
-msgstr "Preskače provjeru prilikom montiranja (zadano)."
+msgstr "Preskače provjeru pri montiranju (zadano)."
 
 msgid "Prints debugging info upon each (re)mount."
-msgstr "Ispisuje podatke za otklanjanje pogrešaka pri svakom (ponovnom) montiranju."
+msgstr "Ispisuje podatke za otklanjanje grešaka pri svakom (ponovnom) montiranju."
 
 msgid "Sets behavior on errors: continue, remount-ro, or panic."
-msgstr "Postavlja ponašanje pri pogreškama: continue, remount-ro ili panic."
+msgstr "Postavlja ponašanje kod grešaka: continue, remount-ro ili panic."
 
 msgid "New files inherit the group ID of their parent directory."
-msgstr "Nove datoteke nasljeđuju ID grupe nadređenog direktorija."
+msgstr "Nove datoteke preuzimaju ID grupe svog roditeljskog direktorija."
 
 msgid "Same as grpid."
 msgstr "Isto kao grpid."
 
 msgid "New files take the creating process's fsgid (default)."
-msgstr "Nove datoteke uzimaju fsgid procesa koji ih stvara (zadano)."
+msgstr "Nove datoteke preuzimaju fsgid procesa koji ih stvara (zadano)."
 
 msgid "Same as nogrpid."
 msgstr "Isto kao nogrpid."
 
 msgid "Enables group quota support."
-msgstr "Omogućuje podršku za grupne kvote."
+msgstr "Omogućuje podršku za kvote grupe."
 
 msgid "Enables user quota support."
 msgstr "Omogućuje podršku za korisničke kvote."
@@ -387,22 +495,22 @@ msgid "Enables user quota support (same as usrquota)."
 msgstr "Omogućuje podršku za korisničke kvote (isto kao usrquota)."
 
 msgid "Disables all quota support."
-msgstr "Onemogućuje svu podršku za kvote."
+msgstr "Isključuje podršku za sve kvote."
 
 msgid "Disables 32-bit UIDs/GIDs for old-kernel compatibility."
-msgstr "Onemogućuje 32-bitne UID-ove/GID-ove radi kompatibilnosti sa starim kernelima."
+msgstr "Isključuje 32-bitne UID/GID radi kompatibilnosti sa starijim jezgrama."
 
 msgid "Uses the old inode allocator instead of Orlov."
-msgstr "Koristi stari alocirator inodea umjesto Orlovog."
+msgstr "Koristi stari dodjeljivač inoda umjesto Orlova."
 
 msgid "Uses the Orlov allocator for new inodes (default)."
-msgstr "Koristi Orlov alocirator za nove inodee (zadano)."
+msgstr "Koristi Orlov dodjeljivač za nove inode (zadano)."
 
 msgid "Group ID allowed to use reserved filesystem blocks."
-msgstr "ID grupe kojoj je dopušteno koristiti rezervirane blokove datotečnog sustava."
+msgstr "ID grupe kojoj je dopušteno korištenje rezerviranih blokova datotečnog sustava."
 
 msgid "User ID allowed to use reserved filesystem blocks."
-msgstr "ID korisnika kojem je dopušteno koristiti rezervirane blokove datotečnog sustava."
+msgstr "ID korisnika kojem je dopušteno korištenje rezerviranih blokova datotečnog sustava."
 
 msgid "Mounts using an alternate superblock number (recovery)."
 msgstr "Montira koristeći alternativni broj superbloka (oporavak)."
@@ -411,270 +519,268 @@ msgid "Enables \"user.\" extended attributes."
 msgstr "Omogućuje proširene atribute \"user.\"."
 
 msgid "Disables \"user.\" extended attributes."
-msgstr "Onemogućuje proširene atribute \"user.\"."
+msgstr "Isključuje proširene atribute \"user.\"."
 
 msgid "Enables write barriers in the journal code."
-msgstr "Omogućuje prepreke zapisa u kodu dnevnika."
+msgstr "Omogućuje barijere zapisivanja u kodu dnevnika."
 
 msgid "Sets journal commit interval in seconds (default 5)."
-msgstr "Postavlja interval predaje dnevnika u sekundama (zadano 5)."
+msgstr "Postavlja interval potvrde dnevnika u sekundama (zadano 5)."
 
 msgid "Sets data journaling mode: journal, ordered, or writeback."
 msgstr "Postavlja način vođenja dnevnika podataka: journal, ordered ili writeback."
 
 msgid "Action on data errors in ordered mode: abort or ignore."
-msgstr "Radnja pri pogreškama podataka u ordered načinu rada: abort ili ignore."
+msgstr "Radnja kod pogrešaka podataka u načinu ordered: abort ili ignore."
 
 msgid "Sets the group quota database file for journaled quotas."
-msgstr "Postavlja datoteku baze grupnih kvota za dnevničke kvote."
+msgstr "Postavlja datoteku baze podataka kvota grupe za kvote s dnevnikom."
 
 msgid "Specifies external journal device by major/minor number."
-msgstr "Navodi uređaj vanjskog dnevnika pomoću major/minor broja."
+msgstr "Navodi uređaj vanjskog dnevnika po glavnom/sporednom broju."
 
 msgid "Specifies external journal device by device path."
-msgstr "Navodi uređaj vanjskog dnevnika pomoću putanje uređaja."
+msgstr "Navodi uređaj vanjskog dnevnika po putanji uređaja."
 
 msgid "Sets quota format: vfsold, vfsv0, or vfsv1."
 msgstr "Postavlja format kvota: vfsold, vfsv0 ili vfsv1."
 
 msgid "Does not load the journal on mount."
-msgstr "Ne učitava dnevnik prilikom montiranja."
+msgstr "Ne učitava dnevnik pri montiranju."
+
 msgid "Does not load the journal on mount (same as noload)."
-msgstr "Ne učitava dnevnik prilikom montiranja (isto kao noload)."
+msgstr "Ne učitava dnevnik pri montiranju (isto kao noload)."
 
 msgid "Sets the user quota database file for journaled quotas."
-msgstr "Postavlja datoteku baze korisničkih kvota za kvote koje se vode u dnevniku."
+msgstr "Postavlja datoteku baze podataka korisničkih kvota za kvote s dnevnikom."
 
 msgid "Simulates an ext4_abort() for debugging purposes."
-msgstr "Simulira ext4_abort() u svrhu otklanjanja pogrešaka."
+msgstr "Simulira ext4_abort() u svrhe otkrivanja grešaka."
 
 msgid "Forces delayed blocks to disk before rename/truncate commits."
-msgstr "Forsira zapis odgođenih blokova na disk prije predaje preimenovanja/skraćivanja."
+msgstr "Prisilno upisuje odgođene blokove na disk prije potvrda preimenovanja/krčenja."
 
 msgid "Disables forced allocation on rename/truncate."
-msgstr "Onemogućuje prisilnu alokaciju kod preimenovanja/skraćivanja."
+msgstr "Isključuje prisilno dodjeljivanje pri preimenovanju/krčenju."
 
 msgid "Tracks metadata blocks internally (debug; off by default)."
-msgstr "Interno prati blokove metapodataka (za otklanjanje pogrešaka; standardno isključeno)."
+msgstr "Unutarnje praćenje blokova metapodataka (debug; zadano isključeno)."
 
 msgid "Disables internal metadata block tracking."
-msgstr "Onemogućuje interno praćenje blokova metapodataka."
+msgstr "Isključuje unutarnje praćenje blokova metapodataka."
 
 msgid "Defers block allocation until write-out time."
-msgstr "Odgađa alokaciju blokova do trenutka zapisivanja."
+msgstr "Odgađa dodjelu blokova do upisa na disk."
 
 msgid "Disables delayed allocation."
-msgstr "Onemogućuje odgođenu alokaciju."
+msgstr "Isključuje odgođenu dodjelu."
 
 msgid "Uses inode mutex for DIO reads (default)."
-msgstr "Koristi mutex inodea za DIO čitanja (zadano)."
+msgstr "Koristi inode mutex za DIO čitanja (zadano)."
 
 msgid "Avoids inode mutex for DIO reads for scalability."
-msgstr "Izbjegava mutex inodea kod DIO čitanja radi skalabilnosti."
+msgstr "Izbjegava inode mutex za DIO čitanja radi skalabilnosti."
 
 msgid "Issues discard/TRIM commands when blocks are freed."
-msgstr "Izvršava discard/TRIM naredbe kada se blokovi oslobode."
+msgstr "Izdaje naredbe discard/TRIM kada se blokovi oslobode."
 
 msgid "Disables issuing discard/TRIM commands."
-msgstr "Onemogućuje izvršavanje discard/TRIM naredbi."
+msgstr "Isključuje izdavanje naredbi discard/TRIM."
 
-msgid ""
-"Sets the case-insensitive lookup charset for casefolded directories (e.g. "
-"utf8-12.1)."
-msgstr "Postavlja znakovni skup za pretraživanje bez razlikovanja velikih i malih slova za mape s preslikavanjem slučaja (npr. utf8-12.1)."
+msgid "Sets the case-insensitive lookup charset for casefolded directories (e.g. utf8-12.1)."
+msgstr "Postavlja znakovni skup za pretraživanje neovisno o veličini slova za casefold direktorije (npr. utf8-12.1)."
 
 msgid "Sets flags controlling casefold behavior (e.g. strict)."
-msgstr "Postavlja zastavice koje upravljaju ponašanjem preslikavanja slučaja (npr. strict)."
+msgstr "Postavlja zastavice koje upravljaju ponašanjem casefolda (npr. strict)."
 
-msgid ""
-"Enables fast commits, a lightweight journaling mode for lower commit latency."
-msgstr "Omogućuje brze predaje, lagani način vođenja dnevnika za manju latenciju predaje."
+msgid "Enables fast commits, a lightweight journaling mode for lower commit latency."
+msgstr "Omogućuje brze potvrde, lagan način vođenja dnevnika s manjom latencijom potvrde."
 
 msgid "Tunes the lazy inode-table initialization speed."
-msgstr "Podešava brzinu postupne inicijalizacije tablice inodea."
+msgstr "Prilagođava brzinu lijene inicijalizacije tablice inoda."
 
 msgid "Does not initialize inode tables in the background."
-msgstr "Ne inicijalizira tablice inodea u pozadini."
+msgstr "Ne inicijalizira tablice inoda u pozadini."
 
 msgid "Max inode table blocks pre-read during mount."
-msgstr "Najveći broj blokova tablice inodea koji se unaprijed čita tijekom montiranja."
+msgstr "Maksimalan broj blokova tablice inoda pročitanih unaprijed pri montiranju."
 
 msgid "Enables 64-bit inode version support."
-msgstr "Omogućuje podršku za 64-bitne verzije inodea."
+msgstr "Omogućuje podršku za 64-bitne verzije inoda."
 
 msgid "Writes commit block without waiting for descriptors."
-msgstr "Zapisuje blok predaje bez čekanja deskriptora."
+msgstr "Upisuje blok potvrde bez čekanja deskriptora."
 
 msgid "Enables checksumming of journal transactions."
-msgstr "Omogućuje kontrolne zbrojeve transakcija dnevnika."
+msgstr "Omogućuje zbirne provjere transakcija dnevnika."
 
 msgid "Disables journal transaction checksumming."
-msgstr "Onemogućuje kontrolne zbrojeve transakcija dnevnika."
+msgstr "Isključuje zbirne provjere transakcija dnevnika."
 
 msgid "Sets I/O priority for journal commits (0-7)."
-msgstr "Postavlja I/O prioritet za predaje dnevnika (0-7)."
+msgstr "Postavlja I/O prioritet za potvrde dnevnika (0-7)."
 
 msgid "Max microseconds to wait to batch sync-write operations."
-msgstr "Najveći broj mikrosekundi čekanja za grupiranje operacija sinkronog pisanja."
+msgstr "Maksimalno mikrosekundi čekanja za grupiranje operacija sinkronog zapisivanja."
 
 msgid "Limits maximum directory size in kilobytes."
-msgstr "Ograničava najveću veličinu mape u kilobajtima."
+msgstr "Ograničava najveću veličinu direktorija u kilobajtima."
 
 msgid "Minimum commit time for batch optimization (us)."
-msgstr "Najmanje vrijeme predaje za optimizaciju grupiranja (us)."
+msgstr "Najmanje vrijeme potvrde za optimizaciju grupiranja (us)."
 
 msgid "Disables write barriers."
-msgstr "Onemogućuje barijere zapisa."
+msgstr "Isključuje barijere zapisivanja."
 
 msgid "Disables mbcache for extended attribute deduplication."
-msgstr "Onemogućuje mbcache za dedupliciranje proširenih atributa."
+msgstr "Isključuje mbcache za deduplikaciju proširenih atributa."
 
 msgid "Enables project quota support."
-msgstr "Omogućuje podršku za projektne kvote."
+msgstr "Omogućuje podršku za projektnu kvotu."
 
 msgid "Sets stripe width (blocks) for mballoc allocation alignment."
-msgstr "Postavlja širinu trake (u blokovima) za poravnanje alokacije mballoc."
+msgstr "Postavlja širinu pruge (blokovi) za poravnanje mballoc dodjele."
 
 msgid "Sets end-of-file preallocation size for buffered I/O."
-msgstr "Postavlja veličinu pretalokacije na kraju datoteke za međuspremnički I/O."
+msgstr "Postavlja veličinu prealokacije kraja datoteke za međumemorijski I/O."
 
 msgid "Enables opportunistic inline xattr format; deprecated since 5.10."
-msgstr "Omogućuje oportunistički ugrađeni (inline) format proširenih atributa; zastarjelo od 5.10."
+msgstr "Omogućuje povremeni inline xattr format; zastarjelo od 5.10."
 
 msgid "Disables attr2 format; deprecated, rejected on CRC filesystems."
-msgstr "Onemogućuje attr2 format; zastarjelo, odbacuje se na CRC datotečnim sustavima."
+msgstr "Onemogućuje attr2 format; zastarjelo, odbija se na datotečnim sustavima s CRC."
 
 msgid "Sets direct-access mode: never, always, or inode."
-msgstr "Postavlja način izravnog pristupa: never, always ili inode."
+msgstr "Postavlja način izravnog pristupa: nikad, uvijek ili inode."
 
 msgid "Issues commands to reclaim freed blocks (SSD-friendly)."
-msgstr "Izvršava naredbe za vraćanje oslobođenih blokova (pogodno za SSD-ove)."
+msgstr "Izdaje naredbe za povratak oslobođenih blokova (pogodno za SSD)."
 
 msgid "Disables issuing discard commands."
-msgstr "Onemogućuje izvršavanje discard naredbi."
+msgstr "Onemogućuje izdavanje discard naredbi."
 
 msgid "Applies filestreams allocation mode to whole filesystem."
-msgstr "Primjenjuje način alokacije tokova datoteka (filestreams) na cijeli datotečni sustav."
+msgstr "Primjenjuje način dodjele filestreams na cijeli datotečni sustav."
 
 msgid "Enables group quota accounting without enforcement."
-msgstr "Omogućuje evidentiranje grupnih kvota bez provođenja."
+msgstr "Omogućuje vođenje evidencije kvota za grupe bez nametanja."
 
 msgid "Enables group quota accounting and enforcement."
-msgstr "Omogućuje evidentiranje grupnih kvota s provođenjem."
+msgstr "Omogućuje vođenje evidencije i nametanje kvota za grupe."
 
 msgid "Same as gquota."
 msgstr "Isto kao gquota."
 
 msgid "New files inherit the parent directory's group ID."
-msgstr "Nove datoteke nasljeđuju ID grupe nadređene mape."
+msgstr "Nove datoteke preuzimaju ID grupe roditeljske mape."
 
 msgid "New files take the process's fsgid (default)."
 msgstr "Nove datoteke dobivaju fsgid procesa (zadano)."
 
 msgid "Keeps empty inode clusters on disk; deprecated since 5.10."
-msgstr "Zadržava prazne skupove inodea na disku; zastarjelo od 5.10."
+msgstr "Zadržava prazne inode klasteri na disku; zastarjelo od 5.10."
 
 msgid "Recycles empty inode clusters; deprecated since 5.10."
-msgstr "Ponovno koristi prazne skupove inodea; zastarjelo od 5.10."
+msgstr "Ponovno koristi prazne inode klasteri; zastarjelo od 5.10."
 
 msgid "Restricts inode numbers to 32 bits."
-msgstr "Ograničava brojeve inodea na 32 bita."
+msgstr "Ograničava inode brojke na 32 bita."
 
 msgid "Allows 64-bit inode numbers (default)."
-msgstr "Dopušta 64-bitne brojeve inodea (zadano)."
+msgstr "Dopušta 64-bitne inode brojke (zadano)."
 
 msgid "Reports swidth/allocsize as st_blksize."
-msgstr "Prijavljuje swidth/allocsize kao st_blksize."
+msgstr "Prijavlja swidth/allocsize kao st_blksize."
 
 msgid "Reports minimal st_blksize (default)."
-msgstr "Prijavljuje minimalni st_blksize (zadano)."
+msgstr "Prijavlja minimalni st_blksize (zadano)."
 
 msgid "Sets number of in-memory log buffers (2-8)."
-msgstr "Postavlja broj međuspremnika dnevnika u memoriji (2-8)."
+msgstr "Postavlja broj dnevničkih međumemorija (2-8)."
 
 msgid "Sets size of each in-memory log buffer."
-msgstr "Postavlja veličinu svakog međuspremnika dnevnika u memoriji."
+msgstr "Postavlja veličinu svakog dnevničkog međumemorija."
 
 msgid "Uses an external log (metadata journal) device."
-msgstr "Koristi vanjski uređaj dnevnika (dnevnik metapodataka)."
+msgstr "Koristi vanjski uređaj za log (dnevnik metapodataka)."
 
 msgid "Skips stripe-unit alignment for data allocations."
-msgstr "Preskače poravnavanje po jedinicama trake za alokacije podataka."
+msgstr "Preskače poravnanje jedrine pruge za dodjele podataka."
 
 msgid "Mounts without running log recovery (read-only)."
 msgstr "Montira bez pokretanja oporavka dnevnika (samo za čitanje)."
 
 msgid "Skips duplicate-UUID mount detection."
-msgstr "Preskače otkrivanje montiranja s dupliciranim UUID-om."
+msgstr "Preskače prepoznavanje montiranja s dupliciranim UUID-om."
 
 msgid "Forcibly turns off all quota accounting and enforcement."
-msgstr "Prisilno isključuje sva evidentiranja i provođenja kvota."
+msgstr "Prisilno gaši svu evidenciju i nametanje kvota."
 
 msgid "Enables project quota accounting and enforcement."
-msgstr "Omogućuje evidentiranje projektnih kvota s provođenjem."
+msgstr "Omogućuje vođenje evidencije i nametanje kvota za projekte."
 
 msgid "Enables project quota accounting without enforcement."
-msgstr "Omogućuje evidentiranje projektnih kvota bez provođenja."
+msgstr "Omogućuje vođenje evidencije kvota za projekte bez nametanja."
 
 msgid "Same as pquota."
 msgstr "Isto kao pquota."
 
 msgid "Enables user quota accounting without enforcement."
-msgstr "Omogućuje evidentiranje korisničkih kvota bez provođenja."
+msgstr "Omogućuje vođenje evidencije korisničkih kvota bez nametanja."
 
 msgid "Enables user quota accounting and enforcement."
-msgstr "Omogućuje evidentiranje korisničkih kvota s provođenjem."
+msgstr "Omogućuje vođenje evidencije i nametanje korisničkih kvota."
 
 msgid "Uses an external realtime-section device."
-msgstr "Koristi vanjski uređaj za realtime odjeljak."
+msgstr "Koristi vanjski uređaj za realtime-sektor."
 
 msgid "Sets stripe unit in 512-byte blocks."
-msgstr "Postavlja jedinicu trake u 512-bajtnim blokovima."
+msgstr "Postavlja jedrinu pruge u blokovima od 512 bajta."
 
 msgid "Rounds data allocations up to stripe-width boundaries."
-msgstr "Zaokružuje alokacije podataka prema gore na granice širine trake."
+msgstr "Zaokružuje dodjele podataka na granice širine pruge."
 
 msgid "Sets stripe width in 512-byte blocks."
-msgstr "Postavlja širinu trake u 512-bajtnim blokovima."
+msgstr "Postavlja širinu pruge u blokovima od 512 bajta."
 
 msgid "Same as uquota."
 msgstr "Isto kao uquota."
 
 msgid "Runs filesystem namespace operations synchronously."
-msgstr "Izvršava operacije nad prostorom naziva datotečnog sustava sinkrono."
+msgstr "Izvršava operacije imenskog prostora datotečnog sustava sinkrono."
 
 msgid "Enables POSIX access control lists (default on)."
-msgstr "Omogućuje POSIX popise kontrole pristupa (standardno omogućeno)."
+msgstr "Omogućuje POSIX liste kontrole pristupa (zadano uključeno)."
 
 msgid "Auto-defragments detected small random writes."
-msgstr "Automatski defragmentira otkrivene male nasumične upise."
+msgstr "Automatski defragmentira prepoznate male nasumične zapiske."
 
 msgid "Disables automatic file defragmentation."
 msgstr "Onemogućuje automatsku defragmentaciju datoteka."
 
 msgid "Ensures writes flush to permanent storage at checkpoints."
-msgstr "Osigurava ispraznjivanje zapisa u trajnu pohranu na kontrolnim točkama."
+msgstr "Osigurava da zapisi isprazne u trajno spremište na kontrolnim točkama."
 
 msgid "Disables write barriers; risks corruption on crash."
-msgstr "Onemogućuje barijere zapisa; postoji rizik od oštećenja pri padu."
+msgstr "Onemogućuje barijere zapisa; opasnost od oštećenja pri kvaru."
 
 msgid "Clears and rebuilds the free space cache."
-msgstr "Briše i ponovno izgrađuje predmemoriju slobodnog prostora."
+msgstr "Ispraznjuje i iznova gradi predmemoriju slobodnog prostora."
 
 msgid "Sets transaction commit interval in seconds (default 30)."
-msgstr "Postavlja interval predaje transakcija u sekundama (zadano 30)."
+msgstr "Postavlja razdoblje potvrde transakcija u sekundama (zadano 30)."
 
-msgid "Enables data compression (zlib, lzo, or zstd)."
-msgstr "Omogućuje kompresiju podataka (zlib, lzo ili zstd)."
+msgid "Enables data compression, optionally with a level (for example zstd:3)."
+msgstr "Omogućuje kompresiju podataka, po želji s razinom (na primjer zstd:3)."
 
-msgid "Always attempts compression, even if ineffective."
-msgstr "Uvijek pokušava kompresiju, čak i ako je neučinkovita."
+msgid "Always attempts compression, even if ineffective, optionally with a level."
+msgstr "Uvijek pokušava kompresiju, čak i ako nije učinkovita, po želji s razinom."
 
 msgid "Enables data copy-on-write for new files."
-msgstr "Omogućuje kopiranje pri pisanju (copy-on-write) podataka za nove datoteke."
+msgstr "Omogućuje kopiranje pri zapisivanju podataka za nove datoteke."
 
 msgid "Disables data COW (implies nodatasum, no compression)."
-msgstr "Onemogućuje COW za podatke (podrazumijeva nodatasum, bez kompresije)."
+msgstr "Onemogućuje COW podataka (podrazumijeva nodatasum, bez kompresije)."
 
 msgid "Enables data checksumming."
 msgstr "Omogućuje kontrolne zbrojeve podataka."
@@ -683,123 +789,121 @@ msgid "Disables data checksumming."
 msgstr "Onemogućuje kontrolne zbrojeve podataka."
 
 msgid "Allows mount with fewer devices than RAID requires."
-msgstr "Dopušta montiranje s manje uređaja nego što RAID zahtijeva."
+msgstr "Dozvoljava montiranje s manje uređaja nego što RAID zahtijeva."
 
 msgid "Scans the given device for btrfs during mount."
-msgstr "Traži btrfs na danom uređaju tijekom montiranja."
+msgstr "Tijekom montiranja pregledava navedeni uređaj za btrfs."
 
 msgid "Discards freed file blocks (TRIM)."
-msgstr "Odbacuje oslobođene blokove datoteka (TRIM)."
+msgstr "Odbacuje oslobođene datotečne blokove (TRIM)."
 
 msgid "Disables discarding of freed blocks."
 msgstr "Onemogućuje odbacivanje oslobođenih blokova."
 
 msgid "Enables verbose output for ENOSPC conditions."
-msgstr "Omogućuje opsežan ispis za ENOSPC stanja."
+msgstr "Uključuje opširni izlaz za stanja ENOSPC."
 
 msgid "Disables verbose ENOSPC output."
-msgstr "Onemogućuje opsežan ENOSPC ispis."
+msgstr "Onemogućuje opširni izlaz za ENOSPC."
 
 msgid "Sets action on fatal errors: bug or panic."
-msgstr "Postavlja radnju pri fatalnim pogreškama: bug ili panic."
+msgstr "Postavlja reakciju na smrtonosne pogreške: bug ili panic."
 
 msgid "Flushes all prior-transaction data at each commit."
-msgstr "Isprazni sve podatke prijašnjih transakcija pri svakoj predaji."
+msgstr "Očituje sve podatke prethodnih transakcija pri svakom commitu."
 
 msgid "Disables forced full flush on commit."
-msgstr "Onemogućuje prisilno potpuno ispraznjivanje pri predaji."
+msgstr "Onemogućuje prisilno potpuno očitanje pri commitu."
 
 msgid "Intentionally fragments block groups (debug builds only)."
-msgstr "Namjerno fragmentira blokovske grupe (samo u debug verzijama)."
+msgstr "Namjerno fragmentira grupe blokova (samo kod debug izdanja)."
 
 msgid "Max bytes that can be inlined in a metadata leaf."
 msgstr "Najveći broj bajtova koji se može ugraditi u list metapodataka."
 
 msgid "Allocates one metadata chunk per N data chunks."
-msgstr "Alocira jedan segment metapodataka na svakih N segmenata podataka."
+msgstr "Dodjeljuje jedan dijeljak metapodataka na N dijeljaka podataka."
 
 msgid "Does not replay the tree log (same as norecovery)."
 msgstr "Ne reproducira dnevnik stabla (isto kao norecovery)."
 
 msgid "Does not attempt recovery at mount time."
-msgstr "Ne pokušava oporavak prilikom montiranja."
+msgstr "Ne pokušava oporavak pri montiranju."
 
 msgid "Forces rebuild of the UUID tree."
-msgstr "Forsira ponovnu izgradnju UUID stabla."
+msgstr "Prisilno ponovno gradi stablo UUID-a."
 
-msgid ""
-"Applies recovery workarounds: usebackuproot, nologreplay, ignorebadroots, "
-"ignore*sums, or all (read-only)."
+msgid "Applies recovery workarounds: usebackuproot, nologreplay, ignorebadroots, ignore*sums, or all (read-only)."
 msgstr "Primjenjuje zaobilazna rješenja za oporavak: usebackuproot, nologreplay, ignorebadroots, ignore*sums ili all (samo za čitanje)."
 
 msgid "Skips automatic resume of an interrupted balance."
-msgstr "Preskače automatski nastavak prekinutog balansiranja."
+msgstr "Preskače automatsko nastavljanje prekinutog balansiranja."
 
 msgid "Enables free space caching (v1 or v2)."
-msgstr "Omogućuje predmemoriju slobodnog prostora (v1 ili v2)."
+msgstr "Uključuje predmemoriju slobodnog prostora (v1 ili v2)."
 
 msgid "Disables the free space cache."
 msgstr "Onemogućuje predmemoriju slobodnog prostora."
 
 msgid "Enables SSD allocation optimizations."
-msgstr "Omogućuje optimizacije alokacije za SSD-ove."
+msgstr "Uključuje optimizacije dodjele za SSD."
 
 msgid "Disables SSD allocation optimizations."
-msgstr "Onemogućuje optimizacije alokacije za SSD-ove."
+msgstr "Onemogućuje optimizacije dodjele za SSD."
 
 msgid "Allocates into larger aligned chunks for low-end SSDs."
-msgstr "Alocira u veće poravnate segmente za SSD-ove niže klase."
+msgstr "Za SSD-ove niže klase dodjeljuje u veće poravnane dijeljake."
 
 msgid "Disables the ssd_spread allocation scheme."
-msgstr "Onemogućuje shemu alokacije ssd_spread."
+msgstr "Onemogućuje shemu dodjele ssd_spread."
 
 msgid "Mounts a subvolume at the given path, not the toplevel."
-msgstr "Montira podvolumen na zadanoj putanji, a ne najvišu razinu."
+msgstr "Montira podvolument na navedenu putanju, a ne toplevel."
 
 msgid "Mounts the subvolume with the given numeric ID."
-msgstr "Montira podvolumen s danim numeričkim ID-om."
+msgstr "Montira podvolument s navedenim numeričkim ID-jem."
 
 msgid "Sets number of worker threads."
 msgstr "Postavlja broj radnih niti."
 
 msgid "Enables tree logging for fsync/O_SYNC."
-msgstr "Omogućuje vođenje dnevnika stabla za fsync/O_SYNC."
+msgstr "Uključuje zapisivanje u dnevnik stabla za fsync/O_SYNC."
 
 msgid "Disables tree logging."
-msgstr "Onemogućuje vođenje dnevnika stabla."
+msgstr "Onemogućuje zapisivanje u dnevnik stabla."
 
 msgid "Tries backup roots if the tree root is bad; removed since 7.3."
-msgstr "Pokušava sigurnosne korijene ako je korijen stabla neispravan; uklonjeno od verzije 7.3."
+msgstr "Ako je korijen stabla oštećen, pokušava sigurnosne korijene; uklonjeno od 7.3."
 
 msgid "Lets subvolume owners delete their own subvolumes."
-msgstr "Dopušta vlasnicima podvolumena brisanje vlastitih podvolumena."
+msgstr "Vlasnicima podvolumenta omogućuje brisanje vlastitih podvolumenta."
 
 msgid "Sets number of active log segments (2, 4, or 6)."
 msgstr "Postavlja broj aktivnih segmenata dnevnika (2, 4 ili 6)."
 
 msgid "Enables age extent cache for allocation hints."
-msgstr "Omogućuje predmemoriju starosti opsega (extent) za upute pri alokaciji."
+msgstr "Uključuje predmemoriju starosti ekstenata za upute o dodjeli."
 
 msgid "Sets block allocation policy: reuse or default."
-msgstr "Postavlja politiku alokacije blokova: reuse ili default."
+msgstr "Postavlja politiku dodjele blokova: reuse ili default."
 
 msgid "Enables age-threshold background garbage collection."
-msgstr "Omogućuje pozadinsko prikupljanje otpada prema pragu starosti."
+msgstr "Uključuje pozadinsko prikupljanje smeća prema pragu starosti."
 
 msgid "Turns background garbage collection on/off/sync."
-msgstr "Postavlja pozadinsko prikupljanje otpada: on/off/sync."
+msgstr "Postavlja pozadinsko prikupljanje smeća: on/off/sync."
 
 msgid "Allows cache_flush commands to be issued."
-msgstr "Dopušta izvršavanje cache_flush naredbi."
+msgstr "Dozvoljava izdavanje naredbi cache_flush."
 
 msgid "Skips cache_flush commands if storage guarantees order."
-msgstr "Preskače cache_flush naredbe ako pohrana jamči redoslijed."
+msgstr "Preskače naredbe cache_flush ako pohrana jamči redoslijed."
 
 msgid "Enables or disables checkpointing (disable/enable)."
-msgstr "Omogućuje ili onemogućuje kontrolne točke (disable/enable)."
+msgstr "Uključuje ili isključuje stvaranje kontrolnih točaka (disable/enable)."
 
 msgid "Merges concurrent checkpoint requests via a daemon."
-msgstr "Spaja istovremene zahtjeve za kontrolnim točkama putem demona."
+msgstr "Spaja istovremene zahtjeve za kontrolne točke putem demona."
 
 msgid "Disables checkpoint merge feature."
 msgstr "Onemogućuje značajku spajanja kontrolnih točaka."
@@ -808,105 +912,106 @@ msgid "Selects compression algorithm (lzo, lz4, zstd)."
 msgstr "Odabire algoritam kompresije (lzo, lz4, zstd)."
 
 msgid "Caches compressed blocks to improve read hit ratio."
-msgstr "Sprema komprimirane blokove u predmemoriju radi boljeg omjera pogodaka čitanja."
+msgstr "Predmemorizira komprimirane blokove radi poboljšanja omjera pogotka pri čitanju."
 
 msgid "Verifies checksums of compressed clusters."
-msgstr "Provjerava kontrolne zbrojeve komprimiranih klastera."
+msgstr "Provjerava checksumove komprimiranih klastera."
 
 msgid "Adds extensions whose files are auto-compressed."
-msgstr "Dodaje nastavke čije se datoteke automatski komprimiraju."
+msgstr "Dodaje proširenja datoteka koja se automatski komprimiraju."
 
 msgid "Sets compress cluster size in 4KB units."
-msgstr "Postavlja veličinu klastera za kompresiju u jedinicama od 4 KB."
+msgstr "Postavlja veličinu klastera kompresije u jedinicama od 4 KB."
 
 msgid "Sets compression mode: fs (auto) or user (manual)."
-msgstr "Postavlja način kompresije: fs (automatski) ili user (ručno)."
+msgstr "Postavlja način kompresije: fs (automatski) ili user (ručni)."
 
 msgid "Flushes data before checkpoint to persist regular files."
-msgstr "Isprazni podatke prije kontrolne točke kako bi se trajno sačuvale obične datoteke."
+msgstr "Očituje podatke prije kontrolne točke radi trajnog spremanja običnih datoteka."
 
 msgid "Ignores mkfs extension list for cold-file detection."
-msgstr "Zanemaruje popis nastavaka iz mkfs za otkrivanje hladnih datoteka."
+msgstr "Zanemaruje mkfs popis proširenja za otkrivanje hladnih datoteka."
 
 msgid "Disables the roll-forward recovery routine."
 msgstr "Onemogućuje rutinu oporavka roll-forward."
 
 msgid "Enables real-time discard/TRIM commands."
-msgstr "Omogućuje discard/TRIM naredbe u stvarnom vremenu."
+msgstr "Uključuje naredbe discard/TRIM u stvarnom vremenu."
 
 msgid "Disables real-time discard."
 msgstr "Onemogućuje discard u stvarnom vremenu."
 
 msgid "Sets discard alignment unit: block, segment, or section."
-msgstr "Postavlja jedinicu poravnanja odbacivanja: block, segment ili section."
+msgstr "Postavlja jedinicu poravnanja za discard: block, segment ili section."
 
 msgid "Sets behavior on critical errors: panic, continue, remount-ro."
-msgstr "Postavlja ponašanje pri kritičnim pogreškama: panic, continue, remount-ro."
+msgstr "Postavlja ponašanje kod kritičnih pogrešaka: panic, continue ili remount-ro."
 
 msgid "Enables the rb-tree extent cache (default)."
-msgstr "Omogućuje predmemoriju opsega rb-stabla (zadano)."
+msgstr "Omogućuje rb-tree predmemoriju razloma (zadano)."
 
 msgid "Disables the extent cache."
-msgstr "Onemogućuje predmemoriju opsega."
+msgstr "Onemogućuje predmemoriju razloma."
 
 msgid "Reduces mount time at the cost of normal performance."
 msgstr "Smanjuje vrijeme montiranja na štetu uobičajene izvedbe."
 
 msgid "Enables fault injection at a given rate (testing)."
-msgstr "Omogućuje ubrizgavanje pogrešaka zadanom stopom (testiranje)."
+msgstr "Omogućuje ubacivanje pogrešaka zadanim stopom (testiranje)."
 
 msgid "Configures which fault types to inject (testing)."
-msgstr "Konfigurira koje će se vrste pogrešaka ubrizgati (testiranje)."
+msgstr "Postavlja koje vrste pogrešaka ubaciti (testiranje)."
 
 msgid "Merges concurrent cache_flush commands."
-msgstr "Spaja istovremene cache_flush naredbe."
+msgstr "Spaja istovremene naredbe cache_flush."
 
 msgid "Sets fsync policy: posix, strict, or nobarrier."
-msgstr "Postavlja politiku fsync: posix, strict ili nobarrier."
+msgstr "Postavlja pravila za fsync: posix, strict ili nobarrier."
 
 msgid "Handles foreground GC in the background GC thread."
-msgstr "Obavlja prednje prikupljanje otpada (GC) u pozadinskoj GC niti."
+msgstr "Obrada GC-a u prvom planu u pozadinskoj GC-niti."
+
 msgid "Disables GC merge feature."
 msgstr "Onemogućuje značajku spajanja GC-a."
 
 msgid "Points to group journaled quota file."
-msgstr "Pokazuje na datoteku grupne kvote s vođenjem dnevnika."
+msgstr "Ukazuje na datoteku grupne kvote s dnevnikom."
 
 msgid "Enables group disk quota accounting."
-msgstr "Omogućuje evidenciju diskovne kvote za grupe."
+msgstr "Omogućuje evidenciju grupne disk kvote."
 
 msgid "Allocates segments heap-based from disk end; deprecated."
-msgstr "Dodjeljuje segmente na temelju gomile od kraja diska; zastarjelo."
+msgstr "Dodjeljuje segmente na temelju kupa od kraja diska; zastarjelo."
 
 msgid "Disables heap-based allocation; deprecated."
-msgstr "Onemogućuje dodjelu na temelju gomile; zastarjelo."
+msgstr "Onemogućuje dodjelu na temelju kupa; zastarjelo."
 
 msgid "Stores small file data inside the inode block."
-msgstr "Pohranjuje podatke malih datoteka unutar bloka inoda."
+msgstr "Pohranjuje podatke malih datoteka unutar inode bloka."
 
 msgid "Stores directory entries inside the inode block."
-msgstr "Pohranjuje unose direktorija unutar bloka inoda."
+msgstr "Pohranjuje unose direktorija unutar inode bloka."
 
 msgid "Disables the inline dentry feature."
-msgstr "Onemogućuje značajku inline unosa direktorija (dentry)."
+msgstr "Onemogućuje značajku inline direktorijskih unosa."
 
 msgid "Enables inline extended attributes."
-msgstr "Omogućuje inline proširene atribute."
+msgstr "Omogućuje inline proširena svojstva."
 
 msgid "Disables inline extended attributes."
-msgstr "Onemogućuje inline proširene atribute."
+msgstr "Onemogućuje inline proširena svojstva."
 
 msgid "Sets the inline xattr size."
-msgstr "Postavlja veličinu inline xattr-a."
+msgstr "Postavlja veličinu inline proširenih svojstava."
 
 msgid "Uses blk-crypto for inline encryption hardware."
-msgstr "Koristi blk-crypto za hardver inline šifriranja."
+msgstr "Koristi blk-crypto za hardver za inline šifriranje."
 
 msgid "Sets casefold directory lookup: perf, compat, or auto."
-msgstr "Postavlja pretragu direktorija uz zanemarivanje velikih i malih slova: perf, compat ili auto."
+msgstr "Postavlja pretraživanje direktorija s ignoriranjem veličine slova: perf, compat ili auto."
 
 msgid "Sets memory mode: normal or low."
-msgstr "Postavlja memorijski način rada: normal ili low."
+msgstr "Postavlja način rada memorije: normal ili low."
 
 msgid "Sets block allocation mode: adaptive or lfs."
 msgstr "Postavlja način dodjele blokova: adaptive ili lfs."
@@ -918,28 +1023,28 @@ msgid "Disables the inline data feature."
 msgstr "Onemogućuje značajku inline podataka."
 
 msgid "Disables roll-forward recovery and mounts read-only."
-msgstr "Onemogućuje roll-forward oporavak i montira datotečni sustav samo za čitanje."
+msgstr "Onemogućuje oporavu roll-forward i montira samo za čitanje."
 
 msgid "Disables user extended attributes."
-msgstr "Onemogućuje korisničke proširene atribute."
+msgstr "Onemogućuje korisnička proširena svojstva."
 
 msgid "Disables all plain disk quota options."
-msgstr "Onemogućuje sve obične opcije diskovne kvote."
+msgstr "Onemogućuje sve obične opcije disk kvote."
 
 msgid "Points to project journaled quota file."
-msgstr "Pokazuje na datoteku projektne kvote s vođenjem dnevnika."
+msgstr "Ukazuje na datoteku projektnih kvota s dnevnikom."
 
 msgid "Enables project quota accounting."
-msgstr "Omogućuje evidenciju projektne kvote."
+msgstr "Omogućuje evidenciju projektnih kvota."
 
 msgid "Enables plain user disk quota accounting."
-msgstr "Omogućuje običnu evidenciju diskovne kvote za korisnike."
+msgstr "Omogućuje evidenciju obične korisničke disk kvote."
 
 msgid "Sets reserved nodes for privileged-user allocation."
-msgstr "Postavlja broj rezerviranih čvorova za dodjelu povlaštenim korisnicima."
+msgstr "Postavlja rezervirane čvorove za dodjelu povlaštenog korisnika."
 
 msgid "Sets reserved space (%) for privileged-user allocation."
-msgstr "Postavlja rezervirani prostor (%) za dodjelu povlaštenim korisnicima."
+msgstr "Postavlja rezervirani prostor (%) za dodjelu povlaštenog korisnika."
 
 msgid "Group ID with access to reserved blocks and nodes."
 msgstr "ID grupe s pristupom rezerviranim blokovima i čvorovima."
@@ -948,449 +1053,448 @@ msgid "User ID with access to reserved blocks and nodes."
 msgstr "ID korisnika s pristupom rezerviranim blokovima i čvorovima."
 
 msgid "Enables dummy fscrypt context for testing."
-msgstr "Omogućuje lažni (dummy) fscrypt kontekst za testiranje."
+msgstr "Omogućuje lažni fscrypt kontekst za testiranje."
 
 msgid "Points to user journaled quota file."
-msgstr "Pokazuje na datoteku korisničke kvote s vođenjem dnevnika."
+msgstr "Ukazuje na datoteku korisničkih kvota s dnevnikom."
 
 msgid "Enables user disk quota accounting."
-msgstr "Omogućuje evidenciju diskovne kvote za korisnike."
+msgstr "Omogućuje evidenciju korisničke disk kvote."
 
 msgid "Enables POSIX Access Control List support."
-msgstr "Omogućuje podršku za POSIX popise kontrole pristupa (ACL)."
+msgstr "Omogućuje podršku za POSIX liste za upravljanje pristupom."
 
 msgid "Enables TRIM support for SSD delete performance."
-msgstr "Omogućuje TRIM podršku za bolje performanse brisanja na SSD-u."
+msgstr "Omogućuje TRIM podršku za izvedbu brisanja na SSD-ovima."
 
 msgid "Permission mask for directories."
-msgstr "Maska dozvola za direktorije."
+msgstr "Maska dopuštenja za direktorije."
 
 msgid "Permission mask for files."
-msgstr "Maska dozvola za datoteke."
+msgstr "Maska dopuštenja za datoteke."
 
 msgid "Forces mounting even if the volume is dirty (not recommended)."
-msgstr "Prisiljava montiranje čak i ako je volumen „prljav” (nije preporučeno)."
+msgstr "Nameće montiranje i ako je volumen u neurednom stanju (nepreporučeno)."
 
 msgid "Default group ID for created files and directories."
-msgstr "Zadani ID grupe za stvorene datoteke i direktorije."
+msgstr "Zadani ID grupe za kreirane datoteke i direktorije."
 
 msgid "Sets the HIDDEN attribute for names starting with a dot."
-msgstr "Postavlja atribut HIDDEN za nazive koji počinju točkom."
+msgstr "Postavlja atribut HIDDEN za imena koja počinju točkom."
 
 msgid "Charset used to translate path strings to Unicode."
-msgstr "Skup znakova koji se koristi za pretvaranje nizova putanja u Unicode."
+msgstr "Skup znakova za pretvorbu putanja u Unicode."
 
 msgid "Hides files with the Windows HIDDEN attribute."
-msgstr "Skriva datoteke s Windows atributom HIDDEN."
+msgstr "Sakriva datoteke s Windows atributom HIDDEN."
 
 msgid "Preallocates space to reduce write fragmentation."
-msgstr "Predodjeljuje prostor radi smanjenja fragmentacije pri zapisivanju."
+msgstr "Predodređuje prostor kako bi se smanjila fragmentacija pri zapisivanju."
 
 msgid "Shows all NTFS meta-files (system files)."
-msgstr "Prikazuje sve NTFS meta-datoteke (sistemske datoteke)."
+msgstr "Prikazuje sve NTFS meta-datoteke (sustavne datoteke)."
 
 msgid "Creates new files as sparse."
-msgstr "Stvara nove datoteke kao rijetke (sparse)."
+msgstr "Kreira nove datoteke kao retke datoteke."
 
 msgid "Marks files with the SYSTEM attribute as immutable."
-msgstr "Označava datoteke sa SYSTEM atributom kao nepromjenjive."
+msgstr "Označava datoteke s atributom SYSTEM kao nepromjenjive."
 
 msgid "Default user ID for created files and directories."
-msgstr "Zadani ID korisnika za stvorene datoteke i direktorije."
+msgstr "Zadano korisničko ID za kreirane datoteke i direktorije."
 
 msgid "Default permission mask for files and directories."
-msgstr "Zadana maska dozvola za datoteke i direktorije."
+msgstr "Zadana maska ovlasti za datoteke i direktorije."
 
 msgid "Rejects filenames not allowed by Windows."
-msgstr "Odbacuje nazive datoteka koje Windows ne dopušta."
+msgstr "Odbija imena datoteka koja Windows ne dopušta."
 
 msgid "Relaxes utime() permission checks for changing timestamps."
-msgstr "Popušta provjere dozvola utime() za promjenu vremenskih oznaka."
+msgstr "Opušta provjere ovlasti funkcije utime() pri promjeni vremenskih žigova."
 
 msgid "Sets the block size; obsolete."
-msgstr "Postavlja veličinu bloka; zastarjelo."
+msgstr "Postavlja veličinu bloka. Zastarjelo."
 
 msgid "Sets case-sensitivity checking (strict, relaxed, or normal)."
-msgstr "Postavlja provjeru osjetljivosti na velika i mala slova (strict, relaxed ili normal)."
+msgstr "Postavlja provjeru osjetljivosti na veličinu slova (strict, relaxed ili normal)."
 
 msgid "Sets codepage for converting to shortname characters."
-msgstr "Postavlja kodnu stranicu za pretvorbu u znakove kratkih naziva."
+msgstr "Postavlja kodnu stranicu za pretvorbu u znakove kratkih imena."
 
 msgid "Obsolete; may fail or be ignored."
-msgstr "Zastarjelo; može zakazati ili biti zanemareno."
+msgstr "Zastarjelo. Moguće je da ne uspije ili da se zanemari."
 
 msgid "Obsolete; forces use of a CVF compressed-volume module."
-msgstr "Zastarjelo; prisiljava upotrebu CVF modula za komprimirane volumene."
+msgstr "Zastarjelo. Prisiljava uporabu modula komprimiranog volumena CVF."
 
 msgid "Obsolete; passes an option to the CVF module."
-msgstr "Zastarjelo; prosljeđuje opciju CVF modulu."
+msgstr "Zastarjelo. Prosljeđuje opciju modulu CVF."
 
 msgid "Enables debug output; unused by current implementation."
-msgstr "Omogućuje debug ispis; trenutačna implementacija ga ne koristi."
+msgstr "Uključuje ispitni izlaz. Trenutna implementacija ga ne koristi."
 
 msgid "Uses DOS 1.x BIOS Parameter Block defaults for small floppies."
-msgstr "Koristi zadane vrijednosti DOS 1.x BIOS bloka parametara (BPB) za male diskete."
+msgstr "Koristi zadane postavke BIOS parametarskog bloka DOS-a 1.x za male diskete."
 
 msgid "Forces DOS dot conventions on filenames (obsolete)."
-msgstr "Prisiljava DOS konvencije točaka na nazivima datoteka (zastarjelo)."
+msgstr "Prisiljava DOS konvencije s točkama u imenima datoteka (zastarjelo)."
 
 msgid "Forces Unix-style names without DOS dots (obsolete)."
-msgstr "Prisiljava nazive u Unix stilu bez DOS točaka (zastarjelo)."
+msgstr "Prisiljava imena u Unix stilu bez DOS točaka (zastarjelo)."
 
 msgid "Allows dots in 8.3 short names (obsolete)."
-msgstr "Dopušta točke u kratkim 8.3 nazivima (zastarjelo)."
+msgstr "Dopušta točke u kratkim imenima 8.3 (zastarjelo)."
 
 msgid "Sets FAT behavior on errors: panic, continue, or remount-ro."
 msgstr "Postavlja ponašanje FAT-a pri pogreškama: panic, continue ili remount-ro."
 
 msgid "Forces FAT type 12, 16, or 32, overriding auto-detection."
-msgstr "Prisiljava FAT vrstu 12, 16 ili 32, nadjačavajući automatsko otkrivanje."
+msgstr "Prisiljava tip FAT-a 12, 16 ili 32, nadjačavajući automatsko otkrivanje."
 
 msgid "Flushes data to disk earlier than normal."
-msgstr "Ispire podatke na disk ranije nego što je uobičajeno."
+msgstr "Podatke na disk zapisuje ranije nego inače."
 
 msgid "Permission mask for regular files."
-msgstr "Maska dozvola za obične datoteke."
+msgstr "Maska ovlasti za obične datoteke."
 
 msgid "Group ID applied to all files."
-msgstr "ID grupe primijenjen na sve datoteke."
+msgstr "ID skupine koji se primjenjuje na sve datoteke."
 
 msgid "Charset converting filenames between disk and Unicode."
-msgstr "Skup znakova koji pretvara nazive datoteka između diska i Unicoda."
+msgstr "Znakovni skup za pretvorbu imena datoteka između diska i Unicodea."
 
 msgid "Enables NFS export support (stale_rw or nostale_ro)."
-msgstr "Omogućuje podršku za NFS izvoz (stale_rw ili nostale_ro)."
+msgstr "Uključuje podršku za NFS izvoz (stale_rw ili nostale_ro)."
 
 msgid "Deprecated; use shortname=win95 instead."
-msgstr "Zastarjelo; umjesto toga koristite shortname=win95."
+msgstr "Zastarjelo. Umjesto toga koristite shortname=win95."
 
 msgid "Skips the ~number tail in 8.3 aliases when possible."
-msgstr "Preskače nastavak ~broj u 8.3 aliasima kad god je to moguće."
+msgstr "Preskače završni dio ~broj u 8.3 pseudonimima kada je to moguće."
 
 msgid "Obsolete; allowed files differing only in case."
-msgstr "Zastarjelo; dopuštao je datoteke koje se razlikuju samo po velikim i malim slovima."
+msgstr "Zastarjelo. Dopuštalo datoteke koje se razlikuju samo u veličini slova."
 
 msgid "Suppresses warning messages and chmod/chown errors."
-msgstr "Potiskuje poruke upozorenja i pogreške chmod/chown."
+msgstr "Potiskuje upozoriteljske poruke i pogreške chmod/chown."
 
 msgid "Treats the FAT read-only attribute as read-only for directories."
-msgstr "Tretira FAT atribut samo za čitanje kod direktorija kao stvarno samo za čitanje."
+msgstr "Atribut samo za čitanje u FAT-u tretira kao status samo za čitanje za direktorije."
 
 msgid "Sets 8.3 short-name display/create mode (lower, win95, winnt, mixed)."
-msgstr "Postavlja način prikaza/stvaranja kratkih 8.3 naziva (lower, win95, winnt, mixed)."
+msgstr "Postavlja način prikaza i kreiranja kratkih imena 8.3 (lower, win95, winnt, mixed)."
 
 msgid "Allows execute permission only for .EXE, .COM, or .BAT files."
-msgstr "Dopušta dozvolu izvršavanja samo za .EXE, .COM ili .BAT datoteke."
+msgstr "Dopušta ovlast za izvršavanje samo za datoteke .EXE, .COM i .BAT."
 
 msgid "Treats the FAT system attribute as the immutable flag."
-msgstr "Tretira FAT sistemski atribut kao zastavicu nepromjenjivosti."
+msgstr "Atribut system u FAT-u tretira kao oznaku nepromjenjivosti."
 
 msgid "Sets minute offset converting FAT local time to UTC."
-msgstr "Postavlja pomak u minutama za pretvorbu FAT lokalnog vremena u UTC."
+msgstr "Postavlja pomak u minutama za pretvorbu lokalnog vremena FAT-a u UTC."
 
 msgid "Interprets timestamps as UTC instead of local time."
-msgstr "Tumači vremenske oznake kao UTC umjesto lokalnog vremena."
+msgstr "Tumači vremenske žigove kao UTC umjesto lokalnog vremena."
 
 msgid "Owner user ID applied to all files."
-msgstr "ID korisnika-vlasnika primijenjen na sve datoteke."
+msgstr "Korisničko ID vlasnika koje se primjenjuje na sve datoteke."
 
 msgid "Permission mask for files and directories."
-msgstr "Maska dozvola za datoteke i direktorije."
+msgstr "Maska ovlasti za datoteke i direktorije."
 
 msgid "Escapes unhandled Unicode characters as :XXXX sequences."
-msgstr "Kodira neobrađene Unicode znakove kao :XXXX nizove."
+msgstr "Zamjenjuje neobrađene Unicode znakove nizovima :XXXX."
 
 msgid "Uses the free-cluster count stored in FSINFO."
-msgstr "Koristi broj slobodnih klastera spremljen u FSINFO."
+msgstr "Koristi broj slobodnih skupina spremljen u FSINFO."
 
 msgid "Use UTF-8 to encode long file names."
-msgstr "Koristi UTF-8 za kodiranje dugih naziva datoteka."
+msgstr "Koristi UTF-8 za kodiranje dugih imena datoteka."
 
 msgid "Deprecated; accepted but has no effect."
-msgstr "Zastarjelo; prihvaćeno, ali nema učinka."
+msgstr "Zastarjelo. Prihvaća se, ali nema učinka."
 
 msgid "Sets behavior on errors: panic, continue, or remount-ro."
 msgstr "Postavlja ponašanje pri pogreškama: panic, continue ili remount-ro."
 
 msgid "Default group ID applied to all files."
-msgstr "Zadani ID grupe primijenjen na sve datoteke."
+msgstr "Zadano ID skupine koje se primjenjuje na sve datoteke."
 
 msgid "Keeps trailing periods in path components and filenames."
-msgstr "Zadržava točke na kraju komponenti putanje i naziva datoteka."
+msgstr "Zadržava završne točke u komponentama staze i imenima datoteka."
 
 msgid "Uses the system timezone for timestamps lacking a valid offset."
-msgstr "Koristi vremensku zonu sustava za vremenske oznake bez valjanog pomaka."
+msgstr "Koristi sustavsku vremensku zonu za vremenske žigove bez valjanog pomaka."
 
 msgid "Sets minute offset converting timestamps to UTC."
-msgstr "Postavlja pomak u minutama za pretvorbu vremenskih oznaka u UTC."
+msgstr "Postavlja pomak u minutama za pretvorbu vremenskih žigova u UTC."
 
 msgid "Default user ID applied to all files."
-msgstr "Zadani ID korisnika primijenjen na sve datoteke."
+msgstr "Zadano korisničko ID koje se primjenjuje na sve datoteke."
 
 msgid "Creates directories with zero size, allocating no cluster."
-msgstr "Stvara direktorije nulte veličine bez dodjele klastera."
+msgstr "Kreira direktorije veličine nula, bez dodjele skupine."
 
 msgid "Enables swap discard; supports discard=once or discard=pages."
-msgstr "Omogućuje discard za swap; podržava discard=once ili discard=pages."
+msgstr "Uključuje discard za swap. Podržava discard=once ili discard=pages."
 
 msgid "Sets the swap device priority (0-32767)."
 msgstr "Postavlja prioritet swap uređaja (0-32767)."
 
 msgid "Maximum seconds to cache directory attributes."
-msgstr "Najviše sekundi predmemoriranja atributa direktorija."
+msgstr "Maksimalni broj sekundi za predmemoriziranje atributa direktorija."
 
 msgid "Maximum seconds to cache regular file attributes."
-msgstr "Najviše sekundi predmemoriranja atributa običnih datoteka."
+msgstr "Maksimalni broj sekundi za predmemoriziranje atributa redovnih datoteka."
 
 msgid "Seconds to cache file/directory attributes before re-checking."
-msgstr "Sekunde predmemoriranja atributa datoteka/direktorija prije ponovne provjere."
+msgstr "Broj sekundi za predmemoriziranje atributa datoteke/direktorija prije ponovne provjere."
 
 msgid "Sets the destination IP address of the server."
 msgstr "Postavlja odredišnu IP adresu poslužitelja."
 
 msgid "Members of this group open files with backup intent."
-msgstr "Članovi ove grupe otvaraju datoteke s namjerom sigurnosnog kopiranja."
+msgstr "Članovi ove skupine otvaraju datoteke s namjerom sigurnosnog kopiranja."
 
 msgid "This user opens files with backup intent."
 msgstr "Ovaj korisnik otvara datoteke s namjerom sigurnosnog kopiranja."
 
 msgid "Overrides the default block size reported on SMB3 files."
-msgstr "Nadjačava zadanu veličinu bloka koja se prijavljuje za SMB3 datoteke."
+msgstr "Previđa zadanu veličinu bloka izvještavanu za SMB3 datoteke."
 
 msgid "Cache mode for file data: none, strict or loose."
-msgstr "Način predmemoriranja podataka datoteka: none, strict ili loose."
+msgstr "Način predmemorije podataka datoteka: none, strict ili loose."
 
 msgid "Maps CIFS/NTFS ACLs and SIDs to/from Linux permissions."
-msgstr "Preslikava CIFS/NTFS ACL-ove i SID-ove u/iz Linux dozvola."
+msgstr "Preslikava CIFS/NTFS ACL-ove i SID-ove u/iz Linux dovole."
 
 msgid "Max seconds to defer the final SMB3 file close."
-msgstr "Najviše sekundi odgode konačnog zatvaranja SMB3 datoteke."
+msgstr "Maksimalni broj sekundi za odgađanje završnog zatvaranja SMB3 datoteke."
 
 msgid "Enables experimental SMB 3.1.1 message compression."
-msgstr "Omogućuje eksperimentalnu kompresiju SMB 3.1.1 poruka."
+msgstr "Omogućuje eksperimentalnu kompresiju poruka SMB 3.1.1."
 
 msgid "Reads username/password from a credentials file."
-msgstr "Čita korisničko ime/lozinku iz datoteke s vjerodajnicama."
+msgstr "Čita korisničko ime/lozinku iz datoteke vjerodajnica."
 
 msgid "Uid owning the credentials cache (useful with krb5)."
-msgstr "Uid koji posjeduje predmemoriju vjerodajnica (korisno uz krb5)."
+msgstr "UID vlasnika predmemorije vjerodajnica (koristan s krb5)."
 
 msgid "Overrides the default mode for directories."
-msgstr "Nadjačava zadani mod dozvola za direktorije."
+msgstr "Previđa zadane ovlasti za direktorije."
 
 msgid "Sets the user's domain (workgroup)."
-msgstr "Postavlja domenu (radnu grupu) korisnika."
+msgstr "Postavlja domenu korisnika (radnu skupinu)."
 
 msgid "Auto-guesses the server domain from the NTLM challenge."
-msgstr "Automatski pogađa domenu poslužitelja iz NTLM izazova."
+msgstr "Automatski nagađa domenu poslužitelja na temelju NTLM izazova."
 
 msgid "Keeps unsupported permissions in memory only; unreliable."
-msgstr "Nepodržane dozvole čuva samo u memoriji; nepouzdano."
+msgstr "Nepridržane ovlasti zadržavaju se samo u memoriji; nepouzdano."
 
 msgid "Seconds between keepalive echo requests."
-msgstr "Sekunde između keepalive echo zahtjeva."
+msgstr "Sekunde između keepalive odjek zahtjeva."
 
 msgid "Min encrypted-read size before offloading decryption."
 msgstr "Minimalna veličina šifriranog čitanja prije prebacivanja dešifriranja."
 
 msgid "Overrides the default mode for regular files."
-msgstr "Nadjačava zadani mod dozvola za obične datoteke."
+msgstr "Previđa zadane ovlasti za redovne datoteke."
 
 msgid "Ignores server gid and always uses the gid value."
-msgstr "Zanemaruje gid poslužitelja i uvijek koristi vrijednost gid."
+msgstr "Zanemaruje GID poslužitelja i uvijek koristi vrijednost GID-a."
 
 msgid "Ignores server uid and always uses the uid value."
-msgstr "Zanemaruje uid poslužitelja i uvijek koristi vrijednost uid."
+msgstr "Zanemaruje UID poslužitelja i uvijek koristi vrijednost UID-a."
 
 msgid "Always uses CIFS-style mandatory locks."
-msgstr "Uvijek koristi obvezno zaključavanje u CIFS stilu."
+msgstr "Uvijek koristi obavezne zaključaje u CIFS stilu."
 
 msgid "Enables local disk caching via FS-Cache."
-msgstr "Omogućuje lokalno predmemoriranje na disk putem FS-Cachea."
+msgstr "Omogućuje lokalno predmemoriziranje na disk putem FS-Cachea."
 
 msgid "Default gid owning files when the server gives none."
-msgstr "Zadani gid za datoteke kada poslužitelj ne navede vlasnika."
+msgstr "Zadani GID vlasnika datoteka kada poslužitelj ne navede GID."
 
 msgid "Don't prompt for a password; mount as guest."
-msgstr "Ne traži unos lozinke; montira kao gost."
+msgstr "Ne traži lozinku; montira kao gost."
 
 msgid "Keeps the share root directory handle cached."
-msgstr "Zadržava ručicu korijenskog direktorija dijeljenog resursa u predmemoriji."
+msgstr "Zadržava u predmemoriji ručku korijenog direktorija udjela."
 
 msgid "Ms the server reserves handles after failover."
-msgstr "Milisekundi tijekom kojih poslužitelj zadržava ručice nakon failovera."
+msgstr "Milisekundi koje poslužitelj rezervira za ručke nakon failovera."
 
 msgid "Hangs when the server crashes instead of erroring."
-msgstr "Zaglavi se kada se poslužitelj sruši umjesto da prijavi pogrešku."
+msgstr "Zadrijepi se kad poslužitelj padne umjesto da vrati grešku."
 
 msgid "Extracts uid/gid from a special SID instead of mapping."
-msgstr "Izvlači uid/gid iz posebnog SID-a umjesto preslikavanja."
+msgstr "Izvlači UID/GID iz posebnog SID-a umjesto preslikavanja."
 
 msgid "Synonym for nocase; case-insensitive matching."
-msgstr "Sinonim za nocase; podudaranje bez razlikovanja velikih i malih slova."
+msgstr "Sinonim za nocase; podudaranje bez razlikovanja velike i male slova."
 
 msgid "Allow interrupts while hung; currently unimplemented."
-msgstr "Dopušta prekide tijekom zaglavljenosti; trenutačno nije implementirano."
+msgstr "Dopušta prekid dok je sustav zadrijepio; trenutno nije implementirano."
 
 msgid "Charset for converting path names to/from Unicode."
-msgstr "Skup znakova za pretvorbu naziva putanja u/iz Unicoda."
+msgstr "Skup znakova za pretvorbu imena putanja u/iz Unicode."
 
 msgid "Enables Unix Extensions (synonym for posix/unix)."
 msgstr "Omogućuje Unix proširenja (sinonim za posix/unix)."
 
 msgid "Checks cached leases locally instead of querying server."
-msgstr "Provjerava predmemorirane najmove (lease) lokalno umjesto slanja upita poslužitelju."
+msgstr "Provjerava predmemorijane lease-ove lokalno umjesto upita poslužitelja."
 
 msgid "Translates reserved Windows filename characters."
-msgstr "Prevodi rezervirane Windows znakove u nazivima datoteka."
+msgstr "Pretvara rezervirane znakove u Windows imenima datoteka."
 
 msgid "Maps reserved characters per Microsoft Services For Mac."
-msgstr "Preslikava rezervirane znakove prema shemi Microsoft Services For Mac."
+msgstr "Preslikava rezervirane znakove prema Microsoft Services For Mac."
 
 msgid "Maximum number of cached directories per share."
-msgstr "Najveći broj predmemoriranih direktorija po dijeljenom resursu."
+msgstr "Maksimalan broj predmemorijanih direktorija po udjelu."
 
 msgid "Number of multichannel transport connections (max 16)."
-msgstr "Broj transportnih veza za višekanalni rad (najviše 16)."
+msgstr "Broj višekanalnih prijenosnih veza (najviše 16)."
 
 msgid "Maximum SMB2 credits the client can hold."
-msgstr "Najveći broj SMB2 kredita koje klijent može držati."
+msgstr "Maksimalan broj SMB2 kredita koje klijent može zadržati."
 
 msgid "Enables Minshall+French symlink support."
-msgstr "Omogućuje podršku za simboličke poveznice Minshall+French."
+msgstr "Omogućuje podršku za Minshall+French simboličke veze."
 
 msgid "Uses multiple transport connections for one session."
-msgstr "Koristi više transportnih veza za jednu sesiju."
+msgstr "Koristi više prijenosnih veza za jednu sesiju."
 
 msgid "Maps each user's access to individual credentials."
-msgstr "Preslikava pristup svakog korisnika na zasebne vjerodajnice."
+msgstr "Preslikava pristup svakog korisnika na pojedinačne vjerodajnice."
 
 msgid "Client netbios name used for port 139 connections."
-msgstr "NetBIOS naziv klijenta koji se koristi za veze na port 139."
+msgstr "NetBIOS ime klijenta koje se koristi za veze na priključku 139."
 
 msgid "Disables POSIX ACL operations."
 msgstr "Onemogućuje POSIX ACL operacije."
 
 msgid "Uses fixed kernel socket buffer sizes."
-msgstr "Koristi fiksne veličine međuspremnika utičnica jezgre."
+msgstr "Koristi fiksne veličine bufera soketa jezgre."
 
 msgid "Don't send byte-range lock requests to the server."
-msgstr "Ne šalje poslužitelju zahtjeve za zaključavanjem raspona bajtova."
+msgstr "Ne šalje zahtjeve za zaključavanje raspona bajtova na poslužitelj."
 
 msgid "Requests case-insensitive path name matching."
-msgstr "Zahtijeva podudaranje naziva putanja bez razlikovanja velikih i malih slova."
+msgstr "Traži podudaranje imena putanja bez razlikovanja velike i male slova."
 
 msgid "Don't follow Distributed FileSystem referrals."
-msgstr "Ne slijedi uputnice (referrals) distribuiranog datotečnog sustava."
+msgstr "Ne prati preporuke distribuiranog datotečnog sustava."
 
 msgid "Disables caching of the share root handle."
-msgstr "Onemogućuje predmemoriranje ručice korijena dijeljenog resursa."
+msgstr "Onemogućuje predmemorizaciju ručke korijena podjele."
 
 msgid "Don't allow interrupts; currently unimplemented."
-msgstr "Ne dopušta prekide; trenutačno nije implementirano."
+msgstr "Ne dopušta prekid; trenutačno nije implementirano."
+
 msgid "Don't request leases/oplocks when opening files."
-msgstr "Ne zahtijeva lease/oplock zaključavanja pri otvaranju datoteka."
+msgstr "Ne traži najmove ili oplocks pri otvaranju datoteka."
 
 msgid "Disables Unix Extensions (synonym for noposix)."
 msgstr "Onemogućuje Unix proširenja (sinonim za noposix)."
 
 msgid "Don't translate reserved filename characters."
-msgstr "Ne prevodi rezervirane znakove u nazivima datoteka."
+msgstr "Ne prevodi rezervirane znakove naziva datoteka."
 
 msgid "Disables client-side permission checking."
-msgstr "Onemogućuje provjeru dozvola na strani klijenta."
+msgstr "Onemogućuje provjeru dopuštenja na strani klijenta."
 
 msgid "Disables persistent handles."
-msgstr "Onemogućuje trajne handle-ove."
+msgstr "Onemogućuje trajne ručke."
 
 msgid "Disables Unix Extensions for this mount."
 msgstr "Onemogućuje Unix proširenja za ovo montiranje."
 
 msgid "Don't negotiate POSIX-style pathnames."
-msgstr "Ne dogovara putanje datoteka u POSIX stilu."
+msgstr "Ne pregovara o putanjama u stilu POSIX."
 
 msgid "Disables resilient handles."
-msgstr "Onemogućuje otporne handle-ove."
+msgstr "Onemogućuje otporne ručke."
 
 msgid "Client generates inode numbers locally."
 msgstr "Klijent lokalno generira brojeve inoda."
 
 msgid "Lets the server set uid/gid on new files."
-msgstr "Omogućuje poslužitelju postavljanje uid/gid na novim datotekama."
+msgstr "Dopušta poslužitelju da postavi uid/gid novim datotekama."
 
 msgid "Never reuses existing sockets for new mounts."
-msgstr "Nikada ne koristi postojeće utičnice za nova montiranja."
+msgstr "Nikada ne ponovno koristi postojeće utičnice za nova montiranja."
 
 msgid "Don't flush to the server on fsync()."
-msgstr "Ne ispire podatke na poslužitelj pri fsync()."
+msgstr "Ne odvodi na poslužitelj pri pozivu fsync()."
 
 msgid "Disables getfattr/setfattr xattr operations."
-msgstr "Onemogućuje xattr operacije getfattr/setfattr."
+msgstr "Onemogućuje xattr operacije getfattr i setfattr."
 
 msgid "Specifies the CIFS password (alias of password)."
 msgstr "Određuje CIFS lozinku (alias za password)."
 
 msgid "Specifies an alternate password for password rotation."
-msgstr "Određuje zamjensku lozinku za rotaciju lozinki."
+msgstr "Određuje alternativnu lozinku za rotaciju lozinki."
 
 msgid "Specifies the CIFS password."
 msgstr "Određuje CIFS lozinku."
 
 msgid "Enables client-side permission checking (default)."
-msgstr "Omogućuje provjeru dozvola na strani klijenta (zadano)."
+msgstr "Omogućuje provjeru dopuštenja na strani klijenta (zadano)."
 
 msgid "Keeps opened files across reconnections."
-msgstr "Zadržava otvorene datoteke tijekom ponovnog povezivanja."
+msgstr "Zadržava otvorene datoteke pri ponovnom povezivanju."
 
 msgid "Port to connect to the CIFS server."
-msgstr "Ulaz za povezivanje s CIFS poslužiteljem."
+msgstr "Priključak za povezivanje s CIFS poslužiteljem."
 
 msgid "Enables Unix Extensions for this mount."
 msgstr "Omogućuje Unix proširenja za ovo montiranje."
 
 msgid "Allows POSIX-style pathnames (inverse of noposixpaths)."
-msgstr "Dopušta putanje u POSIX stilu (obrnuto od noposixpaths)."
+msgstr "Dopušta putanje u stilu POSIX (suprotnost od noposixpaths)."
 
 msgid "Uses SMB Direct over an RDMA adapter."
-msgstr "Koristi SMB Direct preko RDMA adaptera."
+msgstr "Koristi SMB Direct preko RDMA prilagođivača."
 
 msgid "Maximum bytes requested in each read request."
-msgstr "Najviše bajtova zatraženo u svakom zahtjevu za čitanje."
+msgstr "Najveći broj bajtova zatražen u svakom zahtjevu za čitanje."
 
 msgid "Forwards the opening pid on read/write operations."
-msgstr "Prosljeđuje pid otvaranja pri operacijama čitanja/pisanja."
+msgstr "Proslijeđuje PID otvaranja pri operacijama čitanja i pisanja."
 
 msgid "Encrypts traffic at the SMB layer (SMB3+)."
-msgstr "Šifrira promet na SMB sloju (SMB3+)."
+msgstr "Uvodi šifriranje prometa na razini SMB (SMB3+)."
 
-msgid ""
-"Sets the session security mode (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, "
-"ntlmv2i, ntlmssp, ntlmsspi)."
-msgstr "Postavlja sigurnosni način sesije (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+msgid "Sets the session security mode (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+msgstr "Postavlja način sigurnosti sesije (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
 
 msgid "Server netbios name for old port 139 servers."
-msgstr "NetBIOS naziv poslužitelja za stare poslužitelje na ulazu 139."
+msgstr "NetBIOS ime poslužitelja za starije poslužitelje koji koriste priključak 139."
 
 msgid "Uses inode numbers returned by the server."
 msgstr "Koristi brojeve inoda koje vraća poslužitelj."
 
 msgid "Sets uid/gid of processes on newly created files."
-msgstr "Postavlja uid/gid procesa za novostvorene datoteke."
+msgstr "Postavlja uid/gid procesa na novo stvorenim datotekama."
 
 msgid "Creates device/fifo files in Services for Unix format."
 msgstr "Stvara datoteke uređaja/fifo u formatu Services for Unix."
 
 msgid "Ignores unrecognized mount options following it."
-msgstr "Zanemaruje neprepoznate opcije montiranja koje slijede nakon njega."
+msgstr "Zanemaruje neprepoznate opcije montiranja koje slijede iza njega."
 
 msgid "Mounts a specific snapshot of the remote share."
-msgstr "Montira određenu snimku udaljenog dijeljenog resursa."
+msgstr "Montira određeni snimak udaljene podjele."
 
 msgid "Returns errors instead of hanging when server crashes."
-msgstr "Vraća pogreške umjesto zaglavljenja kada se poslužitelj sruši."
+msgstr "Vraća greške umjesto zaglavljivanja pri padu poslužitelja."
 
 msgid "Default uid owning files when the server gives none."
-msgstr "Zadani uid vlasnik datoteka kada ga poslužitelj ne dostavi."
+msgstr "Zadani uid vlasništva nad datotekama kada poslužitelj ne zada nijedan."
 
 msgid "Enables Unix Extensions (synonym for posix)."
 msgstr "Omogućuje Unix proširenja (sinonim za posix)."
@@ -1402,217 +1506,217 @@ msgid "Specifies the SMB username (alias of username)."
 msgstr "Određuje SMB korisničko ime (alias za username)."
 
 msgid "Specifies the SMB username to connect as."
-msgstr "Određuje SMB korisničko ime pod kojim se vrši povezivanje."
+msgstr "Određuje SMB korisničko ime pod kojim se povezuje."
 
 msgid "SMB protocol version (e.g. 1.0, 2.1, 3.1.1)."
-msgstr "Inačica SMB protokola (npr. 1.0, 2.1, 3.1.1)."
+msgstr "Verzija SMB protokola (npr. 1.0, 2.1, 3.1.1)."
 
 msgid "Maximum bytes sent in each write request."
-msgstr "Najviše bajtova poslano u svakom zahtjevu za pisanje."
+msgstr "Najveći broj bajtova poslan u svakom zahtjevu za pisanje."
 
 msgid "Enables attribute caching (default)."
-msgstr "Omogućuje predmemoriranje atributa (zadano)."
+msgstr "Omogućuje predmemorizaciju atributa (zadano)."
 
 msgid "Disables attribute caching; makes writes synchronous."
-msgstr "Onemogućuje predmemoriranje atributa; čini pisanja sinkronima."
+msgstr "Onemogućuje predmemorizaciju atributa; pisanje postaje sinkrono."
 
 msgid "Max seconds directory attributes are cached."
-msgstr "Maksimalan broj sekundi predmemoriranja atributa direktorija."
+msgstr "Najveći broj sekundi predmemorizacije atributa direktorija."
 
 msgid "Min seconds directory attributes are cached."
-msgstr "Minimalan broj sekundi predmemoriranja atributa direktorija."
+msgstr "Najmanji broj sekundi predmemorizacije atributa direktorija."
 
 msgid "Max seconds regular file attributes are cached."
-msgstr "Maksimalan broj sekundi predmemoriranja atributa običnih datoteka."
+msgstr "Najveći broj sekundi predmemorizacije atributa obične datoteke."
 
 msgid "Min seconds regular file attributes are cached."
-msgstr "Minimalan broj sekundi predmemoriranja atributa običnih datoteka."
+msgstr "Najmanji broj sekundi predmemorizacije atributa obične datoteke."
 
 msgid "Sets all attribute-cache timeouts to this value."
-msgstr "Postavlja sva vremenska ograničenja predmemorije atributa na ovu vrijednost."
+msgstr "Postavlja sva istjecanja vremena predmemorizacije atributa na ovu vrijednost."
 
 msgid "Enables the NFSACL sideband protocol."
-msgstr "Omogućuje NFSACL protokol bočnog kanala."
+msgstr "Omogućuje NFSACL sideband protokol."
 
 msgid "Disables the NFSACL sideband protocol."
-msgstr "Onemogućuje NFSACL protokol bočnog kanala."
+msgstr "Onemogućuje NFSACL sideband protokol."
 
 msgid "Retries a failed mount in the background."
-msgstr "Ponovno pokušava neuspjelo montiranje u pozadini."
+msgstr "Ponavlja neuspjelo montiranje u pozadini."
 
 msgid "Fails the mount in the foreground (default)."
-msgstr "Neuspjelo montiranje javlja se u prednjem planu (zadano)."
+msgstr "Neuspjelo montiranje u prvom planu (zadano)."
 
 msgid "Client IP advertised for NFSv4.0 callbacks."
-msgstr "IP adresa klijenta koja se objavljuje za NFSv4.0 povratne pozive."
+msgstr "IP adresa klijenta objavljena za NFSv4.0 povratne pozive."
 
 msgid "Uses close-to-open cache coherence semantics."
-msgstr "Koristi semantiku dosljednosti predmemorije close-to-open."
+msgstr "Koristi close-to-open semantiku koherentnosti keša."
 
 msgid "Disables close-to-open cache coherence."
-msgstr "Onemogućuje dosljednost predmemorije close-to-open."
+msgstr "Onemogućuje close-to-open koherentnost keša."
 
 msgid "Caches read-only pages on local disk via FS-Cache."
-msgstr "Predmemorira stranice samo za čitanje na lokalni disk putem FS-Cache."
+msgstr "Kešira samo za čitanje stranice na lokalni disk putem FS-Cache."
 
 msgid "Disables FS-Cache local disk caching."
-msgstr "Onemogućuje FS-Cache predmemoriranje na lokalnom disku."
+msgstr "Onemogućuje keširanje na lokalni disk putem FS-Cache."
 
 msgid "Retries requests indefinitely after server timeouts."
-msgstr "Beskonačno ponavlja zahtjeve nakon isteka vremena poslužitelja."
+msgstr "Neograničeno ponavlja zahtjeve nakon isteka vremena poslužitelja."
 
 msgid "Allow interrupts while hung; ignored after kernel 2.6.25."
-msgstr "Dopušta prekide dok je zahtjev zaglavljen; zanemaruje se nakon jezgre 2.6.25."
+msgstr "Dopušta prekide dok je zaglavljen; zanemaruje se nakon jezgre 2.6.25."
 
 msgid "Don't allow interrupts; ignored after kernel 2.6.25."
 msgstr "Ne dopušta prekide; zanemaruje se nakon jezgre 2.6.25."
 
 msgid "Treats flock/POSIX locks as local only."
-msgstr "Tretira flock/POSIX zaključavanja kao isključivo lokalna."
+msgstr "Tretira flock/POSIX zaključke kao isključivo lokalne."
 
 msgid "Uses the NLM protocol to lock files on the server."
 msgstr "Koristi NLM protokol za zaključavanje datoteka na poslužitelju."
 
 msgid "Don't use NLM locking; locks are local only."
-msgstr "Ne koristi NLM zaključavanje; zaključavanja su isključivo lokalna."
+msgstr "Ne koristi NLM zaključavanje; zaključci su samo lokalni."
 
 msgid "Directory-entry cache mode: all, none, pos or positive."
-msgstr "Način predmemorije unosa direktorija: all, none, pos ili positive."
+msgstr "Način keširanja unosa direktorija: all, none, pos ili positive."
 
 msgid "Max connections to IPs of one NFSv4.1+ server."
-msgstr "Najveći broj veza prema IP adresama jednog NFSv4.1+ poslužitelja."
+msgstr "Maksimalan broj veza do IP adresa jednog NFSv4.1+ poslužitelja."
 
 msgid "Uses TSM-compatible ID for NFSv4 migration."
-msgstr "Koristi TSM-kompatibilan ID za NFSv4 migraciju."
+msgstr "Koristi TSM-kompatibilni ID za NFSv4 migraciju."
 
 msgid "Uses legacy client ID string (default)."
-msgstr "Koristi zastarijeli niz ID-a klijenta (zadano)."
+msgstr "Koristi zastarjeli klijentski ID niz (zadano)."
 
 msgid "NFSv4 protocol minor version number."
-msgstr "Broj sporedne inačice NFSv4 protokola."
+msgstr "Broj manje verzije NFSv4 protokola."
 
 msgid "Hostname running the mountd service."
-msgstr "Naziv domaćina koji pokreće mountd uslugu."
+msgstr "Ime domaćina koji pokreće uslugu mountd."
 
 msgid "Port of the server's mountd service."
-msgstr "Ulaz mountd usluge poslužitelja."
+msgstr "Port usluge mountd na poslužitelju."
 
 msgid "Transport used to contact mountd (udp/tcp)."
-msgstr "Prijenosni protokol za kontakt s mountd uslugom (udp/tcp)."
+msgstr "Transport koji se koristi za kontakt s mountd (udp/tcp)."
 
 msgid "RPC version used to contact mountd."
-msgstr "RPC inačica korištena za kontakt s mountd uslugom."
+msgstr "Verzija RPC-a koja se koristi za kontakt s mountd."
 
 msgid "Maximum length of a pathname component."
-msgstr "Najveća duljina komponente putanje."
+msgstr "Maksimalna duljina komponente putanje."
 
 msgid "Number of connections to establish to the server."
 msgstr "Broj veza koje se uspostavljaju s poslužiteljem."
 
 msgid "NFS protocol version (synonym of vers)."
-msgstr "Inačica NFS protokola (sinonim za vers)."
+msgstr "Verzija NFS protokola (sinonim za vers)."
 
 msgid "Disables rounding buffered writes to page boundaries."
-msgstr "Onemogućuje zaokruživanje međuspremnih pisanja na granice stranica."
+msgstr "Onemogućuje zaokruživanje zapisivanja u međuspremniku na granice stranica."
 
 msgid "Disables READDIRPLUS requests."
 msgstr "Onemogućuje READDIRPLUS zahtjeve."
 
 msgid "Port of the server's NFS service."
-msgstr "Ulaz NFS usluge poslužitelja."
+msgstr "Port NFS usluge poslužitelja."
 
 msgid "Transport protocol: udp, tcp or rdma."
-msgstr "Protokol prijenosa: udp, tcp ili rdma."
+msgstr "Transportni protokol: udp, tcp ili rdma."
 
 msgid "Uses RDMA transport (synonym for proto=rdma)."
-msgstr "Koristi RDMA prijenos (sinonim za proto=rdma)."
+msgstr "Koristi RDMA transport (sinonim za proto=rdma)."
 
 msgid "Enables READDIRPLUS requests."
 msgstr "Omogućuje READDIRPLUS zahtjeve."
 
 msgid "Uses privileged source ports (default)."
-msgstr "Koristi privilegovane izvorne ulaze (zadano)."
+msgstr "Koristi privilegirane izvorske portove (zadano)."
 
 msgid "Uses non-privileged source ports."
-msgstr "Koristi neprivilegovane izvorne ulaze."
+msgstr "Koristi neprivilegirane izvorske portove."
 
 msgid "Number of retries before further recovery action."
-msgstr "Broj ponovnih pokušaja prije daljnjih radnji oporavka."
+msgstr "Broj ponovnih pokušaja prije daljnje oporavne radnje."
 
 msgid "Minutes to retry a failed mount before giving up."
-msgstr "Broj minuta ponovnog pokušaja neuspjelog montiranja prije odustajanja."
+msgstr "Minuta za ponavljanje neuspjelog montiranja prije odustajanja."
 
 msgid "Maximum bytes per network read request."
-msgstr "Najviše bajtova po mrežnom zahtjevu za čitanje."
+msgstr "Maksimalan broj bajtova po mrežnom zahtjevu za čitanje."
 
 msgid "Maximum bytes per network write request."
-msgstr "Najviše bajtova po mrežnom zahtjevu za pisanje."
+msgstr "Maksimalan broj bajtova po mrežnom zahtjevu za zapis."
 
 msgid "Security flavors: none, sys, krb5, krb5i or krb5p."
-msgstr "Sigurnosne varijante: none, sys, krb5, krb5i ili krb5p."
+msgstr "Vrste sigurnosti: none, sys, krb5, krb5i ili krb5p."
 
 msgid "Shares one data/attribute cache across mounts."
-msgstr "Dijeli jednu predmemoriju podataka/atributa između montiranja."
+msgstr "Dijeli jedan keš podataka/atributa između montaža."
 
 msgid "Gives each mount its own cache."
-msgstr "Svakom montiranju daje vlastitu predmemoriju."
+msgstr "Svaka montaža dobiva vlastiti keš."
 
 msgid "Ignores unrecognized mount options."
 msgstr "Zanemaruje neprepoznate opcije montiranja."
 
 msgid "Returns EIO after retrans retries."
-msgstr "Vraća EIO nakon retrans ponovnih pokušaja."
+msgstr "Vraća EIO nakon retrans ponavljanja."
 
 msgid "Returns ETIMEDOUT after retrans retries."
-msgstr "Vraća ETIMEDOUT nakon retrans ponovnih pokušaja."
+msgstr "Vraća ETIMEDOUT nakon retrans ponavljanja."
 
 msgid "Serves cached data when revalidation times out."
-msgstr "Daje predmemorirane podatke kada istekne vrijeme ponovne provjere."
+msgstr "Pružuje keširane podatke kada istekne vrijeme revalidacije."
 
 msgid "Don't fall back to cache when revalidation fails."
-msgstr "Ne vraća se na predmemoriju kada ponovna provjera ne uspije."
+msgstr "Ne vraća se na keš kada revalidacija ne uspije."
 
 msgid "Uses TCP transport (synonym for proto=tcp)."
-msgstr "Koristi TCP prijenos (sinonim za proto=tcp)."
+msgstr "Koristi TCP transport (sinonim za proto=tcp)."
 
 msgid "Deciseconds to wait before retrying a request."
-msgstr "Broj decisekundi čekanja prije ponovnog slanja zahtjeva."
+msgstr "Decisekunde čekanja prije ponavljanja zahtjeva."
 
 msgid "Probes NFSv4.1 session trunking on new mounts."
-msgstr "Ispituje NFSv4.1 session trunking na novim montiranjima."
+msgstr "Ispituje spajanje NFSv4.1 sesija na novim montažama."
 
 msgid "Disables session trunking discovery (default)."
-msgstr "Onemogućuje otkrivanje session trunkinga (zadano)."
+msgstr "Onemogućuje otkrivanje spajanja sesija (zadano)."
 
 msgid "Uses UDP transport (synonym for proto=udp)."
 msgstr "Koristi UDP prijenos (sinonim za proto=udp)."
 
 msgid "NFS protocol version (alternative to nfsvers)."
-msgstr "Inačica NFS protokola (alternativa nfsvers)."
+msgstr "Verzija NFS protokola (alternativa nfsvers)."
 
 msgid "Transport security policy: none, tls or mtls."
 msgstr "Politika sigurnosti prijenosa: none, tls ili mtls."
 
 msgid "Automatically reconnects if the connection is interrupted."
-msgstr "Automatski se ponovno povezuje ako se veza prekine."
+msgstr "Automatski se ponovno spaja ako se veza prekinе."
 
 msgid "Delays connecting until the mountpoint is first accessed."
-msgstr "Odgađa povezivanje do prvog pristupa točki montiranja."
+msgstr "Odgađa spajanje dok se točki montiranja prvi put ne pristupi."
 
 msgid "Synchronous writes; slower but more reliable."
-msgstr "Sinkrona pisanja; sporija, ali pouzdanija."
+msgstr "Sinkroni upisi; sporije, ali pouzdanije."
 
 msgid "Disables speculative read-ahead beyond requested data."
-msgstr "Onemogućuje spekulativno predčitavanje izvan zatraženih podataka."
+msgstr "Onemogućuje spekulativno čitanje unaprijed izvan zatraženih podataka."
 
 msgid "Synchronous readdir; slower but more reliable."
-msgstr "Sinkron readdir; sporiji, ali pouzdaniji."
+msgstr "Sinkrono očitavanje direktorija; sporije, ali pouzdanije."
 
 msgid "Enables workarounds for broken SFTP servers."
-msgstr "Omogućuje zaobilazna rješenja za neispravne SFTP poslužitelje."
+msgstr "Uključuje zaobilazna rješenja za pokvarene SFTP poslužitelje."
 
 msgid "UID/GID mapping mode: none, user or file."
-msgstr "Način UID/GID mapiranja: none, user ili file."
+msgstr "Način mapiranja UID/GID: none, user ili file."
 
 msgid "File of username:uid mappings for idmap=file."
 msgstr "Datoteka mapiranja username:uid za idmap=file."
@@ -1621,64 +1725,64 @@ msgid "File of groupname:gid mappings for idmap=file."
 msgstr "Datoteka mapiranja groupname:gid za idmap=file."
 
 msgid "Handles missing idmap entries: ignore or error."
-msgstr "Rukovanje nedostajućim idmap unosima: ignore ili error."
+msgstr "Obrada nedostajućih unosa idmapa: ignore ili error."
 
 msgid "Command to run instead of ssh."
-msgstr "Naredba za pokretanje umjesto ssh."
+msgstr "Naredba koja se pokreće umjesto ssh-a."
 
 msgid "SSH protocol version to use (default 2)."
-msgstr "Inačica SSH protokola za korištenje (zadano 2)."
+msgstr "Verzija SSH protokola za upotrebu (zadano 2)."
 
 msgid "Path to the sftp server or subsystem."
 msgstr "Putanja do sftp poslužitelja ili podsustava."
 
 msgid "Connects directly to a port, bypassing SSH."
-msgstr "Povezuje se izravno na ulaz, zaobilazeći SSH."
+msgstr "Spaja se izravno na priključak, zaobilazeći SSH."
 
 msgid "Connects via vsock to CID:PORT, bypassing SSH."
-msgstr "Povezuje se putem vsock-a na CID:PORT, zaobilazeći SSH."
+msgstr "Spaja se putem vsock-a na CID:PORT, zaobilazeći SSH."
 
 msgid "Communicates over stdin/stdout, bypassing the network."
-msgstr "Komunicira putem stdin/stdout-a, zaobilazeći mrežu."
+msgstr "Komunicira putem stdin/stdout, zaobilazeći mrežu."
 
 msgid "Makes link(2) fail with ENOSYS."
-msgstr "Uzrokuje neuspjeh link(2) s ENOSYS greškom."
+msgstr "Nariba link(2) da ne uspije s ENOSYS."
 
 msgid "Turns absolute symlinks relative on the client."
-msgstr "Pretvara apsolutne simboličke poveznice u relativne na klijentu."
+msgstr "Na klijentu apsolutne simboičke veze pretvara u relativne."
 
 msgid "Presents server symlinks as regular files."
-msgstr "Prikazuje simboličke poveznice poslužitelja kao obične datoteke."
+msgstr "Simboličke veze poslužitelja prikazuje kao redovne datoteke."
 
 msgid "Don't check that the remote directory exists."
 msgstr "Ne provjerava postoji li udaljeni direktorij."
 
 msgid "Reads the password from stdin (for pam_mount only)."
-msgstr "Čita lozinku iz stdin-a (samo za pam_mount)."
+msgstr "Čita lozinku sa standardnog ulaza (samo za pam_mount)."
 
 msgid "Enables or disables the SSHFS directory cache."
-msgstr "Omogućuje ili onemogućuje SSHFS predmemoriju direktorija."
+msgstr "Uključuje ili isključuje predmemoriju direktorija SSHFS-a."
 
 msgid "Maximum size of the directory cache."
 msgstr "Najveća veličina predmemorije direktorija."
 
 msgid "Timeout in seconds for the directory cache."
-msgstr "Istek vremena u sekundama za predmemoriju direktorija."
+msgstr "Vrijeme isteka u sekundama za predmemoriju direktorija."
 
 msgid "Timeout for cached attributes."
-msgstr "Istek vremena za predmemorirane atribute."
+msgstr "Vrijeme isteka za predmemorisana svojstva."
 
 msgid "Timeout for cached symlinks."
-msgstr "Istek vremena za predmemorirane simboličke poveznice."
+msgstr "Vrijeme isteka za predmemorisane simboičke veze."
 
 msgid "Timeout for cached directory names."
-msgstr "Istek vremena za predmemorirane nazive direktorija."
+msgstr "Vrijeme isteka za predmemorisana imena direktorija."
 
 msgid "Interval for cleaning the directory cache."
-msgstr "Interval čišćenja predmemorije direktorija."
+msgstr "Razdoblje za čišćenje predmemorije direktorija."
 
 msgid "Interval for forced cleaning when full."
-msgstr "Interval prisilnog čišćenja kada je predmemorija puna."
+msgstr "Razdoblje za prisilno čišćenje kada je predmemorija puna."
 
 msgid "Disables the kernel page cache for file content."
 msgstr "Onemogućuje predmemoriju stranica jezgre za sadržaj datoteka."
@@ -1687,129 +1791,130 @@ msgid "Maximum number of simultaneous SSH connections."
 msgstr "Najveći broj istovremenih SSH veza."
 
 msgid "Allows all users to access the mount."
-msgstr "Dopušta svim korisnicima pristup montiranju."
+msgstr "Dopušta svim korisnicima pristup točki montiranja."
 
 msgid "Allows root access in addition to the mounter."
-msgstr "Dopušta root pristup uz korisnika koji je montirao."
+msgstr "Pored korisnika koji montira, dopušta pristup i korisniku root."
 
 msgid "Unmounts automatically when the process exits."
-msgstr "Automatski odmontira kada proces završi."
+msgstr "Automatski demontira kada proces završi."
 
 msgid "Lets the kernel enforce permission checks."
-msgstr "Dopušta jezgri provođenje provjera dozvola."
+msgstr "Omogućuje jezgri da provjerava dopuštenja."
 
 msgid "Caches file data in kernel without invalidation on open."
 msgstr "Predmemorira podatke datoteka u jezgri bez poništavanja pri otvaranju."
 
 msgid "Invalidates kernel data cache when file mtime changes."
-msgstr "Poništava predmemoriju podataka jezgre kada se promijeni mtime datoteke."
+msgstr "Poništava predmemoriju podataka jezgre pri promjeni vremena zadnje izmjene datoteke."
 
 msgid "Uses filesystem-provided inode numbers."
-msgstr "Koristi brojeve inoda koje pruža datotečni sustav."
+msgstr "Koristi brojeve inode-a koje daje datotečni sustav."
 
 msgid "Allows mounting over non-empty directories (obsolete, now default)."
 msgstr "Dopušta montiranje preko nepraznih direktorija (zastarjelo, sada zadano)."
 
 msgid "Source string shown in /proc/mounts and mtab."
-msgstr "Izvorni niz znakova prikazan u /proc/mounts i mtab."
+msgstr "Izvorni niz prikazan u /proc/mounts i mtab."
+
 msgid "Maximum size of read requests (bytes)."
-msgstr "Maksimalna veličina zahtjeva za čitanje (u bajtovima)."
+msgstr "Najveća veličina zahtjeva za očitavanje (bajtovi)."
 
 msgid "Maximum size of write requests (bytes)."
-msgstr "Maksimalna veličina zahtjeva za pisanje (u bajtovima)."
+msgstr "Najveća veličina zahtjeva za upis (bajtovi)."
 
 msgid "Sets the block size to 512, 1024, or 2048."
 msgstr "Postavlja veličinu bloka na 512, 1024 ili 2048."
 
 msgid "Sets filename case checking (relaxed or strict)."
-msgstr "Postavlja provjeru velikih i malih slova naziva datoteka (relaxed ili strict)."
+msgstr "Postavlja provjeru veličine slova imena datoteka (opušteno ili strogo)."
 
 msgid "Ignores high-order bits of file lengths (files limited to 16 MB)."
-msgstr "Zanemaruje više bitove duljina datoteka (datoteke su ograničene na 16 MB)."
+msgstr "Zanemaruje više bitove duljine datoteka (datoteke ograničene na 16 MB)."
 
 msgid "Group ID given to all files."
-msgstr "ID grupe dodijeljen svim datotekama."
+msgstr "ID skupine koji se dodjeljuje svim datotekama."
 
 msgid "Charset converting Joliet Unicode names to 8-bit characters."
-msgstr "Znakovni skup koji pretvara Joliet Unicode nazive u 8-bitne znakove."
+msgstr "Kodna stranica za pretvorbu Joliet imena s Unicodea u 8-bitne znakove."
 
 msgid "Sets non-Rock Ridge name translation (normal, off, or acorn)."
-msgstr "Postavlja prijevod naziva bez Rock Ridgea (normal, off ili acorn)."
+msgstr "Postavlja pretvorbu imena non-Rock Ridge (normal, off ili acorn)."
 
 msgid "Sets default permission mode for non-Rock Ridge files."
-msgstr "Postavlja zadani način dozvola za datoteke bez Rock Ridgea."
+msgstr "Postavlja zadani način dopuštenja za non-Rock Ridge datoteke."
 
 msgid "Disables Microsoft Joliet extensions."
-msgstr "Onemogućuje Microsoftova Joliet proširenja."
+msgstr "Onemogućuje Microsoft Joliet proširenja."
 
 msgid "Disables Rock Ridge extensions."
 msgstr "Onemogućuje Rock Ridge proširenja."
 
 msgid "Sets the sector where the session begins."
-msgstr "Postavlja sektor na kojemu počinje sesija."
+msgstr "Postavlja sektor na kojem počinje sesija."
 
 msgid "Selects the session on a multisession CD."
 msgstr "Odabire sesiju na CD-u s više sesija."
 
 msgid "User ID given to all files."
-msgstr "ID korisnika dodijeljen svim datotekama."
+msgstr "ID korisnika koji se dodjeljuje svim datotekama."
 
 msgid "Shows hidden and associated files."
 msgstr "Prikazuje skrivene i pridružene datoteke."
 
 msgid "Converts 16-bit Unicode CD names to UTF-8."
-msgstr "Pretvara 16-bitne Unicode nazive s CD-a u UTF-8."
+msgstr "Pretvara 16-bitna Unicode imena CD-a u UTF-8."
 
 msgid "Embeds file data in the inode (default)."
 msgstr "Ugrađuje podatke datoteke u inode (zadano)."
 
 msgid "Disables embedding file data in the inode."
-msgstr "Onemogućuje ugrađivanje podataka datoteke u inode."
+msgstr "Onemogućuje ugradnju podataka datoteke u inode."
 
 msgid "Overrides the standard anchor location (default 256)."
-msgstr "Nadjačava standardnu lokaciju sidra (zadano 256)."
+msgstr "Poništava standardnu poziciju sidra (zadano 256)."
 
 msgid "Sets the block size."
 msgstr "Postavlja veličinu bloka."
 
 msgid "Sets default permission mode for directories."
-msgstr "Postavlja zadani način dozvola za direktorije."
+msgstr "Postavlja zadani način dopuštenja za direktorije."
 
 msgid "Unimplemented and ignored."
-msgstr "Nije implementirano i zanemaruje se."
+msgstr "Nije implementirano i ignorira se."
 
 msgid "Sets the default group for all files."
-msgstr "Postavlja zadanu grupu za sve datoteke."
+msgstr "Postavlja zadanu skupinu za sve datoteke."
 
 msgid "Sets the NLS character set for filenames."
-msgstr "Postavlja NLS znakovni skup za nazive datoteka."
+msgstr "Postavlja NLS skupinu znakova za imena datoteka."
 
 msgid "Sets the last block of the filesystem."
-msgstr "Postavlja posljednji blok datotečnog sustava."
+msgstr "Postavlja zadnji blok datotečnog sustava."
 
 msgid "Uses long UDF address descriptors (default)."
-msgstr "Koristi duge adresne deskriptore UDF-a (zadano)."
+msgstr "Koristi duge deskriptore adresa UDF-a (zadano)."
 
 msgid "Sets default permission mode for non-directory files."
-msgstr "Postavlja zadani način dozvola za datoteke koje nisu direktoriji."
+msgstr "Postavlja zadani način dopuštenja za datoteke koje nisu direktoriji."
 
 msgid "Unsets strict UDF conformance."
-msgstr "Poništava strogo pridržavanje UDF standarda."
+msgstr "Onemogućuje strogu usklađenost s UDF-om."
 
 msgid "Skips volume recognition sequence and mounts anyway."
-msgstr "Preskače niz prepoznavanja volumena i svejedno montira."
+msgstr "Preskače slijed prepoznavanja volumena i ipak montira."
 
 msgid "Selects the session on multisession optical media."
-msgstr "Odabire sesiju na optičkom mediju s više sesija."
+msgstr "Odabire sesiju na optičkim medijima s više sesija."
 
 msgid "Uses short UDF address descriptors."
-msgstr "Koristi kratke adresne deskriptore UDF-a."
+msgstr "Koristi kratke deskriptore adresa UDF-a."
 
 msgid "Sets the default user for all files."
 msgstr "Postavlja zadanog korisnika za sve datoteke."
 
 msgid "Masks out permissions from all inodes read."
-msgstr "Maskira dozvole iz svih pročitanih inodea."
+msgstr "Maskira dopuštenja iz svih pročitanih inodeova."
 
 msgid "Shows deleted files in listings."
 msgstr "Prikazuje izbrisane datoteke u popisima."
@@ -1818,115 +1923,115 @@ msgid "Shows otherwise hidden files."
 msgstr "Prikazuje inače skrivene datoteke."
 
 msgid "Uses the UTF-8 character set."
-msgstr "Koristi znakovni skup UTF-8."
+msgstr "Koristi UTF-8 skupinu znakova."
 
 msgid "Sets initial group ID of the root directory."
-msgstr "Postavlja početni ID grupe korijenskog direktorija."
+msgstr "Postavlja početni ID skupine korjenog direktorija."
 
 msgid "Huge-page policy for files: never, always, within_size, advise."
-msgstr "Pravilo velikih stranica za datoteke: never, always, within_size, advise."
+msgstr "Politika velikih stranica za datoteke: never, always, within_size, advise."
 
 msgid "Sets initial permissions of the root directory."
-msgstr "Postavlja početne dozvole korijenskog direktorija."
+msgstr "Postavlja početna dopuštenja korjenog direktorija."
 
 msgid "Sets NUMA memory allocation policy for all files."
-msgstr "Postavlja pravilo dodjele NUMA memorije za sve datoteke."
+msgstr "Postavlja NUMA politiku dodjele memorije za sve datoteke."
 
 msgid "Disables swap; files cannot be swapped out."
-msgstr "Onemogućuje swap; datoteke se ne mogu izbacivati u swap."
+msgstr "Onemogućuje swap; datoteke se ne mogu zamijeniti."
 
 msgid "Same as size, but expressed in blocks of PAGE_SIZE."
-msgstr "Isto kao size, ali izraženo u blokovima od PAGE_SIZE."
+msgstr "Isto kao size, ali izraženo u blokovima veličine PAGE_SIZE."
 
 msgid "Maximum number of inodes for this instance."
-msgstr "Maksimalan broj inodea za ovu instancu."
+msgstr "Najveći broj inodeova za ovaj primjerak."
 
 msgid "Upper size limit, e.g. 8m or 50%; 0 removes the limit."
-msgstr "Gornja granica veličine, npr. 8m ili 50%; 0 uklanja ograničenje."
+msgstr "Gornja granica veličine, npr. 8m ili 50%; 0 uklanja granicu."
 
 msgid "Sets initial user ID of the root directory."
-msgstr "Postavlja početni ID korisnika korijenskog direktorija."
+msgstr "Postavlja početni ID korisnika korjenog direktorija."
 
 msgid "Group whose members bypass hidepid access restrictions."
-msgstr "Grupa čiji članovi zaobilaze ograničenja pristupa hidepid."
+msgstr "Skupina čiji članovi zaobilaze hidepid ograničenja pristupa."
 
 msgid "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible."
-msgstr "Skriva unose /proc/pid: 0 isključeno, 1 vlastiti direktoriji, 2 ostali PID-ovi nevidljivi."
+msgstr "Skriva unose /proc/pid: 0 isključeno, 1 vlastiti direktoriji, 2 drugi PID-ovi nevidljivi."
 
 msgid "Selects the PID namespace used to translate PIDs (new in 6.16)."
-msgstr "Odabire prostor naziva PID-ova koji se koristi za prevođenje PID-ova (novo u 6.16)."
+msgstr "Odabire PID imenski prostor koji se koristi za pretvorbu PID-ova (novo u 6.16)."
 
 msgid "Shows only the pid subset, hiding other top-level proc files."
-msgstr "Prikazuje samo pid podskup, a skriva ostale proc datoteke najviše razine."
+msgstr "Prikazuje samo pid podskup, skrivajući ostale proc datoteke na najvišoj razini."
 
 msgid "Sets group of newly created pseudo-terminals."
-msgstr "Postavlja grupu novostvorenih pseudo-terminala."
+msgstr "Postavlja skupinu novo stvorenih pseudo-terminala."
 
 msgid "Limits the number of pseudo-terminals in this instance."
-msgstr "Ograničava broj pseudo-terminala u ovoj instanci."
+msgstr "Ograničava broj pseudo-terminala u ovom primjerku."
 
 msgid "Sets permissions of newly created pseudo-terminals."
-msgstr "Postavlja dozvole novostvorenih pseudo-terminala."
+msgstr "Postavlja dopuštenja novo stvorenih pseudo-terminala."
 
 msgid "Creates a private instance with independent pty index space."
-msgstr "Stvara privatnu instancu s neovisnim prostorom pty indeksa."
+msgstr "Stvara privatni primjerak s neovisnim prostorom pty indeksa."
 
 msgid "Sets the mode of the instance's ptmx device node."
-msgstr "Postavlja način rada ptmx čvora uređaja instance."
+msgstr "Postavlja način ptmx čvora uređaja primjerka."
 
 msgid "Sets owner of newly created pseudo-terminals."
-msgstr "Postavlja vlasnika novostvorenih pseudo-terminala."
+msgstr "Postavlja vlasnika novo stvorenih pseudo-terminala."
 
 msgid "Favors dynamic cgroup changes over hot-path fork/exit costs."
-msgstr "Daje prednost dinamičkim promjenama cgroupa naspram troška fork/exit operacija na kritičnom putu."
+msgstr "Daje prednost dinamičkim promjenama cgroupa u odnosu na troškove fork/exit na vrućem putu."
 
 msgid "Counts HugeTLB usage in memory controller accounting."
-msgstr "Uračunava HugeTLB upotrebu u evidenciju memorijskog kontrolera."
+msgstr "Ubraja upotrebu HugeTLB-a u obračun kontrolera memorije."
 
 msgid "Reports only local memory.events, excluding subtree counts."
-msgstr "Prikazuje samo lokalne memory.events, isključujući zbrojeve podstabala."
+msgstr "Prikazuje samo lokalne memory.events, isključujući brojače podstabljaka."
 
 msgid "Applies memory.min/low protection recursively to subtrees."
-msgstr "Primjenjuje zaštitu memory.min/low rekurzivno na podstabla."
+msgstr "Primjenjuje zaštitu memory.min/low rekurzivno na podstabljake."
 
 msgid "Treats cgroup namespaces as delegation boundaries."
-msgstr "Tretira prostore naziva cgroupa kao granice delegiranja."
+msgstr "Smatra cgroup imenske prostore granicama delegacije."
 
 msgid "Counts only local fork failures in pids.events.max."
-msgstr "Uračunava samo lokalne fork neuspjehe u pids.events.max."
+msgstr "Broji samo lokalne neuspjele pozive fork u pids.events.max."
 
 msgid "Sets the group of the debugfs mount."
-msgstr "Postavlja grupu debugfs montiranja."
+msgstr "Postavlja grupu montaže debugfs."
 
 msgid "Sets permissions of the mountpoint."
 msgstr "Postavlja dozvole točke montiranja."
 
 msgid "Sets the owner of the debugfs mount."
-msgstr "Postavlja vlasnika debugfs montiranja."
+msgstr "Postavlja vlasnika montaže debugfs."
 
 msgid "Sets the group of the tracefs mount."
-msgstr "Postavlja grupu tracefs montiranja."
+msgstr "Postavlja grupu montaže tracefs."
 
 msgid "Sets the owner of the tracefs mount."
-msgstr "Postavlja vlasnika tracefs montiranja."
+msgstr "Postavlja vlasnika montaže tracefs."
 
 msgid "Sets group of the filesystem root."
 msgstr "Postavlja grupu korijena datotečnog sustava."
 
 msgid "Reserves a minimum of huge-page memory; mount fails if short."
-msgstr "Rezervira minimalnu količinu memorije velikih stranica; ako je nema dovoljno, montiranje ne uspijeva."
+msgstr "Rezervira minimalnu količinu huge-page memorije; ako je premalo, montaža ne uspijeva."
 
 msgid "Sets permissions of the filesystem root."
 msgstr "Postavlja dozvole korijena datotečnog sustava."
 
 msgid "Maximum number of inodes the filesystem can use."
-msgstr "Maksimalan broj inodea koje datotečni sustav može koristiti."
+msgstr "Najveći broj inoda koji datotečni sustav može koristiti."
 
 msgid "Uses the given huge-page size for this mount."
-msgstr "Koristi navedenu veličinu velikih stranica za ovo montiranje."
+msgstr "Koristi navedenu veličinu huge-page za ovu montažu."
 
 msgid "Maximum huge-page memory the filesystem may use."
-msgstr "Maksimalna memorija velikih stranica koju datotečni sustav smije koristiti."
+msgstr "Najveća količina huge-page memorije koju datotečni sustav može koristiti."
 
 msgid "Sets owner of the filesystem root."
 msgstr "Postavlja vlasnika korijena datotečnog sustava."
@@ -1935,394 +2040,370 @@ msgid "Access mode: user, <uid>, any or client."
 msgstr "Način pristupa: user, <uid>, any ili client."
 
 msgid "Authentication fid used by Plan 9 security."
-msgstr "Fid za autentifikaciju koji koristi Plan 9 sigurnost."
+msgstr "Autentikacijski fid koji koristi sigurnosni sustav Plan 9."
 
 msgid "File tree to access on the server."
-msgstr "Stablo datoteka kojem se pristupa na poslužitelju."
+msgstr "Datotečno stablo koje se pristupa na poslužitelju."
 
 msgid "Caching policy: none, readahead, mmap, loose or fscache."
-msgstr "Pravilo predmemoriranja: none, readahead, mmap, loose ili fscache."
+msgstr "Politika keširanja: none, readahead, mmap, loose ili fscache."
 
 msgid "Tag for the persistent fscache."
-msgstr "Oznaka trajne fscache predmemorije."
+msgstr "Oznaka za trajni fscache."
 
 msgid "Debug level as a bitmask."
-msgstr "Razina otklanjanja grešaka kao bitovna maska."
+msgstr "Razina korekcije kao bitovska maska."
 
 msgid "Attempts to mount with this gid."
-msgstr "Pokušava montirati s ovim gid-om."
+msgstr "Pokušava montirati s ovim gid."
 
 msgid "Attempts to mount as this uid."
 msgstr "Pokušava montirati kao ovaj uid."
 
 msgid "Bypasses the page cache on all reads/writes."
-msgstr "Zaobilazi predmemoriju stranica kod svakog čitanja/pisanja."
+msgstr "Zaobilazi keš stranica pri svim čitanjima i zapisima."
 
 msgid "Ignores qid.version==0 as a cache marker."
-msgstr "Zanemaruje qid.version==0 kao oznaku predmemorije."
+msgstr "Zanemaruje qid.version==0 kao oznaku keša."
 
 msgid "Bytes used for 9p packet payload."
-msgstr "Broj bajtova za korisni teret 9p paketa."
+msgstr "Broj bajtova za korisni sadržaj 9p paketa."
 
 msgid "Ms to retain negative dentries in cache."
-msgstr "Milisekunde zadržavanja negativnih dentryja u predmemoriji."
+msgstr "Broj milisekundi za zadržavanje negativnih dentry u kešu."
 
 msgid "Forces legacy 9p2000 mode (no extensions)."
-msgstr "Forsira zastarjeli 9p2000 način rada (bez proširenja)."
+msgstr "Nameće zastarjeli 9p2000 način (bez proširenja)."
 
 msgid "Don't map special files; shows them as normal files."
 msgstr "Ne preslikava posebne datoteke; prikazuje ih kao obične datoteke."
 
 msgid "Don't offer xattr functions on this mount."
-msgstr "Ne nudi xattr funkcije na ovom montiranju."
+msgstr "Ne nudi funkcije xattr na ovoj montaži."
 
 msgid "Port to connect to on the remote server."
-msgstr "Ulazna vrata za povezivanje s udaljenim poslužiteljem."
+msgstr "Priključak za spajanje na udaljeni poslužitelj."
 
 msgid "File descriptor for reading with trans=fd."
-msgstr "Opisnik datoteke za čitanje uz trans=fd."
+msgstr "Opisnik datoteke za čitanje s trans=fd."
 
 msgid "Transport: unix, tcp, fd, virtio, rdma or usbg."
 msgstr "Prijenos: unix, tcp, fd, virtio, rdma ili usbg."
 
 msgid "User name to mount as on the server."
-msgstr "Korisničko ime pod kojim se montira na poslužitelju."
+msgstr "Ime korisnika pod kojim se montira na poslužitelju."
 
 msgid "9p protocol version: 9p2000, 9p2000.u or 9p2000.L."
-msgstr "Inačica protokola 9p: 9p2000, 9p2000.u ili 9p2000.L."
+msgstr "Verzija 9p protokola: 9p2000, 9p2000.u ili 9p2000.L."
 
 msgid "File descriptor for writing with trans=fd."
-msgstr "Opisnik datoteke za pisanje uz trans=fd."
+msgstr "Opisnik datoteke za zapisivanje s trans=fd."
 
 msgid "Appends a data-only lower layer directory (new mount API)."
-msgstr "Dodaje direktorij donjeg sloja samo s podacima (novi API za montiranje)."
+msgstr "Dodaje direktorij donjeg sloja koji sadrži samo podatke (novi API za montažu)."
 
 msgid "Controls fsync during copy-up: auto, strict, or volatile."
-msgstr "Upravlja fsync-om tijekom copy-up: auto, strict ili volatile."
+msgstr "Upravlja fsync tijekom copy-up: auto, strict ili volatile."
 
 msgid "Use an index to avoid inode collisions: on or off."
-msgstr "Koristi indeks radi izbjegavanja sudara inodea: on ili off."
+msgstr "Koristi indeks da se izbjegnu sudari inoda: on ili off."
 
 msgid "Colon-separated list of lower-layer directories."
-msgstr "Popis direktorija donjeg sloja odvojenih dvotočkom."
+msgstr "Popis direktorija donjeg sloja odvojenih dvotočkama."
 
 msgid "Copy up only metadata first, deferring data copy: on or off."
-msgstr "Najprije kopira samo metapodatke, odgađajući kopiranje podataka: on ili off."
+msgstr "Prvo kopira samo metapodatke, odgađajući kopiranje podataka: on ili off."
 
 msgid "Make the overlay mountable via NFS: on or off."
-msgstr "Omogućuje montiranje overlaya putem NFS-a: on ili off."
+msgstr "Omogućava montažu overlaya putem NFS: on ili off."
 
 msgid "Record the caller's credentials for permission checks."
-msgstr "Zapisuje vjerodajnice pozivatelja radi provjere dozvola."
+msgstr "Bilježi vjerodajnice pozivatelja za provjeru dozvola."
 
 msgid "Redirect directories on rename: on, off, follow, or nofollow."
 msgstr "Preusmjerava direktorije pri preimenovanju: on, off, follow ili nofollow."
 
 msgid "Directory used as the upper (writable) layer."
-msgstr "Direktorij koji služi kao gornji sloj (za pisanje)."
+msgstr "Direktorij koji se koristi kao gornji (upisivi) sloj."
 
 msgid "Use the user.overlay.* xattr namespace instead of trusted.overlay.*."
-msgstr "Koristi user.overlay.* xattr prostor naziva umjesto trusted.overlay.*."
+msgstr "Koristi imenski prostor xattr user.overlay.* umjesto trusted.overlay.*."
 
 msgid "Control the overlay UUID and fsid: null, off, on, or auto."
-msgstr "Upravlja UUID-om i fsid-om overlaya: null, off, on ili auto."
+msgstr "Upravlja UUID i fsid overlaya: null, off, on ili auto."
 
 msgid "Verify metacopy digests with fs-verity: off, on, or require."
-msgstr "Provjerava metacopy sažetke pomoću fs-verity: off, on ili require."
+msgstr "Provjerava metacopy zbirke pomoću fs-verity: off, on ili require."
 
 msgid "Prefer performance over durability; data not crash-safe."
-msgstr "Prednost daje performansama umjesto trajnosti; podaci nisu otporni na pad sustava."
+msgstr "Prioritizira performanse pred trajnošću; podaci nisu zaštićeni od pada sustava."
 
 msgid "Scratch directory on the same filesystem as upperdir."
-msgstr "Privremeni radni direktorij na istom datotečnom sustavu kao upperdir."
+msgstr "Privremena radna mapa na istom datotečnom sustavu kao upperdir."
 
 msgid "Appends an additional work directory (new mount API)."
-msgstr "Dodaje dodatni radni direktorij (novi API za montiranje)."
+msgstr "Dodaje dodatnu radnu mapu (novi API za montiranje)."
 
 msgid "Compose unique inode numbers across layers: on, off, or auto."
-msgstr "Stvara jedinstvene brojeve inodea u svim slojevima: on, off ili auto."
+msgstr "Generira jedinstvene inode brojeve kroz slojeve: on, off ili auto."
 
 msgid "Enable access control lists (legacy alias for acltype)."
-msgstr "Omogućuje popise kontrole pristupa (zastarjeli alias za acltype)."
+msgstr "Uključuje popise kontrole pristupa (zastarjeli alias za acltype)."
 
 msgid "Disable ACLs (alias for acltype=off)."
-msgstr "Onemogućuje ACL-ove (alias za acltype=off)."
+msgstr "Isključuje ACL (alias za acltype=off)."
 
 msgid "Select ACL type: off, nfsv4, or posix."
 msgstr "Odabire vrstu ACL-a: off, nfsv4 ili posix."
 
 msgid "Enable mandatory locking (alias for nbmand=on)."
-msgstr "Omogućuje obvezno zaključavanje (alias za nbmand=on)."
+msgstr "Uključuje obvezno zaključavanje (alias za nbmand=on)."
 
 msgid "Disable mandatory locking (alias for nbmand=off)."
-msgstr "Onemogućuje obvezno zaključavanje (alias za nbmand=off)."
+msgstr "Isključuje obvezno zaključavanje (alias za nbmand=off)."
 
 msgid "Mount with non-blocking mandatory locks."
-msgstr "Montira s neblokirajućim obveznim bravama."
+msgstr "Montira s neblokirajućim obveznim zaključavanjem."
 
 msgid "Allow mounting over a non-empty or busy directory."
-msgstr "Dopušta montiranje preko nepraznog ili zauzetog direktorija."
+msgstr "Dopušta montiranje preko neprazne ili zauzete mape."
 
 msgid "Enable POSIX ACLs (alias for acltype=posix)."
-msgstr "Omogućuje POSIX ACL-ove (alias za acltype=posix)."
+msgstr "Uključuje POSIX ACL (alias za acltype=posix)."
 
 msgid "Disable relative access-time updates (plain atime)."
-msgstr "Onemogućuje relativna ažuriranja vremena pristupa (obični atime)."
+msgstr "Isključuje ažuriranje relativnog vremena pristupa (obično atime)."
 
 msgid "Enable extended attributes."
-msgstr "Omogućuje proširene atribute."
+msgstr "Uključuje proširene atribute."
 
 msgid "Disable extended attributes."
-msgstr "Onemogućuje proširene atribute."
+msgstr "Isključuje proširene atribute."
 
 msgid "Private flag marking the mount as managed by ZFS."
-msgstr "Privatna zastavica koja označava da montiranjem upravlja ZFS."
+msgstr "Privatna zastavica koja označava da je montiranje pod nadzorom ZFS-a."
 
 msgid "Compression type used for background (rebalance) writes."
-msgstr "Vrsta kompresije za pisanja u pozadini (rebalansiranje)."
+msgstr "Vrsta kompresije za pisanje u pozadini (prebalansiranje)."
 
 msgid "Target device/label to move data to in the background."
-msgstr "Ciljni uređaj/natpis na koji se podaci premještaju u pozadini."
+msgstr "Ciljni uređaj/oznaka na koji se u pozadini premještaju podaci."
 
 msgid "Compression type used for foreground writes."
-msgstr "Vrsta kompresije za pisanja u prvom planu."
+msgstr "Vrsta kompresije za pisanje u prvom planu."
 
 msgid "Checksum type used for data writes."
-msgstr "Vrsta kontrolne sume za pisanja podataka."
+msgstr "Vrsta kontrolnog zbroja za pisanje podataka."
 
 msgid "Number of replicas to keep for user data."
-msgstr "Broj replika koje se čuvaju za korisničke podatke."
+msgstr "Broj replika koje se zadržavaju za korisničke podatke."
 
 msgid "Allows mounting with data degraded (missing a replica)."
-msgstr "Dopušta montiranje s degradiranim podacima (nedostaje replika)."
+msgstr "Dopušta montiranje s podacima u degradiranom stanju (nedostaje replika)."
 
 msgid "Allows mounting even when data would be missing."
-msgstr "Dopušta montiranje i kada bi podaci nedostajali."
+msgstr "Dopušta montiranje čak i kada bi podaci nedostajali."
 
 msgid "Enables discard/TRIM support on member devices."
-msgstr "Omogućuje podršku za discard/TRIM na članskim uređajima."
+msgstr "Uključuje podršku za discard/TRIM na podređenim uređajima."
 
 msgid "Enables erasure coding."
-msgstr "Omogućuje erasure coding (kodiranje s brisanjem)."
+msgstr "Uključuje erasure coding."
 
-msgid ""
-"Action to take on filesystem inconsistency: continue, fix_safe, panic, or ro."
-msgstr "Radnja pri nekonzistentnosti datotečnog sustava: continue, fix_safe, panic ili ro."
+msgid "Action to take on filesystem inconsistency: continue, fix_safe, panic, or ro."
+msgstr "Radnja u slučaju neusklađenosti datotečnog sustava: continue, fix_safe, panic ili ro."
 
 msgid "Fixes fsck errors without prompting during mount."
-msgstr "Ispravlja fsck pogreške tijekom montiranja bez traženja potvrde."
+msgstr "Ispravlja greške fsck-a bez upita tijekom montiranja."
 
 msgid "Preferred target device/label for foreground writes."
-msgstr "Preferirani ciljni uređaj/natpis za pisanja u prvom planu."
+msgstr "Preferirani ciljni uređaj/oznaka za pisanje u prvom planu."
 
 msgid "Runs fsck during mount."
 msgstr "Pokreće fsck tijekom montiranja."
 
 msgid "Enables inline data extents for small files (default on)."
-msgstr "Omogućuje inline podatkovne ekstente za male datoteke (standardno uključeno)."
+msgstr "Uključuje inline opsege podataka za male datoteke (zadano: on)."
 
 msgid "Restricts new inode numbers to 32 bits."
-msgstr "Ograničava nove brojeve inodea na 32 bita."
+msgstr "Ograničava nove inode brojeve na 32 bita."
 
 msgid "Milliseconds before an automatic journal commit (default 1000)."
-msgstr "Milisekunde do automatskog zapisivanja dnevnika (standardno 1000)."
+msgstr "Milisekunde prije automatske potvrde dnevnika (zadano: 1000)."
 
 msgid "Disables journal flush on sync/fsync."
-msgstr "Onemogućuje pražnjenje dnevnika pri sync/fsync."
+msgstr "Isključuje ispis dnevnika pri sync/fsync."
 
 msgid "Milliseconds before automatic journal reclaim."
-msgstr "Milisekunde prije automatskog oslobađanja dnevnika."
+msgstr "Milisekunde prije automatskog povlačenja dnevnika."
 
 msgid "Checksum type used for metadata writes."
-msgstr "Vrsta kontrolne sume za pisanja metapodataka."
+msgstr "Vrsta kontrolnog zbroja za pisanje metapodataka."
+
 msgid "Number of replicas to keep for metadata (journal and btree)."
-msgstr "Broj replika koje treba čuvati za metapodatke (dnevnik i b-stablo)."
+msgstr "Broj replika koje se zadržavaju za metapodatke (dnevnik i btree)."
 
 msgid "Preferred target device/label for metadata writes."
-msgstr "Preferirani ciljni uređaj/oznaka za zapise metapodataka."
+msgstr "Preferirani ciljni uređaj/oznaka za pisanje metapodataka."
 
-msgid ""
-"Issues no writes at all, even for journal replay (super read-only mode)."
-msgstr "Ne vrši nikakve zapise, čak ni za ponovnu primjenu dnevnika (super način rada samo za čitanje)."
+msgid "Issues no writes at all, even for journal replay (super read-only mode)."
+msgstr "Ne vrši nikakva pisanja, čak ni za ponovnu preigru dnevnika (super način rada samo za čitanje)."
 
 msgid "Doesn't open member devices in exclusive mode."
-msgstr "Ne otvara pripadajuće uređaje u isključivom načinu rada."
+msgstr "Ne otvara podređene uređaje u isključivom načinu."
 
 msgid "Does not replay the journal on mount (not recommended)."
-msgstr "Ne primjenjuje dnevnik pri montiranju (nije preporučljivo)."
+msgstr "Ne preigra dnevnik pri montiranju (nije preporučeno)."
 
 msgid "Target device/label data is copied to on read."
-msgstr "Ciljni uređaj/oznaka u koji se kopiraju podaci pri čitanju."
+msgstr "Ciljni uređaj/oznaka na koji se podaci kopiraju pri čitanju."
 
 msgid "Rate-limits error messages during fsck."
-msgstr "Ograničava broj poruka o pogreškama tijekom fsck provjere."
+msgstr "Ograničava učestalost poruka o greškama tijekom fsck-a."
 
 msgid "Mounts the filesystem in read-only mode."
-msgstr "Montira datotečni sustav u načinu rada samo za čitanje."
+msgstr "Montira datotečni sustav u načinu samo za čitanje."
 
 msgid "Uses the CPU id for the high bits of new inode numbers."
-msgstr "Koristi ID procesora za više bitove brojeva novih inodea."
+msgstr "Koristi CPU ID za više bitove novih inode brojeva."
 
 msgid "Hash function used for string hash tables (directories and xattrs)."
-msgstr "Funkcija raspršivanja koja se koristi za hash tablice znakovnih nizova (direktorije i proširene atribute)."
+msgstr "Hash funkcija koja se koristi za hash tablice nizova znakova (mape i xattr)."
 
 msgid "Prints extra debugging info during mount/recovery."
-msgstr "Ispisuje dodatne informacije za otklanjanje pogrešaka tijekom montiranja/oporavka."
+msgstr "Ispišta dodatne informacije za otklanjanje grešaka tijekom montiranja/obnove."
 
 msgid "Upgrades the on-disk format to the latest version on mount."
-msgstr "Nadograđuje format na disku na najnoviju verziju pri montiranju."
+msgstr "Ažurira format na disku na najnoviju verziju pri montiranju."
 
 msgid "Stores full 128-bit cryptographic MACs instead of the default 80-bit."
-msgstr "Pohranjuje pune 128-bitne kriptografske MAC-ove umjesto zadanih 80-bitnih."
+msgstr "Pohranjuje pune kriptografske MAC-ove od 128 bitova umjesto zadanih od 80 bitova."
 
 msgid "Enables group quotas."
-msgstr "Omogućuje grupne kvote."
+msgstr "Uključuje grupne kvote."
 
 msgid "Enables project quotas."
-msgstr "Omogućuje projektne kvote."
+msgstr "Uključuje kvote projekata."
 
 msgid "Enables user quotas."
-msgstr "Omogućuje korisničke kvote."
+msgstr "Uključuje korisničke kvote."
 
-msgid ""
-"original non-journaling ext filesystem, still used for small boot partitions"
-msgstr "izvorni ext datotečni sustav bez dnevnika, još se koristi za male boot particije"
+msgid "original non-journaling ext filesystem, still used for small boot partitions"
+msgstr "izvorni ext datotečni sustav bez jurnalizacije, i dalje korišten za male particije za pokretanje"
 
 msgid "ext2 with journaling added for crash-recovery reliability"
-msgstr "ext2 s dodanim dnevnikom za pouzdan oporavak nakon pada sustava"
+msgstr "ext2 s dodanom jurnalizacijom radi pouzdanosti oporavka nakon kvara"
 
-msgid ""
-"default Linux journaling filesystem with extents and very large volume "
-"support"
-msgstr "zadani Linux datotečni sustav s dnevnikom, ekstenatima i podrškom za vrlo velike volumene"
+msgid "default Linux journaling filesystem with extents and very large volume support"
+msgstr "zadani Linux datotečni sustav s jurnalizacijom, ekstenzijama i podrškom za vrlo velike volume"
 
 msgid "copy-on-write filesystem with snapshots, subvolumes, and RAID"
-msgstr "datotečni sustav s kopiranjem pri zapisivanju (copy-on-write) sa snimkama, podvolumenima i RAID-om"
+msgstr "datotečni sustav s kopiranjem pri pisanju, trenucima, podvolumeima i RAID-om"
 
-msgid ""
-"SGI-developed 64-bit journaling filesystem for high performance and large "
-"files"
-msgstr "SGI-jev 64-bitni dnevnički datotečni sustav za visoke performanse i velike datoteke"
+msgid "SGI-developed 64-bit journaling filesystem for high performance and large files"
+msgstr "64-bitni datotečni sustav s jurnalizacijom, razvijen u SGI-u, za visoke performanse i velike datoteke"
 
 msgid "flash-friendly filesystem designed for NAND flash storage"
-msgstr "datotečni sustav prilagođen flash memoriji, dizajniran za NAND flash pohranu"
+msgstr "datotečni sustav prilagođen flash memoriji, osmišljen za NAND flash pohranu"
 
 msgid "Linux kernel driver providing read/write access to Windows NTFS volumes"
-msgstr "upravljački program Linux kernela koji pruža pristup Windows NTFS volumenima za čitanje i pisanje"
+msgstr "upravljač Linux jezgre koji omogućuje čitanje i pisanje na Windows NTFS volume"
 
 msgid "FAT filesystem variant with long filename support for removable media"
-msgstr "varijanta FAT datotečnog sustava s podrškom za duga imena datoteka za prijenosne medije"
+msgstr "varijanta FAT datotečnog sustava s podrškom za dugačka imena datoteka, namijenjena izuzimljivim medijima"
 
 msgid "Microsoft filesystem for large removable drives and SD cards over 32 GB"
-msgstr "Microsoftov datotečni sustav za velike prijenosne diskove i SD kartice veće od 32 GB"
+msgstr "Microsoftov datotečni sustav za velike izuzimljive pogone i SD kartice veće od 32 GB"
 
 msgid "disk space acting as virtual memory when physical RAM is exhausted"
-msgstr "prostor na disku koji djeluje kao virtualna memorija kada se fizički RAM iscrpi"
+msgstr "diskovski prostor koji služi kao virtualna memorija kada se fizička RAM memorija iscrpi"
 
-msgid ""
-"network filesystem using the SMB protocol for Windows and NAS file shares"
-msgstr "mrežni datotečni sustav koji koristi SMB protokol za dijeljenja datoteka na Windows i NAS sustavima"
+msgid "network filesystem using the SMB protocol for Windows and NAS file shares"
+msgstr "mrežni datotečni sustav koji koristi SMB protokol za dijeljenje datoteka između Windowsa i NAS uređaja"
 
 msgid "modern, secure dialect of SMB used for Windows, Azure, and NAS shares"
-msgstr "moderan i siguran dijalekt SMB-a koji se koristi za dijeljenja na Windows, Azure i NAS sustavima"
+msgstr "moderni, sigurniji dijalekt SMB-a koji se koristi za Windows, Azure i NAS dijeljenja datoteka"
 
 msgid "network filesystem for sharing files across machines over the network"
-msgstr "mrežni datotečni sustav za dijeljenje datoteka između računala putem mreže"
+msgstr "mrežni datotečni sustav za dijeljenje datoteka između strojeva preko mreže"
 
 msgid "newer NFS version adding security, statefulness, and better locking"
-msgstr "novija verzija NFS-a koja donosi sigurnost, očuvanje stanja i bolje zaključavanje"
+msgstr "novija verzija NFS-a koja dodaje sigurnost, zadržavanje stanja i bolje zaključavanje"
 
-msgid ""
-"mounts a remote directory over SSH using SFTP, running in userspace via FUSE"
-msgstr "montira udaljeni direktorij preko SSH-a pomoću SFTP-a, radi u korisničkom prostoru putem FUSE-a"
+msgid "mounts a remote directory over SSH using SFTP, running in userspace via FUSE"
+msgstr "montira udaljeni direktorij preko SSH-a koristeći SFTP, radi u korisničkom prostoru putem FUSE-a"
 
 msgid "standard filesystem format for CD-ROM optical media"
 msgstr "standardni format datotečnog sustava za CD-ROM optičke medije"
 
 msgid "Universal Disk Format for writable optical discs like DVDs and Blu-rays"
-msgstr "Universal Disk Format za optičke medije za zapisivanje poput DVD-a i Blu-raya"
+msgstr "Univerzalni format diska za upisivane optičke diskove poput DVD-a i Blu-ray discova"
 
-msgid ""
-"virtual filesystem storing files in RAM and swap for temporary in-memory data"
-msgstr "virtualni datotečni sustav koji pohranjuje datoteke u RAM i swap za privremene podatke u memoriji"
+msgid "virtual filesystem storing files in RAM and swap for temporary in-memory data"
+msgstr "virtualni datotečni sustav koji datoteke pohranjuje u RAM i swap za privremene podatke u memoriji"
 
 msgid "virtual filesystem exposing kernel and process information as files"
-msgstr "virtualni datotečni sustav koji izlaže informacije o kernelu i procesima kao datoteke"
+msgstr "virtualni datotečni sustav koji izlaže informacije o jezgri i procesima kao datoteke"
 
-msgid ""
-"virtual filesystem exposing kernel objects, devices, and their attributes to "
-"userspace"
-msgstr "virtualni datotečni sustav koji izlaže objekte kernela, uređaje i njihove atribute korisničkom prostoru"
+msgid "virtual filesystem exposing kernel objects, devices, and their attributes to userspace"
+msgstr "virtualni datotečni sustav koji izlaže objekte jezgre, uređaje i njihove atribute korisničkom prostoru"
 
-msgid ""
-"virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
-msgstr "virtualni datotečni sustav koji pruža čvorove pseudo-terminalskih uređaja pod /dev/pts"
+msgid "virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
+msgstr "virtualni datotečni sustav koji pruža čvorove pseudoterminalskih uređaja pod /dev/pts"
 
-msgid ""
-"virtual filesystem for the unified cgroup v2 hierarchy, managing resource "
-"limits and accounting"
-msgstr "virtualni datotečni sustav za objedinjenu cgroup v2 hijerarhiju, upravlja ograničenjima resursa i njihovim praćenjem"
+msgid "virtual filesystem for the unified cgroup v2 hierarchy, managing resource limits and accounting"
+msgstr "virtualni datotečni sustav za ujedinjenu cgroup v2 hijerarhiju, služi za upravljanje ograničenjima resursa i evidenciju"
 
-msgid ""
-"virtual filesystem backing security modules such as SELinux and IMA "
-"integrity interfaces"
-msgstr "virtualni datotečni sustav koji podupire sigurnosne module poput SELinuxa i IMA sučelja integriteta"
+msgid "virtual filesystem backing security modules such as SELinux and IMA integrity interfaces"
+msgstr "virtualni datotečni sustav koji podupire module sigurnosti poput SELinuxa i sučelja IMA integriteta"
 
-msgid ""
-"virtual filesystem exporting arbitrary kernel debugging data with no ABI "
-"stability guarantees"
-msgstr "virtualni datotečni sustav koji izvozi proizvoljne podatke kernela za otklanjanje pogrešaka bez jamstava ABI stabilnosti"
+msgid "virtual filesystem exporting arbitrary kernel debugging data with no ABI stability guarantees"
+msgstr "virtualni datotečni sustav koji izlaže proizvoljne podatke za odpravljanje grešaka u jezgri, bez garancija stabilnosti ABI"
 
-msgid ""
-"virtual filesystem holding ftrace control and trace-output files under /sys/"
-"kernel/tracing"
-msgstr "virtualni datotečni sustav koji sadrži ftrace kontrolne datoteke i datoteke s tragovima pod /sys/kernel/tracing"
+msgid "virtual filesystem holding ftrace control and trace-output files under /sys/kernel/tracing"
+msgstr "virtualni datotečni sustav s datotekama za upravljanje ftraceom i izlazom praćenja pod /sys/kernel/tracing"
 
-msgid ""
-"virtual filesystem where userspace creates and configures kernel objects via "
-"mkdir and rmdir"
-msgstr "virtualni datotečni sustav u kojem korisnički prostor stvara i konfigurira objekte kernela putem mkdir i rmdir"
+msgid "virtual filesystem where userspace creates and configures kernel objects via mkdir and rmdir"
+msgstr "virtualni datotečni sustav u kojem korisnički prostor stvara i konfigurira objekte jezgre pomoću mkdir i rmdir"
 
 msgid "POSIX message queue IPC exposed as files at /dev/mqueue"
-msgstr "POSIX redovi poruka (IPC) izloženi kao datoteke na /dev/mqueue"
+msgstr "POSIX redovi poruka za međuprocesnu komunikaciju, izloženi kao datoteke na /dev/mqueue"
 
 msgid "interface to huge page memory, mounted at /dev/hugepages"
-msgstr "sučelje prema memoriji velikih stranica, montirano na /dev/hugepages"
+msgstr "sučelje za memoriju s velikim stranicama, montirano na /dev/hugepages"
 
 msgid "populates /dev with device nodes automatically at boot"
-msgstr "automatski puni /dev čvorovima uređaja pri pokretanju"
+msgstr "automatski popunjava /dev čvorovima uređaja pri pokretanju sustava"
 
 msgid "Plan 9 remote filesystem protocol, used for host-to-VM file sharing"
-msgstr "protokol udaljenog datotečnog sustava Plan 9, koristi se za dijeljenje datoteka između domaćina i virtualnih strojeva"
+msgstr "Plan 9 protokol udaljenog datotečnog sustava, koristi se za dijeljenje datoteka između domaćina i virtualne mašine"
 
 msgid "union filesystem stacking upper/lower layers, used by containers"
-msgstr "union datotečni sustav koji slaže gornje/donje slojeve, koriste ga kontejneri"
+msgstr "unijni datotečni sustav koji slaže gornje/donje slojeve, koristi se u spremnicima"
 
 msgid "OpenZFS copy-on-write filesystem with integrated volume management"
-msgstr "OpenZFS datotečni sustav s kopiranjem pri zapisivanju i integriranim upravljanjem volumenima"
+msgstr "OpenZFS datotečni sustav s kopiranjem pri pisanju i integriranim upravljanjem volumeima"
 
-msgid ""
-"copy-on-write, multi-device filesystem with built-in caching, compression, "
-"and checksumming"
-msgstr "višeuređajni datotečni sustav s kopiranjem pri zapisivanju, ugrađenim predmemoriranjem, kompresijom i kontrolnim zbrojevima"
+msgid "copy-on-write, multi-device filesystem with built-in caching, compression, and checksumming"
+msgstr "datotečni sustav s kopiranjem pri pisanju i podrškom za više uređaja, s ugrađenim keširanjem, kompresijom i kontrolnim zbrojevima"
 
 msgid "a custom filesystem type"
-msgstr "prilagođena vrsta datotečnog sustava"
+msgstr "prilagođeni tip datotečnog sustava"
 
 msgid "Other"
-msgstr "Ostalo"
+msgstr "Drugo"
 
 msgid "Other…"
-msgstr "Ostalo…"
+msgstr "Drugo…"
 
 msgid "Search filesystems"
-msgstr "Traži datotečne sustave"
+msgstr "Pretraži datotečne sustave"
 
 msgid "Choose the filesystem type"
-msgstr "Odaberite vrstu datotečnog sustava"
+msgstr "Odaberite tip datotečnog sustava"
 
 msgid "Error loading filesystem types"
-msgstr "Pogreška pri učitavanju vrsta datotečnih sustava"
+msgstr "Greška pri učitavanju tipova datotečnih sustava"
 
 msgid "File system:"
 msgstr "Datotečni sustav:"
@@ -2331,7 +2412,7 @@ msgid "File system"
 msgstr "Datotečni sustav"
 
 msgid "Make backup"
-msgstr "Stvori kopiju"
+msgstr "Izradi kopiju"
 
 msgid "Save changes"
 msgstr "Spremi promjene"
@@ -2339,12 +2420,11 @@ msgstr "Spremi promjene"
 msgid "Revert changes"
 msgstr "Poništi promjene"
 
-msgid ""
-"Your changes have not been saved yet. The backup will reflect the saved /etc/"
-"fstab, not your unsaved changes. Continue?"
-msgstr ""
-"Vaše promjene još nisu spremljene. Sigurnosna kopija odražavat će spremljenu "
-"/etc/fstab, a ne vaše nespremljene promjene. Nastaviti?"
+msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
+msgstr "Vaše promjene još nisu spremljene. Sigurnosna kopija će odražavati spremljeni /etc/fstab, a ne vaše nespremljene promjene. Nastaviti?"
+
+msgid "Save"
+msgstr "Spremi"
 
 msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr "Jeste li sigurni da želite zapisati ove promjene u /etc/fstab?"
@@ -2359,10 +2439,10 @@ msgid "Could not save"
 msgstr "Nije moguće spremiti"
 
 msgid "Revert"
-msgstr "Poništi"
+msgstr "Vrati"
 
 msgid "Are you sure? Any changes made will be lost!"
-msgstr "Jeste li sigurni? Sve napravljene promjene bit će izgubljene!"
+msgstr "Jeste li sigurni? Sve izmjene bit će izgubljene!"
 
 msgid "'/etc/fstab' entries:"
 msgstr "Unosi u '/etc/fstab':"
@@ -2371,31 +2451,29 @@ msgid "Error loading fstab file!"
 msgstr "Pogreška pri učitavanju fstab datoteke!"
 
 msgid "Backup created"
-msgstr "Sigurnosna kopija je stvorena"
+msgstr "Sigurnosna kopija je kreirana"
 
 msgid "A backup of /etc/fstab was created."
-msgstr "Stvorena je sigurnosna kopija /etc/fstab."
+msgstr "Kreirana je sigurnosna kopija datoteke /etc/fstab."
 
 msgid "Could not create backup"
-msgstr "Nije moguće stvoriti sigurnosnu kopiju"
+msgstr "Nije moguće kreirati sigurnosnu kopiju"
+
+#, rust-format
+msgid "Line {line}"
+msgstr "Redak {line}"
 
 msgid "This entry is disabled (commented out)."
-msgstr "Ovaj unos je onemogućen (zakomentiran)."
+msgstr "Ovaj unos je onemogućen (komentariran)."
 
-msgid ""
-"The system may refuse to boot without this drive. If this is not intended, "
-"add the 'nofail' option. \n"
-"Usually, this is wanted on root and home mounts."
-msgstr ""
-"Sustav može odbiti pokretanje bez ovog uređaja. Ako to nije namjera, dodajte "
-"opciju 'nofail'. \n"
-"Obično je to poželjno kod root i home particija."
+msgid "The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \nUsually, this is wanted on root and home mounts."
+msgstr "Sustav se bez ovog diska možda neće pokrenuti. Ako to nije namjeravano, dodajte opciju 'nofail'. \nTo se uobičajeno želi kod montaža korijena i domaće mape."
 
 msgid "This entry is invalid and cannot be parsed."
 msgstr "Ovaj unos je neispravan i ne može se obraditi."
 
 msgid "Add new mount entry"
-msgstr "Dodaj novi unos za montiranje"
+msgstr "Dodaj novi unos montiranja"
 
 msgid "Restore"
 msgstr "Vrati"
@@ -2404,13 +2482,13 @@ msgid "Restore backup"
 msgstr "Vrati kopiju"
 
 msgid "Search backups"
-msgstr "Traži sigurnosne kopije"
+msgstr "Pretraži sigurnosne kopije"
 
 msgid "Restore from a backup file"
 msgstr "Vrati iz datoteke sigurnosne kopije"
 
 msgid "Failed to list backups"
-msgstr "Nije moguće dohvatiti popis sigurnosnih kopija"
+msgstr "Nije moguće izlistati sigurnosne kopije"
 
 msgid "Could not load backup"
 msgstr "Nije moguće učitati sigurnosnu kopiju"
@@ -2422,20 +2500,19 @@ msgid "Cannot unmount"
 msgstr "Nije moguće odmontirati"
 
 msgid "The entry has unsaved changes. Save your changes before mounting."
-msgstr "Unos ima nespremljene promjene. Spremite promjene prije montiranja."
+msgstr "Unos ima nespremljene izmjene. Spremite izmjene prije montiranja."
 
 msgid "The entry has unsaved changes. Save your changes before remounting."
-msgstr "Unos ima nespremljene promjene. Spremite promjene prije ponovnog montiranja."
+msgstr "Unos ima nespremljene izmjene. Spremite izmjene prije ponovnog montiranja."
 
-msgid ""
-"The mount point has unsaved changes. Save your changes before unmounting."
-msgstr "Točka montiranja ima nespremljene promjene. Spremite promjene prije odmontiranja."
+msgid "The mount point has unsaved changes. Save your changes before unmounting."
+msgstr "Točka montiranja ima nespremljene izmjene. Spremite izmjene prije odmontiranja."
 
 msgid "The mount point is empty."
 msgstr "Točka montiranja je prazna."
 
 msgid "Delete entry"
-msgstr "Izbriši unos"
+msgstr "Obriši unos"
 
 msgid "Device"
 msgstr "Uređaj"
@@ -2444,37 +2521,37 @@ msgid "Mount point"
 msgstr "Točka montiranja"
 
 msgid "Delete"
-msgstr "Izbriši"
+msgstr "Obriši"
 
 msgid "Delete this entry?"
-msgstr "Izbrisati ovaj unos?"
+msgstr "Obrisati ovaj unos?"
 
 msgid "Reset"
-msgstr "Resetiraj"
+msgstr "Poništi"
 
 msgid "Edit properties"
-msgstr "Uredi svojstva"
+msgstr "Uredi osobine"
 
 msgid "Options"
 msgstr "Opcije"
 
 msgid "Active"
-msgstr "Aktivna"
+msgstr "Aktivno"
 
 msgid "Extra"
-msgstr "Dodatna"
+msgstr "Dodatno"
 
 msgid "Dump"
 msgstr "Dump"
 
 msgid "Controls the dump backup frequency; 0 disables"
-msgstr "Određuje učestalost dump sigurnosnih kopija; 0 onemogućuje"
+msgstr "Odreduje učestalost sigurnosnog kopiranja; 0 onemogućava"
 
 msgid "Pass"
 msgstr "Pass"
 
 msgid "Controls the fsck check order; 0 disables"
-msgstr "Određuje redoslijed fsck provjera; 0 onemogućuje"
+msgstr "Odreduje redoslijed provjera fsck; 0 onemogućava"
 
 msgid "Mount actions"
 msgstr "Radnje montiranja"
@@ -2495,13 +2572,17 @@ msgid "Actions"
 msgstr "Radnje"
 
 msgid "Are you sure you want to mount this entry?"
-msgstr "Jeste li sigurni da želite montirati ovaj unos?"
+msgstr "Želite li stvarno montirati ovaj unos?"
 
 msgid "Are you sure you want to remount this entry?"
-msgstr "Jeste li sigurni da želite ponovno montirati ovaj unos?"
+msgstr "Želite li stvarno ponovno montirati ovaj unos?"
 
 msgid "Swap cannot be remounted."
 msgstr "Swap se ne može ponovno montirati."
+
+#, rust-format
+msgid "Remounted {mount_point}."
+msgstr "Ponovno je montirano {mount_point}."
 
 msgid "Remounted"
 msgstr "Ponovno montirano"
@@ -2510,10 +2591,14 @@ msgid "Could not remount"
 msgstr "Nije moguće ponovno montirati"
 
 msgid "Are you sure you want to unmount this entry?"
-msgstr "Jeste li sigurni da želite odmontirati ovaj unos?"
+msgstr "Želite li stvarno odmontirati ovaj unos?"
+
+#, rust-format
+msgid "Unmounted {mount_point}."
+msgstr "Odmontrirano {mount_point}."
 
 msgid "Unmounted"
-msgstr "Odmontirano"
+msgstr "Odmontrirano"
 
 msgid "Could not unmount"
 msgstr "Nije moguće odmontirati"
@@ -2531,13 +2616,13 @@ msgid "Path does not exist"
 msgstr "Putanja ne postoji"
 
 msgid "Mount point missing"
-msgstr "Nedostaje točka montiranja"
+msgstr "Točka montiranja nedostaje"
 
 msgid "The device is currently mounted at this mount point."
-msgstr "Uređaj je trenutačno montiran na ovoj točki montiranja."
+msgstr "Uređaj je trenutno montiran na ovu točku montiranja."
 
 msgid "The device is not currently mounted at this mount point."
-msgstr "Uređaj trenutačno nije montiran na ovoj točki montiranja."
+msgstr "Uređaj trenutno nije montiran na ovu točku montiranja."
 
 msgid "This mount point does not exist on the system."
 msgstr "Ova točka montiranja ne postoji na sustavu."
@@ -2549,34 +2634,34 @@ msgid "Option"
 msgstr "Opcija"
 
 msgid "Search subvolumes"
-msgstr "Traži podvolumene"
+msgstr "Pretraži podvolumene"
 
 msgid "Find a subvolume on this device"
-msgstr "Pronađi podvolume na ovom uređaju"
+msgstr "Pronađi podvolumen na ovom uređaju"
 
 msgid "Failed to fetch subvolumes"
-msgstr "Nije moguće dohvatiti podvolumene"
+msgstr "Preuzimanje podvolumena nije uspjelo"
 
 msgid "Add option…"
 msgstr "Dodaj opciju…"
 
 msgid "Search options"
-msgstr "Traži opcije"
+msgstr "Pretraži opcije"
 
 msgid "Choose an option to add to this entry"
 msgstr "Odaberite opciju za dodavanje u ovaj unos"
 
 msgid "Error loading options"
-msgstr "Pogreška pri učitavanju opcija"
+msgstr "Greška pri učitavanju opcija"
 
 msgid "Add option"
 msgstr "Dodaj opciju"
 
 msgid "Search"
-msgstr "Traži"
+msgstr "Pretraži"
 
 msgid "Failed to load"
-msgstr "Nije moguće učitati"
+msgstr "Učitavanje nije uspjelo"
 
 msgid "OK"
 msgstr "U redu"
