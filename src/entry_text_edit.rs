@@ -226,6 +226,14 @@ pub fn present(parent: &impl IsA<Widget>, entry_ctx: EntryContext, on_saved: imp
 	let width = suggested_dialog_width(parent);
 	let parent = parent_window(parent);
 	let dialog = Dialog::builder().child(&content).follows_content_size(true).width_request(width).build();
+	if let Some(window) = &parent
+		&& let Some(surface) = window.surface()
+	{
+		let (window, dialog) = (window.clone(), dialog.clone());
+		surface.connect_width_notify(move |_| {
+			dialog.set_width_request(suggested_dialog_width(&window));
+		});
+	}
 
 	close_on_click(&cancel_btn, &dialog);
 

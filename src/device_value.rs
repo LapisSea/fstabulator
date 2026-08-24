@@ -827,19 +827,14 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 
 	let header = crate::ui_commons::titled_header("Device", None, &dropdown);
 
-	let value_entry = Entry::builder()
-		.text(&initial.value)
-		.hexpand(true)
-		.margin_start(12)
-		.margin_end(12)
-		.build();
+	let value_entry = Entry::builder().text(&initial.value).hexpand(true).margin_start(12).build();
 	let picker_btn = Button::builder()
 		.icon_name("preferences-system-symbolic")
 		.margin_end(12)
 		.tooltip_text(i18n("Edit device"))
 		.build();
 
-	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(4).build();
+	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(8).build();
 	input_row.append(&value_entry);
 	input_row.append(&picker_btn);
 
@@ -850,7 +845,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 		.css_classes(["error"])
 		.build();
 
-	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).margin_bottom(6).build();
+	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(0).margin_bottom(6).build();
 	content.append(&header);
 	content.append(&input_row);
 	content.append(&warning);

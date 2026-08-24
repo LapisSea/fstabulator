@@ -335,7 +335,8 @@ fn add_compression_option_row(
 	let level_entry = gtk::Entry::builder()
 		.text(current_level.unwrap_or_default())
 		.input_purpose(gtk::InputPurpose::Digits)
-		.width_chars(1)
+		.width_chars(2)
+		.max_width_chars(2)
 		.build();
 	level_entry.set_valign(Align::Center);
 	let content = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
