@@ -16,7 +16,7 @@ mod subvolume;
 mod ui_commons;
 
 use crate::context::{EntryContext, FileContext};
-use crate::i18n::{i18n, i18n_fmt};
+use crate::i18n::{i18n, i18n_fmt, localized_datetime};
 use crate::mount_status::MountStatus;
 use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::{StabEntry, StabFile};
@@ -515,7 +515,10 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 		move |backup: (PathBuf, SystemTime), _index| {
 			let (path, file_ctx, list_panel) = (backup.0.clone(), file_ctx.clone(), list_panel.clone());
 			let (editor_panel, parent_widget) = (editor_panel.clone(), editor_panel.clone());
-			let backup_time = localized_datetime(backup.1);
+			let backup_time = i18n_fmt(
+				"You are about to restore backup from:\n{time}",
+				&[("{time}", &localized_datetime(backup.1))],
+			);
 			ui_commons::confirm_popup(&parent_widget, i18n("Are you sure? Any changes made will be lost!"), move || {
 				restore_backup(&path, &file_ctx, &list_panel, &editor_panel)
 			})
@@ -554,17 +557,6 @@ fn load_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor
 	if let Err(err) = load_fstab_file(path, file_ctx, list_panel, editor_panel) {
 		ui_commons::present_simple_dialog(editor_panel, i18n("Could not load backup").as_str(), &format!("{err:#}"));
 	}
-}
-
-fn localized_datetime(time: SystemTime) -> String {
-	let secs = match time.duration_since(SystemTime::UNIX_EPOCH) {
-		Ok(dur) => dur.as_secs() as i64,
-		Err(err) => -(err.duration().as_secs() as i64),
-	};
-	glib::DateTime::from_unix_local(secs)
-		.and_then(|dt| dt.format("%c"))
-		.map(|formatted| formatted.to_string())
-		.unwrap_or_else(|_| humantime::format_rfc3339(time).to_string())
 }
 
 fn restore_backup(path: &Path, file_ctx: &FileContext, list_panel: &ListBox, editor_panel: &gtk::Box) {

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-24 04:16+0200\n"
+"POT-Creation-Date: 2026-08-24 15:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2513,6 +2513,12 @@ msgid "This entry is invalid and cannot be parsed."
 msgstr ""
 
 msgid "Add new mount entry"
+msgstr ""
+
+#, rust-format
+msgid ""
+"You are about to restore backup from:\n"
+"{time}"
 msgstr ""
 
 msgid "Restore"

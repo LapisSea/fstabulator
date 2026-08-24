@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-24 04:16+0200\n"
-"PO-Revision-Date: 2026-08-24 00:00+0200\n"
+"POT-Creation-Date: 2026-08-24 15:57+0200\n"
+"PO-Revision-Date: 2026-08-24 16:00+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "Language: hr\n"
@@ -2474,6 +2474,12 @@ msgstr "Ovaj unos je neispravan i ne može se obraditi."
 
 msgid "Add new mount entry"
 msgstr "Dodaj novi unos montiranja"
+
+#, rust-format
+msgid ""
+"You are about to restore backup from:\n"
+"{time}"
+msgstr "Upravo ćete vratiti kopiju iz:\n{time}"
 
 msgid "Restore"
 msgstr "Vrati"
