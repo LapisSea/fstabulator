@@ -8,6 +8,7 @@ cd "$(dirname "$0")/.."
 xgettext \
 	--language=Rust \
 	--from-code=UTF-8 \
+	--no-location \
 	--package-name=fstabulator \
 	--package-version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)" \
 	--msgid-bugs-address=https://github.com/lapissea/fstabulator/issues \
