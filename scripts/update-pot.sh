@@ -12,6 +12,7 @@ xgettext \
 	--package-version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)" \
 	--msgid-bugs-address=https://github.com/lapissea/fstabulator/issues \
 	--keyword=i18n:1 \
+	--keyword=i18n_fmt:1 \
 	--keyword='opt!:3' \
 	--add-comments=xgettext \
 	-o po/fstabulator.pot \

@@ -2,6 +2,7 @@ mod block_devices;
 mod context;
 mod credentials_flow;
 mod device_value;
+mod entry_text_edit;
 mod fs_options;
 mod fs_value;
 mod i18n;
@@ -119,7 +120,12 @@ fn build_ui(application: &Application) {
 
 	let file_buttons_panel = GtkBox::builder().orientation(Orientation::Vertical).hexpand(true).spacing(6).build();
 
-	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
+	let row = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.hexpand(true)
+		.spacing(12)
+		.homogeneous(true)
+		.build();
 	file_buttons_panel.append(&row);
 
 	let make_backup_btn = make_icon_label_button("document-save-as-symbolic", i18n("Make backup").as_str());
@@ -200,7 +206,12 @@ fn build_ui(application: &Application) {
 
 	row.append(&build_restore_picker(&file_ctx, &list_panel, &editor_panel));
 
-	let row = GtkBox::builder().orientation(Orientation::Horizontal).hexpand(true).spacing(12).build();
+	let row = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.hexpand(true)
+		.spacing(12)
+		.homogeneous(true)
+		.build();
 	file_buttons_panel.append(&row);
 	row.append(&save_changes_btn);
 	row.append(&revert_changes_btn);
@@ -281,7 +292,10 @@ fn build_ui(application: &Application) {
 		.mount-status-unmounted { color: @warning_color; }\
 		.mount-status-missing { color: @error_color; }\
 		.mount-point-exists { color: @success_color; }\
-		.connection-ok { color: @success_color; }",
+		.connection-ok { color: @success_color; }\
+		.text-edit-ok { color: @success_color; }\
+		.text-edit-warning { color: @warning_color; }\
+		.text-edit-error { color: @error_color; }",
 	);
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 
@@ -328,9 +342,9 @@ fn make_icon_label_button(icon: &str, label: &str) -> Button {
 		.spacing(6)
 		.build();
 	hbox.append(&Image::from_icon_name(icon));
-	hbox.append(&gtk::Label::new(Some(label)));
+	let text = gtk::Label::builder().label(label).wrap(true).hexpand(true).build();
+	hbox.append(&text);
 	let button = Button::new();
-	button.set_label(label);
 	button.set_child(Some(&hbox));
 	button.set_hexpand(true);
 	button
@@ -516,6 +530,7 @@ fn build_restore_picker(file_ctx: &FileContext, list_panel: &ListBox, editor_pan
 		.tooltip(i18n("Restore from a backup file"))
 		.error_message(i18n("Failed to list backups"))
 		.filter(filter)
+		.wrap_label(true)
 		.build();
 
 	menu_btn.set_hexpand(true);
@@ -749,7 +764,26 @@ fn build_editor_panel(
 
 	build_options_group(&options_group, entry_ctx);
 
-	editor_panel.append(&reset_btn);
+	let text_edit_btn = Button::with_label(i18n("Edit as text").as_str());
+	{
+		let (popup_ctx, saved_ctx, device_row) = (entry_ctx.clone(), entry_ctx.clone(), device_row.clone());
+		let (options_group, list_box, list_row) = (options_group.clone(), list_box.clone(), list_row.clone());
+		text_edit_btn.connect_clicked(move |btn| {
+			let (saved_ctx, device_row, options_group) = (saved_ctx.clone(), device_row.clone(), options_group.clone());
+			let (list_box, list_row) = (list_box.clone(), list_row.clone());
+			entry_text_edit::present(btn, popup_ctx.clone(), move || {
+				refresh_entry_editor(&saved_ctx, &device_row, &options_group, &list_box, &list_row);
+			});
+		});
+	}
+	let button_row = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.spacing(12)
+		.homogeneous(true)
+		.build();
+	button_row.append(&text_edit_btn);
+	button_row.append(&reset_btn);
+	editor_panel.append(&button_row);
 
 	add_mount_group(editor_panel, entry_ctx.entry(), rebuild_editor);
 
@@ -776,12 +810,22 @@ fn build_editor_panel(
 	let (options_group, device_row, entry_ctx_ref) = (options_group.clone(), device_row.clone(), entry_ctx.clone());
 	reset_btn.connect_clicked(move |_| {
 		entry_ctx_ref.entry().borrow_mut().reset();
-		device_row.refresh_kinds();
-		build_options_group(&options_group, &entry_ctx_ref);
-		entry_ctx_ref.render();
-		list_box.unselect_all();
-		list_box.select_row(Some(&list_row));
+		refresh_entry_editor(&entry_ctx_ref, &device_row, &options_group, &list_box, &list_row);
 	});
+}
+
+fn refresh_entry_editor(
+	entry_ctx: &EntryContext,
+	device_row: &device_value::DeviceRowController,
+	options_group: &PreferencesGroup,
+	list_box: &ListBox,
+	list_row: &gtk::ListBoxRow,
+) {
+	device_row.refresh_kinds();
+	build_options_group(options_group, entry_ctx);
+	entry_ctx.render();
+	list_box.unselect_all();
+	list_box.select_row(Some(list_row));
 }
 
 fn report_action_outcome(btn: &Button, heading: &str, body: &str, failed: &str, result: anyhow::Result<()>, refresh: &Rc<dyn Fn()>) {

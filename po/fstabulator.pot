@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-23 10:26+0200\n"
+"POT-Creation-Date: 2026-08-24 03:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/credentials_flow.rs:110 src/credentials_flow.rs:116 src/main.rs:581
+#: src/credentials_flow.rs:96
+#, rust-format
+msgid "Mount {mount_point}"
+msgstr ""
+
+#: src/credentials_flow.rs:110 src/credentials_flow.rs:116 src/main.rs:598
 msgid "Cannot mount"
 msgstr ""
 
@@ -29,167 +34,294 @@ msgstr ""
 msgid "A credentials file name is required when saving credentials."
 msgstr ""
 
-#: src/credentials_flow.rs:167 src/credentials_flow.rs:174 src/main.rs:877
+#: src/credentials_flow.rs:167 src/credentials_flow.rs:174 src/main.rs:930
 msgid "Could not mount"
 msgstr ""
 
-#: src/credentials_flow.rs:188
+#: src/credentials_flow.rs:178
+#, rust-format
+msgid "Would you like to delete the saved credentials file {path}?"
+msgstr ""
+
+#: src/credentials_flow.rs:186
 msgid "Credentials deleted"
 msgstr ""
 
-#: src/credentials_flow.rs:189
+#: src/credentials_flow.rs:187
 msgid "The saved credentials file was deleted."
 msgstr ""
 
-#: src/credentials_flow.rs:193
+#: src/credentials_flow.rs:190
 msgid "Could not delete credentials"
 msgstr ""
 
-#: src/credentials_flow.rs:198
+#: src/credentials_flow.rs:194
 msgid "Delete credentials"
 msgstr ""
 
-#: src/credentials_flow.rs:209
+#: src/credentials_flow.rs:205
 msgid "login used for this mount only"
 msgstr ""
 
+#: src/credentials_flow.rs:208
+#, rust-format
+msgid "login saved to {path}"
+msgstr ""
+
 #. xgettext: keep the <b> markup tags intact
-#: src/credentials_flow.rs:214 src/credentials_flow.rs:220
-#: src/credentials_flow.rs:226
+#: src/credentials_flow.rs:210 src/credentials_flow.rs:216
+#: src/credentials_flow.rs:222
 msgid "linked login to entry, <b>you must save changes to preserve this</b>"
 msgstr ""
 
-#: src/credentials_flow.rs:230 src/main.rs:877 src/mount_status.rs:17
+#: src/credentials_flow.rs:214
+#, rust-format
+msgid "updated existing login in {path}"
+msgstr ""
+
+#: src/credentials_flow.rs:220
+#, rust-format
+msgid "using existing login from {path}"
+msgstr ""
+
+#: src/credentials_flow.rs:225 src/main.rs:925
+#, rust-format
+msgid "Mounted {mount_point}."
+msgstr ""
+
+#: src/credentials_flow.rs:226 src/main.rs:928 src/mount_status.rs:17
 msgid "Mounted"
 msgstr ""
 
-#: src/credentials_flow.rs:271
+#: src/credentials_flow.rs:267
 msgid "Username"
 msgstr ""
 
-#: src/credentials_flow.rs:272
+#: src/credentials_flow.rs:268
 msgid "Password"
 msgstr ""
 
-#: src/credentials_flow.rs:273
+#: src/credentials_flow.rs:270
 msgid "Domain (optional)"
 msgstr ""
 
-#: src/credentials_flow.rs:281
+#: src/credentials_flow.rs:280
 msgid "Save for auto-mount"
 msgstr ""
 
-#: src/credentials_flow.rs:282
+#: src/credentials_flow.rs:281
 msgid "Writes a credentials file referenced from the fstab entry."
 msgstr ""
 
-#: src/credentials_flow.rs:285
+#: src/credentials_flow.rs:284
 msgid "Credentials file"
 msgstr ""
 
-#: src/credentials_flow.rs:287
+#: src/credentials_flow.rs:286
 msgid "Load existing credentials"
 msgstr ""
 
-#: src/credentials_flow.rs:292
+#: src/credentials_flow.rs:291
 msgid "Will overwrite the existing file!"
 msgstr ""
 
-#: src/credentials_flow.rs:359
+#: src/credentials_flow.rs:358
 msgid "This filesystem may require credentials to mount."
 msgstr ""
 
-#: src/credentials_flow.rs:362 src/device_value.rs:468 src/device_value.rs:650
-#: src/ui_commons.rs:151
+#: src/credentials_flow.rs:361 src/device_value.rs:616 src/ui_commons.rs:150
+#: src/ui_commons.rs:200
 msgid "Cancel"
 msgstr ""
 
-#: src/credentials_flow.rs:363
+#: src/credentials_flow.rs:362
 msgid "Connect"
 msgstr ""
 
-#: src/device_value.rs:447
+#: src/device_value.rs:337
+#, rust-format
+msgid "Could not resolve '{host}': {err}"
+msgstr ""
+
+#: src/device_value.rs:339
+#, rust-format
+msgid "Could not resolve '{host}'."
+msgstr ""
+
+#: src/device_value.rs:344
+#, rust-format
+msgid "Could not connect to {host}:{port}: {err}"
+msgstr ""
+
+#: src/device_value.rs:427
 msgid "User"
 msgstr ""
 
-#: src/device_value.rs:448
+#: src/device_value.rs:428
 msgid "Host"
 msgstr ""
 
-#: src/device_value.rs:449
+#: src/device_value.rs:429
 msgid "Port"
 msgstr ""
 
-#: src/device_value.rs:450
+#: src/device_value.rs:430
 msgid "Path"
 msgstr ""
 
-#: src/device_value.rs:452
+#: src/device_value.rs:432
 msgid "Test connection"
 msgstr ""
 
-#: src/device_value.rs:463
+#: src/device_value.rs:442
 msgid "Network location"
 msgstr ""
 
-#: src/device_value.rs:469 src/main.rs:168
-msgid "Save"
-msgstr ""
-
-#: src/device_value.rs:494
+#: src/device_value.rs:461
 msgid "Enter a valid port to test."
 msgstr ""
 
-#: src/device_value.rs:498
+#: src/device_value.rs:465
 msgid "Enter a host to test."
 msgstr ""
 
-#: src/device_value.rs:502
+#: src/device_value.rs:469
 msgid "Testing connection…"
 msgstr ""
 
-#: src/device_value.rs:528
+#: src/device_value.rs:475
+#, rust-format
+msgid "Connected to {host}:{port}."
+msgstr ""
+
+#: src/device_value.rs:495
 msgid "Test connection failed."
 msgstr ""
 
-#: src/device_value.rs:548
+#: src/device_value.rs:515
 msgid "Enter a host to save."
 msgstr ""
 
-#: src/device_value.rs:581
+#: src/device_value.rs:548
 msgid "Could not list devices"
 msgstr ""
 
-#: src/device_value.rs:642
+#: src/device_value.rs:606
 msgid "Filter devices…"
 msgstr ""
 
-#: src/device_value.rs:643
+#: src/device_value.rs:610
 msgid "No devices found"
 msgstr ""
 
-#: src/device_value.rs:783
+#: src/device_value.rs:615
+#, rust-format
+msgid "Select {kind}"
+msgstr ""
+
+#: src/device_value.rs:750
 msgid "Device name"
 msgstr ""
 
-#: src/device_value.rs:784
+#: src/device_value.rs:751
 msgid "Size"
 msgstr ""
 
-#: src/device_value.rs:785 src/main.rs:645 src/main.rs:943
+#: src/device_value.rs:752 src/main.rs:662 src/main.rs:1013
 msgid "Label"
 msgstr ""
 
-#: src/device_value.rs:786
+#: src/device_value.rs:753
 msgid "File System"
 msgstr ""
 
-#: src/device_value.rs:787
+#: src/device_value.rs:754
 msgid "Model"
 msgstr ""
 
-#: src/device_value.rs:872
+#: src/device_value.rs:839
 msgid "Edit device"
+msgstr ""
+
+#: src/device_value.rs:924
+#, rust-format
+msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
+msgstr ""
+
+#: src/entry_text_edit.rs:31
+msgid "Could not parse entry"
+msgstr ""
+
+#: src/entry_text_edit.rs:42
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr ""
+
+#: src/entry_text_edit.rs:56
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr ""
+
+#: src/entry_text_edit.rs:63
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr ""
+
+#: src/entry_text_edit.rs:79
+msgid "No problems detected"
+msgstr ""
+
+#: src/entry_text_edit.rs:90
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr ""
+
+#: src/entry_text_edit.rs:96
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr ""
+
+#: src/entry_text_edit.rs:108
+#, rust-format
+msgid "{option} should not have a value"
+msgstr ""
+
+#: src/entry_text_edit.rs:116
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr ""
+
+#: src/entry_text_edit.rs:124
+#, rust-format
+msgid "{option} should be a number"
+msgstr ""
+
+#: src/entry_text_edit.rs:131
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr ""
+
+#: src/entry_text_edit.rs:139
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr ""
+
+#: src/entry_text_edit.rs:143
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr ""
+
+#: src/entry_text_edit.rs:159
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr ""
+
+#: src/entry_text_edit.rs:196 src/main.rs:767
+msgid "Edit as text"
+msgstr ""
+
+#: src/entry_text_edit.rs:198
+msgid "Edit the raw fstab line. Problems with its values are listed below."
 msgstr ""
 
 #: src/fs_options.rs:124
@@ -3011,337 +3143,356 @@ msgid ""
 "virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
 msgstr ""
 
-#: src/fs_value.rs:118
+#: src/fs_value.rs:117
 msgid ""
 "virtual filesystem for the unified cgroup v2 hierarchy, managing resource "
 "limits and accounting"
 msgstr ""
 
-#: src/fs_value.rs:120
+#: src/fs_value.rs:118
 msgid ""
 "virtual filesystem backing security modules such as SELinux and IMA "
 "integrity interfaces"
 msgstr ""
 
-#: src/fs_value.rs:121
+#: src/fs_value.rs:119
 msgid ""
 "virtual filesystem exporting arbitrary kernel debugging data with no ABI "
 "stability guarantees"
 msgstr ""
 
-#: src/fs_value.rs:122
+#: src/fs_value.rs:120
 msgid ""
 "virtual filesystem holding ftrace control and trace-output files under /sys/"
 "kernel/tracing"
 msgstr ""
 
-#: src/fs_value.rs:123
+#: src/fs_value.rs:121
 msgid ""
 "virtual filesystem where userspace creates and configures kernel objects via "
 "mkdir and rmdir"
 msgstr ""
 
-#: src/fs_value.rs:124
+#: src/fs_value.rs:122
 msgid "POSIX message queue IPC exposed as files at /dev/mqueue"
 msgstr ""
 
-#: src/fs_value.rs:125
+#: src/fs_value.rs:123
 msgid "interface to huge page memory, mounted at /dev/hugepages"
 msgstr ""
 
-#: src/fs_value.rs:126
+#: src/fs_value.rs:124
 msgid "populates /dev with device nodes automatically at boot"
 msgstr ""
 
-#: src/fs_value.rs:127
+#: src/fs_value.rs:125
 msgid "Plan 9 remote filesystem protocol, used for host-to-VM file sharing"
 msgstr ""
 
-#: src/fs_value.rs:128
+#: src/fs_value.rs:126
 msgid "union filesystem stacking upper/lower layers, used by containers"
 msgstr ""
 
-#: src/fs_value.rs:129
+#: src/fs_value.rs:127
 msgid "OpenZFS copy-on-write filesystem with integrated volume management"
 msgstr ""
 
-#: src/fs_value.rs:130
+#: src/fs_value.rs:128
 msgid ""
 "copy-on-write, multi-device filesystem with built-in caching, compression, "
 "and checksumming"
 msgstr ""
 
-#: src/fs_value.rs:131
+#: src/fs_value.rs:129
 msgid "a custom filesystem type"
 msgstr ""
 
-#: src/fs_value.rs:159 src/fs_value.rs:192 src/fs_value.rs:218
+#: src/fs_value.rs:157 src/fs_value.rs:190 src/fs_value.rs:216
 msgid "Other"
 msgstr ""
 
-#: src/fs_value.rs:173
+#: src/fs_value.rs:171
 msgid "Other…"
 msgstr ""
 
-#: src/fs_value.rs:206
+#: src/fs_value.rs:204
 msgid "Search filesystems"
 msgstr ""
 
-#: src/fs_value.rs:207
+#: src/fs_value.rs:205
 msgid "Choose the filesystem type"
 msgstr ""
 
-#: src/fs_value.rs:208
+#: src/fs_value.rs:206
 msgid "Error loading filesystem types"
 msgstr ""
 
-#: src/fs_value.rs:244
+#: src/fs_value.rs:242
 msgid "File system:"
 msgstr ""
 
-#: src/fs_value.rs:256 src/main.rs:648
+#: src/fs_value.rs:254 src/main.rs:665
 msgid "File system"
 msgstr ""
 
-#: src/main.rs:125 src/main.rs:156
+#: src/main.rs:131 src/main.rs:162
 msgid "Make backup"
 msgstr ""
 
-#: src/main.rs:126
+#: src/main.rs:132
 msgid "Save changes"
 msgstr ""
 
-#: src/main.rs:127
+#: src/main.rs:133
 msgid "Revert changes"
 msgstr ""
 
-#: src/main.rs:153
+#: src/main.rs:159
 msgid ""
 "Your changes have not been saved yet. The backup will reflect the saved /etc/"
 "fstab, not your unsaved changes. Continue?"
 msgstr ""
 
-#: src/main.rs:169
+#: src/main.rs:174 src/ui_commons.rs:201
+msgid "Save"
+msgstr ""
+
+#: src/main.rs:175
 msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr ""
 
-#: src/main.rs:179
+#: src/main.rs:185
 msgid "Saved, but could not reload"
 msgstr ""
 
-#: src/main.rs:182
+#: src/main.rs:188
 msgid "Saved to /etc/fstab"
 msgstr ""
 
-#: src/main.rs:184
+#: src/main.rs:190
 msgid "Could not save"
 msgstr ""
 
-#: src/main.rs:194
+#: src/main.rs:200
 msgid "Revert"
 msgstr ""
 
-#: src/main.rs:195 src/main.rs:503
+#: src/main.rs:201 src/main.rs:519
 msgid "Are you sure? Any changes made will be lost!"
 msgstr ""
 
-#: src/main.rs:216
+#: src/main.rs:227
 msgid "'/etc/fstab' entries:"
 msgstr ""
 
-#: src/main.rs:299
+#: src/main.rs:313
 msgid "Error loading fstab file!"
 msgstr ""
 
-#: src/main.rs:319
+#: src/main.rs:333
 msgid "Backup created"
 msgstr ""
 
-#: src/main.rs:319
+#: src/main.rs:333
 msgid "A backup of /etc/fstab was created."
 msgstr ""
 
-#: src/main.rs:320
+#: src/main.rs:334
 msgid "Could not create backup"
 msgstr ""
 
-#: src/main.rs:384
+#: src/main.rs:360
+#, rust-format
+msgid "Line {line}"
+msgstr ""
+
+#: src/main.rs:398
 msgid "This entry is disabled (commented out)."
 msgstr ""
 
-#: src/main.rs:391
+#: src/main.rs:406
 msgid ""
 "The system may refuse to boot without this drive. If this is not intended, "
 "add the 'nofail' option. \n"
 "Usually, this is wanted on root and home mounts."
 msgstr ""
 
-#: src/main.rs:400
+#: src/main.rs:416
 msgid "This entry is invalid and cannot be parsed."
 msgstr ""
 
-#: src/main.rs:452
+#: src/main.rs:468
 msgid "Add new mount entry"
 msgstr ""
 
-#: src/main.rs:507
+#: src/main.rs:523
 msgid "Restore"
 msgstr ""
 
-#: src/main.rs:512
+#: src/main.rs:528
 msgid "Restore backup"
 msgstr ""
 
-#: src/main.rs:513
+#: src/main.rs:529
 msgid "Search backups"
 msgstr ""
 
-#: src/main.rs:514
+#: src/main.rs:530
 msgid "Restore from a backup file"
 msgstr ""
 
-#: src/main.rs:515
+#: src/main.rs:531
 msgid "Failed to list backups"
 msgstr ""
 
-#: src/main.rs:538 src/main.rs:567
+#: src/main.rs:555 src/main.rs:584
 msgid "Could not load backup"
 msgstr ""
 
-#: src/main.rs:582 src/main.rs:895
+#: src/main.rs:599 src/main.rs:951
 msgid "Cannot remount"
 msgstr ""
 
-#: src/main.rs:583
+#: src/main.rs:600
 msgid "Cannot unmount"
 msgstr ""
 
-#: src/main.rs:589
+#: src/main.rs:606
 msgid "The entry has unsaved changes. Save your changes before mounting."
 msgstr ""
 
-#: src/main.rs:590
+#: src/main.rs:607
 msgid "The entry has unsaved changes. Save your changes before remounting."
 msgstr ""
 
-#: src/main.rs:591
+#: src/main.rs:608
 msgid ""
 "The mount point has unsaved changes. Save your changes before unmounting."
 msgstr ""
 
-#: src/main.rs:598
+#: src/main.rs:615
 msgid "The mount point is empty."
 msgstr ""
 
-#: src/main.rs:627
+#: src/main.rs:644
 msgid "Delete entry"
 msgstr ""
 
-#: src/main.rs:649
+#: src/main.rs:666
 msgid "Device"
 msgstr ""
 
-#: src/main.rs:650 src/mount_point_value.rs:18
+#: src/main.rs:667 src/mount_point_value.rs:18
 msgid "Mount point"
 msgstr ""
 
-#: src/main.rs:676
+#: src/main.rs:693
 msgid "Delete"
 msgstr ""
 
-#: src/main.rs:676
+#: src/main.rs:693
 msgid "Delete this entry?"
 msgstr ""
 
-#: src/main.rs:711
+#: src/main.rs:728
 msgid "Reset"
 msgstr ""
 
-#: src/main.rs:716
+#: src/main.rs:733
 msgid "Edit properties"
 msgstr ""
 
-#: src/main.rs:719
+#: src/main.rs:736
 msgid "Options"
 msgstr ""
 
-#: src/main.rs:735
+#: src/main.rs:753
 msgid "Active"
 msgstr ""
 
-#: src/main.rs:751
+#: src/main.rs:790
 msgid "Extra"
 msgstr ""
 
-#: src/main.rs:755
+#: src/main.rs:794
 msgid "Dump"
 msgstr ""
 
-#: src/main.rs:756
+#: src/main.rs:795
 msgid "Controls the dump backup frequency; 0 disables"
 msgstr ""
 
-#: src/main.rs:763
+#: src/main.rs:802
 msgid "Pass"
 msgstr ""
 
-#: src/main.rs:764
+#: src/main.rs:803
 msgid "Controls the fsck check order; 0 disables"
 msgstr ""
 
-#: src/main.rs:793
+#: src/main.rs:842
 msgid "Mount actions"
 msgstr ""
 
-#: src/main.rs:805
+#: src/main.rs:854
 msgid "Status"
 msgstr ""
 
-#: src/main.rs:808 src/main.rs:858
+#: src/main.rs:857 src/main.rs:907
 msgid "Mount"
 msgstr ""
 
-#: src/main.rs:809 src/main.rs:886
+#: src/main.rs:858 src/main.rs:942
 msgid "Remount"
 msgstr ""
 
-#: src/main.rs:810 src/main.rs:914
+#: src/main.rs:859 src/main.rs:977
 msgid "Unmount"
 msgstr ""
 
-#: src/main.rs:818
+#: src/main.rs:867
 msgid "Actions"
 msgstr ""
 
-#: src/main.rs:859
+#: src/main.rs:908
 msgid "Are you sure you want to mount this entry?"
 msgstr ""
 
-#: src/main.rs:887
+#: src/main.rs:943
 msgid "Are you sure you want to remount this entry?"
 msgstr ""
 
-#: src/main.rs:895
+#: src/main.rs:951
 msgid "Swap cannot be remounted."
 msgstr ""
 
-#: src/main.rs:906
+#: src/main.rs:961
+#, rust-format
+msgid "Remounted {mount_point}."
+msgstr ""
+
+#: src/main.rs:964
 msgid "Remounted"
 msgstr ""
 
-#: src/main.rs:906
+#: src/main.rs:966
 msgid "Could not remount"
 msgstr ""
 
-#: src/main.rs:915
+#: src/main.rs:978
 msgid "Are you sure you want to unmount this entry?"
 msgstr ""
 
-#: src/main.rs:935 src/mount_status.rs:18
+#: src/main.rs:997
+#, rust-format
+msgid "Unmounted {mount_point}."
+msgstr ""
+
+#: src/main.rs:1000 src/mount_status.rs:18
 msgid "Unmounted"
 msgstr ""
 
-#: src/main.rs:935
+#: src/main.rs:1002
 msgid "Could not unmount"
 msgstr ""
 
@@ -3385,50 +3536,50 @@ msgstr ""
 msgid "Option"
 msgstr ""
 
-#: src/options_value.rs:363
+#: src/options_value.rs:366
 msgid "Search subvolumes"
 msgstr ""
 
-#: src/options_value.rs:364
+#: src/options_value.rs:367
 msgid "Find a subvolume on this device"
 msgstr ""
 
-#: src/options_value.rs:365
+#: src/options_value.rs:368
 msgid "Failed to fetch subvolumes"
 msgstr ""
 
-#: src/options_value.rs:399
+#: src/options_value.rs:402
 msgid "Add option…"
 msgstr ""
 
-#: src/options_value.rs:400
+#: src/options_value.rs:403
 msgid "Search options"
 msgstr ""
 
-#: src/options_value.rs:401
+#: src/options_value.rs:404
 msgid "Choose an option to add to this entry"
 msgstr ""
 
-#: src/options_value.rs:402
+#: src/options_value.rs:405
 msgid "Error loading options"
 msgstr ""
 
-#: src/options_value.rs:406
+#: src/options_value.rs:409
 msgid "Add option"
 msgstr ""
 
-#: src/search_picker.rs:36
+#: src/search_picker.rs:37
 msgid "Search"
 msgstr ""
 
-#: src/search_picker.rs:41
+#: src/search_picker.rs:43
 msgid "Failed to load"
 msgstr ""
 
-#: src/ui_commons.rs:93 src/ui_commons.rs:104
+#: src/ui_commons.rs:92 src/ui_commons.rs:103
 msgid "OK"
 msgstr ""
 
-#: src/ui_commons.rs:176
+#: src/ui_commons.rs:225
 msgid "Confirm"
 msgstr ""

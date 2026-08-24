@@ -1,6 +1,5 @@
-use adw::ActionRow;
-use adw::AlertDialog;
 use adw::prelude::*;
+use adw::{ActionRow, AlertDialog, Dialog};
 use gtk::{Align, Box as GtkBox, Button, ListBox, Orientation, Widget};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -167,6 +166,56 @@ impl ConfirmPopupBuilder {
 
 pub(crate) fn parent_window(widget: &impl IsA<Widget>) -> Option<gtk::Window> {
 	widget.root().and_then(|root| root.downcast::<gtk::Window>().ok())
+}
+
+pub(crate) const DIALOG_MARGIN: i32 = 16;
+
+pub(crate) fn dialog_content_box() -> GtkBox {
+	GtkBox::builder()
+		.orientation(Orientation::Vertical)
+		.spacing(6)
+		.margin_start(DIALOG_MARGIN)
+		.margin_end(DIALOG_MARGIN)
+		.margin_top(DIALOG_MARGIN)
+		.margin_bottom(DIALOG_MARGIN)
+		.build()
+}
+
+pub(crate) fn close_on_click(btn: &Button, dialog: &Dialog) {
+	let dialog = dialog.clone();
+	btn.connect_clicked(move |_| {
+		dialog.close();
+	});
+}
+
+pub(crate) fn dialog_heading(title: impl Into<String>) -> gtk::Label {
+	gtk::Label::builder()
+		.label(title.into())
+		.css_classes(["title-1"])
+		.halign(Align::Start)
+		.build()
+}
+
+pub(crate) fn cancel_save_row() -> (Button, Button, GtkBox) {
+	let cancel_btn = Button::with_label(i18n("Cancel").as_str());
+	let save_btn = Button::with_label(i18n("Save").as_str());
+	save_btn.add_css_class("suggested-action");
+	let row = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.spacing(6)
+		.halign(Align::End)
+		.build();
+	row.append(&cancel_btn);
+	row.append(&save_btn);
+	(cancel_btn, save_btn, row)
+}
+
+pub(crate) fn suggested_dialog_width(widget: &impl IsA<Widget>) -> i32 {
+	parent_window(widget)
+		.as_ref()
+		.map(|window| window.width() * 9 / 10)
+		.filter(|width| *width > 0)
+		.unwrap_or(600)
 }
 
 pub fn confirm_popup(parent_widget: &impl IsA<Widget>, message: impl Into<String>, on_confirm: impl FnOnce() + 'static) -> ConfirmPopupBuilder {

@@ -347,26 +347,6 @@ fn test_network_connection(host: &str, port: u16) -> Result<(), String> {
 		})
 }
 
-const DIALOG_MARGIN: i32 = 16;
-
-fn dialog_content_box() -> GtkBox {
-	GtkBox::builder()
-		.orientation(Orientation::Vertical)
-		.spacing(6)
-		.margin_start(DIALOG_MARGIN)
-		.margin_end(DIALOG_MARGIN)
-		.margin_top(DIALOG_MARGIN)
-		.margin_bottom(DIALOG_MARGIN)
-		.build()
-}
-
-fn close_on_click(btn: &Button, dialog: &Dialog) {
-	let dialog = dialog.clone();
-	btn.connect_clicked(move |_| {
-		dialog.close();
-	});
-}
-
 #[derive(Clone)]
 pub struct DeviceRowController {
 	entry: GC<StabEntry>,
@@ -459,24 +439,11 @@ impl DeviceRowController {
 		test_row.append(&test_btn);
 		test_row.append(&status_label);
 
-		let heading = Label::builder()
-			.label(i18n("Network location"))
-			.css_classes(["title-1"])
-			.halign(Align::Start)
-			.build();
+		let heading = crate::ui_commons::dialog_heading(i18n("Network location"));
 
-		let cancel_btn = Button::with_label(i18n("Cancel").as_str());
-		let save_btn = Button::with_label(i18n("Save").as_str());
-		save_btn.add_css_class("suggested-action");
-		let buttons = GtkBox::builder()
-			.orientation(Orientation::Horizontal)
-			.spacing(6)
-			.halign(Align::End)
-			.build();
-		buttons.append(&cancel_btn);
-		buttons.append(&save_btn);
+		let (cancel_btn, save_btn, buttons) = crate::ui_commons::cancel_save_row();
 
-		let content = dialog_content_box();
+		let content = crate::ui_commons::dialog_content_box();
 		content.append(&heading);
 		content.append(&user_entry);
 		content.append(&host_entry);
@@ -535,7 +502,7 @@ impl DeviceRowController {
 
 		let dialog = Dialog::builder().child(&content).follows_content_size(true).width_request(400).build();
 
-		close_on_click(&cancel_btn, &dialog);
+		crate::ui_commons::close_on_click(&cancel_btn, &dialog);
 
 		{
 			let (controller, user_entry, host_entry) = (self.clone(), user_entry.clone(), host_entry.clone());
@@ -624,11 +591,7 @@ impl DeviceRowController {
 			column_view.append_column(&make_column(&title, getter));
 		}
 
-		let parent = crate::ui_commons::parent_window(&self.picker_btn);
-		let max_width = parent
-			.as_ref()
-			.map(|window| (window.width() as f64 * 0.95) as i32 - DIALOG_MARGIN * 2)
-			.unwrap_or(600);
+		let max_width = crate::ui_commons::suggested_dialog_width(&self.picker_btn);
 
 		let scroll = ScrolledWindow::builder()
 			.child(&column_view)
@@ -649,15 +612,11 @@ impl DeviceRowController {
 			.visible(false)
 			.build();
 
-		let heading = Label::builder()
-			.label(i18n_fmt("Select {kind}", &[("{kind}", kind.label())]))
-			.css_classes(["title-1"])
-			.halign(Align::Start)
-			.build();
+		let heading = crate::ui_commons::dialog_heading(i18n_fmt("Select {kind}", &[("{kind}", kind.label())]));
 		let cancel_btn = Button::with_label(i18n("Cancel").as_str());
 		cancel_btn.set_halign(Align::End);
 
-		let content = dialog_content_box();
+		let content = crate::ui_commons::dialog_content_box();
 		content.append(&heading);
 		content.append(&search);
 		content.append(&scroll);
@@ -670,7 +629,7 @@ impl DeviceRowController {
 
 		let dialog = Dialog::builder().child(&content).follows_content_size(true).build();
 
-		close_on_click(&cancel_btn, &dialog);
+		crate::ui_commons::close_on_click(&cancel_btn, &dialog);
 
 		{
 			let (dialog, controller) = (dialog.clone(), self.clone());
@@ -706,6 +665,7 @@ impl DeviceRowController {
 			let column_view = column_view.clone();
 			gtk::glib::idle_add_local_once(move || column_view.scroll_to(pos, None, ListScrollFlags::FOCUS, None));
 		}
+		let parent = crate::ui_commons::parent_window(&self.picker_btn);
 		dialog.present(parent.as_ref());
 	}
 }

@@ -17,6 +17,7 @@ type Filter<T> = Rc<dyn Fn(&str, &T) -> bool>;
 pub struct SearchPickerBuilder<T: Clone + 'static, W: IsA<Widget>> {
 	search_placeholder: String,
 	menu_label: String,
+	wrap_label: bool,
 	tooltip: String,
 	dataset: Rc<dyn Fn() -> anyhow::Result<Vec<T>>>,
 	render_row: Rc<dyn Fn(&T) -> W>,
@@ -35,6 +36,7 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 		Self {
 			search_placeholder: i18n("Search"),
 			menu_label: menu_label.into(),
+			wrap_label: false,
 			tooltip: String::new(),
 			dataset: Rc::new(dataset),
 			render_row: Rc::new(render_row),
@@ -42,6 +44,11 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 			filter: None,
 			on_select: Rc::new(on_select),
 		}
+	}
+
+	pub fn wrap_label(mut self, value: bool) -> Self {
+		self.wrap_label = value;
+		self
 	}
 
 	pub fn search_placeholder(mut self, value: impl Into<String>) -> Self {
@@ -74,6 +81,7 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 		let Self {
 			search_placeholder,
 			menu_label,
+			wrap_label,
 			tooltip,
 			dataset,
 			render_row,
@@ -110,7 +118,14 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 
 		let popover = Popover::builder().child(&popover_content).build();
 
-		let menu_btn = MenuButton::builder().label(menu_label.as_str()).popover(&popover).build();
+		let menu_btn = MenuButton::builder().popover(&popover).build();
+		if wrap_label {
+			let label = gtk::Label::builder().label(menu_label.as_str()).wrap(true).hexpand(true).build();
+			menu_btn.set_always_show_arrow(true);
+			menu_btn.set_child(Some(&label));
+		} else {
+			menu_btn.set_label(menu_label.as_str());
+		}
 		if !tooltip.is_empty() {
 			menu_btn.set_tooltip_text(Some(tooltip.as_str()));
 		}
@@ -130,7 +145,7 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 				if !popover.is_visible() {
 					return;
 				}
-				if menu_btn.label().is_some_and(|label| !label.is_empty()) {
+				if !menu_label.is_empty() {
 					popover.set_size_request(menu_btn.width(), -1);
 				}
 				match dataset() {
