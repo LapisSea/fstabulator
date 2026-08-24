@@ -1,6 +1,6 @@
 use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
-use crate::fs_options::{FsOption, OptionSpec, OptionValue};
+use crate::fs_options::{CompressionSpec, FsOption, OptionSpec, OptionValue};
 use crate::i18n::i18n;
 use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
@@ -91,6 +91,18 @@ fn add_option_row(ctx: AddContext) {
 					let Some(selected) = model.string(dropdown.selected()) else { return };
 					set_option(&ctx, FsOption::from_kv(name.clone(), selected));
 				});
+			} else {
+				add_free_text_option_row(ctx.clone(), &trash);
+			}
+		}
+		Some(OptionSpec {
+			description,
+			value: OptionValue::Compression(algorithms),
+			..
+		}) => {
+			let (algo, level) = CompressionSpec::split(&current);
+			if algorithms.iter().any(|spec| spec.name == algo) {
+				add_compression_option_row(ctx.clone(), &trash, &name, description, algorithms, algo, level);
 			} else {
 				add_free_text_option_row(ctx.clone(), &trash);
 			}
@@ -290,6 +302,78 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	dropdown.connect_selected_notify(move |_| apply());
 }
 
+fn filter_input(input: &gtk::Entry, valid: impl Fn(char) -> bool + 'static, on_changed: impl Fn(&str) + 'static) {
+	input.connect_changed(move |input| {
+		let text = input.text();
+		let cleaned: String = text.chars().filter(|c| valid(*c)).collect();
+		if cleaned.as_str() != text.as_str() {
+			let before: String = text.chars().take(input.position().max(0) as usize).filter(|c| valid(*c)).collect();
+			input.set_text(&cleaned);
+			input.set_position(before.chars().count() as i32);
+			return;
+		}
+		on_changed(&cleaned);
+	});
+}
+
+fn add_compression_option_row(
+	ctx: AddContext,
+	trash: &gtk::Button,
+	name: &str,
+	description: &str,
+	algorithms: &'static [CompressionSpec],
+	current_algo: &str,
+	current_level: Option<&str>,
+) {
+	let names: Vec<&str> = algorithms.iter().map(|spec| spec.name).collect();
+	let model = StringList::new(&names);
+	let dropdown = DropDown::builder().model(&model).build();
+	dropdown.set_valign(Align::Center);
+	if let Some(pos) = algorithms.iter().position(|spec| spec.name == current_algo) {
+		dropdown.set_selected(pos as u32);
+	}
+	let level_entry = gtk::Entry::builder()
+		.text(current_level.unwrap_or_default())
+		.input_purpose(gtk::InputPurpose::Digits)
+		.width_chars(1)
+		.build();
+	level_entry.set_valign(Align::Center);
+	let content = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
+	content.append(&dropdown);
+	content.append(&level_entry);
+
+	let row = ActionRow::builder().title(name).subtitle(i18n(description)).build();
+	row.add_suffix(&content);
+	row.add_suffix(trash);
+	ctx.group.add(&row);
+
+	let (ctx, name) = (ctx.clone(), name.to_string());
+	let apply = Rc::new({
+		let (dropdown, level_entry) = (dropdown.clone(), level_entry.clone());
+		move || {
+			let spec = algorithms[dropdown.selected() as usize];
+			let level = level_entry.text().to_string();
+			let value = if spec.levels.is_some() && !level.is_empty() {
+				format!("{}:{level}", spec.name)
+			} else {
+				spec.name.to_string()
+			};
+			set_option(&ctx, FsOption::from_kv(&name, value));
+		}
+	});
+	dropdown.connect_selected_notify({
+		let (apply, level_entry) = (apply.clone(), level_entry.clone());
+		move |dropdown| {
+			let spec = algorithms[dropdown.selected() as usize];
+			if spec.levels.is_none() && !level_entry.text().is_empty() {
+				level_entry.set_text("");
+			}
+			apply();
+		}
+	});
+	filter_input(&level_entry, |c| c.is_ascii_digit(), move |_| apply());
+}
+
 fn add_digits_option_row(
 	ctx: AddContext,
 	trash: &gtk::Button,
@@ -309,19 +393,8 @@ fn add_digits_option_row(
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
-	let ctx = ctx.clone();
-	let name = name.to_string();
-	input.connect_changed(move |input| {
-		let text = input.text();
-		let cleaned: String = text.chars().filter(|c| valid_digit(*c)).collect();
-		if cleaned.as_str() != text.as_str() {
-			let before: String = text.chars().take(input.position().max(0) as usize).filter(|c| valid_digit(*c)).collect();
-			input.set_text(&cleaned);
-			input.set_position(before.chars().count() as i32);
-			return;
-		}
-		set_option(&ctx, FsOption::from_kv(name.clone(), cleaned));
-	});
+	let (ctx, name) = (ctx.clone(), name.to_string());
+	filter_input(&input, valid_digit, move |cleaned| set_option(&ctx, FsOption::from_kv(&name, cleaned)));
 }
 
 fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
@@ -417,6 +490,7 @@ fn default_option_value(option: OptionSpec) -> FsOption {
 	match option.value {
 		OptionValue::Toggle => FsOption::from_named(option.name),
 		OptionValue::Enum(values) => FsOption::from_kv(option.name, values.first().copied().unwrap_or_default()),
+		OptionValue::Compression(algorithms) => FsOption::from_kv(option.name, algorithms.first().map(|spec| spec.name).unwrap_or_default()),
 		OptionValue::Integer => FsOption::from_kv(option.name, "0"),
 		OptionValue::IntegerRange(min, max) => FsOption::from_kv(option.name, 0.clamp(min, max).to_string()),
 		OptionValue::Octal => FsOption::from_kv(option.name, "0"),
@@ -445,6 +519,17 @@ mod tests {
 		assert_eq!(default_option_value(opt(OptionValue::Toggle)), FsOption::from_named("opt"));
 		assert_eq!(
 			default_option_value(opt(OptionValue::Enum(&["a", "b", "c"]))),
+			FsOption::from_kv("opt", "a")
+		);
+		const COMPRESSION: [CompressionSpec; 2] = [
+			CompressionSpec {
+				name: "a",
+				levels: Some((0, 9)),
+			},
+			CompressionSpec { name: "b", levels: None },
+		];
+		assert_eq!(
+			default_option_value(opt(OptionValue::Compression(&COMPRESSION))),
 			FsOption::from_kv("opt", "a")
 		);
 		assert_eq!(default_option_value(opt(OptionValue::Integer)), FsOption::from_kv("opt", "0"));

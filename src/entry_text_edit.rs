@@ -119,6 +119,21 @@ fn option_value_problem(spec: OptionSpec, option: &FsOption) -> Option<String> {
 			},
 			|_| None,
 		),
+		OptionValue::Compression(algorithms) => {
+			let valid = match value {
+				None => true,
+				Some(value) => algorithms.iter().any(|spec| spec.is_valid(value)),
+			};
+			if valid {
+				None
+			} else {
+				let values: Vec<&str> = algorithms.iter().map(|spec| spec.name).collect();
+				Some(i18n_fmt(
+					"{option} should be one of: {values}, optionally followed by a level",
+					&[("{option}", name), ("{values}", &values.join(", "))],
+				))
+			}
+		}
 		OptionValue::Integer => value
 			.filter(|value| value.parse::<i64>().is_ok())
 			.map_or_else(|| Some(i18n_fmt("{option} should be a number", &[("{option}", name)])), |_| None),
@@ -362,6 +377,54 @@ mod tests {
 			issues
 				.iter()
 				.any(|issue| issue.kind == IssueKind::Warning && issue.message.contains("resgid"))
+		);
+	}
+
+	#[test]
+	fn compression_option_accepts_bare_algorithm_and_level() {
+		let issues = detect_issues(0, "none /mnt/x btrfs compress 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("compress")));
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=zstd 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("compress")));
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=zstd:3 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("compress")));
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=zstd:0 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("compress")));
+	}
+
+	#[test]
+	fn compression_option_rejects_out_of_range_level() {
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=zstd:16 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.kind == IssueKind::Warning && issue.message.contains("compress"))
+		);
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=zlib:10 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.kind == IssueKind::Warning && issue.message.contains("compress"))
+		);
+	}
+
+	#[test]
+	fn compression_option_rejects_level_for_levelless_algorithm() {
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=lzo:3 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.kind == IssueKind::Warning && issue.message.contains("compress"))
+		);
+	}
+
+	#[test]
+	fn compression_option_rejects_unknown_algorithm() {
+		let issues = detect_issues(0, "none /mnt/x btrfs compress=bork:3 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.kind == IssueKind::Warning && issue.message.contains("compress"))
 		);
 	}
 }

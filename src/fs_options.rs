@@ -71,6 +71,34 @@ impl BoolType {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct CompressionSpec {
+	pub name: &'static str,
+	/// Inclusive level range, or None if the algorithm takes no level
+	pub levels: Option<(u8, u8)>,
+}
+
+impl CompressionSpec {
+	pub fn split(value: &str) -> (&str, Option<&str>) {
+		match value.split_once(':') {
+			Some((name, level)) => (name, Some(level)),
+			None => (value, None),
+		}
+	}
+
+	pub fn is_valid(self, value: &str) -> bool {
+		let (name, level) = Self::split(value);
+		if self.name != name {
+			return false;
+		}
+		match (level, self.levels) {
+			(None, _) => true,
+			(Some(level), Some((min, max))) => level.parse::<u8>().is_ok_and(|level| (min..=max).contains(&level)),
+			(Some(_), None) => false,
+		}
+	}
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum OptionValue {
 	/// Bare flag with no value (defaults, nofail...)
 	Toggle,
@@ -86,6 +114,8 @@ pub enum OptionValue {
 	Bool(BoolType),
 	/// One of a fixed set of string literals
 	Enum(&'static [&'static str]),
+	/// One of a set of compression algorithms with an optional `:level` (for example `zstd:3`)
+	Compression(&'static [CompressionSpec]),
 	/// Arbitrary free-form text (paths, names, labels)
 	String,
 	/// A btrfs subvolume, picked from the subvolumes found on the entry's device
@@ -308,6 +338,19 @@ pub const XFS_OPTIONS: &[OptionSpec] = &[
 	opt!("wsync", OptionValue::Toggle, "Runs filesystem namespace operations synchronously."),
 ];
 
+pub const BTRFS_COMPRESSION: [CompressionSpec; 4] = [
+	CompressionSpec {
+		name: "zlib",
+		levels: Some((0, 9)),
+	},
+	CompressionSpec { name: "lzo", levels: None },
+	CompressionSpec {
+		name: "zstd",
+		levels: Some((0, 15)),
+	},
+	CompressionSpec { name: "no", levels: None },
+];
+
 #[rustfmt::skip]
 pub const BTRFS_OPTIONS: &[OptionSpec] = &[
 	opt!("acl", OptionValue::Toggle, "Enables POSIX access control lists (default on)."),
@@ -318,8 +361,8 @@ pub const BTRFS_OPTIONS: &[OptionSpec] = &[
 	opt!("nobarrier", OptionValue::Toggle, "Disables write barriers; risks corruption on crash."),
 	opt!("clear_cache", OptionValue::Toggle, "Clears and rebuilds the free space cache."),
 	opt!("commit", OptionValue::Integer, "Sets transaction commit interval in seconds (default 30).", "30"),
-	opt!("compress", OptionValue::Enum(&["zlib", "lzo", "zstd", "no"]), "Enables data compression (zlib, lzo, or zstd).", "zstd"),
-	opt!("compress-force", OptionValue::Enum(&["zlib", "lzo", "zstd", "no"]), "Always attempts compression, even if ineffective.", "zstd"),
+	opt!("compress", OptionValue::Compression(&BTRFS_COMPRESSION), "Enables data compression, optionally with a level (for example zstd:3).", "zstd"),
+	opt!("compress-force", OptionValue::Compression(&BTRFS_COMPRESSION), "Always attempts compression, even if ineffective, optionally with a level.", "zstd"),
 	opt!("datacow", OptionValue::Toggle, "Enables data copy-on-write for new files."),
 	opt!("nodatacow", OptionValue::Toggle, "Disables data COW (implies nodatasum, no compression)."),
 	opt!("datasum", OptionValue::Toggle, "Enables data checksumming."),
@@ -1074,5 +1117,29 @@ mod tests {
 		assert_eq!(BoolType::YesNo.parse("NO"), Some(false));
 		assert_eq!(BoolType::OneZero.parse("0"), Some(false));
 		assert_eq!(BoolType::OneZero.parse("garbage"), None);
+	}
+
+	#[test]
+	fn compression_spec_validity() {
+		let (zlib, lzo, zstd, no) = (BTRFS_COMPRESSION[0], BTRFS_COMPRESSION[1], BTRFS_COMPRESSION[2], BTRFS_COMPRESSION[3]);
+
+		assert!(zstd.is_valid("zstd"));
+		assert!(zstd.is_valid("zstd:3"));
+		assert!(zstd.is_valid("zstd:0"));
+		assert!(zstd.is_valid("zstd:15"));
+		assert!(!zstd.is_valid("zstd:16"));
+		assert!(!zstd.is_valid("zstd:"));
+		assert!(!zstd.is_valid("zstd:3:4"));
+		assert!(!zstd.is_valid("zlib:3"));
+
+		assert!(zlib.is_valid("zlib:9"));
+		assert!(!zlib.is_valid("zlib:10"));
+		assert!(!zlib.is_valid("zlib:x"));
+
+		assert!(lzo.is_valid("lzo"));
+		assert!(!lzo.is_valid("lzo:1"));
+
+		assert!(no.is_valid("no"));
+		assert!(!no.is_valid("no:1"));
 	}
 }
