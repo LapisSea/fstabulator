@@ -1,0 +1,2674 @@
+# German translations for fstabulator.
+# This file is distributed under the same license as the fstabulator package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: fstabulator 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
+"POT-Creation-Date: 2026-08-24 16:58+0200\n"
+"PO-Revision-Date: 2026-08-25 14:00+0200\n"
+"Last-Translator: Automatically translated (machine-assisted)\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#, rust-format
+msgid "Mount {mount_point}"
+msgstr "Einhängen von {mount_point}"
+
+msgid "Cannot mount"
+msgstr "Nicht einhängbar"
+
+msgid "A password is required."
+msgstr "Ein Passwort ist erforderlich."
+
+msgid "A credentials file name is required when saving credentials."
+msgstr "Für das Speichern der Zugangsdaten ist ein Dateiname erforderlich."
+
+msgid "Could not mount"
+msgstr "Einhängen fehlgeschlagen"
+
+#, rust-format
+msgid "Would you like to delete the saved credentials file {path}?"
+msgstr "Möchten Sie die gespeicherte Zugangsdatendatei {path} löschen?"
+
+msgid "Credentials deleted"
+msgstr "Zugangsdaten gelöscht"
+
+msgid "The saved credentials file was deleted."
+msgstr "Die gespeicherte Zugangsdatendatei wurde gelöscht."
+
+msgid "Could not delete credentials"
+msgstr "Zugangsdaten konnten nicht gelöscht werden"
+
+msgid "Delete credentials"
+msgstr "Zugangsdaten löschen"
+
+msgid "login used for this mount only"
+msgstr "Anmeldung nur für diese Einhängung"
+
+#, rust-format
+msgid "login saved to {path}"
+msgstr "Anmeldung gespeichert unter {path}"
+
+#. xgettext: keep the <b> markup tags intact
+msgid "linked login to entry, <b>you must save changes to preserve this</b>"
+msgstr "Anmeldung mit Eintrag verknüpft, <b>Sie müssen Ihre Änderungen speichern, um dies beizubehalten</b>"
+
+#, rust-format
+msgid "updated existing login in {path}"
+msgstr "vorhandene Anmeldung in {path} aktualisiert"
+
+#, rust-format
+msgid "using existing login from {path}"
+msgstr "vorhandene Anmeldung aus {path} wird verwendet"
+
+#, rust-format
+msgid "Mounted {mount_point}."
+msgstr "{mount_point} wurde eingebunden."
+
+msgid "Mounted"
+msgstr "Eingebunden"
+
+msgid "Username"
+msgstr "Benutzername"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "Domain (optional)"
+msgstr "Domäne (optional)"
+
+msgid "Save for auto-mount"
+msgstr "Für automatische Einhängung speichern"
+
+msgid "Writes a credentials file referenced from the fstab entry."
+msgstr "Erstellt eine Zugangsdatendatei, auf die der fstab-Eintrag verweist."
+
+msgid "Credentials file"
+msgstr "Zugangsdatendatei"
+
+msgid "Load existing credentials"
+msgstr "Vorhandene Zugangsdaten laden"
+
+msgid "Will overwrite the existing file!"
+msgstr "Die vorhandene Datei wird überschrieben!"
+
+msgid "This filesystem may require credentials to mount."
+msgstr "Dieses Dateisystem benötigt möglicherweise Zugangsdaten zum Einhängen."
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Connect"
+msgstr "Verbinden"
+
+#, rust-format
+msgid "Could not resolve '{host}': {err}"
+msgstr "'{host}' konnte nicht aufgelöst werden: {err}"
+
+#, rust-format
+msgid "Could not resolve '{host}'."
+msgstr "'{host}' konnte nicht aufgelöst werden."
+
+#, rust-format
+msgid "Could not connect to {host}:{port}: {err}"
+msgstr "Verbindung zu {host}:{port} fehlgeschlagen: {err}"
+
+msgid "User"
+msgstr "Benutzer"
+
+msgid "Host"
+msgstr "Host"
+
+msgid "Port"
+msgstr "Port"
+
+msgid "Path"
+msgstr "Pfad"
+
+msgid "Test connection"
+msgstr "Verbindung testen"
+
+msgid "Network location"
+msgstr "Netzwerkadresse"
+
+msgid "Enter a valid port to test."
+msgstr "Gültigen Port zum Testen eingeben."
+
+msgid "Enter a host to test."
+msgstr "Host zum Testen eingeben."
+
+msgid "Testing connection…"
+msgstr "Verbindung wird getestet…"
+
+#, rust-format
+msgid "Connected to {host}:{port}."
+msgstr "Verbindung zu {host}:{port} hergestellt."
+
+msgid "Test connection failed."
+msgstr "Verbindungstest fehlgeschlagen."
+
+msgid "Enter a host to save."
+msgstr "Host zum Speichern eingeben."
+
+msgid "Could not list devices"
+msgstr "Fehler beim Auflisten der Geräte"
+
+msgid "Filter devices…"
+msgstr "Geräte filtern…"
+
+msgid "No devices found"
+msgstr "Keine Geräte gefunden"
+
+#, rust-format
+msgid "Select {kind}"
+msgstr "{kind} auswählen"
+
+msgid "Device name"
+msgstr "Gerätename"
+
+msgid "Size"
+msgstr "Größe"
+
+msgid "Label"
+msgstr "Bezeichnung"
+
+msgid "File System"
+msgstr "Dateisystem"
+
+msgid "Model"
+msgstr "Modell"
+
+msgid "Edit device"
+msgstr "Gerät bearbeiten"
+
+#, rust-format
+msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
+msgstr "Konnte {kind} für {value} nicht auflösen. Der Wert wurde unverändert beibehalten."
+
+msgid "Could not parse entry"
+msgstr "Eintrag konnte nicht geparst werden"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Einhängepunkt existiert nicht: {point}"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "Unbekanntes Dateisystem: {fs_type}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Unbekannte Option: {option}"
+
+msgid "No problems detected"
+msgstr "Keine Probleme erkannt"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "Unbekannter Gerätetyp: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "Gerät existiert nicht: {device}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} darf keinen Wert haben"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} muss einer dieser Werte sein: {values}"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} muss einer dieser Werte sein: {values}, optional gefolgt von einer Stufe"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} muss eine Zahl sein"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} muss eine Zahl zwischen {min} und {max} sein"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} muss eine oktale Zahl sein"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} muss eine Zahl mit einer Größeneinheit sein, zum Beispiel 16K"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} muss {on} oder {off} sein"
+
+msgid "Edit as text"
+msgstr "Als Text bearbeiten"
+
+msgid "Edit the raw fstab line. Problems with its values are listed below."
+msgstr "Die rohe fstab-Zeile bearbeiten. Probleme mit ihren Werten werden unten aufgeführt."
+
+msgid "All I/O to the filesystem is done asynchronously."
+msgstr "Der gesamte E/A auf dem Dateisystem erfolgt asynchron."
+
+msgid "Update inode access time on every access."
+msgstr "Inode-Zugriffszeit bei jedem Zugriff aktualisieren."
+
+msgid "Can be mounted with the -a (mount all) option."
+msgstr "Kann mit der Option -a (alle einhängen) eingehängt werden."
+
+msgid "Remount a subtree elsewhere; mount only that subtree."
+msgstr "Einen Teilbaum an anderer Stelle neu einhängen; nur diesen Teilbaum einhängen."
+
+msgid "Comment field; ignored by the mount command."
+msgstr "Kommentarfeld; wird vom mount-Befehl ignoriert."
+
+msgid "Set the SELinux context for the whole filesystem."
+msgstr "SELinux-Kontext für das gesamte Dateisystem festlegen."
+
+msgid "Use default options: rw, suid, dev, exec, auto, nouser, async."
+msgstr "Standardoptionen verwenden: rw, suid, dev, exec, auto, nouser, async."
+
+msgid "Set the default SELinux context for unlabeled files."
+msgstr "Standard-SELinux-Kontext für Dateien ohne Label festlegen."
+
+msgid "Interpret character or block special devices on the filesystem."
+msgstr "Zeichen- oder Blöckspezialgeräte auf dem Dateisystem interpretieren."
+
+msgid "Update directory access times on reads."
+msgstr "Zugriffszeiten von Verzeichnissen beim Lesen aktualisieren."
+
+msgid "Make all directory updates synchronous."
+msgstr "Alle Verzeichnisaktualisierungen synchron ausführen."
+
+msgid "Permit execution of binaries on the filesystem."
+msgstr "Ausführung von Binärdateien auf dem Dateisystem zulassen."
+
+msgid "Set the SELinux context for the filesystem being mounted."
+msgstr "SELinux-Kontext für das einzuhängende Dateisystem festlegen."
+
+msgid "Allow mounting by a user whose group matches the device's group."
+msgstr "Einhängen durch einen Benutzer erlauben, dessen Gruppe mit der Gerätegruppe übereinstimmt."
+
+msgid "Increment the inode version on every inode modification."
+msgstr "Inode-Version bei jeder Inode-Änderung erhöhen."
+
+msgid "Update on-disk timestamps lazily, flushing them later."
+msgstr "Zeitstempel auf der Platte träge aktualisieren und später schreiben."
+
+msgid "Mount the file through a loop device."
+msgstr "Die Datei über ein Loop-Gerät einhängen."
+
+msgid "Turn off the silent flag (verbose errors)."
+msgstr "Stiller Modus ausschalten (ausführliche Fehlermeldungen)."
+
+msgid "Allow mandatory locking on the filesystem."
+msgstr "Pflicht-Sperren auf dem Dateisystem zulassen."
+
+msgid "Atomically move a mounted tree to a new location."
+msgstr "Einen eingehängten Baum atomar an einen neuen Ort verschieben."
+
+msgid "Do not update inode access times on reads."
+msgstr "Inode-Zugriffszeiten beim Lesen nicht aktualisieren."
+
+msgid "Can only be mounted explicitly, never with -a."
+msgstr "Kann nur explizit eingehängt werden, niemals mit -a."
+
+msgid "Do not interpret character or block special devices."
+msgstr "Zeichen- oder Blöckspezialgeräte nicht interpretieren."
+
+msgid "Do not update directory access times."
+msgstr "Zugriffszeiten von Verzeichnissen nicht aktualisieren."
+
+msgid "Do not permit execution of binaries on the filesystem."
+msgstr "Ausführung von Binärdateien auf dem Dateisystem nicht zulassen."
+
+msgid "Do not report errors if the device does not exist."
+msgstr "Keine Fehler melden, wenn das Gerät nicht existiert."
+
+msgid "Do not increment the inode version counter."
+msgstr "Inode-Versionszähler nicht erhöhen."
+
+msgid "Do not use the lazytime feature; flush timestamps at once."
+msgstr "lazytime-Funktion nicht verwenden; Zeitstempel sofort nachschreiben."
+
+msgid "Do not allow mandatory locking on the filesystem."
+msgstr "Keine Pflichtsperren auf dem Dateisystem zulassen."
+
+msgid "Do not use the relatime feature."
+msgstr "relatime-Funktion nicht verwenden."
+
+msgid "Do not honor setuid or setgid bits or file capabilities."
+msgstr "setuid- oder setgid-Bits und Datei-Capabilities nicht berücksichtigen."
+
+msgid "Do not follow symbolic links when resolving paths."
+msgstr "Symbolische Links beim Auflösen von Pfaden nicht verfolgen."
+
+msgid "Use the kernel's default access-time behavior."
+msgstr "Standard-Zugriffszeitverhalten des Kernels verwenden."
+
+msgid "Only root may mount the filesystem."
+msgstr "Nur root kann das Dateisystem einhängen."
+
+msgid "Mount only after the network is available."
+msgstr "Erst nach Verfügbarkeit des Netzwerks einhängen."
+
+msgid "Allow mounting by the owner of the device."
+msgstr "Einhängen durch den Gerätebesitzer zulassen."
+
+msgid "Make the mount private (no propagation to other mounts)."
+msgstr "Einhang als privat markieren (keine Propagation auf andere Einhängen)."
+
+msgid "Remount a subtree and all its submounts elsewhere."
+msgstr "Subbaum und alle Untereinhänge an anderer Stelle neu einhängen."
+
+msgid "Update access times relative to modify or change time."
+msgstr "Zugriffszeiten relativ zur Änderungs- oder Statusänderungszeit aktualisieren."
+
+msgid "Attempt to remount an already-mounted filesystem."
+msgstr "Neueinhängen eines bereits eingehängten Dateisystems versuchen."
+
+msgid "Mount the filesystem read-only."
+msgstr "Dateisystem nur lesend einhängen."
+
+msgid "Set the SELinux context of the filesystem's root inode."
+msgstr "SELinux-Kontext des Root-Inodes des Dateisystems festlegen."
+
+msgid "Make the mount and its submounts private."
+msgstr "Einhang und dessen Untereinhang als privat markieren."
+
+msgid "Make the mount and its submounts shared."
+msgstr "Einhang und dessen Untereinhang als geteilt markieren."
+
+msgid "Make the mount and its submounts slaves of their master."
+msgstr "Einhang und dessen Untereinhang zu Sklaven ihres Masters machen."
+
+msgid "Make the mount and its submounts unbindable."
+msgstr "Einhang und dessen Untereinhang als nicht bindbar markieren."
+
+msgid "Mount the filesystem read-write."
+msgstr "Dateisystem lese- und schreibend einhängen."
+
+msgid "Turn on the silent flag (suppress errors)."
+msgstr "silent-Flag aktivieren (Fehler unterdrücken)."
+
+msgid "Make the mount a slave of its master (receive propagation)."
+msgstr "Einhang zu einem Sklaven seines Masters machen (Propagation empfangen)."
+
+msgid "Make the mount shared with peer mounts."
+msgstr "Den Einhang mit Peer-Einhängen teilen."
+
+msgid "Update access times on every access (full atime)."
+msgstr "Zugriffszeiten bei jedem Zugriff aktualisieren (volles atime)."
+
+msgid "Honor setuid or setgid bits and file capabilities."
+msgstr "setuid- oder setgid-Bits und Datei-Capabilities berücksichtigen."
+
+msgid "All I/O to the filesystem is done synchronously."
+msgstr "Alle E/A zum Dateisystem erfolgt synchron."
+
+msgid "Make the mount unbindable."
+msgstr "Einhang als nicht bindbar markieren."
+
+msgid "Allow an ordinary user to mount the filesystem."
+msgstr "Einhängen des Dateisystems durch normale Benutzer zulassen."
+
+msgid "Allow every user to mount and unmount the filesystem."
+msgstr "Ein- und Aushängen des Dateisystems durch alle Benutzer zulassen."
+
+msgid "Restrict automatic filesystem detection to the listed types."
+msgstr "Automatische Dateisystemerkennung auf die aufgelisteten Typen beschränken."
+
+msgid "Set the group that may unmount the mount."
+msgstr "Gruppe festlegen, die den Einhang aushängen darf."
+
+msgid "Create an idmapped mount using the given ID mapping."
+msgstr "idmapped-Einhang mit der angegebenen ID-Zuordnung erstellen."
+
+msgid "Create the mountpoint directory if it does not exist."
+msgstr "Einhängepunkt-Verzeichnis erstellen, falls es nicht existiert."
+
+msgid "Set the mountpoint directory mode after mounting."
+msgstr "Modus des Einhängepunkt-Verzeichnisses nach dem Einhängen festlegen."
+
+msgid "Do not canonicalize mount source and target paths."
+msgstr "Quell- und Zielpfade des Einhangs nicht kanonisieren."
+
+msgid "Do not create a loop device even if the source is a regular file."
+msgstr "Kein Loop-Gerät erstellen, auch wenn die Quelle eine reguläre Datei ist."
+
+msgid "Set the owner that may unmount the mount."
+msgstr "Besitzer festlegen, der den Einhang aushängen darf."
+
+msgid "Mount a subdirectory of the filesystem instead of its root."
+msgstr "Ein Unterverzeichnis des Dateisystems anstelle dessen Wurzel einhängen."
+
+msgid "Enables POSIX access control lists."
+msgstr "Aktiviert POSIX-Zugriffssteuerunglisten."
+
+msgid "Disables POSIX access control lists."
+msgstr "Deaktiviert POSIX-Zugriffssteuerunglisten."
+
+msgid "statfs reports usable blocks minus filesystem overhead."
+msgstr "statfs meldet nutzbare Blöcke abzüglich des Dateisystem-Overheads."
+
+msgid "statfs reports total blocks including overhead."
+msgstr "statfs meldet die Gesamtzahl der Blöcke einschließlich Overhead."
+
+msgid "Performs mount-time checking; only check=none supported now."
+msgstr "Führt eine Prüfung beim Einhängen durch; derzeit wird nur check=none unterstützt."
+
+msgid "Skips checking at mount time (default)."
+msgstr "Überspringt die Prüfung beim Einhängen (Standard)."
+
+msgid "Prints debugging info upon each (re)mount."
+msgstr "Gibt bei jedem (Neu-)Einhängen Debug-Informationen aus."
+
+msgid "Sets behavior on errors: continue, remount-ro, or panic."
+msgstr "Verhalten bei Fehlern festlegen: continue, remount-ro oder panic."
+
+msgid "New files inherit the group ID of their parent directory."
+msgstr "Neue Dateien erben die Gruppen-ID des übergeordneten Verzeichnisses."
+
+msgid "Same as grpid."
+msgstr "Gleich wie grpid."
+
+msgid "New files take the creating process's fsgid (default)."
+msgstr "Neue Dateien übernehmen die fsgid des erzeugenden Prozesses (Standard)."
+
+msgid "Same as nogrpid."
+msgstr "Entspricht nogrpid."
+
+msgid "Enables group quota support."
+msgstr "Aktiviert die Gruppenquoten."
+
+msgid "Enables user quota support."
+msgstr "Aktiviert die Benutzerquoten."
+
+msgid "Enables user quota support (same as usrquota)."
+msgstr "Aktiviert die Benutzerquoten (entspricht usrquota)."
+
+msgid "Disables all quota support."
+msgstr "Deaktiviert alle Quoten."
+
+msgid "Disables 32-bit UIDs/GIDs for old-kernel compatibility."
+msgstr "Deaktiviert 32-Bit-UIDs/GIDs zur Kompatibilität mit älteren Kerneln."
+
+msgid "Uses the old inode allocator instead of Orlov."
+msgstr "Verwendet den alten Inode-Allokator statt Orlov."
+
+msgid "Uses the Orlov allocator for new inodes (default)."
+msgstr "Verwendet den Orlov-Allokator für neue Inodes (Standard)."
+
+msgid "Group ID allowed to use reserved filesystem blocks."
+msgstr "Gruppen-ID, die reservierte Dateisystemblöcke verwenden darf."
+
+msgid "User ID allowed to use reserved filesystem blocks."
+msgstr "Benutzer-ID, die reservierte Dateisystemblöcke verwenden darf."
+
+msgid "Mounts using an alternate superblock number (recovery)."
+msgstr "Hängt mit alternativer Superblocknummer ein (Wiederherstellung)."
+
+msgid "Enables \"user.\" extended attributes."
+msgstr "Aktiviert die erweiterten Attribute „user.“"
+
+msgid "Disables \"user.\" extended attributes."
+msgstr "Deaktiviert die erweiterten Attribute „user.“"
+
+msgid "Enables write barriers in the journal code."
+msgstr "Aktiviert Schreibbarrieren im Journalcode."
+
+msgid "Sets journal commit interval in seconds (default 5)."
+msgstr "Setzt das Commit-Intervall des Journals in Sekunden (Standard: 5)."
+
+msgid "Sets data journaling mode: journal, ordered, or writeback."
+msgstr "Setzt den Journalisierungsmodus für Daten: journal, ordered oder writeback."
+
+msgid "Action on data errors in ordered mode: abort or ignore."
+msgstr "Verhalten bei Datenfehlern im ordered-Modus: abort oder ignore."
+
+msgid "Sets the group quota database file for journaled quotas."
+msgstr "Setzt die Gruppenquoten-Datenbankdatei für journalisierte Quoten."
+
+msgid "Specifies external journal device by major/minor number."
+msgstr "Gibt das externe Journalgerät anhand der Major-/Minor-Nummer an."
+
+msgid "Specifies external journal device by device path."
+msgstr "Gibt das externe Journalgerät anhand des Gerätpfads an."
+
+msgid "Sets quota format: vfsold, vfsv0, or vfsv1."
+msgstr "Setzt das Quota-Format: vfsold, vfsv0 oder vfsv1."
+
+msgid "Does not load the journal on mount."
+msgstr "Lädt das Journal beim Einhängen nicht."
+
+msgid "Does not load the journal on mount (same as noload)."
+msgstr "Lädt das Journal beim Einhängen nicht (entspricht noload)."
+
+msgid "Sets the user quota database file for journaled quotas."
+msgstr "Setzt die Benutzerquoten-Datenbankdatei für journalisierte Quoten."
+
+msgid "Simulates an ext4_abort() for debugging purposes."
+msgstr "Simuliert ext4_abort() zu Fehlersuchzwecken."
+
+msgid "Forces delayed blocks to disk before rename/truncate commits."
+msgstr "Erzwingt das Schreiben verzögerter Blöcke auf die Platte vor rename- und truncate-Commits."
+
+msgid "Disables forced allocation on rename/truncate."
+msgstr "Deaktiviert die erzwungene Allokation bei rename/truncate."
+
+msgid "Tracks metadata blocks internally (debug; off by default)."
+msgstr "Verfolgt Metadatenblöcke intern (Debug; standardmäßig deaktiviert)."
+
+msgid "Disables internal metadata block tracking."
+msgstr "Deaktiviert die interne Verfolgung von Metadatenblöcken."
+
+msgid "Defers block allocation until write-out time."
+msgstr "Verschiebt die Blockallokation bis zum Schreibvorgang."
+
+msgid "Disables delayed allocation."
+msgstr "Deaktiviert die verzögerte Allokation."
+
+msgid "Uses inode mutex for DIO reads (default)."
+msgstr "Verwendet das Inode-Mutex für DIO-Lesevorgänge (Standard)."
+
+msgid "Avoids inode mutex for DIO reads for scalability."
+msgstr "Vermeidet das Inode-Mutex für DIO-Lesevorgänge (Skalierung)."
+
+msgid "Issues discard/TRIM commands when blocks are freed."
+msgstr "Gibt discard/TRIM-Befehle aus, wenn Blöcke freigegeben werden."
+
+msgid "Disables issuing discard/TRIM commands."
+msgstr "Deaktiviert das Ausgeben von discard/TRIM-Befehlen."
+
+msgid "Sets the case-insensitive lookup charset for casefolded directories (e.g. utf8-12.1)."
+msgstr "Setzt den Zeichensatz für die case-insensitive Suche in casefold-Verzeichnissen (z. B. utf8-12.1)."
+
+msgid "Sets flags controlling casefold behavior (e.g. strict)."
+msgstr "Setzt Flags zur Steuerung des casefold-Verhaltens (z. B. strict)."
+
+msgid "Enables fast commits, a lightweight journaling mode for lower commit latency."
+msgstr "Aktiviert Fast Commits, einen leichtgewichtigen Journalisierungsmodus für geringere Commit-Latenz."
+
+msgid "Tunes the lazy inode-table initialization speed."
+msgstr "Stellt das Tempo der verzögerten Inode-Tabellen-Initialisierung ein."
+
+msgid "Does not initialize inode tables in the background."
+msgstr "Initialisiert die Inode-Tabellen nicht im Hintergrund."
+
+msgid "Max inode table blocks pre-read during mount."
+msgstr "Maximal vorab gelesene Inode-Tabellenblöcke beim Einhängen."
+
+msgid "Enables 64-bit inode version support."
+msgstr "Aktiviert die Unterstützung für 64-Bit-Inode-Versionen."
+
+msgid "Writes commit block without waiting for descriptors."
+msgstr "Schreibt den Commit-Block ohne Warten auf Deskriptoren."
+
+msgid "Enables checksumming of journal transactions."
+msgstr "Aktiviert die Prüfsummenbildung für Journaltransaktionen."
+
+msgid "Disables journal transaction checksumming."
+msgstr "Deaktiviert die Prüfsummenbildung für Journaltransaktionen."
+
+msgid "Sets I/O priority for journal commits (0-7)."
+msgstr "Setzt die I/O-Priorität für Journal-Commits (0-7)."
+
+msgid "Max microseconds to wait to batch sync-write operations."
+msgstr "Maximale Wartezeit in Mikrosekunden zum Bündeln von sync-Schreibvorgängen."
+
+msgid "Limits maximum directory size in kilobytes."
+msgstr "Begrenzt die maximale Verzeichnisgröße in Kilobyte."
+
+msgid "Minimum commit time for batch optimization (us)."
+msgstr "Minimale Commit-Zeit für die Batching-Optimierung (us)."
+
+msgid "Disables write barriers."
+msgstr "Deaktiviert Schreibbarrieren."
+
+msgid "Disables mbcache for extended attribute deduplication."
+msgstr "Deaktiviert mbcache für die Deduplizierung erweiterter Attribute."
+
+msgid "Enables project quota support."
+msgstr "Aktiviert die Projektquoten-Unterstützung."
+
+msgid "Sets stripe width (blocks) for mballoc allocation alignment."
+msgstr "Legt die Stripe-Breite (Blöcke) für die Allokationsausrichtung von mballoc fest."
+
+msgid "Sets end-of-file preallocation size for buffered I/O."
+msgstr "Legt die Preallocationsgröße am Dateiende für gepufferten I/O fest."
+
+msgid "Enables opportunistic inline xattr format; deprecated since 5.10."
+msgstr "Aktiviert das opportunistische Inline-xattr-Format; veraltet seit 5.10."
+
+msgid "Disables attr2 format; deprecated, rejected on CRC filesystems."
+msgstr "Deaktiviert das attr2-Format; veraltet, wird auf CRC-Dateisystemen abgelehnt."
+
+msgid "Sets direct-access mode: never, always, or inode."
+msgstr "Legt den Direktzugriffsmodus fest: never, always oder inode."
+
+msgid "Issues commands to reclaim freed blocks (SSD-friendly)."
+msgstr "Gibt Befehle zur Wiederaufbereitung freigegebener Blöcke aus (SSD-freundlich)."
+
+msgid "Disables issuing discard commands."
+msgstr "Deaktiviert das Senden von Discard-Befehlen."
+
+msgid "Applies filestreams allocation mode to whole filesystem."
+msgstr "Wendet den filestreams-Allokationsmodus auf das gesamte Dateisystem an."
+
+msgid "Enables group quota accounting without enforcement."
+msgstr "Aktiviert die Kontierung von Gruppenquoten ohne Durchsetzung."
+
+msgid "Enables group quota accounting and enforcement."
+msgstr "Aktiviert die Kontierung und Durchsetzung von Gruppenquoten."
+
+msgid "Same as gquota."
+msgstr "Entspricht gquota."
+
+msgid "New files inherit the parent directory's group ID."
+msgstr "Neue Dateien erben die Gruppen-ID des übergeordneten Verzeichnisses."
+
+msgid "New files take the process's fsgid (default)."
+msgstr "Neue Dateien übernehmen die fsgid des Prozesses (Standard)."
+
+msgid "Keeps empty inode clusters on disk; deprecated since 5.10."
+msgstr "Behält leere Inode-Cluster auf der Festplatte; veraltet seit 5.10."
+
+msgid "Recycles empty inode clusters; deprecated since 5.10."
+msgstr "Recycelt leere Inode-Cluster; veraltet seit 5.10."
+
+msgid "Restricts inode numbers to 32 bits."
+msgstr "Beschränkt Inode-Nummern auf 32 Bit."
+
+msgid "Allows 64-bit inode numbers (default)."
+msgstr "Erlaubt 64-Bit-Inode-Nummern (Standard)."
+
+msgid "Reports swidth/allocsize as st_blksize."
+msgstr "Gibt swidth/allocsize als st_blksize zurück."
+
+msgid "Reports minimal st_blksize (default)."
+msgstr "Gibt das minimale st_blksize zurück (Standard)."
+
+msgid "Sets number of in-memory log buffers (2-8)."
+msgstr "Legt die Anzahl der Log-Puffer im Speicher fest (2-8)."
+
+msgid "Sets size of each in-memory log buffer."
+msgstr "Legt die Größe jedes Log-Puffers im Speicher fest."
+
+msgid "Uses an external log (metadata journal) device."
+msgstr "Verwendet ein externes Gerät als Log (Metadata-Journal)."
+
+msgid "Skips stripe-unit alignment for data allocations."
+msgstr "Überspringt die Stripe-Einheit-Ausrichtung für Datenallokationen."
+
+msgid "Mounts without running log recovery (read-only)."
+msgstr "Mountet ohne Durchführung der Log-Wiederherstellung (nur lesend)."
+
+msgid "Skips duplicate-UUID mount detection."
+msgstr "Überspringt die Erkennung von UUID-Duplikaten."
+
+msgid "Forcibly turns off all quota accounting and enforcement."
+msgstr "Schaltet sämtliche Quota-Kontierung und -Durchsetzung zwangsweise aus."
+
+msgid "Enables project quota accounting and enforcement."
+msgstr "Aktiviert die Kontierung und Durchsetzung von Projektquoten."
+
+msgid "Enables project quota accounting without enforcement."
+msgstr "Aktiviert die Kontierung von Projektquoten ohne Durchsetzung."
+
+msgid "Same as pquota."
+msgstr "Entspricht pquota."
+
+msgid "Enables user quota accounting without enforcement."
+msgstr "Aktiviert die Kontierung von Benutzerquoten ohne Durchsetzung."
+
+msgid "Enables user quota accounting and enforcement."
+msgstr "Aktiviert die Kontierung und Durchsetzung von Benutzerquoten."
+
+msgid "Uses an external realtime-section device."
+msgstr "Verwendet ein externes Gerät für den Realtime-Bereich."
+
+msgid "Sets stripe unit in 512-byte blocks."
+msgstr "Legt die Stripe-Einheit in 512-Byte-Blöcken fest."
+
+msgid "Rounds data allocations up to stripe-width boundaries."
+msgstr "Rundet Datenallokationen auf Grenzen der Stripe-Breite auf."
+
+msgid "Sets stripe width in 512-byte blocks."
+msgstr "Legt die Stripe-Breite in 512-Byte-Blöcken fest."
+
+msgid "Same as uquota."
+msgstr "Entspricht uquota."
+
+msgid "Runs filesystem namespace operations synchronously."
+msgstr "Führt Namespace-Operationen des Dateisystems synchron aus."
+
+msgid "Enables POSIX access control lists (default on)."
+msgstr "Aktiviert POSIX-Zugriffssteuerungslisten (standardmäßig an)."
+
+msgid "Auto-defragments detected small random writes."
+msgstr "Defragmentiert erkannte kleine zufällige Schreibvorgänge automatisch."
+
+msgid "Disables automatic file defragmentation."
+msgstr "Deaktiviert die automatische Defragmentierung von Dateien."
+
+msgid "Ensures writes flush to permanent storage at checkpoints."
+msgstr "Stellt sicher, dass Schreibvorgänge an Checkpoints dauerhaft geschrieben werden."
+
+msgid "Disables write barriers; risks corruption on crash."
+msgstr "Deaktiviert Schreibbarrieren; Korruptionsrisiko bei Absturz."
+
+msgid "Clears and rebuilds the free space cache."
+msgstr "Leert und baut den Freiraum-Cache neu auf."
+
+msgid "Sets transaction commit interval in seconds (default 30)."
+msgstr "Legt das Commit-Intervall für Transaktionen in Sekunden fest (Standard: 30)."
+
+msgid "Enables data compression, optionally with a level (for example zstd:3)."
+msgstr "Aktiviert Datenkomprimierung, optional mit Stufe (z. B. zstd:3)."
+
+msgid "Always attempts compression, even if ineffective, optionally with a level."
+msgstr "Versucht immer zu komprimieren, auch wenn es wirkungslos ist, optional mit Stufe."
+
+msgid "Enables data copy-on-write for new files."
+msgstr "Aktiviert Copy-on-Write für die Daten neuer Dateien."
+
+msgid "Disables data COW (implies nodatasum, no compression)."
+msgstr "Deaktiviert Daten-COW (impliziert nodatasum, keine Kompression)."
+
+msgid "Enables data checksumming."
+msgstr "Aktiviert die Prüfsummenbildung für Daten."
+
+msgid "Disables data checksumming."
+msgstr "Deaktiviert die Prüfsummenbildung für Daten."
+
+msgid "Allows mount with fewer devices than RAID requires."
+msgstr "Ermöglicht das Einhängen mit weniger Geräten, als RAID erfordert."
+
+msgid "Scans the given device for btrfs during mount."
+msgstr "Durchsucht das angegebene Gerät beim Einhängen nach btrfs."
+
+msgid "Discards freed file blocks (TRIM)."
+msgstr "Verwirft freigegebene Dateiblöcke (TRIM)."
+
+msgid "Disables discarding of freed blocks."
+msgstr "Deaktiviert das Verwerfen freigegebener Blöcke."
+
+msgid "Enables verbose output for ENOSPC conditions."
+msgstr "Aktiviert ausführliche Ausgabe bei ENOSPC-Zuständen."
+
+msgid "Disables verbose ENOSPC output."
+msgstr "Deaktiviert die ausführliche ENOSPC-Ausgabe."
+
+msgid "Sets action on fatal errors: bug or panic."
+msgstr "Legt die Aktion bei fatalen Fehlern fest: bug oder panic."
+
+msgid "Flushes all prior-transaction data at each commit."
+msgstr "Schreibt bei jedem Commit alle Daten vorheriger Transaktionen aus."
+
+msgid "Disables forced full flush on commit."
+msgstr "Deaktiviert das erzwungene vollständige Ausleeren beim Commit."
+
+msgid "Intentionally fragments block groups (debug builds only)."
+msgstr "Fragmentiert Blockgruppen absichtlich (nur für Debug-Builds)."
+
+msgid "Max bytes that can be inlined in a metadata leaf."
+msgstr "Max. Bytes, die in einem Metadaten-Leaf inline abgelegt werden können."
+
+msgid "Allocates one metadata chunk per N data chunks."
+msgstr "Alloziert einen Metadaten-Chunk pro N Daten-Chunks."
+
+msgid "Does not replay the tree log (same as norecovery)."
+msgstr "Spielt das Baumprotokoll nicht ab (entspricht norecovery)."
+
+msgid "Does not attempt recovery at mount time."
+msgstr "Versucht beim Einhängen keine Wiederherstellung."
+
+msgid "Forces rebuild of the UUID tree."
+msgstr "Erzwingt den Neuaufbau des UUID-Baums."
+
+msgid "Applies recovery workarounds: usebackuproot, nologreplay, ignorebadroots, ignore*sums, or all (read-only)."
+msgstr "Wendet Wiederherstellungs-Umgehungen an: usebackuproot, nologreplay, ignorebadroots, ignore*sums oder all (nur lesend)."
+
+msgid "Skips automatic resume of an interrupted balance."
+msgstr "Überspringt die automatische Fortsetzung einer unterbrochenen Balance."
+
+msgid "Enables free space caching (v1 or v2)."
+msgstr "Aktiviert den Freiplatz-Cache (v1 oder v2)."
+
+msgid "Disables the free space cache."
+msgstr "Deaktiviert den Freiplatz-Cache."
+
+msgid "Enables SSD allocation optimizations."
+msgstr "Aktiviert Allokations-Optimierungen für SSDs."
+
+msgid "Disables SSD allocation optimizations."
+msgstr "Deaktiviert Allokations-Optimierungen für SSDs."
+
+msgid "Allocates into larger aligned chunks for low-end SSDs."
+msgstr "Alloziert für Low-End-SSDs in größere, ausgerichtete Chunks."
+
+msgid "Disables the ssd_spread allocation scheme."
+msgstr "Deaktiviert das ssd_spread-Allokationsschema."
+
+msgid "Mounts a subvolume at the given path, not the toplevel."
+msgstr "Hängt ein Subvolume am angegebenen Pfad ein, nicht das Toplevel."
+
+msgid "Mounts the subvolume with the given numeric ID."
+msgstr "Hängt das Subvolume mit der angegebenen numerischen ID ein."
+
+msgid "Sets number of worker threads."
+msgstr "Legt die Anzahl der Arbeits-Threads fest."
+
+msgid "Enables tree logging for fsync/O_SYNC."
+msgstr "Aktiviert die Baum-Protokollierung für fsync/O_SYNC."
+
+msgid "Disables tree logging."
+msgstr "Deaktiviert die Baum-Protokollierung."
+
+msgid "Tries backup roots if the tree root is bad; removed since 7.3."
+msgstr "Versucht, Backup-Wurzeln zu verwenden, wenn die Baumwurzel defekt ist; seit 7.3 entfernt."
+
+msgid "Lets subvolume owners delete their own subvolumes."
+msgstr "Erlaubt Subvolume-Eigentümern, ihre eigenen Subvolumes zu löschen."
+
+msgid "Sets number of active log segments (2, 4, or 6)."
+msgstr "Legt die Anzahl der aktiven Log-Segmente fest (2, 4 oder 6)."
+
+msgid "Enables age extent cache for allocation hints."
+msgstr "Aktiviert den Age-Extent-Cache für Allokationshinweise."
+
+msgid "Sets block allocation policy: reuse or default."
+msgstr "Legt die Block-Allokationsrichtlinie fest: reuse oder default."
+
+msgid "Enables age-threshold background garbage collection."
+msgstr "Aktiviert die automatische Hintergrundbereinigung anhand einer Altersgrenze."
+
+msgid "Turns background garbage collection on/off/sync."
+msgstr "Schaltet die automatische Hintergrundbereinigung ein/aus/sync."
+
+msgid "Allows cache_flush commands to be issued."
+msgstr "Erlaubt das Senden von cache_flush-Befehlen."
+
+msgid "Skips cache_flush commands if storage guarantees order."
+msgstr "Überspringt cache_flush-Befehle, wenn der Speicher die Reihenfolge garantiert."
+
+msgid "Enables or disables checkpointing (disable/enable)."
+msgstr "Aktiviert oder deaktiviert Checkpointing (disable/enable)."
+
+msgid "Merges concurrent checkpoint requests via a daemon."
+msgstr "Bündelt gleichzeitige Checkpoint-Anfragen über einen Daemon."
+
+msgid "Disables checkpoint merge feature."
+msgstr "Deaktiviert die Checkpoint-Merge-Funktion."
+
+msgid "Selects compression algorithm (lzo, lz4, zstd)."
+msgstr "Wählt den Kompressionsalgorithmus (lzo, lz4, zstd)."
+
+msgid "Caches compressed blocks to improve read hit ratio."
+msgstr "Cacht komprimierte Blöcke, um die Lese-Trefferquote zu verbessern."
+
+msgid "Verifies checksums of compressed clusters."
+msgstr "Prüft die Prüfsummen von komprimierten Clustern."
+
+msgid "Adds extensions whose files are auto-compressed."
+msgstr "Fügt Erweiterungen hinzu, deren Dateien automatisch komprimiert werden."
+
+msgid "Sets compress cluster size in 4KB units."
+msgstr "Legt die Kompressions-Cluster-Größe in 4-KB-Einheiten fest."
+
+msgid "Sets compression mode: fs (auto) or user (manual)."
+msgstr "Setzt den Kompressionsmodus: fs (automatisch) oder user (manuell)."
+
+msgid "Flushes data before checkpoint to persist regular files."
+msgstr "Schreibt Daten vor dem Checkpoint fest, um reguläre Dateien zu sichern."
+
+msgid "Ignores mkfs extension list for cold-file detection."
+msgstr "Ignoriert die Liste der mkfs-Dateiendungen für die Erkennung kalter Dateien."
+
+msgid "Disables the roll-forward recovery routine."
+msgstr "Deaktiviert die Roll-Forward-Wiederherstellungsroutine."
+
+msgid "Enables real-time discard/TRIM commands."
+msgstr "Aktiviert Echtzeit-Discard/TRIM-Befehle."
+
+msgid "Disables real-time discard."
+msgstr "Deaktiviert Echtzeit-Discard."
+
+msgid "Sets discard alignment unit: block, segment, or section."
+msgstr "Setzt die Discard-Ausrichtungseinheit: block, segment oder section."
+
+msgid "Sets behavior on critical errors: panic, continue, remount-ro."
+msgstr "Setzt das Verhalten bei kritischen Fehlern: panic, continue oder remount-ro."
+
+msgid "Enables the rb-tree extent cache (default)."
+msgstr "Aktiviert den rb-tree-Extent-Cache (Standard)."
+
+msgid "Disables the extent cache."
+msgstr "Deaktiviert den Extent-Cache."
+
+msgid "Reduces mount time at the cost of normal performance."
+msgstr "Verkürzt die Einhängezeit auf Kosten der normalen Leistung."
+
+msgid "Enables fault injection at a given rate (testing)."
+msgstr "Aktiviert Fehlerinjektion mit einer bestimmten Rate (Test)."
+
+msgid "Configures which fault types to inject (testing)."
+msgstr "Konfiguriert, welche Fehlertypen injiziert werden (Test)."
+
+msgid "Merges concurrent cache_flush commands."
+msgstr "Führt gleichzeitige cache_flush-Befehle zusammen."
+
+msgid "Sets fsync policy: posix, strict, or nobarrier."
+msgstr "Setzt die fsync-Richtlinie: posix, strict oder nobarrier."
+
+msgid "Handles foreground GC in the background GC thread."
+msgstr "Verarbeitet Foreground-GC im Hintergrund-GC-Thread."
+
+msgid "Disables GC merge feature."
+msgstr "Deaktiviert die GC-Merge-Funktion."
+
+msgid "Points to group journaled quota file."
+msgstr "Verweist auf die journalisierte Gruppenquotadatei."
+
+msgid "Enables group disk quota accounting."
+msgstr "Aktiviert die Datenträgerquota-Abrechnung für Gruppen."
+
+msgid "Allocates segments heap-based from disk end; deprecated."
+msgstr "Allokiert Segmente haufbasiert ab dem Datenträgerende; veraltet."
+
+msgid "Disables heap-based allocation; deprecated."
+msgstr "Deaktiviert die haufbasierte Allokation; veraltet."
+
+msgid "Stores small file data inside the inode block."
+msgstr "Speichert Daten kleiner Dateien im Inode-Block."
+
+msgid "Stores directory entries inside the inode block."
+msgstr "Speichert Verzeichniseinträge im Inode-Block."
+
+msgid "Disables the inline dentry feature."
+msgstr "Deaktiviert die Inline-dentry-Funktion."
+
+msgid "Enables inline extended attributes."
+msgstr "Aktiviert erweiterte Attribute inline."
+
+msgid "Disables inline extended attributes."
+msgstr "Deaktiviert erweiterte Attribute inline."
+
+msgid "Sets the inline xattr size."
+msgstr "Setzt die Größe der Inline-Xattrs."
+
+msgid "Uses blk-crypto for inline encryption hardware."
+msgstr "Verwendet blk-crypto für Inline-Verschlüsselungshardware."
+
+msgid "Sets casefold directory lookup: perf, compat, or auto."
+msgstr "Setzt die Casefold-Verzeichnisauflösung: perf, compat oder auto."
+
+msgid "Sets memory mode: normal or low."
+msgstr "Setzt den Speichermodus: normal oder low."
+
+msgid "Sets block allocation mode: adaptive or lfs."
+msgstr "Setzt den Blockallokationsmodus: adaptive oder lfs."
+
+msgid "Enables faster full/empty NAT block access."
+msgstr "Aktiviert schnelleren Zugriff auf volle/leere NAT-Blöcke."
+
+msgid "Disables the inline data feature."
+msgstr "Deaktiviert die Inline-Daten-Funktion."
+
+msgid "Disables roll-forward recovery and mounts read-only."
+msgstr "Deaktiviert Roll-Forward-Wiederherstellung und bindet schreibgeschützt ein."
+
+msgid "Disables user extended attributes."
+msgstr "Deaktiviert erweiterte Benutzerattribute."
+
+msgid "Disables all plain disk quota options."
+msgstr "Deaktiviert alle Optionen der einfachen Datenträgerquota."
+
+msgid "Points to project journaled quota file."
+msgstr "Verweist auf die journalisierte Projektquotadatei."
+
+msgid "Enables project quota accounting."
+msgstr "Aktiviert die Quota-Abrechnung für Projekte."
+
+msgid "Enables plain user disk quota accounting."
+msgstr "Aktiviert die einfache Benutzer-Datenträgerquota-Abrechnung."
+
+msgid "Sets reserved nodes for privileged-user allocation."
+msgstr "Setzt reservierte Nodes für die Allokation privilegierter Benutzer."
+
+msgid "Sets reserved space (%) for privileged-user allocation."
+msgstr "Setzt den reservierten Speicherplatz (%) für Allokation privilegierter Benutzer."
+
+msgid "Group ID with access to reserved blocks and nodes."
+msgstr "Gruppen-ID mit Zugriff auf reservierte Blöcke und Nodes."
+
+msgid "User ID with access to reserved blocks and nodes."
+msgstr "Benutzer-ID mit Zugriff auf reservierte Blöcke und Nodes."
+
+msgid "Enables dummy fscrypt context for testing."
+msgstr "Aktiviert einen Dummy-fscrypt-Kontext für Tests."
+
+msgid "Points to user journaled quota file."
+msgstr "Verweist auf die journalisierte Benutzerquotadatei."
+
+msgid "Enables user disk quota accounting."
+msgstr "Aktiviert die Benutzer-Datenträgerquota-Abrechnung."
+
+msgid "Enables POSIX Access Control List support."
+msgstr "Aktiviert die Unterstützung für POSIX-Zugriffskontrolllisten."
+
+msgid "Enables TRIM support for SSD delete performance."
+msgstr "Aktiviert TRIM-Unterstützung für die Löschleistung von SSDs."
+
+msgid "Permission mask for directories."
+msgstr "Berechtigungsmaske für Verzeichnisse."
+
+msgid "Permission mask for files."
+msgstr "Berechtigungsmaske für Dateien."
+
+msgid "Forces mounting even if the volume is dirty (not recommended)."
+msgstr "Erzwingt das Einhängen, auch wenn das Laufwerk schmutzig ist (nicht empfohlen)."
+
+msgid "Default group ID for created files and directories."
+msgstr "Standard-Gruppenkennung für erstellte Dateien und Verzeichnisse."
+
+msgid "Sets the HIDDEN attribute for names starting with a dot."
+msgstr "Setzt das Attribut HIDDEN für Namen, die mit einem Punkt beginnen."
+
+msgid "Charset used to translate path strings to Unicode."
+msgstr "Zeichensatz zur Umwandlung von Pfadzeichenketten in Unicode."
+
+msgid "Hides files with the Windows HIDDEN attribute."
+msgstr "Blendet Dateien mit dem Windows-Attribut HIDDEN aus."
+
+msgid "Preallocates space to reduce write fragmentation."
+msgstr "Reserviert Speicher vorab, um Schreibfragmentierung zu reduzieren."
+
+msgid "Shows all NTFS meta-files (system files)."
+msgstr "Zeigt alle NTFS-Metadateien (Systemdateien) an."
+
+msgid "Creates new files as sparse."
+msgstr "Erstellt neue Dateien als Sparse-Dateien."
+
+msgid "Marks files with the SYSTEM attribute as immutable."
+msgstr "Markiert Dateien mit dem Attribut SYSTEM als unveränderlich."
+
+msgid "Default user ID for created files and directories."
+msgstr "Standard-Benutzerkennung für erstellte Dateien und Verzeichnisse."
+
+msgid "Default permission mask for files and directories."
+msgstr "Standard-Berechtigungsmaske für Dateien und Verzeichnisse."
+
+msgid "Rejects filenames not allowed by Windows."
+msgstr "Verwirft Dateinamen, die von Windows nicht zulässig sind."
+
+msgid "Relaxes utime() permission checks for changing timestamps."
+msgstr "Lockert die utime()-Berechtigungsprüfungen für die Änderung von Zeitstempeln."
+
+msgid "Sets the block size; obsolete."
+msgstr "Setzt die Blockgröße; veraltet."
+
+msgid "Sets case-sensitivity checking (strict, relaxed, or normal)."
+msgstr "Setzt die Groß-/Kleinschreibungsprüfung (strict, relaxed oder normal)."
+
+msgid "Sets codepage for converting to shortname characters."
+msgstr "Setzt die Codepage für die Umwandlung in Kurznamenzeichen."
+
+msgid "Obsolete; may fail or be ignored."
+msgstr "Veraltet; kann fehlschlagen oder ignoriert werden."
+
+msgid "Obsolete; forces use of a CVF compressed-volume module."
+msgstr "Veraltet; erzwingt die Verwendung eines CVF-Moduls für komprimierte Volumes."
+
+msgid "Obsolete; passes an option to the CVF module."
+msgstr "Veraltet; leitet eine Option an das CVF-Modul weiter."
+
+msgid "Enables debug output; unused by current implementation."
+msgstr "Aktiviert Debugausgabe; wird von der aktuellen Implementierung nicht verwendet."
+
+msgid "Uses DOS 1.x BIOS Parameter Block defaults for small floppies."
+msgstr "Verwendet die BIOS-Parameter-Block-Standardwerte von DOS 1.x für kleine Disketten."
+
+msgid "Forces DOS dot conventions on filenames (obsolete)."
+msgstr "Erzwingt DOS-Punktkonventionen für Dateinamen (veraltet)."
+
+msgid "Forces Unix-style names without DOS dots (obsolete)."
+msgstr "Erzwingt Unix-artige Namen ohne DOS-Punkte (veraltet)."
+
+msgid "Allows dots in 8.3 short names (obsolete)."
+msgstr "Erlaubt Punkte in 8.3-Kurznamen (veraltet)."
+
+msgid "Sets FAT behavior on errors: panic, continue, or remount-ro."
+msgstr "Setzt das FAT-Verhalten bei Fehlern: panic, continue oder remount-ro."
+
+msgid "Forces FAT type 12, 16, or 32, overriding auto-detection."
+msgstr "Erzwingt den FAT-Typ 12, 16 oder 32 und überschreibt die automatische Erkennung."
+
+msgid "Flushes data to disk earlier than normal."
+msgstr "Schreibt Daten früher als üblich auf die Platte."
+
+msgid "Permission mask for regular files."
+msgstr "Berechtigungsmaske für reguläre Dateien."
+
+msgid "Group ID applied to all files."
+msgstr "Gruppenkennung für alle Dateien."
+
+msgid "Charset converting filenames between disk and Unicode."
+msgstr "Zeichensatz zur Umwandlung von Dateinamen zwischen Datenträger und Unicode."
+
+msgid "Enables NFS export support (stale_rw or nostale_ro)."
+msgstr "Aktiviert die NFS-Exportunterstützung (stale_rw oder nostale_ro)."
+
+msgid "Deprecated; use shortname=win95 instead."
+msgstr "Abgelöst; verwenden Sie stattdessen shortname=win95."
+
+msgid "Skips the ~number tail in 8.3 aliases when possible."
+msgstr "Überspringt die ~Zahl-Endung in 8.3-Aliassen, wenn möglich."
+
+msgid "Obsolete; allowed files differing only in case."
+msgstr "Veraltet; erlaubte Dateien, die sich nur durch Groß-/Kleinschreibung unterschieden."
+
+msgid "Suppresses warning messages and chmod/chown errors."
+msgstr "Unterdrückt Warnmeldungen und chmod/chown-Fehler."
+
+msgid "Treats the FAT read-only attribute as read-only for directories."
+msgstr "Behandelt das FAT-Attribut „schreibgeschützt\" für Verzeichnisse als schreibgeschützt."
+
+msgid "Sets 8.3 short-name display/create mode (lower, win95, winnt, mixed)."
+msgstr "Setzt den Anzeige-/Erstellmodus für 8.3-Kurznamen (lower, win95, winnt, mixed)."
+
+msgid "Allows execute permission only for .EXE, .COM, or .BAT files."
+msgstr "Erlaubt die Ausführberechtigung nur für .EXE-, .COM- oder .BAT-Dateien."
+
+msgid "Treats the FAT system attribute as the immutable flag."
+msgstr "Behandelt das FAT-Systemattribut als Unveränderlichkeitsflag."
+
+msgid "Sets minute offset converting FAT local time to UTC."
+msgstr "Setzt die Minutenverschiebung zur Umwandlung der lokalen FAT-Zeit in UTC."
+
+msgid "Interprets timestamps as UTC instead of local time."
+msgstr "Interpretiert Zeitstempel als UTC statt als lokale Zeit."
+
+msgid "Owner user ID applied to all files."
+msgstr "Besitzer-Benutzerkennung für alle Dateien."
+
+msgid "Permission mask for files and directories."
+msgstr "Berechtigungsmaske für Dateien und Verzeichnisse."
+
+msgid "Escapes unhandled Unicode characters as :XXXX sequences."
+msgstr "Maskiert nicht verarbeitete Unicode-Zeichen als :XXXX-Sequenzen."
+
+msgid "Uses the free-cluster count stored in FSINFO."
+msgstr "Verwendet die in FSINFO gespeicherte Anzahl freier Cluster."
+
+msgid "Use UTF-8 to encode long file names."
+msgstr "Verwendet UTF-8 zur Kodierung langer Dateinamen."
+
+msgid "Deprecated; accepted but has no effect."
+msgstr "Abgelöst; wird akzeptiert, hat aber keine Wirkung."
+
+msgid "Sets behavior on errors: panic, continue, or remount-ro."
+msgstr "Setzt das Verhalten bei Fehlern: panic, continue oder remount-ro."
+
+msgid "Default group ID applied to all files."
+msgstr "Standard-Gruppenkennung für alle Dateien."
+
+msgid "Keeps trailing periods in path components and filenames."
+msgstr "Behält abschließende Punkte in Pfadkomponenten und Dateinamen bei."
+
+msgid "Uses the system timezone for timestamps lacking a valid offset."
+msgstr "Verwendet die Systemzeitzone für Zeitstempel ohne gültiges Offset."
+
+msgid "Sets minute offset converting timestamps to UTC."
+msgstr "Setzt die Minutenverschiebung zur Umrechnung von Zeitstempeln in UTC."
+
+msgid "Default user ID applied to all files."
+msgstr "Standard-Benutzerkennung für alle Dateien."
+
+msgid "Creates directories with zero size, allocating no cluster."
+msgstr "Erstellt Verzeichnisse mit Nullgröße und ordnet kein Cluster zu."
+
+msgid "Enables swap discard; supports discard=once or discard=pages."
+msgstr "Aktiviert Swap-Discard; unterstützt discard=once oder discard=pages."
+
+msgid "Sets the swap device priority (0-32767)."
+msgstr "Setzt die Priorität des Swap-Geräts (0-32767)."
+
+msgid "Maximum seconds to cache directory attributes."
+msgstr "Maximale Sekunden zum Zwischenspeichern von Verzeichnisattributen."
+
+msgid "Maximum seconds to cache regular file attributes."
+msgstr "Maximale Sekunden zum Zwischenspeichern von Attributen normaler Dateien."
+
+msgid "Seconds to cache file/directory attributes before re-checking."
+msgstr "Sekunden zum Zwischenspeichern von Datei-/Verzeichnisattributen vor der erneuten Prüfung."
+
+msgid "Sets the destination IP address of the server."
+msgstr "Setzt die Ziel-IP-Adresse des Servers."
+
+msgid "Members of this group open files with backup intent."
+msgstr "Mitglieder dieser Gruppe öffnen Dateien im Backup-Modus."
+
+msgid "This user opens files with backup intent."
+msgstr "Dieser Benutzer öffnet Dateien im Backup-Modus."
+
+msgid "Overrides the default block size reported on SMB3 files."
+msgstr "Überschreibt die standardmäßig bei SMB3-Dateien gemeldete Blockgröße."
+
+msgid "Cache mode for file data: none, strict or loose."
+msgstr "Zwischenspeichermodus für Dateidaten: none, strict oder loose."
+
+msgid "Maps CIFS/NTFS ACLs and SIDs to/from Linux permissions."
+msgstr "Mappt CIFS/NTFS-ACLs und SIDs in Linux-Berechtigungen und umgekehrt."
+
+msgid "Max seconds to defer the final SMB3 file close."
+msgstr "Maximale Sekunden bis zur endgültigen Schließung von SMB3-Dateien."
+
+msgid "Enables experimental SMB 3.1.1 message compression."
+msgstr "Aktiviert die experimentelle Nachrichtenkompression für SMB 3.1.1."
+
+msgid "Reads username/password from a credentials file."
+msgstr "Liest Benutzername/Passwort aus einer Anmeldedaten-Datei."
+
+msgid "Uid owning the credentials cache (useful with krb5)."
+msgstr "UID, die den Anmeldedaten-Cache besitzt (nützlich bei krb5)."
+
+msgid "Overrides the default mode for directories."
+msgstr "Überschreibt den Standardmodus für Verzeichnisse."
+
+msgid "Sets the user's domain (workgroup)."
+msgstr "Setzt die Domain (Arbeitsgruppe) des Benutzers."
+
+msgid "Auto-guesses the server domain from the NTLM challenge."
+msgstr "Ermittelt die Serverdomain automatisch aus der NTLM-Challenge."
+
+msgid "Keeps unsupported permissions in memory only; unreliable."
+msgstr "Behält nicht unterstützte Berechtigungen nur im Speicher; unzuverlässig."
+
+msgid "Seconds between keepalive echo requests."
+msgstr "Sekunden zwischen Keepalive-Echo-Anfragen."
+
+msgid "Min encrypted-read size before offloading decryption."
+msgstr "Min. Größe verschlüsselter Lesezugriffe vor dem Auslagern der Entschlüsselung."
+
+msgid "Overrides the default mode for regular files."
+msgstr "Überschreibt den Standardmodus für normale Dateien."
+
+msgid "Ignores server gid and always uses the gid value."
+msgstr "Ignoriert die GID des Servers und verwendet immer den gid-Wert."
+
+msgid "Ignores server uid and always uses the uid value."
+msgstr "Ignoriert die UID des Servers und verwendet immer den uid-Wert."
+
+msgid "Always uses CIFS-style mandatory locks."
+msgstr "Verwendet immer CIFS-artige Pflichtsperrungen."
+
+msgid "Enables local disk caching via FS-Cache."
+msgstr "Aktiviert lokales Festplattencaching über FS-Cache."
+
+msgid "Default gid owning files when the server gives none."
+msgstr "Standard-GID für Dateien, wenn der Server keine angibt."
+
+msgid "Don't prompt for a password; mount as guest."
+msgstr "Keine Passwortabfrage; als Gast einhängen."
+
+msgid "Keeps the share root directory handle cached."
+msgstr "Hält den Handle des Hauptverzeichnisses der Freigabe im Cache."
+
+msgid "Ms the server reserves handles after failover."
+msgstr "Millisekunden, die der Server nach Failover für Handles reserviert."
+
+msgid "Hangs when the server crashes instead of erroring."
+msgstr "Hängt bei einem Serverabsturz fest, statt einen Fehler zu melden."
+
+msgid "Extracts uid/gid from a special SID instead of mapping."
+msgstr "Extrahiert uid/gid aus einer speziellen SID, anstatt sie zu mappen."
+
+msgid "Synonym for nocase; case-insensitive matching."
+msgstr "Synonym für nocase; case-insensitive Abgleich."
+
+msgid "Allow interrupts while hung; currently unimplemented."
+msgstr "Unterbrechungen während des Hängens erlauben; derzeit nicht implementiert."
+
+msgid "Charset for converting path names to/from Unicode."
+msgstr "Zeichensatz für die Umwandlung von Pfadnamen in und aus Unicode."
+
+msgid "Enables Unix Extensions (synonym for posix/unix)."
+msgstr "Aktiviert Unix-Erweiterungen (Synonym für posix/unix)."
+
+msgid "Checks cached leases locally instead of querying server."
+msgstr "Prüft zwischengespeicherte Leases lokal, ohne den Server abzufragen."
+
+msgid "Translates reserved Windows filename characters."
+msgstr "Übersetzt reservierte Windows-Dateinamenzeichen."
+
+msgid "Maps reserved characters per Microsoft Services For Mac."
+msgstr "Mappt reservierte Zeichen gemäß Microsoft Services For Mac."
+
+msgid "Maximum number of cached directories per share."
+msgstr "Maximale Anzahl zwischengespeicherter Verzeichnisse pro Freigabe."
+
+msgid "Number of multichannel transport connections (max 16)."
+msgstr "Anzahl der Multichannel-Transportverbindungen (max. 16)."
+
+msgid "Maximum SMB2 credits the client can hold."
+msgstr "Maximale SMB2-Credits, die der Client halten kann."
+
+msgid "Enables Minshall+French symlink support."
+msgstr "Aktiviert die Unterstützung für Minshall+French-Symlinks."
+
+msgid "Uses multiple transport connections for one session."
+msgstr "Verwendet mehrere Transportverbindungen für eine Sitzung."
+
+msgid "Maps each user's access to individual credentials."
+msgstr "Ordnet den Zugriff jedes Benutzers individuellen Zugangsdaten zu."
+
+msgid "Client netbios name used for port 139 connections."
+msgstr "Client-NetBIOS-Name, der für Verbindungen über Port 139 verwendet wird."
+
+msgid "Disables POSIX ACL operations."
+msgstr "Deaktiviert POSIX-ACL-Vorgänge."
+
+msgid "Uses fixed kernel socket buffer sizes."
+msgstr "Verwendet feste Socket-Puffergrößen des Kernels."
+
+msgid "Don't send byte-range lock requests to the server."
+msgstr "Sendet keine Bytebereich-Sperranfragen an den Server."
+
+msgid "Requests case-insensitive path name matching."
+msgstr "Fordert case-insensitive Pfadnamenabgleich an."
+
+msgid "Don't follow Distributed FileSystem referrals."
+msgstr "Folgt keinen Verweisen des Distributed FileSystem."
+
+msgid "Disables caching of the share root handle."
+msgstr "Deaktiviert den Cache des Stammhandles der Freigabe."
+
+msgid "Don't allow interrupts; currently unimplemented."
+msgstr "Erlaubt keine Unterbrechungen; derzeit nicht implementiert."
+
+msgid "Don't request leases/oplocks when opening files."
+msgstr "Fordert beim Öffnen von Dateien keine Leases/Oplocks an."
+
+msgid "Disables Unix Extensions (synonym for noposix)."
+msgstr "Deaktiviert Unix-Erweiterungen (Synonym für noposix)."
+
+msgid "Don't translate reserved filename characters."
+msgstr "Übersetzt reservierte Dateinamenzeichen nicht."
+
+msgid "Disables client-side permission checking."
+msgstr "Deaktiviert die clientseitige Rechteprüfung."
+
+msgid "Disables persistent handles."
+msgstr "Deaktiviert persistente Handles."
+
+msgid "Disables Unix Extensions for this mount."
+msgstr "Deaktiviert Unix-Erweiterungen für diesen Mount."
+
+msgid "Don't negotiate POSIX-style pathnames."
+msgstr "Verhandelt keine POSIX-artigen Pfadnamen."
+
+msgid "Disables resilient handles."
+msgstr "Deaktiviert resiliente Handles."
+
+msgid "Client generates inode numbers locally."
+msgstr "Der Client erzeugt Inode-Nummern lokal."
+
+msgid "Lets the server set uid/gid on new files."
+msgstr "Erlaubt dem Server, uid/gid neuer Dateien festzulegen."
+
+msgid "Never reuses existing sockets for new mounts."
+msgstr "Wiederverwendet vorhandene Sockets für neue Mounts nie."
+
+msgid "Don't flush to the server on fsync()."
+msgstr "Schreibt beim Aufruf von fsync() nicht auf den Server."
+
+msgid "Disables getfattr/setfattr xattr operations."
+msgstr "Deaktiviert getfattr-/setfattr-xattr-Vorgänge."
+
+msgid "Specifies the CIFS password (alias of password)."
+msgstr "Gibt das CIFS-Kennwort an (Alias von password)."
+
+msgid "Specifies an alternate password for password rotation."
+msgstr "Gibt ein alternatives Kennwort für die Kennwortrotation an."
+
+msgid "Specifies the CIFS password."
+msgstr "Gibt das CIFS-Kennwort an."
+
+msgid "Enables client-side permission checking (default)."
+msgstr "Aktiviert die clientseitige Rechteprüfung (Standard)."
+
+msgid "Keeps opened files across reconnections."
+msgstr "Behält geöffnete Dateien auch bei erneuten Verbindungen bei."
+
+msgid "Port to connect to the CIFS server."
+msgstr "Port zur Verbindung mit dem CIFS-Server."
+
+msgid "Enables Unix Extensions for this mount."
+msgstr "Aktiviert Unix-Erweiterungen für diesen Mount."
+
+msgid "Allows POSIX-style pathnames (inverse of noposixpaths)."
+msgstr "Erlaubt POSIX-artige Pfadnamen (Gegenteil von noposixpaths)."
+
+msgid "Uses SMB Direct over an RDMA adapter."
+msgstr "Verwendet SMB Direct über einen RDMA-Adapter."
+
+msgid "Maximum bytes requested in each read request."
+msgstr "Maximale Anzahl an Bytes pro Leseanfrage."
+
+msgid "Forwards the opening pid on read/write operations."
+msgstr "Übergibt bei Lese-/Schreibvorgängen die PID des öffnenden Prozesses."
+
+msgid "Encrypts traffic at the SMB layer (SMB3+)."
+msgstr "Verschlüsselt den Verkehr auf der SMB-Ebene (SMB3+)."
+
+msgid "Sets the session security mode (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+msgstr "Legt den Sicherheitsmodus der Sitzung fest (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+
+msgid "Server netbios name for old port 139 servers."
+msgstr "Server-NetBIOS-Name für ältere Port-139-Server."
+
+msgid "Uses inode numbers returned by the server."
+msgstr "Verwendet die vom Server zurückgegebenen Inode-Nummern."
+
+msgid "Sets uid/gid of processes on newly created files."
+msgstr "Legt uid/gid der Prozesse für neu erstellte Dateien fest."
+
+msgid "Creates device/fifo files in Services for Unix format."
+msgstr "Erstellt Geräte-/FIFO-Dateien im Services-for-Unix-Format."
+
+msgid "Ignores unrecognized mount options following it."
+msgstr "Ignoriert nicht erkannte Mount-Optionen, die darauf folgen."
+
+msgid "Mounts a specific snapshot of the remote share."
+msgstr "Montiert einen bestimmten Snapshot der entfernten Freigabe."
+
+msgid "Returns errors instead of hanging when server crashes."
+msgstr "Gibt bei einem Serverabsturz Fehler zurück, anstatt zu hängen."
+
+msgid "Default uid owning files when the server gives none."
+msgstr "Standard-UID, die Dateien besitzt, wenn der Server keine angibt."
+
+msgid "Enables Unix Extensions (synonym for posix)."
+msgstr "Aktiviert Unix-Erweiterungen (Synonym für posix)."
+
+msgid "Namespace in which kernel upcalls are handled."
+msgstr "Namespace, in dem Kernel-Upcalls verarbeitet werden."
+
+msgid "Specifies the SMB username (alias of username)."
+msgstr "Gibt den SMB-Benutzernamen an (Alias von username)."
+
+msgid "Specifies the SMB username to connect as."
+msgstr "Gibt den SMB-Benutzernamen für die Verbindung an."
+
+msgid "SMB protocol version (e.g. 1.0, 2.1, 3.1.1)."
+msgstr "Version des SMB-Protokolls (z. B. 1.0, 2.1, 3.1.1)."
+
+msgid "Maximum bytes sent in each write request."
+msgstr "Maximale Anzahl an Bytes pro Schreibanfrage."
+
+msgid "Enables attribute caching (default)."
+msgstr "Aktiviert die Attributzwischenspeicherung (Standard)."
+
+msgid "Disables attribute caching; makes writes synchronous."
+msgstr "Deaktiviert die Attributzwischenspeicherung; Schreibvorgänge werden synchron."
+
+msgid "Max seconds directory attributes are cached."
+msgstr "Maximale Cachezeit für Verzeichnisattribute in Sekunden."
+
+msgid "Min seconds directory attributes are cached."
+msgstr "Minimale Cachezeit für Verzeichnisattribute in Sekunden."
+
+msgid "Max seconds regular file attributes are cached."
+msgstr "Maximale Cachezeit für Attribute regulärer Dateien in Sekunden."
+
+msgid "Min seconds regular file attributes are cached."
+msgstr "Minimale Cachezeit für Attribute regulärer Dateien in Sekunden."
+
+msgid "Sets all attribute-cache timeouts to this value."
+msgstr "Setzt alle Zeitlimits des Attribut-Zwischenspeichers auf diesen Wert."
+
+msgid "Enables the NFSACL sideband protocol."
+msgstr "Aktiviert das NFSACL-Sideband-Protokoll."
+
+msgid "Disables the NFSACL sideband protocol."
+msgstr "Deaktiviert das NFSACL-Sideband-Protokoll."
+
+msgid "Retries a failed mount in the background."
+msgstr "Wiederholt ein fehlgeschlagenes Einhängen im Hintergrund."
+
+msgid "Fails the mount in the foreground (default)."
+msgstr "Einhängen schlägt im Vordergrund fehl (Standard)."
+
+msgid "Client IP advertised for NFSv4.0 callbacks."
+msgstr "Angekündigte Client-IP für NFSv4.0-Callbacks."
+
+msgid "Uses close-to-open cache coherence semantics."
+msgstr "Verwendet Close-to-Open-Zwischenspeicher-Kohärenz."
+
+msgid "Disables close-to-open cache coherence."
+msgstr "Deaktiviert die Close-to-Open-Zwischenspeicher-Kohärenz."
+
+msgid "Caches read-only pages on local disk via FS-Cache."
+msgstr "Zwischenspeichert schreibgeschützte Seiten lokal per FS-Cache."
+
+msgid "Disables FS-Cache local disk caching."
+msgstr "Deaktiviert das lokale Zwischenspeichern per FS-Cache."
+
+msgid "Retries requests indefinitely after server timeouts."
+msgstr "Wiederholt Anfragen unbegrenzt nach Server-Zeitüberschreitungen."
+
+msgid "Allow interrupts while hung; ignored after kernel 2.6.25."
+msgstr "Erlaubt Unterbrechungen, wenn der Mount hängt; wird ab Kernel 2.6.25 ignoriert."
+
+msgid "Don't allow interrupts; ignored after kernel 2.6.25."
+msgstr "Erlaubt keine Unterbrechungen; wird ab Kernel 2.6.25 ignoriert."
+
+msgid "Treats flock/POSIX locks as local only."
+msgstr "Behandelt flock- und POSIX-Sperren nur als lokal."
+
+msgid "Uses the NLM protocol to lock files on the server."
+msgstr "Verwendet das NLM-Protokoll zum Sperren von Dateien auf dem Server."
+
+msgid "Don't use NLM locking; locks are local only."
+msgstr "Verwendet keine NLM-Sperren; Sperren gelten nur lokal."
+
+msgid "Directory-entry cache mode: all, none, pos or positive."
+msgstr "Zwischenspeichermodus für Verzeichniseinträge: all, none, pos oder positive."
+
+msgid "Max connections to IPs of one NFSv4.1+ server."
+msgstr "Maximale Verbindungen zu IP-Adressen eines NFSv4.1+-Servers."
+
+msgid "Uses TSM-compatible ID for NFSv4 migration."
+msgstr "Verwendet eine TSM-kompatible ID für die NFSv4-Migration."
+
+msgid "Uses legacy client ID string (default)."
+msgstr "Verwendet die veraltete Client-ID-Zeichenfolge (Standard)."
+
+msgid "NFSv4 protocol minor version number."
+msgstr "Minorversionsnummer des NFSv4-Protokolls."
+
+msgid "Hostname running the mountd service."
+msgstr "Hostname des Rechners mit dem mountd-Dienst."
+
+msgid "Port of the server's mountd service."
+msgstr "Port des mountd-Dienstes des Servers."
+
+msgid "Transport used to contact mountd (udp/tcp)."
+msgstr "Transport zur Kontaktaufnahme mit mountd (udp/tcp)."
+
+msgid "RPC version used to contact mountd."
+msgstr "RPC-Version zur Kontaktaufnahme mit mountd."
+
+msgid "Maximum length of a pathname component."
+msgstr "Maximale Länge eines Pfadbestandteils."
+
+msgid "Number of connections to establish to the server."
+msgstr "Anzahl der zum Server aufzubauenen Verbindungen."
+
+msgid "NFS protocol version (synonym of vers)."
+msgstr "NFS-Protokollversion (Synonym für vers)."
+
+msgid "Disables rounding buffered writes to page boundaries."
+msgstr "Deaktiviert das Ausrichten gepuffter Schreibvorgänge auf Seitengrenzen."
+
+msgid "Disables READDIRPLUS requests."
+msgstr "Deaktiviert READDIRPLUS-Anfragen."
+
+msgid "Port of the server's NFS service."
+msgstr "Port des NFS-Dienstes des Servers."
+
+msgid "Transport protocol: udp, tcp or rdma."
+msgstr "Transportprotokoll: udp, tcp oder rdma."
+
+msgid "Uses RDMA transport (synonym for proto=rdma)."
+msgstr "Verwendet RDMA-Transport (Synonym für proto=rdma)."
+
+msgid "Enables READDIRPLUS requests."
+msgstr "Aktiviert READDIRPLUS-Anfragen."
+
+msgid "Uses privileged source ports (default)."
+msgstr "Verwendet privilegierte Quellports (Standard)."
+
+msgid "Uses non-privileged source ports."
+msgstr "Verwendet nicht privilegierte Quellports."
+
+msgid "Number of retries before further recovery action."
+msgstr "Anzahl der Wiederholungen vor weiteren Wiederherstellungsmaßnahmen."
+
+msgid "Minutes to retry a failed mount before giving up."
+msgstr "Minuten, in denen nach Fehlschlag wiederholt wird, bevor aufgegeben wird."
+
+msgid "Maximum bytes per network read request."
+msgstr "Maximale Anzahl an Bytes pro Netzwerk-Leseanfrage."
+
+msgid "Maximum bytes per network write request."
+msgstr "Maximale Anzahl an Bytes pro Netzwerk-Schreibanfrage."
+
+msgid "Security flavors: none, sys, krb5, krb5i or krb5p."
+msgstr "Sicherheitsmethoden: none, sys, krb5, krb5i oder krb5p."
+
+msgid "Shares one data/attribute cache across mounts."
+msgstr "Teilt einen Daten-/Attribut-Zwischenspeicher über mehrere Mounts."
+
+msgid "Gives each mount its own cache."
+msgstr "Jeder Mount erhält einen eigenen Cache."
+
+msgid "Ignores unrecognized mount options."
+msgstr "Ignoriert nicht erkannte Mount-Optionen."
+
+msgid "Returns EIO after retrans retries."
+msgstr "Gibt EIO nach retrans-Versuchen zurück."
+
+msgid "Returns ETIMEDOUT after retrans retries."
+msgstr "Gibt ETIMEDOUT nach retrans-Versuchen zurück."
+
+msgid "Serves cached data when revalidation times out."
+msgstr "Liefert bei Timeout der Revalidierung zwischengespeicherte Daten."
+
+msgid "Don't fall back to cache when revalidation fails."
+msgstr "Fällt bei fehlgeschlagener Revalidierung nicht auf den Cache zurück."
+
+msgid "Uses TCP transport (synonym for proto=tcp)."
+msgstr "Verwendet den TCP-Transport (Synonym für proto=tcp)."
+
+msgid "Deciseconds to wait before retrying a request."
+msgstr "Wartezeit in Zehntelsekunden, bevor eine Anfrage wiederholt wird."
+
+msgid "Probes NFSv4.1 session trunking on new mounts."
+msgstr "Prüft bei neuen Mounts auf NFSv4.1-Sitzungstrunking."
+
+msgid "Disables session trunking discovery (default)."
+msgstr "Deaktiviert die Erkennung von Sitzungstrunking (Standard)."
+
+msgid "Uses UDP transport (synonym for proto=udp)."
+msgstr "Verwendet den UDP-Transport (Synonym für proto=udp)."
+
+msgid "NFS protocol version (alternative to nfsvers)."
+msgstr "NFS-Protokollversion (Alternative zu nfsvers)."
+
+msgid "Transport security policy: none, tls or mtls."
+msgstr "Transport-Sicherheitsrichtlinie: none, tls oder mtls."
+
+msgid "Automatically reconnects if the connection is interrupted."
+msgstr "Stellt bei einer Unterbrechung automatisch die Verbindung wieder her."
+
+msgid "Delays connecting until the mountpoint is first accessed."
+msgstr "Verbindet erst beim ersten Zugriff auf den Einhängepunkt."
+
+msgid "Synchronous writes; slower but more reliable."
+msgstr "Synchrones Schreiben; langsamer, aber zuverlässiger."
+
+msgid "Disables speculative read-ahead beyond requested data."
+msgstr "Deaktiviert den spekulativen Read-Ahead über die angeforderten Daten hinaus."
+
+msgid "Synchronous readdir; slower but more reliable."
+msgstr "Synchrones readdir; langsamer, aber zuverlässiger."
+
+msgid "Enables workarounds for broken SFTP servers."
+msgstr "Aktiviert Workarounds für fehlerhafte SFTP-Server."
+
+msgid "UID/GID mapping mode: none, user or file."
+msgstr "UID/GID-Zuordnungsmodus: none, user oder file."
+
+msgid "File of username:uid mappings for idmap=file."
+msgstr "Datei mit username:uid-Zuordnungen für idmap=file."
+
+msgid "File of groupname:gid mappings for idmap=file."
+msgstr "Datei mit groupname:gid-Zuordnungen für idmap=file."
+
+msgid "Handles missing idmap entries: ignore or error."
+msgstr "Verarbeitung fehlender idmap-Einträge: ignore oder error."
+
+msgid "Command to run instead of ssh."
+msgstr "Befehl, der statt ssh ausgeführt wird."
+
+msgid "SSH protocol version to use (default 2)."
+msgstr "Zu verwendende SSH-Protokollversion (Standard: 2)."
+
+msgid "Path to the sftp server or subsystem."
+msgstr "Pfad zum sftp-Server oder zum Subsystem."
+
+msgid "Connects directly to a port, bypassing SSH."
+msgstr "Verbindet sich direkt mit einem Port und umgeht SSH."
+
+msgid "Connects via vsock to CID:PORT, bypassing SSH."
+msgstr "Verbindet sich per vsock mit CID:PORT und umgeht SSH."
+
+msgid "Communicates over stdin/stdout, bypassing the network."
+msgstr "Kommuniziert über stdin/stdout und umgeht das Netzwerk."
+
+msgid "Makes link(2) fail with ENOSYS."
+msgstr "Lässt link(2) mit ENOSYS fehlschlagen."
+
+msgid "Turns absolute symlinks relative on the client."
+msgstr "Wandelt absolute symbolische Links auf dem Client in relative um."
+
+msgid "Presents server symlinks as regular files."
+msgstr "Präsentiert symbolische Links des Servers als reguläre Dateien."
+
+msgid "Don't check that the remote directory exists."
+msgstr "Prüft nicht, ob das Remote-Verzeichnis existiert."
+
+msgid "Reads the password from stdin (for pam_mount only)."
+msgstr "Liest das Passwort von stdin (nur für pam_mount)."
+
+msgid "Enables or disables the SSHFS directory cache."
+msgstr "Aktiviert oder deaktiviert den SSHFS-Verzeichnis-Cache."
+
+msgid "Maximum size of the directory cache."
+msgstr "Maximale Größe des Verzeichnis-Caches."
+
+msgid "Timeout in seconds for the directory cache."
+msgstr "Timeout in Sekunden für den Verzeichnis-Cache."
+
+msgid "Timeout for cached attributes."
+msgstr "Timeout für zwischengespeicherte Attribute."
+
+msgid "Timeout for cached symlinks."
+msgstr "Timeout für zwischengespeicherte Symlinks."
+
+msgid "Timeout for cached directory names."
+msgstr "Timeout für zwischengespeicherte Verzeichnisnamen."
+
+msgid "Interval for cleaning the directory cache."
+msgstr "Intervall zur Bereinigung des Verzeichnis-Caches."
+
+msgid "Interval for forced cleaning when full."
+msgstr "Intervall für erzwungene Bereinigung bei vollem Cache."
+
+msgid "Disables the kernel page cache for file content."
+msgstr "Deaktiviert den Seitenspeicher des Kernels für Dateiinhalte."
+
+msgid "Maximum number of simultaneous SSH connections."
+msgstr "Maximale Anzahl gleichzeitiger SSH-Verbindungen."
+
+msgid "Allows all users to access the mount."
+msgstr "Erlaubt allen Benutzern den Zugriff auf den Mount."
+
+msgid "Allows root access in addition to the mounter."
+msgstr "Erlaubt zusätzlich zum einhängenden Benutzer auch root den Zugriff."
+
+msgid "Unmounts automatically when the process exits."
+msgstr "Hängt automatisch ab, wenn der Prozess beendet wird."
+
+msgid "Lets the kernel enforce permission checks."
+msgstr "Lässt den Kernel Berechtigungsprüfungen durchsetzen."
+
+msgid "Caches file data in kernel without invalidation on open."
+msgstr "Zwischenspeichert Dateidaten im Kernel ohne Invalidierung beim Öffnen."
+
+msgid "Invalidates kernel data cache when file mtime changes."
+msgstr "Entwertet den Kernel-Datencache, wenn sich die mtime einer Datei ändert."
+
+msgid "Uses filesystem-provided inode numbers."
+msgstr "Verwendet die Inode-Nummern des Dateisystems."
+
+msgid "Allows mounting over non-empty directories (obsolete, now default)."
+msgstr "Erlaubt das Mounten auf nicht leeren Verzeichnissen (veraltet, inzwischen Standard)."
+
+msgid "Source string shown in /proc/mounts and mtab."
+msgstr "Quellenzeichenfolge, die in /proc/mounts und mtab angezeigt wird."
+
+msgid "Maximum size of read requests (bytes)."
+msgstr "Maximale Größe von Leseanfragen (Bytes)."
+
+msgid "Maximum size of write requests (bytes)."
+msgstr "Maximale Größe von Schreibanfragen (Bytes)."
+
+msgid "Sets the block size to 512, 1024, or 2048."
+msgstr "Setzt die Blockgröße auf 512, 1024 oder 2048."
+
+msgid "Sets filename case checking (relaxed or strict)."
+msgstr "Setzt die Groß-/Kleinschreibung von Dateinamen (gelockert oder strikt)."
+
+msgid "Ignores high-order bits of file lengths (files limited to 16 MB)."
+msgstr "Ignoriert die höchstwertigen Bits der Dateilängen (Dateien auf 16 MB begrenzt)."
+
+msgid "Group ID given to all files."
+msgstr "Gruppenkennung für alle Dateien."
+
+msgid "Charset converting Joliet Unicode names to 8-bit characters."
+msgstr "Zeichensatz, der Joliet-Unicode-Namen in 8-Bit-Zeichen umwandelt."
+
+msgid "Sets non-Rock Ridge name translation (normal, off, or acorn)."
+msgstr "Setzt die Nicht-Rock-Ridge-Namensübersetzung (normal, off oder acorn)."
+
+msgid "Sets default permission mode for non-Rock Ridge files."
+msgstr "Setzt den Standard-Berechtigungsmodus für Nicht-Rock-Ridge-Dateien."
+
+msgid "Disables Microsoft Joliet extensions."
+msgstr "Deaktiviert die Microsoft-Joliet-Erweiterungen."
+
+msgid "Disables Rock Ridge extensions."
+msgstr "Deaktiviert die Rock-Ridge-Erweiterungen."
+
+msgid "Sets the sector where the session begins."
+msgstr "Setzt den Sektor, an dem die Sitzung beginnt."
+
+msgid "Selects the session on a multisession CD."
+msgstr "Wählt die Sitzung auf einer Multisession-CD aus."
+
+msgid "User ID given to all files."
+msgstr "Benutzerkennung für alle Dateien."
+
+msgid "Shows hidden and associated files."
+msgstr "Zeigt versteckte und zugehörige Dateien an."
+
+msgid "Converts 16-bit Unicode CD names to UTF-8."
+msgstr "Wandelt 16-Bit-Unicode-CD-Namen in UTF-8 um."
+
+msgid "Embeds file data in the inode (default)."
+msgstr "Speichert Dateidaten im Inode (Standard)."
+
+msgid "Disables embedding file data in the inode."
+msgstr "Deaktiviert die Speicherung von Dateidaten im Inode."
+
+msgid "Overrides the standard anchor location (default 256)."
+msgstr "Überschreibt die Standard-Ankerposition (Standardwert 256)."
+
+msgid "Sets the block size."
+msgstr "Setzt die Blockgröße."
+
+msgid "Sets default permission mode for directories."
+msgstr "Setzt den Standard-Berechtigungsmodus für Verzeichnisse."
+
+msgid "Unimplemented and ignored."
+msgstr "Nicht implementiert und ignoriert."
+
+msgid "Sets the default group for all files."
+msgstr "Setzt die Standardgruppe für alle Dateien."
+
+msgid "Sets the NLS character set for filenames."
+msgstr "Setzt den NLS-Zeichensatz für Dateinamen."
+
+msgid "Sets the last block of the filesystem."
+msgstr "Setzt den letzten Block des Dateisystems."
+
+msgid "Uses long UDF address descriptors (default)."
+msgstr "Verwendet lange UDF-Adressdeskriptoren (Standard)."
+
+msgid "Sets default permission mode for non-directory files."
+msgstr "Setzt den Standard-Berechtigungsmodus für Dateien, die keine Verzeichnisse sind."
+
+msgid "Unsets strict UDF conformance."
+msgstr "Hebt die strikte UDF-Konformität auf."
+
+msgid "Skips volume recognition sequence and mounts anyway."
+msgstr "Überspringt die Datenträger-Erkennungssequenz und mountet trotzdem."
+
+msgid "Selects the session on multisession optical media."
+msgstr "Wählt die Sitzung auf optischen Datenträgern mit Multisitzung aus."
+
+msgid "Uses short UDF address descriptors."
+msgstr "Verwendet kurze UDF-Adressdeskriptoren."
+
+msgid "Sets the default user for all files."
+msgstr "Setzt den Standardbenutzer für alle Dateien."
+
+msgid "Masks out permissions from all inodes read."
+msgstr "Maskiert die Berechtigungen aller gelesenen Inodes."
+
+msgid "Shows deleted files in listings."
+msgstr "Zeigt gelöschte Dateien in Verzeichnislisten an."
+
+msgid "Shows otherwise hidden files."
+msgstr "Zeigt ansonsten versteckte Dateien an."
+
+msgid "Uses the UTF-8 character set."
+msgstr "Verwendet den UTF-8-Zeichensatz."
+
+msgid "Sets initial group ID of the root directory."
+msgstr "Setzt die anfängliche Gruppenkennung des Root-Verzeichnisses."
+
+msgid "Huge-page policy for files: never, always, within_size, advise."
+msgstr "Huge-Page-Richtlinie für Dateien: never, always, within_size, advise."
+
+msgid "Sets initial permissions of the root directory."
+msgstr "Setzt die anfänglichen Berechtigungen des Root-Verzeichnisses."
+
+msgid "Sets NUMA memory allocation policy for all files."
+msgstr "Setzt die NUMA-Speicherzuweisungsrichtlinie für alle Dateien."
+
+msgid "Disables swap; files cannot be swapped out."
+msgstr "Deaktiviert Swap; Dateien können nicht ausgelagert werden."
+
+msgid "Same as size, but expressed in blocks of PAGE_SIZE."
+msgstr "Wie size, aber in Blöcken von PAGE_SIZE ausgedrückt."
+
+msgid "Maximum number of inodes for this instance."
+msgstr "Maximale Anzahl von Inodes für diese Instanz."
+
+msgid "Upper size limit, e.g. 8m or 50%; 0 removes the limit."
+msgstr "Obergrenze der Größe, z. B. 8m oder 50 %; 0 hebt die Begrenzung auf."
+
+msgid "Sets initial user ID of the root directory."
+msgstr "Setzt die anfängliche Benutzerkennung des Wurzelverzeichnisses."
+
+msgid "Group whose members bypass hidepid access restrictions."
+msgstr "Gruppe, deren Mitglieder die Zugriffsbeschränkungen von hidepid umgehen."
+
+msgid "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible."
+msgstr "Blendet /proc/pid-Einträge aus: 0 aus, 1 eigene Verzeichnisse, 2 andere PIDs unsichtbar."
+
+msgid "Selects the PID namespace used to translate PIDs (new in 6.16)."
+msgstr "Wählt den PID-Namensraum, der zur Übersetzung von PIDs verwendet wird (neu in 6.16)."
+
+msgid "Shows only the pid subset, hiding other top-level proc files."
+msgstr "Zeigt nur die pid-Untermenge und blendet andere proc-Dateien der obersten Ebene aus."
+
+msgid "Sets group of newly created pseudo-terminals."
+msgstr "Setzt die Gruppe neu erstellter Pseudo-Terminals."
+
+msgid "Limits the number of pseudo-terminals in this instance."
+msgstr "Begrenzt die Anzahl der Pseudo-Terminals in dieser Instanz."
+
+msgid "Sets permissions of newly created pseudo-terminals."
+msgstr "Setzt die Berechtigungen neu erstellter Pseudo-Terminals."
+
+msgid "Creates a private instance with independent pty index space."
+msgstr "Erstellt eine private Instanz mit eigenständigem pty-Indexbereich."
+
+msgid "Sets the mode of the instance's ptmx device node."
+msgstr "Setzt den Modus des ptmx-Geräteknotens der Instanz."
+
+msgid "Sets owner of newly created pseudo-terminals."
+msgstr "Setzt den Eigentümer neu erstellter Pseudo-Terminals."
+
+msgid "Favors dynamic cgroup changes over hot-path fork/exit costs."
+msgstr "Bevorzugt dynamische cgroup-Änderungen vor den fork/exit-Kosten im Hot-Pfad."
+
+msgid "Counts HugeTLB usage in memory controller accounting."
+msgstr "Zählt die HugeTLB-Nutzung in die Abrechnung des Speichercontrollers ein."
+
+msgid "Reports only local memory.events, excluding subtree counts."
+msgstr "Berichtet nur lokale memory.events und schließt Teilbaum-Zählungen aus."
+
+msgid "Applies memory.min/low protection recursively to subtrees."
+msgstr "Wendet den memory.min/low-Schutz rekursiv auf Teilbäume an."
+
+msgid "Treats cgroup namespaces as delegation boundaries."
+msgstr "Behandelt cgroup-Namensräume als Delegierungsgrenzen."
+
+msgid "Counts only local fork failures in pids.events.max."
+msgstr "Zählt nur lokale fork-Fehler in pids.events.max."
+
+msgid "Sets the group of the debugfs mount."
+msgstr "Setzt die Gruppe des debugfs-Mounts."
+
+msgid "Sets permissions of the mountpoint."
+msgstr "Setzt die Berechtigungen des Einhängepunkts."
+
+msgid "Sets the owner of the debugfs mount."
+msgstr "Setzt den Eigentümer des debugfs-Mounts."
+
+msgid "Sets the group of the tracefs mount."
+msgstr "Setzt die Gruppe des tracefs-Mounts."
+
+msgid "Sets the owner of the tracefs mount."
+msgstr "Setzt den Eigentümer des tracefs-Mounts."
+
+msgid "Sets group of the filesystem root."
+msgstr "Setzt die Gruppe der Dateisystemwurzel."
+
+msgid "Reserves a minimum of huge-page memory; mount fails if short."
+msgstr "Reserviert einen Mindestbetrag an Hugepage-Speicher; sonst schlägt der Mount fehl."
+
+msgid "Sets permissions of the filesystem root."
+msgstr "Setzt die Berechtigungen der Dateisystemwurzel."
+
+msgid "Maximum number of inodes the filesystem can use."
+msgstr "Maximale Anzahl an Inodes, die das Dateisystem verwenden kann."
+
+msgid "Uses the given huge-page size for this mount."
+msgstr "Verwendet die angegebene Hugepage-Größe für diesen Mount."
+
+msgid "Maximum huge-page memory the filesystem may use."
+msgstr "Maximaler Hugepage-Speicher, den das Dateisystem verwenden darf."
+
+msgid "Sets owner of the filesystem root."
+msgstr "Setzt den Eigentümer der Dateisystemwurzel."
+
+msgid "Access mode: user, <uid>, any or client."
+msgstr "Zugriffsmodus: user, <uid>, any oder client."
+
+msgid "Authentication fid used by Plan 9 security."
+msgstr "Authentifizierungsfid der Plan-9-Sicherheit."
+
+msgid "File tree to access on the server."
+msgstr "Dateibaum, auf den auf dem Server zugegriffen wird."
+
+msgid "Caching policy: none, readahead, mmap, loose or fscache."
+msgstr "Caching-Richtlinie: none, readahead, mmap, loose oder fscache."
+
+msgid "Tag for the persistent fscache."
+msgstr "Tag für den persistenten fscache."
+
+msgid "Debug level as a bitmask."
+msgstr "Debugstufe als Bitmaske."
+
+msgid "Attempts to mount with this gid."
+msgstr "Versucht, mit dieser gid einzuhängen."
+
+msgid "Attempts to mount as this uid."
+msgstr "Versucht, als diese uid einzuhängen."
+
+msgid "Bypasses the page cache on all reads/writes."
+msgstr "Umgeht den Seitencache bei allen Lese- und Schreibzugriffen."
+
+msgid "Ignores qid.version==0 as a cache marker."
+msgstr "Ignoriert qid.version==0 als Cachemarker."
+
+msgid "Bytes used for 9p packet payload."
+msgstr "Byte für die Nutzlast von 9p-Paketen."
+
+msgid "Ms to retain negative dentries in cache."
+msgstr "Millisekunden, negative dentries im Cache zu halten."
+
+msgid "Forces legacy 9p2000 mode (no extensions)."
+msgstr "Erzwingt den alten 9p2000-Modus (ohne Erweiterungen)."
+
+msgid "Don't map special files; shows them as normal files."
+msgstr "Kartiert keine speziellen Dateien; zeigt sie als normale Dateien an."
+
+msgid "Don't offer xattr functions on this mount."
+msgstr "Bietet auf diesem Mount keine xattr-Funktionen an."
+
+msgid "Port to connect to on the remote server."
+msgstr "Port, an den auf dem entfernten Server verbunden wird."
+
+msgid "File descriptor for reading with trans=fd."
+msgstr "Dateideskriptor zum Lesen mit trans=fd."
+
+msgid "Transport: unix, tcp, fd, virtio, rdma or usbg."
+msgstr "Transport: unix, tcp, fd, virtio, rdma oder usbg."
+
+msgid "User name to mount as on the server."
+msgstr "Benutzername, mit dem auf dem Server gemountet wird."
+
+msgid "9p protocol version: 9p2000, 9p2000.u or 9p2000.L."
+msgstr "9p-Protokollversion: 9p2000, 9p2000.u oder 9p2000.L."
+
+msgid "File descriptor for writing with trans=fd."
+msgstr "Dateideskriptor zum Schreiben mit trans=fd."
+
+msgid "Appends a data-only lower layer directory (new mount API)."
+msgstr "Fügt ein nur Daten enthaltendes Lower-Layer-Verzeichnis hinzu (neue Mount-API)."
+
+msgid "Controls fsync during copy-up: auto, strict, or volatile."
+msgstr "Steuert fsync beim Copy-up: auto, strict oder volatile."
+
+msgid "Use an index to avoid inode collisions: on or off."
+msgstr "Verwendet einen Index, um Inode-Kollisionen zu vermeiden: on oder off."
+
+msgid "Colon-separated list of lower-layer directories."
+msgstr "Durch Doppelpunkte getrennte Liste von Lower-Layer-Verzeichnissen."
+
+msgid "Copy up only metadata first, deferring data copy: on or off."
+msgstr "Kopiert zunächst nur Metadaten und verzögert die Datenkopie: on oder off."
+
+msgid "Make the overlay mountable via NFS: on or off."
+msgstr "Macht das Overlay über NFS mountbar: on oder off."
+
+msgid "Record the caller's credentials for permission checks."
+msgstr "Vermerkt die Zugangsdaten des Aufrufers für Berechtigungsprüfungen."
+
+msgid "Redirect directories on rename: on, off, follow, or nofollow."
+msgstr "Umleitet Verzeichnisse beim Umbenennen: on, off, follow oder nofollow."
+
+msgid "Directory used as the upper (writable) layer."
+msgstr "Verzeichnis, das als oberes (schreibbares) Layer verwendet wird."
+
+msgid "Use the user.overlay.* xattr namespace instead of trusted.overlay.*."
+msgstr "Verwendet den user.overlay.*-Xattr-Namensraum statt trusted.overlay.*."
+
+msgid "Control the overlay UUID and fsid: null, off, on, or auto."
+msgstr "Steuert die Overlay-UUID und fsid: null, off, on oder auto."
+
+msgid "Verify metacopy digests with fs-verity: off, on, or require."
+msgstr "Prüft Metacopy-Prüfsummen mit fs-verity: off, on oder require."
+
+msgid "Prefer performance over durability; data not crash-safe."
+msgstr "Bevorzugt Leistung gegenüber Dauerhaftigkeit; Daten sind nicht absturzsicher."
+
+msgid "Scratch directory on the same filesystem as upperdir."
+msgstr "Arbeitsverzeichnis auf demselben Dateisystem wie upperdir."
+
+msgid "Appends an additional work directory (new mount API)."
+msgstr "Fügt ein zusätzliches Arbeitsverzeichnis hinzu (neue Mount-API)."
+
+msgid "Compose unique inode numbers across layers: on, off, or auto."
+msgstr "Bildet eindeutige Inode-Nummern über alle Layer hinweg: on, off oder auto."
+
+msgid "Enable access control lists (legacy alias for acltype)."
+msgstr "Aktiviert Zugriffssteuerungslisten (veralteter Alias für acltype)."
+
+msgid "Disable ACLs (alias for acltype=off)."
+msgstr "Deaktiviert ACLs (Alias für acltype=off)."
+
+msgid "Select ACL type: off, nfsv4, or posix."
+msgstr "Wählt den ACL-Typ: off, nfsv4 oder posix."
+
+msgid "Enable mandatory locking (alias for nbmand=on)."
+msgstr "Aktiviert erzwungene Sperren (Alias für nbmand=on)."
+
+msgid "Disable mandatory locking (alias for nbmand=off)."
+msgstr "Deaktiviert erzwungene Sperren (Alias für nbmand=off)."
+
+msgid "Mount with non-blocking mandatory locks."
+msgstr "Mountet mit nicht blockierenden erzwungenen Sperren."
+
+msgid "Allow mounting over a non-empty or busy directory."
+msgstr "Erlaubt das Mounten über ein nicht leeres oder beschäftigtes Verzeichnis."
+
+msgid "Enable POSIX ACLs (alias for acltype=posix)."
+msgstr "Aktiviert POSIX-ACLs (Alias für acltype=posix)."
+
+msgid "Disable relative access-time updates (plain atime)."
+msgstr "Deaktiviert die relative Aktualisierung der Zugriffszeit (einfaches atime)."
+
+msgid "Enable extended attributes."
+msgstr "Aktiviert erweiterte Attribute."
+
+msgid "Disable extended attributes."
+msgstr "Deaktiviert erweiterte Attribute."
+
+msgid "Private flag marking the mount as managed by ZFS."
+msgstr "Privates Flag, das den Mount als von ZFS verwaltet markiert."
+
+msgid "Compression type used for background (rebalance) writes."
+msgstr "Kompressionstyp für Hintergrund-(Rebalance-)Schreibvorgänge."
+
+msgid "Target device/label to move data to in the background."
+msgstr "Zielgerät/Bezeichnung, zu dem die Daten im Hintergrund verschoben werden."
+
+msgid "Compression type used for foreground writes."
+msgstr "Kompressionstyp für Schreibvorgänge im Vordergrund."
+
+msgid "Checksum type used for data writes."
+msgstr "Prüfsummentyp für das Schreiben von Daten."
+
+msgid "Number of replicas to keep for user data."
+msgstr "Anzahl der für Benutzerdaten aufzubewahrenden Replikate."
+
+msgid "Allows mounting with data degraded (missing a replica)."
+msgstr "Erlaubt das Mounten bei degradierten Daten (fehlendes Replikat)."
+
+msgid "Allows mounting even when data would be missing."
+msgstr "Erlaubt das Mounten, selbst wenn Daten fehlen würden."
+
+msgid "Enables discard/TRIM support on member devices."
+msgstr "Aktiviert die discard/TRIM-Unterstützung für Mitgliedsvorrichtungen."
+
+msgid "Enables erasure coding."
+msgstr "Aktiviert Erasure Coding."
+
+msgid "Action to take on filesystem inconsistency: continue, fix_safe, panic, or ro."
+msgstr "Vorgehen bei Inkonsistenz des Dateisystems: continue, fix_safe, panic oder ro."
+
+msgid "Fixes fsck errors without prompting during mount."
+msgstr "Behebt fsck-Fehler beim Mounten, ohne nachzufragen."
+
+msgid "Preferred target device/label for foreground writes."
+msgstr "Bevorzugtes Zielgerät/Bezeichnung für Schreibvorgänge im Vordergrund."
+
+msgid "Runs fsck during mount."
+msgstr "Führt fsck beim Mounten aus."
+
+msgid "Enables inline data extents for small files (default on)."
+msgstr "Aktiviert Inline-Daten-Extents für kleine Dateien (Standard on)."
+
+msgid "Restricts new inode numbers to 32 bits."
+msgstr "Beschränkt neue Inode-Nummern auf 32 Bit."
+
+msgid "Milliseconds before an automatic journal commit (default 1000)."
+msgstr "Millisekunden bis zum automatischen Journal-Commit (Standard 1000)."
+
+msgid "Disables journal flush on sync/fsync."
+msgstr "Deaktiviert das Ausspülen des Journals bei sync/fsync."
+
+msgid "Milliseconds before automatic journal reclaim."
+msgstr "Millisekunden bis zum automatischen Journal-Reclaim."
+
+msgid "Checksum type used for metadata writes."
+msgstr "Prüfsummentyp für das Schreiben von Metadaten."
+
+msgid "Number of replicas to keep for metadata (journal and btree)."
+msgstr "Anzahl der Replikate, die für Metadaten (Journal und btree) aufbewahrt werden."
+
+msgid "Preferred target device/label for metadata writes."
+msgstr "Bevorzugtes Zielgerät/Label für das Schreiben von Metadaten."
+
+msgid "Issues no writes at all, even for journal replay (super read-only mode)."
+msgstr "Führt keinerlei Schreibvorgänge aus, auch nicht für die Wiedergabe des Journals (Super-Read-Only-Modus)."
+
+msgid "Doesn't open member devices in exclusive mode."
+msgstr "Öffnet Mitgliedgeräte nicht im exklusiven Modus."
+
+msgid "Does not replay the journal on mount (not recommended)."
+msgstr "Wiedergibt das Journal beim Mounten nicht ab (nicht empfohlen)."
+
+msgid "Target device/label data is copied to on read."
+msgstr "Zielgerät/Label, zu dem Daten beim Lesen kopiert werden."
+
+msgid "Rate-limits error messages during fsck."
+msgstr "Drosselt Fehlermeldungen während des fsck."
+
+msgid "Mounts the filesystem in read-only mode."
+msgstr "Mountet das Dateisystem im Read-Only-Modus."
+
+msgid "Uses the CPU id for the high bits of new inode numbers."
+msgstr "Verwendet die CPU-ID für die höchstwertigen Bits neuer Inode-Nummern."
+
+msgid "Hash function used for string hash tables (directories and xattrs)."
+msgstr "Hash-Funktion, die für Hash-Tabellen von Zeichenketten (Verzeichnisse und xattrs) verwendet wird."
+
+msgid "Prints extra debugging info during mount/recovery."
+msgstr "Gibt zusätzliche Debugging-Informationen beim Mounten/Wiederherstellen aus."
+
+msgid "Upgrades the on-disk format to the latest version on mount."
+msgstr "Aktualisiert das Datenträgerformat beim Mounten auf die neueste Version."
+
+msgid "Stores full 128-bit cryptographic MACs instead of the default 80-bit."
+msgstr "Speichert kryptografische MACs mit vollen 128 Bit statt der Standardgröße von 80 Bit."
+
+msgid "Enables group quotas."
+msgstr "Aktiviert Gruppenkontingente."
+
+msgid "Enables project quotas."
+msgstr "Aktiviert Projektkontingente."
+
+msgid "Enables user quotas."
+msgstr "Aktiviert Benutzerkontingente."
+
+msgid "original non-journaling ext filesystem, still used for small boot partitions"
+msgstr "ursprüngliches ext-Dateisystem ohne Journal, wird weiterhin für kleine Boot-Partitionen verwendet"
+
+msgid "ext2 with journaling added for crash-recovery reliability"
+msgstr "ext2 mit Journal für zuverlässige Wiederherstellung nach Systemabstürzen"
+
+msgid "default Linux journaling filesystem with extents and very large volume support"
+msgstr "Standard-Journaldateisystem von Linux mit Extents und Unterstützung sehr großer Datenträger"
+
+msgid "copy-on-write filesystem with snapshots, subvolumes, and RAID"
+msgstr "Copy-on-Write-Dateisystem mit Snapshots, Subvolumes und RAID"
+
+msgid "SGI-developed 64-bit journaling filesystem for high performance and large files"
+msgstr "Von SGI entwickeltes 64-Bit-Journaldateisystem für hohe Leistung und große Dateien"
+
+msgid "flash-friendly filesystem designed for NAND flash storage"
+msgstr "Flash-schonendes Dateisystem, ausgelegt für NAND-Flash-Speicher"
+
+msgid "Linux kernel driver providing read/write access to Windows NTFS volumes"
+msgstr "Linux-Kernel-Treiber, der Lese- und Schreibzugriff auf Windows-NTFS-Volumes bereitstellt"
+
+msgid "FAT filesystem variant with long filename support for removable media"
+msgstr "FAT-Dateisystemvariante mit Unterstützung langer Dateinamen für Wechselmedien"
+
+msgid "Microsoft filesystem for large removable drives and SD cards over 32 GB"
+msgstr "Microsoft-Dateisystem für große Wechseldatenträger und SD-Karten über 32 GB"
+
+msgid "disk space acting as virtual memory when physical RAM is exhausted"
+msgstr "Festplattenspeicher, der bei ausgeschöpftem physischem RAM als virtueller Speicher dient"
+
+msgid "network filesystem using the SMB protocol for Windows and NAS file shares"
+msgstr "Netzwerkdateisystem, das das SMB-Protokoll für Windows- und NAS-Dateifreigaben verwendet"
+
+msgid "modern, secure dialect of SMB used for Windows, Azure, and NAS shares"
+msgstr "moderne, sichere Variante von SMB, die für Windows-, Azure- und NAS-Freigaben verwendet wird"
+
+msgid "network filesystem for sharing files across machines over the network"
+msgstr "Netzwerkdateisystem zum Teilen von Dateien zwischen Rechnern über das Netzwerk"
+
+msgid "newer NFS version adding security, statefulness, and better locking"
+msgstr "neuere NFS-Version mit mehr Sicherheit, Zustandsverwaltung und besseren Sperren"
+
+msgid "mounts a remote directory over SSH using SFTP, running in userspace via FUSE"
+msgstr "hängt ein entferntes Verzeichnis über SSH mittels SFTP ein und läuft im Userspace über FUSE"
+
+msgid "standard filesystem format for CD-ROM optical media"
+msgstr "Standard-Dateisystemformat für optische CD-ROM-Medien"
+
+msgid "Universal Disk Format for writable optical discs like DVDs and Blu-rays"
+msgstr "Universal Disk Format für schreibbare optische Datenträger wie DVDs und Blu-rays"
+
+msgid "virtual filesystem storing files in RAM and swap for temporary in-memory data"
+msgstr "virtuelles Dateisystem, das Dateien in RAM und Swap für temporäre Daten im Speicher speichert"
+
+msgid "virtual filesystem exposing kernel and process information as files"
+msgstr "virtuelles Dateisystem, das Kernel- und Prozessinformationen als Dateien bereitstellt"
+
+msgid "virtual filesystem exposing kernel objects, devices, and their attributes to userspace"
+msgstr "virtuelles Dateisystem, das Kernelobjekte, Geräte und deren Attribute für den Userspace bereitstellt"
+
+msgid "virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
+msgstr "virtuelles Dateisystem, das Pseudo-Terminal-Geräteknoten unter /dev/pts bereitstellt"
+
+msgid "virtual filesystem for the unified cgroup v2 hierarchy, managing resource limits and accounting"
+msgstr "virtuelles Dateisystem für die einheitliche cgroup-v2-Hierarchie zur Verwaltung von Ressourcenlimits und Abrechnung"
+
+msgid "virtual filesystem backing security modules such as SELinux and IMA integrity interfaces"
+msgstr "virtuelles Dateisystem, das Sicherheitsmodule wie SELinux und IMA-Integritätsinterfaces unterstützt"
+
+msgid "virtual filesystem exporting arbitrary kernel debugging data with no ABI stability guarantees"
+msgstr "virtuelles Dateisystem, das beliebige Kernel-Debuggingdaten ohne Garantie auf ABI-Stabilität exportiert"
+
+msgid "virtual filesystem holding ftrace control and trace-output files under /sys/kernel/tracing"
+msgstr "virtuelles Dateisystem, das ftrace-Steuerungs- und Trace-Ausgabedateien unter /sys/kernel/tracing enthält"
+
+msgid "virtual filesystem where userspace creates and configures kernel objects via mkdir and rmdir"
+msgstr "virtuelles Dateisystem, in dem der Userspace Kernelobjekte über mkdir und rmdir erstellt und konfiguriert"
+
+msgid "POSIX message queue IPC exposed as files at /dev/mqueue"
+msgstr "POSIX-Nachrichtenschlangen-IPC, als Dateien unter /dev/mqueue verfügbar"
+
+msgid "interface to huge page memory, mounted at /dev/hugepages"
+msgstr "Schnittstelle zum Huge-Page-Speicher, gemountet unter /dev/hugepages"
+
+msgid "populates /dev with device nodes automatically at boot"
+msgstr "befüllt /dev beim Start automatisch mit Geräteknoten"
+
+msgid "Plan 9 remote filesystem protocol, used for host-to-VM file sharing"
+msgstr "Plan-9-Remote-Dateisystemprotokoll, verwendet zum Teilen von Dateien zwischen Host und VM"
+
+msgid "union filesystem stacking upper/lower layers, used by containers"
+msgstr "Union-Dateisystem, das obere und untere Ebenen stapelt, verwendet von Containern"
+
+msgid "OpenZFS copy-on-write filesystem with integrated volume management"
+msgstr "OpenZFS-Copy-on-Write-Dateisystem mit integriertem Volumenmanagement"
+
+msgid "copy-on-write, multi-device filesystem with built-in caching, compression, and checksumming"
+msgstr "Copy-on-Write- und Multi-Geräte-Dateisystem mit eingebauter Zwischenspeicherung, Komprimierung und Prüfsummenbildung"
+
+msgid "a custom filesystem type"
+msgstr "ein benutzerdefinierter Dateisystemtyp"
+
+msgid "Other"
+msgstr "Andere"
+
+msgid "Other…"
+msgstr "Andere…"
+
+msgid "Search filesystems"
+msgstr "Dateisysteme durchsuchen"
+
+msgid "Choose the filesystem type"
+msgstr "Dateisystemtyp auswählen"
+
+msgid "Error loading filesystem types"
+msgstr "Fehler beim Laden der Dateisystemtypen"
+
+msgid "File system:"
+msgstr "Dateisystem:"
+
+msgid "File system"
+msgstr "Dateisystem"
+
+msgid "Make backup"
+msgstr "Sicherung erstellen"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+msgid "Revert changes"
+msgstr "Änderungen verwerfen"
+
+msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
+msgstr "Ihre Änderungen wurden noch nicht gespeichert. Die Sicherung entspricht dem gespeicherten /etc/fstab, nicht Ihren ungespeicherten Änderungen. Fortfahren?"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Are you sure you want to write these changes to /etc/fstab?"
+msgstr "Sind Sie sicher, dass Sie diese Änderungen in /etc/fstab schreiben möchten?"
+
+msgid "Saved, but could not reload"
+msgstr "Gespeichert, aber Neuladen fehlgeschlagen"
+
+msgid "Saved to /etc/fstab"
+msgstr "In /etc/fstab gespeichert"
+
+msgid "Could not save"
+msgstr "Speichern fehlgeschlagen"
+
+msgid "Revert"
+msgstr "Verwerfen"
+
+msgid "Are you sure? Any changes made will be lost!"
+msgstr "Sind Sie sicher? Alle vorgenommenen Änderungen gehen verloren!"
+
+msgid "'/etc/fstab' entries:"
+msgstr "Einträge in '/etc/fstab':"
+
+msgid "Error loading fstab file!"
+msgstr "Fehler beim Laden der fstab-Datei!"
+
+msgid "Backup created"
+msgstr "Sicherung erstellt"
+
+msgid "A backup of /etc/fstab was created."
+msgstr "Eine Sicherung von /etc/fstab wurde erstellt."
+
+msgid "Could not create backup"
+msgstr "Sicherung konnte nicht erstellt werden"
+
+#, rust-format
+msgid "Line {line}"
+msgstr "Zeile {line}"
+
+msgid "This entry is disabled (commented out)."
+msgstr "Dieser Eintrag ist deaktiviert (auskommentiert)."
+
+msgid "The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \nUsually, this is wanted on root and home mounts."
+msgstr "Das System verweigert möglicherweise den Start ohne dieses Laufwerk. Falls dies nicht beabsichtigt ist, fügen Sie die Option 'nofail' hinzu. \nÜblicherweise ist dies bei Root- und Home-Mounts erwünscht."
+
+msgid "This entry is invalid and cannot be parsed."
+msgstr "Dieser Eintrag ist ungültig und kann nicht geparst werden."
+
+msgid "Add new mount entry"
+msgstr "Neuen Einhängeeintrag hinzufügen"
+
+#, rust-format
+msgid "You are about to restore backup from:\n{time}"
+msgstr "Sie sind dabei, eine Sicherung wiederherzustellen:\n{time}"
+
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+msgid "Restore backup"
+msgstr "Sicherung wiederherstellen"
+
+msgid "Search backups"
+msgstr "Sicherungen durchsuchen"
+
+msgid "Restore from a backup file"
+msgstr "Aus einer Sicherungsdatei wiederherstellen"
+
+msgid "Failed to list backups"
+msgstr "Fehler beim Auflisten der Sicherungen"
+
+msgid "Could not load backup"
+msgstr "Sicherung konnte nicht geladen werden"
+
+msgid "Cannot remount"
+msgstr "Erneutes Einhängen nicht möglich"
+
+msgid "Cannot unmount"
+msgstr "Aushängen nicht möglich"
+
+msgid "The entry has unsaved changes. Save your changes before mounting."
+msgstr "Der Eintrag hat ungespeicherte Änderungen. Speichern Sie Ihre Änderungen vor dem Einhängen."
+
+msgid "The entry has unsaved changes. Save your changes before remounting."
+msgstr "Der Eintrag hat ungespeicherte Änderungen. Speichern Sie Ihre Änderungen vor dem erneuten Einhängen."
+
+msgid "The mount point has unsaved changes. Save your changes before unmounting."
+msgstr "Der Einhängepunkt hat ungespeicherte Änderungen. Speichern Sie Ihre Änderungen vor dem Aushängen."
+
+msgid "The mount point is empty."
+msgstr "Der Einhängepunkt ist leer."
+
+msgid "Delete entry"
+msgstr "Eintrag löschen"
+
+msgid "Device"
+msgstr "Gerät"
+
+msgid "Mount point"
+msgstr "Einhängepunkt"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Delete this entry?"
+msgstr "Diesen Eintrag löschen?"
+
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+msgid "Edit properties"
+msgstr "Eigenschaften bearbeiten"
+
+msgid "Options"
+msgstr "Optionen"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Extra"
+msgstr "Weitere"
+
+msgid "Dump"
+msgstr "Dump"
+
+msgid "Controls the dump backup frequency; 0 disables"
+msgstr "Steuert die Häufigkeit von Dump-Backups; 0 deaktiviert"
+
+msgid "Pass"
+msgstr "Pass"
+
+msgid "Controls the fsck check order; 0 disables"
+msgstr "Steuert die fsck-Prüfreihenfolge; 0 deaktiviert"
+
+msgid "Mount actions"
+msgstr "Aktionen zum Einhängen"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Mount"
+msgstr "Einhängen"
+
+msgid "Remount"
+msgstr "Neu einhängen"
+
+msgid "Unmount"
+msgstr "Aushängen"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Are you sure you want to mount this entry?"
+msgstr "Möchten Sie diesen Eintrag wirklich einhängen?"
+
+msgid "Are you sure you want to remount this entry?"
+msgstr "Möchten Sie diesen Eintrag wirklich neu einhängen?"
+
+msgid "Swap cannot be remounted."
+msgstr "Swap kann nicht neu eingebunden werden."
+
+#, rust-format
+msgid "Remounted {mount_point}."
+msgstr "{mount_point} wurde neu eingebunden."
+
+msgid "Remounted"
+msgstr "Neu eingebunden"
+
+msgid "Could not remount"
+msgstr "Neues Einhängen fehlgeschlagen"
+
+msgid "Are you sure you want to unmount this entry?"
+msgstr "Möchten Sie diesen Eintrag wirklich aushängen?"
+
+#, rust-format
+msgid "Unmounted {mount_point}."
+msgstr "{mount_point} wurde ausgebunden."
+
+msgid "Unmounted"
+msgstr "Ausgebunden"
+
+msgid "Could not unmount"
+msgstr "Aushängen fehlgeschlagen"
+
+msgid "Choose folder"
+msgstr "Ordner auswählen"
+
+msgid "Choose mount point"
+msgstr "Einhängepunkt auswählen"
+
+msgid "Path exists"
+msgstr "Pfad existiert"
+
+msgid "Path does not exist"
+msgstr "Pfad existiert nicht"
+
+msgid "Mount point missing"
+msgstr "Einhängepunkt fehlt"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "Das Gerät ist derzeit unter diesem Einhängepunkt eingebunden."
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "Das Gerät ist derzeit nicht unter diesem Einhängepunkt eingebunden."
+
+msgid "This mount point does not exist on the system."
+msgstr "Dieser Einhängepunkt existiert nicht auf dem System."
+
+msgid "Remove option"
+msgstr "Option entfernen"
+
+msgid "Option"
+msgstr "Option"
+
+msgid "Search subvolumes"
+msgstr "Subvolumes durchsuchen"
+
+msgid "Find a subvolume on this device"
+msgstr "Ein Subvolume auf diesem Gerät finden"
+
+msgid "Failed to fetch subvolumes"
+msgstr "Abrufen der Subvolumes fehlgeschlagen"
+
+msgid "Add option…"
+msgstr "Option hinzufügen…"
+
+msgid "Search options"
+msgstr "Optionen durchsuchen"
+
+msgid "Choose an option to add to this entry"
+msgstr "Option auswählen, die diesem Eintrag hinzugefügt wird"
+
+msgid "Error loading options"
+msgstr "Fehler beim Laden der Optionen"
+
+msgid "Add option"
+msgstr "Option hinzufügen"
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Failed to load"
+msgstr "Laden fehlgeschlagen"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Confirm"
+msgstr "Bestätigen"
