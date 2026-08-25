@@ -120,6 +120,8 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 
 		let menu_btn = MenuButton::builder().popover(&popover).build();
 		if wrap_label {
+			// For some reason label won't respect top and bottom margin... Not sure why.
+			// This is a visual bug with languages where the label wraps. Very annoying.
 			let label = gtk::Label::builder().label(menu_label.as_str()).wrap(true).hexpand(true).build();
 			menu_btn.set_always_show_arrow(true);
 			menu_btn.set_child(Some(&label));

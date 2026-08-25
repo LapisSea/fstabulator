@@ -756,7 +756,9 @@ fn build_editor_panel(
 
 	build_options_group(&options_group, entry_ctx);
 
-	let text_edit_btn = Button::with_label(i18n("Edit as text").as_str());
+	let text = gtk::Label::builder().label(&i18n("Edit as text")).wrap(true).hexpand(true).build();
+	let text_edit_btn = Button::builder().child(&text).build();
+
 	{
 		let (popup_ctx, saved_ctx, device_row) = (entry_ctx.clone(), entry_ctx.clone(), device_row.clone());
 		let (options_group, list_box, list_row) = (options_group.clone(), list_box.clone(), list_row.clone());
