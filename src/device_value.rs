@@ -32,7 +32,7 @@ impl DeviceValue {
 	pub fn resolve_node(&self) -> Option<PathBuf> {
 		if let Some(dir) = self.kind.by_disk_dir() {
 			std::fs::canonicalize(Path::new(dir).join(&self.value)).ok()
-		} else if self.kind == DeviceKind::DevicePath {
+		} else if self.kind == DeviceKind::DevicePath || self.kind == DeviceKind::FilePath {
 			std::fs::canonicalize(&self.value).ok()
 		} else {
 			None
@@ -60,7 +60,7 @@ impl DeviceValue {
 			DeviceKind::PartUuid => format!("PARTUUID={}", self.value),
 			DeviceKind::Label => format!("LABEL={}", self.value),
 			DeviceKind::PartLabel => format!("PARTLABEL={}", self.value),
-			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => self.value.clone(),
+			DeviceKind::DevicePath | DeviceKind::FilePath | DeviceKind::Network | DeviceKind::Other => self.value.clone(),
 		}
 	}
 }
@@ -184,17 +184,19 @@ pub enum DeviceKind {
 	Label,
 	PartLabel,
 	DevicePath,
+	FilePath,
 	Network,
 	Other,
 }
 
 impl DeviceKind {
-	pub const ALL: [DeviceKind; 6] = [
+	pub const ALL: [DeviceKind; 7] = [
 		DeviceKind::Uuid,
 		DeviceKind::PartUuid,
 		DeviceKind::Label,
 		DeviceKind::PartLabel,
 		DeviceKind::DevicePath,
+		DeviceKind::FilePath,
 		DeviceKind::Network,
 	];
 
@@ -213,9 +215,14 @@ impl DeviceKind {
 			DeviceKind::Label => "Label",
 			DeviceKind::PartLabel => "Partition Label",
 			DeviceKind::DevicePath => "Device path",
+			DeviceKind::FilePath => "File path",
 			DeviceKind::Network => "Network location",
 			DeviceKind::Other => "Other",
 		}
+	}
+
+	pub fn is_local(self) -> bool {
+		self == DeviceKind::FilePath || DeviceKind::LOCAL.contains(&self)
 	}
 
 	pub fn for_fs_type(fs_type: &FsType) -> &'static [DeviceKind] {
@@ -226,7 +233,15 @@ impl DeviceKind {
 			FsType::Securityfs | FsType::Debugfs | FsType::Tracefs | FsType::Configfs | FsType::Mqueue => &[],
 			FsType::Hugetlbfs | FsType::Devtmpfs | FsType::P9 | FsType::Overlay | FsType::Zfs => &[],
 			FsType::Ext2 | FsType::Ext3 | FsType::Ext4 | FsType::Btrfs | FsType::Xfs | FsType::F2fs => &DeviceKind::LOCAL,
-			FsType::Ntfs3 | FsType::Vfat | FsType::Exfat | FsType::Swap | FsType::Bcachefs => &DeviceKind::LOCAL,
+			FsType::Ntfs3 | FsType::Vfat | FsType::Exfat | FsType::Bcachefs => &DeviceKind::LOCAL,
+			FsType::Swap => &[
+				DeviceKind::Uuid,
+				DeviceKind::PartUuid,
+				DeviceKind::Label,
+				DeviceKind::PartLabel,
+				DeviceKind::DevicePath,
+				DeviceKind::FilePath,
+			],
 			FsType::Other(_) => &DeviceKind::ALL,
 		}
 	}
@@ -250,6 +265,7 @@ impl DeviceKind {
 			DeviceKind::Label => device.strip_prefix("LABEL="),
 			DeviceKind::PartLabel => device.strip_prefix("PARTLABEL="),
 			DeviceKind::DevicePath => device.starts_with("/dev/").then_some(device),
+			DeviceKind::FilePath => device.starts_with('/').then_some(device),
 			DeviceKind::Network => (device.starts_with("//") || device.contains(":/")).then_some(device),
 			DeviceKind::Other => Some(device),
 		};
@@ -262,13 +278,16 @@ impl DeviceKind {
 			DeviceKind::PartUuid => Some("/dev/disk/by-partuuid"),
 			DeviceKind::Label => Some("/dev/disk/by-label"),
 			DeviceKind::PartLabel => Some("/dev/disk/by-partlabel"),
-			DeviceKind::DevicePath | DeviceKind::Network | DeviceKind::Other => None,
+			DeviceKind::DevicePath | DeviceKind::FilePath | DeviceKind::Network | DeviceKind::Other => None,
 		}
 	}
 
 	fn identify_node(self, node: &Path) -> Option<String> {
 		if self == DeviceKind::DevicePath {
 			return Some(friendly_device_path(node));
+		}
+		if self == DeviceKind::FilePath {
+			return Some(node.to_string_lossy().into_owned());
 		}
 		let path = find_node_in_dir(self.by_disk_dir()?, node)?;
 		path.file_name()?.to_str().map(str::to_string)
@@ -404,7 +423,7 @@ impl DeviceRowController {
 
 	fn sync_kind(&self) {
 		let kind = self.entry.borrow().device.kind;
-		let show_picker = kind != DeviceKind::Other;
+		let show_picker = kind != DeviceKind::Other && kind != DeviceKind::FilePath;
 		*self.syncing.borrow_mut() = true;
 		self.picker_btn.set_visible(show_picker);
 		if show_picker {
@@ -804,7 +823,7 @@ fn pick_value(device: &BlockDeviceInfo, kind: DeviceKind) -> Option<String> {
 		DeviceKind::Label => device.label.clone(),
 		DeviceKind::PartLabel => device.partlabel.clone(),
 		DeviceKind::DevicePath => Some(device.path.clone()),
-		DeviceKind::Network | DeviceKind::Other => None,
+		DeviceKind::Network | DeviceKind::FilePath | DeviceKind::Other => None,
 	}
 }
 
@@ -917,7 +936,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 				return;
 			}
 
-			let both_local = DeviceKind::LOCAL.contains(&current.kind) && DeviceKind::LOCAL.contains(&new_kind);
+			let both_local = current.kind.is_local() && new_kind.is_local();
 			if both_local {
 				match current.transform(new_kind) {
 					Some(device) => {
@@ -970,6 +989,35 @@ mod tests {
 
 		let re = blank.reclassify_for(&FsType::Ext4);
 		assert_eq!(re.kind, DeviceKind::Other);
+	}
+
+	#[test]
+	fn swap_devices_classify_by_kind() {
+		let allowed = DeviceKind::for_fs_type(&FsType::Swap);
+		let file = DeviceKind::classify("/swapfile", allowed);
+		assert_eq!(file.kind, DeviceKind::FilePath);
+		assert_eq!(file.render(), "/swapfile");
+
+		assert_eq!(DeviceKind::classify("/dev/zram0", allowed).kind, DeviceKind::DevicePath);
+		assert_eq!(
+			DeviceKind::classify("UUID=77777777-7777-7777-7777-777777777777", allowed).kind,
+			DeviceKind::Uuid
+		);
+	}
+
+	#[test]
+	fn file_path_resolves_and_transforms() {
+		let dir = std::env::temp_dir().join(format!("fstabulator-fp-test-{}", std::process::id()));
+		std::fs::create_dir_all(&dir).unwrap();
+		let file = dir.join("swapfile");
+		std::fs::write(&file, "").unwrap();
+		let path = file.canonicalize().unwrap();
+
+		let value = DeviceValue::from(path.to_string_lossy().into_owned(), DeviceKind::FilePath);
+		assert_eq!(value.resolve_node().as_deref(), Some(path.as_path()));
+		let as_device = value.transform(DeviceKind::DevicePath).unwrap();
+		assert_eq!(as_device.value, path.to_string_lossy().into_owned());
+		let _ = std::fs::remove_dir_all(&dir);
 	}
 
 	#[test]

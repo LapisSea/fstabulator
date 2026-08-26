@@ -32,6 +32,7 @@ UUID=66666666-6666-6666-6666-666666666666     /external              exfat      
 
 # Swap
 UUID=77777777-7777-7777-7777-777777777777     none                   swap        sw                                                                 0      0
+/swapfile                                      none                   swap        defaults                                                           0      0
 
 # tmpfs variants
 tmpfs                                         /tmp                   tmpfs       rw,nosuid,nodev,size=8G,mode=1777                                 0      0

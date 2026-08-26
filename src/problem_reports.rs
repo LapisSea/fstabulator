@@ -109,7 +109,7 @@ fn device_problem(device: &str, fs_type: &FsType) -> Option<Problem> {
 			message: i18n_fmt("Unknown device type: {device}", &[("{device}", device)]),
 		});
 	}
-	let checkable = DeviceKind::LOCAL.contains(&value.kind);
+	let checkable = value.kind.is_local();
 	if !checkable || value.resolve_node().is_some() {
 		return None;
 	}
@@ -373,6 +373,22 @@ mod tests {
 	fn swap_entry_skips_mount_point_check() {
 		let issues = detect_issues(0, "/dev/zram0 none swap defaults 0 0");
 		assert!(!issues.iter().any(|issue| issue.message.contains("Mount point does not exist")));
+	}
+
+	#[test]
+	fn swap_file_is_a_recognized_device_type() {
+		let issues = detect_issues(0, "/swapfile none swap defaults 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("Unknown device type")));
+	}
+
+	#[test]
+	fn missing_swap_file_is_an_error() {
+		let issues = detect_issues(0, "/no/such/swapfile none swap defaults 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.level == ProblemLevel::Error && issue.message.contains("Device does not exist"))
+		);
 	}
 
 	#[test]

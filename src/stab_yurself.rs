@@ -556,7 +556,7 @@ mod tests {
 				panic!("line {} failed to parse: {err:#}", line + 1);
 			}
 		}
-		assert_eq!(entries.len(), 45, "unexpected number of entries in fstab-dummy");
+		assert_eq!(entries.len(), 46, "unexpected number of entries in fstab-dummy");
 	}
 
 	#[test]
