@@ -407,12 +407,12 @@ mod tests {
 	}
 
 	#[test]
-	fn unknown_file_system_warns_and_skips_option_checks() {
+	fn unknown_file_system_is_an_error_and_skips_option_checks() {
 		let issues = detect_issues(0, "none /mnt/x borkfs bogus_option 0 0");
 		assert!(
 			issues
 				.iter()
-				.any(|issue| issue.level == ProblemLevel::Warning && issue.message.contains("borkfs"))
+				.any(|issue| issue.level == ProblemLevel::Error && issue.message.contains("borkfs"))
 		);
 		assert!(!issues.iter().any(|issue| issue.message.contains("bogus_option")));
 	}
