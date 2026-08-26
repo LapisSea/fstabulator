@@ -2,13 +2,15 @@ use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
 use crate::fs_options::{CompressionSpec, FsOption, OptionSpec, OptionValue};
 use crate::i18n::i18n;
+use crate::problem_reports::{CheckValue, Problem, check};
 use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
-use crate::{GC, fs_options};
+use crate::{GC, fs_options, ui_commons};
 use adw::prelude::*;
 use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow, SpinRow};
 use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, MenuButton, Orientation, StringList};
 use std::rc::Rc;
+use std::time::Duration;
 
 pub fn build_options_group(group: &PreferencesGroup, entry_ctx: &EntryContext) {
 	while let Some(row) = group.row(0) {
@@ -121,10 +123,14 @@ fn add_option_row(ctx: AddContext) {
 			row.add_suffix(&trash);
 			ctx.group.add(&row);
 
+			let row_icon = option_row_icon(row.clone());
+			refresh_option_issue(row_icon.as_ref(), &ctx);
 			let (ctx, name) = (ctx.clone(), name.clone());
+			let row_icon = row_icon.clone();
 			check.connect_toggled(move |check| {
 				let value = if check.is_active() { on } else { off };
 				set_option(&ctx, FsOption::from_kv(name.clone(), value));
+				refresh_option_issue(row_icon.as_ref(), &ctx);
 			});
 		}
 		Some(OptionSpec {
@@ -179,7 +185,7 @@ fn add_option_row(ctx: AddContext) {
 }
 
 fn make_trash_button(ctx: &AddContext) -> Button {
-	let trash = crate::ui_commons::trash_button(i18n("Remove option").as_str());
+	let trash = ui_commons::trash_button(i18n("Remove option").as_str());
 
 	let ctx = ctx.clone();
 	trash.connect_clicked(move |_| {
@@ -191,6 +197,24 @@ fn make_trash_button(ctx: &AddContext) -> Button {
 	trash
 }
 
+fn option_row_issue(ctx: &AddContext) -> Option<Problem> {
+	let entry = ctx.entry_ctx.entry().borrow();
+	entry
+		.options
+		.get(ctx.index)
+		.and_then(|option| check(&CheckValue::Option(option.clone()), &entry))
+}
+
+fn option_row_icon(row: impl IsA<gtk::Widget>) -> Option<gtk::Image> {
+	ui_commons::find_widget_with_class(row, "icon")?.downcast::<gtk::Image>().ok()
+}
+
+fn refresh_option_issue(icon: Option<&gtk::Image>, ctx: &AddContext) {
+	if let Some(icon) = icon {
+		ui_commons::update_issue_icon(icon, option_row_issue(ctx).as_ref());
+	}
+}
+
 fn set_option(ctx: &AddContext, value: FsOption) {
 	ctx.entry_ctx.entry().borrow_mut().options[ctx.index] = value;
 	ctx.entry_ctx.render();
@@ -198,11 +222,16 @@ fn set_option(ctx: &AddContext, value: FsOption) {
 
 fn add_free_text_option_row(ctx: AddContext, trash: &gtk::Button) {
 	let row = EntryRow::builder().title(i18n("Option")).text(ctx.value.to_string()).build();
+	let issue_icon = ui_commons::issue_image();
+	row.add_prefix(&issue_icon);
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
+	let (issue_icon, ctx) = (issue_icon.clone(), ctx.clone());
+	refresh_option_issue(Some(&issue_icon), &ctx);
 	row.connect_changed(move |row| {
 		set_option(&ctx, FsOption::from_raw(&row.text()));
+		refresh_option_issue(Some(&issue_icon), &ctx);
 	});
 }
 
@@ -213,8 +242,9 @@ fn add_entry_option_row(
 	description: &str,
 	input: &gtk::Entry,
 	input_extras: &[&impl IsA<gtk::Widget>],
+	issue: Option<&gtk::Image>,
 ) {
-	let header = crate::ui_commons::titled_header(name, Some(i18n(description).as_str()), trash);
+	let header = ui_commons::titled_header(name, Some(i18n(description).as_str()), issue, trash);
 	let input_row = GtkBox::builder().orientation(Orientation::Horizontal).spacing(6).build();
 	input_row.append(input);
 	for extra in input_extras {
@@ -234,7 +264,12 @@ fn add_entry_option_row(
 
 fn add_string_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
 	let input = gtk::Entry::builder().text(current).hexpand(true).margin_start(12).margin_end(12).build();
-	add_entry_option_row(ctx, trash, name, description, &input, &[] as &[&gtk::Entry]);
+	let issue_icon = ui_commons::issue_image();
+	add_entry_option_row(ctx.clone(), trash, name, description, &input, &[] as &[&gtk::Entry], Some(&issue_icon));
+	refresh_option_issue(Some(&issue_icon), &ctx);
+
+	let (ctx, issue_icon) = (ctx.clone(), issue_icon.clone());
+	input.connect_changed(move |_| refresh_option_issue(Some(&issue_icon), &ctx));
 }
 
 fn add_spin_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str, min: f64, max: f64) {
@@ -249,10 +284,14 @@ fn add_spin_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
+	let row_icon = option_row_icon(row.clone());
+	refresh_option_issue(row_icon.as_ref(), &ctx);
 	let ctx = ctx.clone();
 	let name = name.to_string();
+	let row_icon = row_icon.clone();
 	row.adjustment().connect_value_changed(move |adjustment| {
 		set_option(&ctx, FsOption::from_kv(name.clone(), (adjustment.value().round() as i64).to_string()));
+		refresh_option_issue(row_icon.as_ref(), &ctx);
 	});
 }
 
@@ -285,15 +324,19 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
+	let row_icon = option_row_icon(row.clone());
+	refresh_option_issue(row_icon.as_ref(), &ctx);
 	let (ctx, model) = (ctx.clone(), model.clone());
 	let name = name.to_string();
 	let (apply_input, apply_dropdown) = (input.clone(), dropdown.clone());
+	let row_icon = row_icon.clone();
 	let apply = Rc::new(move || {
 		let value = match model.string(apply_dropdown.selected()).as_deref() {
 			Some("B") | None => apply_input.text().to_string(),
 			Some(s) => format!("{}{s}", apply_input.text()),
 		};
 		set_option(&ctx, FsOption::from_kv(name.clone(), value));
+		refresh_option_issue(row_icon.as_ref(), &ctx);
 	});
 	input.connect_changed({
 		let apply = apply.clone();
@@ -348,9 +391,12 @@ fn add_compression_option_row(
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
+	let row_icon = option_row_icon(row.clone());
+	refresh_option_issue(row_icon.as_ref(), &ctx);
 	let (ctx, name) = (ctx.clone(), name.to_string());
 	let apply = Rc::new({
 		let (dropdown, level_entry) = (dropdown.clone(), level_entry.clone());
+		let row_icon = row_icon.clone();
 		move || {
 			let spec = algorithms[dropdown.selected() as usize];
 			let level = level_entry.text().to_string();
@@ -360,6 +406,7 @@ fn add_compression_option_row(
 				spec.name.to_string()
 			};
 			set_option(&ctx, FsOption::from_kv(&name, value));
+			refresh_option_issue(row_icon.as_ref(), &ctx);
 		}
 	});
 	dropdown.connect_selected_notify({
@@ -394,14 +441,58 @@ fn add_digits_option_row(
 	row.add_suffix(trash);
 	ctx.group.add(&row);
 
+	let row_icon = option_row_icon(row.clone());
+	refresh_option_issue(row_icon.as_ref(), &ctx);
 	let (ctx, name) = (ctx.clone(), name.to_string());
-	filter_input(&input, valid_digit, move |cleaned| set_option(&ctx, FsOption::from_kv(&name, cleaned)));
+	let row_icon = row_icon.clone();
+	filter_input(&input, valid_digit, move |cleaned| {
+		set_option(&ctx, FsOption::from_kv(&name, cleaned));
+		refresh_option_issue(row_icon.as_ref(), &ctx);
+	});
 }
 
 fn add_subvol_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str) {
 	let input = gtk::Entry::builder().text(current).hexpand(true).margin_start(12).build();
 	let find_btn = build_subvol_find_button(&ctx, &input, name);
-	add_entry_option_row(ctx, trash, name, description, &input, &[&find_btn]);
+	let issue_icon = ui_commons::issue_image();
+	let by_id = name == "subvolid";
+	add_entry_option_row(ctx.clone(), trash, name, description, &input, &[&find_btn], Some(&issue_icon));
+	run_subvol_check(&ctx, &input, &issue_icon, by_id);
+
+	let (ctx, issue_icon) = (ctx.clone(), issue_icon.clone());
+	input.connect_changed(move |input| run_subvol_check(&ctx, input, &issue_icon, by_id));
+}
+
+fn run_subvol_check(ctx: &AddContext, input: &gtk::Entry, issue_icon: &gtk::Image, by_id: bool) {
+	let (entry, value) = {
+		let entry = ctx.entry_ctx.entry().borrow();
+		(entry.clone(), input.text().to_string())
+	};
+	let (input, issue_icon) = (input.clone(), issue_icon.clone());
+	let (tx, rx) = std::sync::mpsc::channel();
+	let thread_value = value.clone();
+	std::thread::spawn(move || {
+		let target = CheckValue::Subvolume {
+			value: thread_value,
+			by_id,
+			no_permission_ask: true,
+		};
+		let _ = tx.send(check(&target, &entry));
+	});
+	if let Ok(problem) = rx.recv_timeout(Duration::from_millis(60)) {
+		ui_commons::update_issue_icon(&issue_icon, problem.as_ref());
+		return;
+	}
+	gtk::glib::timeout_add_local(std::time::Duration::from_millis(100), move || match rx.try_recv() {
+		Ok(problem) => {
+			if input.text().as_str() == value.as_str() {
+				ui_commons::update_issue_icon(&issue_icon, problem.as_ref());
+			}
+			gtk::glib::ControlFlow::Break
+		}
+		Err(std::sync::mpsc::TryRecvError::Disconnected) => gtk::glib::ControlFlow::Break,
+		Err(_) => gtk::glib::ControlFlow::Continue,
+	});
 }
 
 fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) -> MenuButton {
@@ -423,10 +514,9 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 			Ok(subvols)
 		}
 	};
-	let render_row = |subvol: &Subvol| crate::ui_commons::activatable_row(subvol.path.clone(), format!("ID {}", subvol.id));
-	let filter = |query: &str, subvol: &Subvol| {
-		crate::ui_commons::query_matches(query, &subvol.path) || crate::ui_commons::query_matches(query, &subvol.id.to_string())
-	};
+	let render_row = |subvol: &Subvol| ui_commons::activatable_row(subvol.path.clone(), format!("ID {}", subvol.id));
+	let filter =
+		|query: &str, subvol: &Subvol| ui_commons::query_matches(query, &subvol.path) || ui_commons::query_matches(query, &subvol.id.to_string());
 	let on_select = {
 		let (input, ctx, name) = (input.clone(), ctx.clone(), name.to_string());
 		move |subvol: Subvol, _| {
@@ -460,9 +550,9 @@ fn add_add_option_row(ctx: AddContext) {
 		let available = available.clone();
 		move || Ok(available.clone())
 	};
-	let render_row = |option: &OptionSpec| crate::ui_commons::activatable_row(option.name, i18n(option.description));
+	let render_row = |option: &OptionSpec| ui_commons::activatable_row(option.name, i18n(option.description));
 	let filter = |query: &str, option: &OptionSpec| {
-		crate::ui_commons::query_matches(query, option.name) || crate::ui_commons::query_matches(query, i18n(option.description).as_str())
+		ui_commons::query_matches(query, option.name) || ui_commons::query_matches(query, i18n(option.description).as_str())
 	};
 	let on_select = {
 		let ctx = ctx.clone();

@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 
 use super::credentials::{CredentialsInfo, MountCredentials, delete_credentials, inspect_credentials, mount_with_credentials};
-use super::service::request;
+use super::service::{request, request_if_alive};
 
 pub(crate) fn make_backup() -> Result<()> {
 	expect_done(request(PrivilegedAction::MakeBackup)?)
@@ -32,6 +32,13 @@ pub(crate) fn remount(mount_point: &str, is_swap: bool) -> Result<()> {
 
 pub(crate) fn list_subvolumes(mount_point: &str) -> Result<Vec<Subvol>> {
 	match request(PrivilegedAction::ListSubvolumes(mount_point.to_string()))? {
+		PrivilegedResponse::Subvolumes(subvols) => Ok(subvols),
+		_ => bail!("The privileged helper returned an unexpected response."),
+	}
+}
+
+pub(crate) fn list_subvolumes_if_alive(mount_point: &str) -> Result<Vec<Subvol>> {
+	match request_if_alive(PrivilegedAction::ListSubvolumes(mount_point.to_string()))? {
 		PrivilegedResponse::Subvolumes(subvols) => Ok(subvols),
 		_ => bail!("The privileged helper returned an unexpected response."),
 	}

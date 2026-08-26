@@ -100,9 +100,9 @@ impl PrivilegedService {
 	}
 }
 
-pub(super) fn request(action: PrivilegedAction) -> Result<PrivilegedResponse> {
-	static SERVICE: OnceLock<Mutex<Option<PrivilegedService>>> = OnceLock::new();
+static SERVICE: OnceLock<Mutex<Option<PrivilegedService>>> = OnceLock::new();
 
+pub(super) fn request(action: PrivilegedAction) -> Result<PrivilegedResponse> {
 	let mut slot = SERVICE.get_or_init(|| Mutex::new(None)).lock().unwrap_or_else(PoisonError::into_inner);
 
 	let mut service = ensure_alive(slot.take())?;
@@ -116,6 +116,17 @@ pub(super) fn request(action: PrivilegedAction) -> Result<PrivilegedResponse> {
 	let result = service.request(action);
 	*slot = Some(service);
 	result
+}
+
+pub(super) fn request_if_alive(action: PrivilegedAction) -> Result<PrivilegedResponse> {
+	let mut slot = SERVICE.get_or_init(|| Mutex::new(None)).lock().unwrap_or_else(PoisonError::into_inner);
+	let Some(service) = slot.as_mut() else {
+		bail!("The privileged helper is not running.");
+	};
+	if service.dead || service.child_exited() {
+		bail!("The privileged helper is not running.");
+	}
+	service.request(action)
 }
 
 fn ensure_alive(slot: Option<PrivilegedService>) -> Result<PrivilegedService> {

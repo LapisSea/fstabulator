@@ -10,7 +10,7 @@ pub struct Subvol {
 	pub path: String,
 }
 
-fn find_mount_point(device: &str) -> Result<Option<String>> {
+pub(crate) fn find_mount_point(device: &str) -> Result<Option<String>> {
 	let sources = std::iter::once(device.to_string()).chain(resolve_local_device(device));
 	for source in sources {
 		let output = Command::new("findmnt")
@@ -36,9 +36,12 @@ pub fn list_subvolumes(device: &Path) -> Result<Vec<Subvol>> {
 			device.display()
 		);
 	};
+	list_subvolumes_at(&mount_point, true)
+}
 
+pub(crate) fn list_subvolumes_at(mount_point: &str, allow_escalation: bool) -> Result<Vec<Subvol>> {
 	let direct = Command::new("btrfs")
-		.args(["subvolume", "list", &mount_point])
+		.args(["subvolume", "list", mount_point])
 		.output()
 		.context("Could not run the 'btrfs' command. Is btrfs-progs installed?")?;
 	if direct.status.success() {
@@ -50,7 +53,11 @@ pub fn list_subvolumes(device: &Path) -> Result<Vec<Subvol>> {
 		bail!("btrfs could not list subvolumes on '{mount_point}': {}", stderr.trim());
 	}
 
-	crate::privileged::list_subvolumes(&mount_point)
+	if allow_escalation {
+		crate::privileged::list_subvolumes(mount_point)
+	} else {
+		crate::privileged::list_subvolumes_if_alive(mount_point)
+	}
 }
 
 fn is_permission_error(stderr: &str) -> bool {

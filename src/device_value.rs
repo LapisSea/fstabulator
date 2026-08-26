@@ -1,9 +1,9 @@
-use crate::GC;
 use crate::block_devices::{BlockDeviceInfo, list_block_devices};
 use crate::context::EntryContext;
 use crate::fs_value::FsType;
 use crate::i18n::{i18n, i18n_fmt};
 use crate::stab_yurself::StabEntry;
+use crate::{GC, problem_reports, ui_commons};
 use adw::prelude::*;
 use adw::{Dialog, EntryRow, PreferencesGroup, PreferencesRow};
 use glib::subclass::prelude::*;
@@ -358,6 +358,7 @@ pub struct DeviceRowController {
 	style: GC<NetworkStyle>,
 	value_entry: Entry,
 	picker_btn: Button,
+	issue_icon: gtk::Image,
 }
 
 fn kinds_with_selected(fs_type: &FsType, current_kind: DeviceKind) -> (Vec<DeviceKind>, usize) {
@@ -395,6 +396,12 @@ impl DeviceRowController {
 		self.entry_ctx.render();
 	}
 
+	fn refresh_issue(&self) {
+		let entry = self.entry.borrow();
+		let problem = problem_reports::check(&problem_reports::CheckValue::Device(entry.device.render()), &entry);
+		ui_commons::update_issue_icon(&self.issue_icon, problem.as_ref());
+	}
+
 	fn sync_kind(&self) {
 		let kind = self.entry.borrow().device.kind;
 		let show_picker = kind != DeviceKind::Other;
@@ -411,6 +418,7 @@ impl DeviceRowController {
 		let value = self.entry.borrow().device.value.clone();
 		self.value_entry.set_text(&value);
 		*self.syncing.borrow_mut() = false;
+		self.refresh_issue();
 	}
 
 	fn open_network_editor(&self) {
@@ -439,11 +447,11 @@ impl DeviceRowController {
 		test_row.append(&test_btn);
 		test_row.append(&status_label);
 
-		let heading = crate::ui_commons::dialog_heading(i18n("Network location"));
+		let heading = ui_commons::dialog_heading(i18n("Network location"));
 
-		let (cancel_btn, save_btn, buttons) = crate::ui_commons::cancel_save_row();
+		let (cancel_btn, save_btn, buttons) = ui_commons::cancel_save_row();
 
-		let content = crate::ui_commons::dialog_content_box();
+		let content = ui_commons::dialog_content_box();
 		content.append(&heading);
 		content.append(&user_entry);
 		content.append(&host_entry);
@@ -502,7 +510,7 @@ impl DeviceRowController {
 
 		let dialog = Dialog::builder().child(&content).follows_content_size(true).width_request(400).build();
 
-		crate::ui_commons::close_on_click(&cancel_btn, &dialog);
+		ui_commons::close_on_click(&cancel_btn, &dialog);
 
 		{
 			let (controller, user_entry, host_entry) = (self.clone(), user_entry.clone(), host_entry.clone());
@@ -517,7 +525,7 @@ impl DeviceRowController {
 			});
 		}
 
-		let parent = crate::ui_commons::parent_window(&self.picker_btn);
+		let parent = ui_commons::parent_window(&self.picker_btn);
 		dialog.present(parent.as_ref());
 	}
 
@@ -545,7 +553,7 @@ impl DeviceRowController {
 		let mut devices: Vec<BlockDeviceInfo> = match list_block_devices() {
 			Ok(devices) => devices.into_iter().filter(|device| pick_value(device, kind).is_some()).collect(),
 			Err(err) => {
-				crate::ui_commons::present_simple_dialog(&self.picker_btn, i18n("Could not list devices").as_str(), &format!("{err:#}"));
+				ui_commons::present_simple_dialog(&self.picker_btn, i18n("Could not list devices").as_str(), &format!("{err:#}"));
 				return;
 			}
 		};
@@ -591,7 +599,7 @@ impl DeviceRowController {
 			column_view.append_column(&make_column(&title, getter));
 		}
 
-		let max_width = crate::ui_commons::suggested_dialog_width(&self.picker_btn);
+		let max_width = ui_commons::suggested_dialog_width(&self.picker_btn);
 
 		let scroll = ScrolledWindow::builder()
 			.child(&column_view)
@@ -612,11 +620,11 @@ impl DeviceRowController {
 			.visible(false)
 			.build();
 
-		let heading = crate::ui_commons::dialog_heading(i18n_fmt("Select {kind}", &[("{kind}", kind.label())]));
+		let heading = ui_commons::dialog_heading(i18n_fmt("Select {kind}", &[("{kind}", kind.label())]));
 		let cancel_btn = Button::with_label(i18n("Cancel").as_str());
 		cancel_btn.set_halign(Align::End);
 
-		let content = crate::ui_commons::dialog_content_box();
+		let content = ui_commons::dialog_content_box();
 		content.append(&heading);
 		content.append(&search);
 		content.append(&scroll);
@@ -629,7 +637,7 @@ impl DeviceRowController {
 
 		let dialog = Dialog::builder().child(&content).follows_content_size(true).build();
 
-		crate::ui_commons::close_on_click(&cancel_btn, &dialog);
+		ui_commons::close_on_click(&cancel_btn, &dialog);
 
 		{
 			let (dialog, controller) = (dialog.clone(), self.clone());
@@ -665,7 +673,7 @@ impl DeviceRowController {
 			let column_view = column_view.clone();
 			gtk::glib::idle_add_local_once(move || column_view.scroll_to(pos, None, ListScrollFlags::FOCUS, None));
 		}
-		let parent = crate::ui_commons::parent_window(&self.picker_btn);
+		let parent = ui_commons::parent_window(&self.picker_btn);
 		dialog.present(parent.as_ref());
 	}
 }
@@ -825,7 +833,8 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 	let syncing: GC<bool> = GC::new(false);
 	let style: GC<NetworkStyle> = GC::new(network_style_for_fs(&entry.borrow().fs_type));
 
-	let header = crate::ui_commons::titled_header("Device", None, &dropdown);
+	let issue_icon = ui_commons::issue_image();
+	let header = ui_commons::titled_header("Device", None, Some(&issue_icon), &dropdown);
 
 	let value_entry = Entry::builder().text(&initial.value).hexpand(true).margin_start(12).build();
 	let picker_btn = Button::builder()
@@ -863,6 +872,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 		style,
 		value_entry: value_entry.clone(),
 		picker_btn: picker_btn.clone(),
+		issue_icon: issue_icon.clone(),
 	};
 
 	{
@@ -876,6 +886,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 			};
 			warning.set_visible(false);
 			controller.entry.borrow_mut().device = DeviceValue::from(entry.text(), kind);
+			controller.refresh_issue();
 			controller.entry_ctx.render();
 		});
 	}

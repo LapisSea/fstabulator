@@ -5,6 +5,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::i18n::i18n;
+use crate::problem_reports::{Problem, ProblemLevel};
 
 pub(crate) fn trash_button(tooltip: &str) -> Button {
 	let btn = Button::from_icon_name("user-trash-symbolic");
@@ -15,17 +16,45 @@ pub(crate) fn trash_button(tooltip: &str) -> Button {
 	btn
 }
 
-pub(crate) fn titled_header(title: &str, subtitle: Option<&str>, suffix: &impl IsA<Widget>) -> GtkBox {
-	let text = GtkBox::builder()
+pub(crate) const CHECKMARK_NAME: &str = "object-select-symbolic";
+pub(crate) const WARNING_NAME: &str = "dialog-warning-symbolic";
+pub(crate) const ERROR_NAME: &str = "dialog-error-symbolic";
+
+pub(crate) fn issue_image() -> gtk::Image {
+	let icon = gtk::Image::from_icon_name(CHECKMARK_NAME);
+	icon.add_css_class("text-edit-ok");
+	icon.set_valign(Align::Center);
+	icon
+}
+
+pub(crate) fn update_issue_icon(icon: &gtk::Image, problem: Option<&Problem>) {
+	let (name, class, message) = match problem {
+		None => (CHECKMARK_NAME, "text-edit-ok", None),
+		Some(problem) => match problem.level {
+			ProblemLevel::Ok => (CHECKMARK_NAME, "text-edit-ok", None),
+			ProblemLevel::Warning => (WARNING_NAME, "text-edit-warning", Some(problem.message.clone())),
+			ProblemLevel::Error => (ERROR_NAME, "issue-error", Some(problem.message.clone())),
+		},
+	};
+	icon.set_icon_name(Some(name));
+	icon.set_tooltip_text(message.as_deref());
+	for other in ["text-edit-ok", "text-edit-warning", "issue-error"] {
+		if other != class {
+			icon.remove_css_class(other);
+		}
+	}
+	icon.add_css_class(class);
+}
+
+pub(crate) fn titled_header(title: &str, subtitle: Option<&str>, issue: Option<&gtk::Image>, suffix: &impl IsA<Widget>) -> GtkBox {
+	let labels = GtkBox::builder()
 		.orientation(Orientation::Vertical)
-		.margin_top(6)
 		.spacing(3)
 		.valign(Align::Center)
-		.hexpand(true)
 		.build();
-	text.append(&gtk::Label::builder().label(title).halign(Align::Start).wrap(true).build());
+	labels.append(&gtk::Label::builder().label(title).halign(Align::Start).wrap(true).build());
 	if let Some(subtitle) = subtitle {
-		text.append(
+		labels.append(
 			&gtk::Label::builder()
 				.label(subtitle)
 				.halign(Align::Start)
@@ -34,6 +63,17 @@ pub(crate) fn titled_header(title: &str, subtitle: Option<&str>, suffix: &impl I
 				.build(),
 		);
 	}
+	let text = GtkBox::builder()
+		.orientation(Orientation::Horizontal)
+		.spacing(6)
+		.margin_top(6)
+		.valign(Align::Center)
+		.hexpand(true)
+		.build();
+	if let Some(icon) = issue {
+		text.append(icon);
+	}
+	text.append(&labels);
 	let header = GtkBox::builder()
 		.orientation(Orientation::Horizontal)
 		.spacing(6)

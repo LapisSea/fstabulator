@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-24 15:57+0200\n"
+"POT-Creation-Date: 2026-08-25 18:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -196,18 +196,14 @@ msgid "Could not parse entry"
 msgstr ""
 
 #, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr ""
-
-#, rust-format
 msgid "Unknown file system: {fs_type}"
 msgstr ""
 
-#, rust-format
-msgid "Unknown option: {option}"
+msgid "No problems detected"
 msgstr ""
 
-msgid "No problems detected"
+#, rust-format
+msgid "Mount point does not exist: {point}"
 msgstr ""
 
 #, rust-format
@@ -216,6 +212,10 @@ msgstr ""
 
 #, rust-format
 msgid "Device does not exist: {device}"
+msgstr ""
+
+#, rust-format
+msgid "Unknown option: {option}"
 msgstr ""
 
 #, rust-format
@@ -248,6 +248,10 @@ msgstr ""
 
 #, rust-format
 msgid "{option} should be {on} or {off}"
+msgstr ""
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
 msgstr ""
 
 msgid "Edit as text"
@@ -2659,9 +2663,6 @@ msgstr ""
 msgid "Path exists"
 msgstr ""
 
-msgid "Path does not exist"
-msgstr ""
-
 msgid "Mount point missing"
 msgstr ""
 
@@ -2678,6 +2679,20 @@ msgid "Remove option"
 msgstr ""
 
 msgid "Option"
+msgstr ""
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr ""
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr ""
+
+msgid "Could not check subvolume"
+msgstr ""
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
 msgstr ""
 
 msgid "Search subvolumes"

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-24 16:58+0200\n"
+"POT-Creation-Date: 2026-08-25 18:49+0200\n"
 "PO-Revision-Date: 2026-08-25 14:00+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Italian <it@li.org>\n"
@@ -194,19 +194,15 @@ msgid "Could not parse entry"
 msgstr "Impossibile analizzare la voce"
 
 #, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr "Il punto di montaggio non esiste: {point}"
-
-#, rust-format
 msgid "Unknown file system: {fs_type}"
 msgstr "Sistema di file sconosciuto: {fs_type}"
 
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr "Opzione sconosciuta: {option}"
-
 msgid "No problems detected"
 msgstr "Nessun problema rilevato"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Il punto di montaggio non esiste: {point}"
 
 #, rust-format
 msgid "Unknown device type: {device}"
@@ -215,6 +211,10 @@ msgstr "Tipo di dispositivo sconosciuto: {device}"
 #, rust-format
 msgid "Device does not exist: {device}"
 msgstr "Il dispositivo non esiste: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Opzione sconosciuta: {option}"
 
 #, rust-format
 msgid "{option} should not have a value"
@@ -247,6 +247,10 @@ msgstr "{option} deve essere un numero con un'unità di misura, ad esempio 16K"
 #, rust-format
 msgid "{option} should be {on} or {off}"
 msgstr "{option} deve essere {on} o {off}"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "Il file di credenziali non esiste: {path}"
 
 msgid "Edit as text"
 msgstr "Modifica come testo"
@@ -2616,9 +2620,6 @@ msgstr "Scegli un punto di montaggio"
 msgid "Path exists"
 msgstr "Il percorso esiste"
 
-msgid "Path does not exist"
-msgstr "Il percorso non esiste"
-
 msgid "Mount point missing"
 msgstr "Punto di montaggio mancante"
 
@@ -2636,6 +2637,20 @@ msgstr "Rimuovi opzione"
 
 msgid "Option"
 msgstr "Opzione"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "Il sottovolume non esiste: {subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "Impossibile verificare il sottovolume: il dispositivo non è montato"
+
+msgid "Could not check subvolume"
+msgstr "Impossibile verificare il sottovolume"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "Impossibile verificare il sottovolume: {error}"
 
 msgid "Search subvolumes"
 msgstr "Cerca sottovolumi"

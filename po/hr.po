@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-24 15:57+0200\n"
+"POT-Creation-Date: 2026-08-25 18:49+0200\n"
 "PO-Revision-Date: 2026-08-24 16:00+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Croatian <hr@li.org>\n"
@@ -13,7 +13,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #, rust-format
 msgid "Mount {mount_point}"
@@ -194,19 +195,15 @@ msgid "Could not parse entry"
 msgstr "Nije moguće obraditi unos"
 
 #, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr "Točka montiranja ne postoji: {point}"
-
-#, rust-format
 msgid "Unknown file system: {fs_type}"
 msgstr "Nepoznat datotečni sustav: {fs_type}"
 
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr "Nepoznata opcija: {option}"
-
 msgid "No problems detected"
 msgstr "Nema otkrivenih problema"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Točka montiranja ne postoji: {point}"
 
 #, rust-format
 msgid "Unknown device type: {device}"
@@ -215,6 +212,10 @@ msgstr "Nepoznat tip uređaja: {device}"
 #, rust-format
 msgid "Device does not exist: {device}"
 msgstr "Uređaj ne postoji: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Nepoznata opcija: {option}"
 
 #, rust-format
 msgid "{option} should not have a value"
@@ -247,6 +248,10 @@ msgstr "{option} bi trebala biti broj s jedinicom veličine, na primjer 16K"
 #, rust-format
 msgid "{option} should be {on} or {off}"
 msgstr "{option} bi trebala biti {on} ili {off}"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "Datoteka s vjerodajnicama ne postoji: {path}"
 
 msgid "Edit as text"
 msgstr "Uredi kao tekst"
@@ -2616,9 +2621,6 @@ msgstr "Odaberi točku montiranja"
 msgid "Path exists"
 msgstr "Putanja postoji"
 
-msgid "Path does not exist"
-msgstr "Putanja ne postoji"
-
 msgid "Mount point missing"
 msgstr "Točka montiranja nedostaje"
 
@@ -2636,6 +2638,20 @@ msgstr "Ukloni opciju"
 
 msgid "Option"
 msgstr "Opcija"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "Podvolumen ne postoji: {subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "Nije moguće provjeriti podvolumen: uređaj nije montiran"
+
+msgid "Could not check subvolume"
+msgstr "Nije moguće provjeriti podvolumen"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "Nije moguće provjeriti podvolumen: {error}"
 
 msgid "Search subvolumes"
 msgstr "Pretraži podvolumene"

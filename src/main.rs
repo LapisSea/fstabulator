@@ -10,6 +10,7 @@ mod mount_point_value;
 mod mount_status;
 mod options_value;
 mod privileged;
+mod problem_reports;
 mod search_picker;
 mod stab_yurself;
 mod subvolume;
@@ -20,7 +21,7 @@ use crate::i18n::{i18n, i18n_fmt, localized_datetime};
 use crate::mount_status::MountStatus;
 use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::{StabEntry, StabFile};
-use crate::ui_commons::{activatable_row, clear_children, find_widget_with_class, query_matches, trash_button};
+use crate::ui_commons::{ERROR_NAME, WARNING_NAME, activatable_row, clear_children, find_widget_with_class, query_matches, trash_button};
 use adw::gdk::pango;
 use adw::prelude::*;
 use adw::{
@@ -291,11 +292,10 @@ fn build_ui(application: &Application) {
 		.mount-status-mounted { color: @success_color; }\
 		.mount-status-unmounted { color: @warning_color; }\
 		.mount-status-missing { color: @error_color; }\
-		.mount-point-exists { color: @success_color; }\
 		.connection-ok { color: @success_color; }\
 		.text-edit-ok { color: @success_color; }\
 		.text-edit-warning { color: @warning_color; }\
-		.text-edit-error { color: @error_color; }",
+		.issue-error { color: @error_color; }",
 	);
 	gtk::style_context_add_provider_for_display(&RootExt::display(&window), &provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 
@@ -400,7 +400,7 @@ fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
 	}
 
 	if entry.active && !entry.has_option("nofail") {
-		let warning = make_icon("dialog-warning-symbolic", NOFAIL_WARNING_CLASS);
+		let warning = make_icon(WARNING_NAME, NOFAIL_WARNING_CLASS);
 		warning.set_tooltip_text(Some(
 			i18n(
 				"The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \n\
@@ -412,7 +412,7 @@ fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
 	}
 
 	if !entry.is_valid() {
-		let alert = make_icon("dialog-error-symbolic", INVALID_ALERT_CLASS);
+		let alert = make_icon(ERROR_NAME, INVALID_ALERT_CLASS);
 		alert.set_tooltip_text(Some(i18n("This entry is invalid and cannot be parsed.").as_str()));
 		action_row.add_suffix(&alert);
 	}
@@ -730,12 +730,14 @@ fn build_editor_panel(
 
 	add_user_label_row(&edit_props, entry_ctx);
 	let device_row = device_value::add_device_row(&edit_props, entry_ctx);
-	mount_point_value::add_mount_point_row(&edit_props, entry_ctx);
+	let mount_point_row = mount_point_value::add_mount_point_row(&edit_props, entry_ctx);
 	{
 		let (entry_ctx, device_row, options_group) = (entry_ctx.clone(), device_row.clone(), options_group.clone());
+		let mount_point_row = mount_point_row.clone();
 		fs_value::add_fs_type_row(&edit_props.clone(), &entry_ctx.clone(), {
 			move || {
 				device_row.refresh_kinds();
+				mount_point_row.refresh();
 				build_options_group(&options_group, &entry_ctx);
 			}
 		});
@@ -756,17 +758,19 @@ fn build_editor_panel(
 
 	build_options_group(&options_group, entry_ctx);
 
-	let text = gtk::Label::builder().label(&i18n("Edit as text")).wrap(true).hexpand(true).build();
+	let text = gtk::Label::builder().label(i18n("Edit as text")).wrap(true).hexpand(true).build();
 	let text_edit_btn = Button::builder().child(&text).build();
 
 	{
 		let (popup_ctx, saved_ctx, device_row) = (entry_ctx.clone(), entry_ctx.clone(), device_row.clone());
 		let (options_group, list_box, list_row) = (options_group.clone(), list_box.clone(), list_row.clone());
+		let mount_point_row = mount_point_row.clone();
 		text_edit_btn.connect_clicked(move |btn| {
 			let (saved_ctx, device_row, options_group) = (saved_ctx.clone(), device_row.clone(), options_group.clone());
 			let (list_box, list_row) = (list_box.clone(), list_row.clone());
+			let mount_point_row = mount_point_row.clone();
 			entry_text_edit::present(btn, popup_ctx.clone(), move || {
-				refresh_entry_editor(&saved_ctx, &device_row, &options_group, &list_box, &list_row);
+				refresh_entry_editor(&saved_ctx, &device_row, &options_group, &mount_point_row, &list_box, &list_row);
 			});
 		});
 	}
@@ -802,9 +806,10 @@ fn build_editor_panel(
 
 	let (list_box, list_row) = (list_box.clone(), list_row.clone());
 	let (options_group, device_row, entry_ctx_ref) = (options_group.clone(), device_row.clone(), entry_ctx.clone());
+	let mount_point_row = mount_point_row.clone();
 	reset_btn.connect_clicked(move |_| {
 		entry_ctx_ref.entry().borrow_mut().reset();
-		refresh_entry_editor(&entry_ctx_ref, &device_row, &options_group, &list_box, &list_row);
+		refresh_entry_editor(&entry_ctx_ref, &device_row, &options_group, &mount_point_row, &list_box, &list_row);
 	});
 }
 
@@ -812,11 +817,13 @@ fn refresh_entry_editor(
 	entry_ctx: &EntryContext,
 	device_row: &device_value::DeviceRowController,
 	options_group: &PreferencesGroup,
+	mount_point_row: &mount_point_value::MountPointRow,
 	list_box: &ListBox,
 	list_row: &gtk::ListBoxRow,
 ) {
 	device_row.refresh_kinds();
 	build_options_group(options_group, entry_ctx);
+	mount_point_row.refresh();
 	entry_ctx.render();
 	list_box.unselect_all();
 	list_box.select_row(Some(list_row));

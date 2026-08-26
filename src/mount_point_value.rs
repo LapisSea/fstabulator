@@ -1,24 +1,39 @@
 use crate::context::EntryContext;
+use crate::fs_value::FsType;
 use crate::i18n::i18n;
+use crate::stab_yurself::StabEntry;
+use crate::{GC, problem_reports, ui_commons};
 use adw::prelude::*;
 use adw::{EntryRow, PreferencesGroup};
-use std::path::Path;
 
-pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext) {
+#[derive(Clone)]
+pub struct MountPointRow {
+	entry: GC<StabEntry>,
+	row: EntryRow,
+	icon: gtk::Image,
+}
+
+impl MountPointRow {
+	pub fn refresh(&self) {
+		let text = self.entry.borrow().mount_point.clone();
+		self.row.set_text(&text);
+		update_status_icon(&self.icon, &self.entry.borrow());
+	}
+}
+
+pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> MountPointRow {
 	let entry = entry_ctx.entry().clone();
 
 	let folder_btn = gtk::Button::from_icon_name("folder-open-symbolic");
 	folder_btn.add_css_class("flat");
 	folder_btn.set_tooltip_text(Some(i18n("Choose folder").as_str()));
 
-	let exists_icon = gtk::Image::from_icon_name("object-select-symbolic");
-	exists_icon.add_css_class("mount-point-exists");
-	exists_icon.set_valign(gtk::Align::Center);
+	let exists_icon = ui_commons::issue_image();
 
 	let row = EntryRow::builder().title(i18n("Mount point")).text(&entry.borrow().mount_point).build();
 	row.add_suffix(&folder_btn);
-	row.add_suffix(&exists_icon);
-	update_exists_icon(&exists_icon, entry.borrow().mount_point.as_str());
+	row.add_prefix(&exists_icon);
+	update_status_icon(&exists_icon, &entry.borrow());
 	{
 		let (entry_ctx, entry, exists_icon) = (entry_ctx.clone(), entry.clone(), exists_icon.clone());
 		row.connect_changed(move |row| {
@@ -26,7 +41,7 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 				let mut entry = entry.borrow_mut();
 				entry.mount_point = row.text().to_string();
 			}
-			update_exists_icon(&exists_icon, row.text().as_str());
+			update_status_icon(&exists_icon, &entry.borrow());
 			entry_ctx.render();
 		});
 	}
@@ -52,17 +67,24 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 						let mut entry = entry.borrow_mut();
 						entry.mount_point = text;
 					}
-					update_exists_icon(&exists_icon, row.text().as_str());
+					update_status_icon(&exists_icon, &entry.borrow());
 					entry_ctx.render();
 				}
 			});
 		});
 	}
 	options.add(&row);
+	MountPointRow {
+		entry,
+		row,
+		icon: exists_icon,
+	}
 }
 
-fn update_exists_icon(icon: &gtk::Image, mount_point: &str) {
-	let exists = Path::new(mount_point.trim()).is_dir();
-	icon.set_visible(exists);
-	icon.set_tooltip_text(Some(if exists { i18n("Path exists") } else { i18n("Path does not exist") }.as_str()));
+fn update_status_icon(icon: &gtk::Image, entry: &StabEntry) {
+	let problem = problem_reports::check(&problem_reports::CheckValue::MountPoint(entry.mount_point.clone()), entry);
+	ui_commons::update_issue_icon(icon, problem.as_ref());
+	if problem.is_none() && entry.fs_type != FsType::Swap && !entry.mount_point.trim().is_empty() {
+		icon.set_tooltip_text(Some(i18n("Path exists").as_str()));
+	}
 }
