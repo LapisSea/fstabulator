@@ -1,0 +1,2689 @@
+# Japanese translations for fstabulator.
+# This file is distributed under the same license as the fstabulator package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: fstabulator 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
+"POT-Creation-Date: 2026-08-26 00:56+0200\n"
+"PO-Revision-Date: 2026-08-26 02:07+0200\n"
+"Last-Translator: Automatically translated (machine-assisted)\n"
+"Language-Team: Japanese <ja@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: plural=0;\n"
+
+#, rust-format
+msgid "Mount {mount_point}"
+msgstr "「{mount_point}」をマウント"
+
+msgid "Cannot mount"
+msgstr "マウントできません"
+
+msgid "A password is required."
+msgstr "パスワードが必要です。"
+
+msgid "A credentials file name is required when saving credentials."
+msgstr "認証情報を保存するには、認証情報ファイル名が必要です。"
+
+msgid "Could not mount"
+msgstr "マウントできませんでした"
+
+#, rust-format
+msgid "Would you like to delete the saved credentials file {path}?"
+msgstr "保存した認証情報ファイル「{path}」を削除しますか？"
+
+msgid "Credentials deleted"
+msgstr "認証情報が削除されました"
+
+msgid "The saved credentials file was deleted."
+msgstr "保存した認証情報ファイルが削除されました。"
+
+msgid "Could not delete credentials"
+msgstr "認証情報を削除できませんでした"
+
+msgid "Delete credentials"
+msgstr "認証情報を削除"
+
+msgid "login used for this mount only"
+msgstr "このマウントでのみ使用するログイン"
+
+#, rust-format
+msgid "login saved to {path}"
+msgstr "ログインを「{path}」に保存しました"
+
+#. xgettext: keep the <b> markup tags intact
+msgid "linked login to entry, <b>you must save changes to preserve this</b>"
+msgstr "エントリにログインをリンクしました。<b>保持するには、変更を保存する必要があります</b>"
+
+#, rust-format
+msgid "updated existing login in {path}"
+msgstr "「{path}」の既存のログインを更新しました"
+
+#, rust-format
+msgid "using existing login from {path}"
+msgstr "「{path}」の既存のログインを使用しています"
+
+#, rust-format
+msgid "Mounted {mount_point}."
+msgstr "「{mount_point}」をマウントしました。"
+
+msgid "Mounted"
+msgstr "マウント済み"
+
+msgid "Username"
+msgstr "ユーザー名"
+
+msgid "Password"
+msgstr "パスワード"
+
+msgid "Domain (optional)"
+msgstr "ドメイン（任意）"
+
+msgid "Save for auto-mount"
+msgstr "自動マウント用に保存"
+
+msgid "Writes a credentials file referenced from the fstab entry."
+msgstr "fstab エントリから参照される認証情報ファイルを書き込みます。"
+
+msgid "Credentials file"
+msgstr "認証情報ファイル"
+
+msgid "Load existing credentials"
+msgstr "既存の認証情報を読み込む"
+
+msgid "Will overwrite the existing file!"
+msgstr "既存のファイルを上書きします！"
+
+msgid "This filesystem may require credentials to mount."
+msgstr "このファイルシステムをマウントするには、認証情報が必要な場合があります。"
+
+msgid "Cancel"
+msgstr "キャンセル"
+
+msgid "Connect"
+msgstr "接続"
+
+#, rust-format
+msgid "Could not resolve '{host}': {err}"
+msgstr "「{host}」を名前解決できませんでした: {err}"
+
+#, rust-format
+msgid "Could not resolve '{host}'."
+msgstr "「{host}」を名前解決できませんでした。"
+
+#, rust-format
+msgid "Could not connect to {host}:{port}: {err}"
+msgstr "{host}:{port} に接続できませんでした: {err}"
+
+msgid "User"
+msgstr "ユーザー"
+
+msgid "Host"
+msgstr "ホスト"
+
+msgid "Port"
+msgstr "ポート"
+
+msgid "Path"
+msgstr "パス"
+
+msgid "Test connection"
+msgstr "接続テスト"
+
+msgid "Network location"
+msgstr "ネットワーク上の場所"
+
+msgid "Enter a valid port to test."
+msgstr "テストには、有効なポートが必要です。"
+
+msgid "Enter a host to test."
+msgstr "テストには、ホストが必要です。"
+
+msgid "Testing connection…"
+msgstr "接続をテストしています…"
+
+#, rust-format
+msgid "Connected to {host}:{port}."
+msgstr "{host}:{port} に接続しました。"
+
+msgid "Test connection failed."
+msgstr "接続テストに失敗しました。"
+
+msgid "Enter a host to save."
+msgstr "保存には、ホストが必要です。"
+
+msgid "Could not list devices"
+msgstr "デバイスの一覧を表示できませんでした"
+
+msgid "Filter devices…"
+msgstr "デバイスを絞り込み…"
+
+msgid "No devices found"
+msgstr "デバイスが見つかりません"
+
+#, rust-format
+msgid "Select {kind}"
+msgstr "{kind} の選択"
+
+msgid "Device name"
+msgstr "デバイス名"
+
+msgid "Size"
+msgstr "サイズ"
+
+msgid "Label"
+msgstr "ラベル"
+
+msgid "File System"
+msgstr "ファイルシステム"
+
+msgid "Model"
+msgstr "モデル"
+
+msgid "Edit device"
+msgstr "デバイスを編集"
+
+#, rust-format
+msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
+msgstr "{kind} を解決できませんでした({value})。値はそのまま保持されました。"
+
+msgid "Could not parse entry"
+msgstr "エントリを解析できませんでした"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "不明なファイルシステム: {fs_type}"
+
+msgid "No problems detected"
+msgstr "問題が検出されませんでした"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "マウントポイントが存在しません: {point}"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "不明なデバイスタイプ: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "デバイスが存在しません: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "不明なオプション: {option}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} には値を指定しないでください"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} は {values} のいずれかである必要があります"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} は {values} のいずれかの値で、任意でレベルを続けて指定できます"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} は数値である必要があります"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} は {min} から {max} までの数値である必要があります"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} は 8 進数である必要があります"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} はサイズ単位付きの数値である必要があります(例: 16K)"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} は {on} または {off} である必要があります"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "認証情報ファイルが存在しません: {path}"
+
+msgid "Edit as text"
+msgstr "テキストとして編集"
+
+msgid "Edit the raw fstab line. Problems with its values are listed below."
+msgstr "生の fstab 行を編集します。値の問題は以下に列挙されます。"
+
+msgid "All I/O to the filesystem is done asynchronously."
+msgstr "ファイルシステムへのすべての I/O は非同期で行われます。"
+
+msgid "Update inode access time on every access."
+msgstr "inode のアクセス時刻をすべてのアクセス時に更新します。"
+
+msgid "Can be mounted with the -a (mount all) option."
+msgstr "-a(すべてマウント)オプションでマウントできます。"
+
+msgid "Remount a subtree elsewhere; mount only that subtree."
+msgstr "サブツリーを別の場所に再マウントします。そのサブツリーのみがマウントされます。"
+
+msgid "Comment field; ignored by the mount command."
+msgstr "コメント欄。mount コマンドによって無視されます。"
+
+msgid "Set the SELinux context for the whole filesystem."
+msgstr "ファイルシステム全体に SELinux コンテキストを設定します。"
+
+msgid "Use default options: rw, suid, dev, exec, auto, nouser, async."
+msgstr "デフォルトのオプションを使用します: rw, suid, dev, exec, auto, nouser, async."
+
+msgid "Set the default SELinux context for unlabeled files."
+msgstr "ラベルが付いていないファイルのデフォルトの SELinux コンテキストを設定します。"
+
+msgid "Interpret character or block special devices on the filesystem."
+msgstr "ファイルシステム上のキャラクタまたはブロック特殊デバイスを解釈します。"
+
+msgid "Update directory access times on reads."
+msgstr "読み取り時にディレクトリのアクセス時刻を更新します。"
+
+msgid "Make all directory updates synchronous."
+msgstr "ディレクトリのすべての更新を同期で行います。"
+
+msgid "Permit execution of binaries on the filesystem."
+msgstr "ファイルシステム上のバイナリの実行を許可します。"
+
+msgid "Set the SELinux context for the filesystem being mounted."
+msgstr "マウントされるファイルシステムに SELinux コンテキストを設定します。"
+
+msgid "Allow mounting by a user whose group matches the device's group."
+msgstr "ユーザーのグループがデバイスのグループと一致する場合のマウントを許可します。"
+
+msgid "Increment the inode version on every inode modification."
+msgstr "inode の変更のたびに inode のバージョンをインクリメントします。"
+
+msgid "Update on-disk timestamps lazily, flushing them later."
+msgstr "ディスク上のタイムスタンプを遅延して更新し、後でフラッシュします。"
+
+msgid "Mount the file through a loop device."
+msgstr "ループデバイス経由でファイルをマウントします。"
+
+msgid "Turn off the silent flag (verbose errors)."
+msgstr "silent フラグをオフにします(詳細なエラー表示)。"
+
+msgid "Allow mandatory locking on the filesystem."
+msgstr "ファイルシステムでの必須ロックを許可します。"
+
+msgid "Atomically move a mounted tree to a new location."
+msgstr "マウントされたツリーを新しい場所へアトミックに移動します。"
+
+msgid "Do not update inode access times on reads."
+msgstr "読み取り時に inode のアクセス時刻を更新しません。"
+
+msgid "Can only be mounted explicitly, never with -a."
+msgstr "明示的にマウントするのみで、-a によるマウントはできません。"
+
+msgid "Do not interpret character or block special devices."
+msgstr "キャラクタまたはブロック特殊デバイスを解釈しません。"
+
+msgid "Do not update directory access times."
+msgstr "ディレクトリのアクセス時刻を更新しません。"
+
+msgid "Do not permit execution of binaries on the filesystem."
+msgstr "ファイルシステム上のバイナリの実行を許可しません。"
+
+msgid "Do not report errors if the device does not exist."
+msgstr "デバイスが存在しない場合でもエラーを報告しません。"
+
+msgid "Do not increment the inode version counter."
+msgstr "inode のバージョンカウンタを増加させません。"
+
+msgid "Do not use the lazytime feature; flush timestamps at once."
+msgstr "lazytime 機能を使いません。タイムスタンプを一度に書き出します。"
+
+msgid "Do not allow mandatory locking on the filesystem."
+msgstr "ファイルシステムでの強制ロックを許可しません。"
+
+msgid "Do not use the relatime feature."
+msgstr "relatime 機能を使いません。"
+
+msgid "Do not honor setuid or setgid bits or file capabilities."
+msgstr "setuid ビット、setgid ビット、ファイル capability を無視します。"
+
+msgid "Do not follow symbolic links when resolving paths."
+msgstr "パスを解決する際、シンボリックリンクを追跡しません。"
+
+msgid "Use the kernel's default access-time behavior."
+msgstr "カーネルのデフォルトのアクセス時刻の挙動を使います。"
+
+msgid "Only root may mount the filesystem."
+msgstr "ファイルシステムをマウントできるのは root のみです。"
+
+msgid "Mount only after the network is available."
+msgstr "ネットワークが利用可能になってからマウントします。"
+
+msgid "Allow mounting by the owner of the device."
+msgstr "デバイス所有者によるマウントを許可します。"
+
+msgid "Make the mount private (no propagation to other mounts)."
+msgstr "マウントを private にします（他のマウントへの伝播なし）。"
+
+msgid "Remount a subtree and all its submounts elsewhere."
+msgstr "サブツリーとそのすべてのサブマウントを、別の場所へリマウントします。"
+
+msgid "Update access times relative to modify or change time."
+msgstr "modify 時刻または change 時刻を基準にアクセス時刻を更新します。"
+
+msgid "Attempt to remount an already-mounted filesystem."
+msgstr "すでにマウントされているファイルシステムのリマウントを試みます。"
+
+msgid "Mount the filesystem read-only."
+msgstr "ファイルシステムを読み取り専用でマウントします。"
+
+msgid "Set the SELinux context of the filesystem's root inode."
+msgstr "ファイルシステムのルート inode の SELinux コンテキストを設定します。"
+
+msgid "Make the mount and its submounts private."
+msgstr "マウントとそのサブマウントを private にします。"
+
+msgid "Make the mount and its submounts shared."
+msgstr "マウントとそのサブマウントを shared にします。"
+
+msgid "Make the mount and its submounts slaves of their master."
+msgstr "マウントとそのサブマウントを、そのマスタの slave にします。"
+
+msgid "Make the mount and its submounts unbindable."
+msgstr "マウントとそのサブマウントを unbindable にします。"
+
+msgid "Mount the filesystem read-write."
+msgstr "ファイルシステムを読み書きでマウントします。"
+
+msgid "Turn on the silent flag (suppress errors)."
+msgstr "silent フラグをオンにします（エラーを抑制）。"
+
+msgid "Make the mount a slave of its master (receive propagation)."
+msgstr "マウントをそのマスタの slave にします（伝播を受信）。"
+
+msgid "Make the mount shared with peer mounts."
+msgstr "マウントをピアマウントと shared にします。"
+
+msgid "Update access times on every access (full atime)."
+msgstr "アクセスするたびにアクセス時刻を更新します（完全な atime）。"
+
+msgid "Honor setuid or setgid bits and file capabilities."
+msgstr "setuid ビット、setgid ビット、ファイル capability を適用します。"
+
+msgid "All I/O to the filesystem is done synchronously."
+msgstr "ファイルシステムへのすべての I/O が同期で行われます。"
+
+msgid "Make the mount unbindable."
+msgstr "マウントを unbindable にします。"
+
+msgid "Allow an ordinary user to mount the filesystem."
+msgstr "一般ユーザーによるファイルシステムのマウントを許可します。"
+
+msgid "Allow every user to mount and unmount the filesystem."
+msgstr "すべてのユーザーによるファイルシステムのマウントとアンマウントを許可します。"
+
+msgid "Restrict automatic filesystem detection to the listed types."
+msgstr "ファイルシステムの自動検出を、列挙された種類に限定します。"
+
+msgid "Set the group that may unmount the mount."
+msgstr "アンマウントを許可するグループを設定します。"
+
+msgid "Create an idmapped mount using the given ID mapping."
+msgstr "指定された ID マッピングを使用して idmapped マウントを作成します。"
+
+msgid "Create the mountpoint directory if it does not exist."
+msgstr "マウントポイントのディレクトリが存在しない場合は作成します。"
+
+msgid "Set the mountpoint directory mode after mounting."
+msgstr "マウント後、マウントポイントのディレクトリモードを設定します。"
+
+msgid "Do not canonicalize mount source and target paths."
+msgstr "マウントのソースとターゲットのパスを正規化しません。"
+
+msgid "Do not create a loop device even if the source is a regular file."
+msgstr "ソースが通常ファイルであっても、ループデバイスを作成しません。"
+
+msgid "Set the owner that may unmount the mount."
+msgstr "アンマウントを許可する所有者を設定します。"
+
+msgid "Mount a subdirectory of the filesystem instead of its root."
+msgstr "ファイルシステムのルートではなく、そのサブディレクトリをマウントします。"
+
+msgid "Enables POSIX access control lists."
+msgstr "POSIX アクセス制御リストを有効にします。"
+
+msgid "Disables POSIX access control lists."
+msgstr "POSIX アクセス制御リストを無効にします。"
+
+msgid "statfs reports usable blocks minus filesystem overhead."
+msgstr "statfs は、オーバーヘッドを引いた利用可能ブロック数を報告します。"
+
+msgid "statfs reports total blocks including overhead."
+msgstr "statfs は、オーバーヘッドを含むブロック総数を報告します。"
+
+msgid "Performs mount-time checking; only check=none supported now."
+msgstr "マウント時にチェックを行います。現在サポートされているのは check=none のみです。"
+
+msgid "Skips checking at mount time (default)."
+msgstr "マウント時のチェックをスキップします（デフォルト）。"
+
+msgid "Prints debugging info upon each (re)mount."
+msgstr "各（再）マウント時にデバッグ情報を表示します。"
+
+msgid "Sets behavior on errors: continue, remount-ro, or panic."
+msgstr "エラー時の挙動を設定します：continue、remount-ro、または panic。"
+
+msgid "New files inherit the group ID of their parent directory."
+msgstr "新規ファイルは、親ディレクトリのグループ ID を継承します。"
+
+msgid "Same as grpid."
+msgstr "grpid と同じです。"
+
+msgid "New files take the creating process's fsgid (default)."
+msgstr "新規ファイルは作成プロセスの fsgid を継承します (デフォルト)。"
+
+msgid "Same as nogrpid."
+msgstr "nogrpid と同じ。"
+
+msgid "Enables group quota support."
+msgstr "グループクォータ対応を有効にします。"
+
+msgid "Enables user quota support."
+msgstr "ユーザークォータ対応を有効にします。"
+
+msgid "Enables user quota support (same as usrquota)."
+msgstr "ユーザークォータ対応を有効にします (usrquota と同じ)。"
+
+msgid "Disables all quota support."
+msgstr "すべてのクォータ対応を無効にします。"
+
+msgid "Disables 32-bit UIDs/GIDs for old-kernel compatibility."
+msgstr "旧カーネルとの互換性のため 32 ビット UID/GID を無効にします。"
+
+msgid "Uses the old inode allocator instead of Orlov."
+msgstr "Orlov ではなく従来の inode アロケーターを使用します。"
+
+msgid "Uses the Orlov allocator for new inodes (default)."
+msgstr "新規 inode に Orlov アロケーターを使用します (デフォルト)。"
+
+msgid "Group ID allowed to use reserved filesystem blocks."
+msgstr "予約ファイルシステムブロックの使用が許可されるグループ ID。"
+
+msgid "User ID allowed to use reserved filesystem blocks."
+msgstr "予約ファイルシステムブロックの使用が許可されるユーザ ID。"
+
+msgid "Mounts using an alternate superblock number (recovery)."
+msgstr "代替スーパーブロック番号を使用してマウントします (復旧用)。"
+
+msgid "Enables \"user.\" extended attributes."
+msgstr "「user.」拡張属性を有効にします。"
+
+msgid "Disables \"user.\" extended attributes."
+msgstr "「user.」拡張属性を無効にします。"
+
+msgid "Enables write barriers in the journal code."
+msgstr "ジャーナルコードでライトバリアを有効にします。"
+
+msgid "Sets journal commit interval in seconds (default 5)."
+msgstr "ジャーナルコミット間隔を秒で設定します (デフォルト 5)。"
+
+msgid "Sets data journaling mode: journal, ordered, or writeback."
+msgstr "データジャーナリングモードを設定します: journal、ordered、または writeback。"
+
+msgid "Action on data errors in ordered mode: abort or ignore."
+msgstr "ordered モードでのデータエラー時の処理: abort または ignore。"
+
+msgid "Sets the group quota database file for journaled quotas."
+msgstr "ジャーナル付きクォータのグループクォータデータベースファイルを設定します。"
+
+msgid "Specifies external journal device by major/minor number."
+msgstr "メジャー/マイナー番号で外部ジャーナルデバイスを指定します。"
+
+msgid "Specifies external journal device by device path."
+msgstr "デバイスパスで外部ジャーナルデバイスを指定します。"
+
+msgid "Sets quota format: vfsold, vfsv0, or vfsv1."
+msgstr "クォータ形式を設定します: vfsold、vfsv0、または vfsv1。"
+
+msgid "Does not load the journal on mount."
+msgstr "マウント時にジャーナルを読み込みません。"
+
+msgid "Does not load the journal on mount (same as noload)."
+msgstr "マウント時にジャーナルを読み込みません (noload と同じ)。"
+
+msgid "Sets the user quota database file for journaled quotas."
+msgstr "ジャーナル付きクォータのユーザークォータデータベースファイルを設定します。"
+
+msgid "Simulates an ext4_abort() for debugging purposes."
+msgstr "デバッグ目的で ext4_abort() をシミュレートします。"
+
+msgid "Forces delayed blocks to disk before rename/truncate commits."
+msgstr "rename/truncate のコミット前に、遅延ブロックを強制的にディスクへ書き出します。"
+
+msgid "Disables forced allocation on rename/truncate."
+msgstr "rename/truncate 時の強制アロケーションを無効にします。"
+
+msgid "Tracks metadata blocks internally (debug; off by default)."
+msgstr "メタデータブロックを内部で追跡します (デバッグ用。デフォルトで無効)。"
+
+msgid "Disables internal metadata block tracking."
+msgstr "メタデータブロックの内部追跡を無効にします。"
+
+msgid "Defers block allocation until write-out time."
+msgstr "ブロックアロケーションを書き出し時まで遅延します。"
+
+msgid "Disables delayed allocation."
+msgstr "遅延アロケーションを無効にします。"
+
+msgid "Uses inode mutex for DIO reads (default)."
+msgstr "DIO リードに inode mutex を使用します (デフォルト)。"
+
+msgid "Avoids inode mutex for DIO reads for scalability."
+msgstr "スケーラビリティのため、DIO リードで inode mutex を回避します。"
+
+msgid "Issues discard/TRIM commands when blocks are freed."
+msgstr "ブロック解放時に discard/TRIM コマンドを発行します。"
+
+msgid "Disables issuing discard/TRIM commands."
+msgstr "discard/TRIM コマンドの発行を無効にします。"
+
+msgid "Sets the case-insensitive lookup charset for casefolded directories (e.g. utf8-12.1)."
+msgstr "casefold ディレクトリの大文字小文字を区別しない検索用の文字セットを設定します (例: utf8-12.1)。"
+
+msgid "Sets flags controlling casefold behavior (e.g. strict)."
+msgstr "casefold の動作を制御するフラグを設定します (例: strict)。"
+
+msgid "Enables fast commits, a lightweight journaling mode for lower commit latency."
+msgstr "コミット遅延を低減する軽量なジャーナリングモード fast commits を有効にします。"
+
+msgid "Tunes the lazy inode-table initialization speed."
+msgstr "inode テーブルの遅延初期化の速度を調整します。"
+
+msgid "Does not initialize inode tables in the background."
+msgstr "inode テーブルをバックグラウンドで初期化しません。"
+
+msgid "Max inode table blocks pre-read during mount."
+msgstr "マウント時に事前読み込みする inode テーブルブロックの最大数。"
+
+msgid "Enables 64-bit inode version support."
+msgstr "64 ビット inode バージョン対応を有効にします。"
+
+msgid "Writes commit block without waiting for descriptors."
+msgstr "ディスクリプタを待たずにコミットブロックを書き出します。"
+
+msgid "Enables checksumming of journal transactions."
+msgstr "ジャーナルトランザクションのチェックサムを有効にします。"
+
+msgid "Disables journal transaction checksumming."
+msgstr "ジャーナルトランザクションのチェックサムを無効にします。"
+
+msgid "Sets I/O priority for journal commits (0-7)."
+msgstr "ジャーナルコミットの I/O 優先度を設定します (0-7)。"
+
+msgid "Max microseconds to wait to batch sync-write operations."
+msgstr "同期書き込み操作をバッチ処理する際の最大待機時間 (マイクロ秒)。"
+
+msgid "Limits maximum directory size in kilobytes."
+msgstr "ディレクトリの最大サイズをキロバイト単位で制限します。"
+
+msgid "Minimum commit time for batch optimization (us)."
+msgstr "バッチ最適化の最小コミット時間（us）。"
+
+msgid "Disables write barriers."
+msgstr "ライトバリアを無効にします。"
+
+msgid "Disables mbcache for extended attribute deduplication."
+msgstr "拡張属性の重複排除用の mbcache を無効にします。"
+
+msgid "Enables project quota support."
+msgstr "プロジェクトクォータを有効にします。"
+
+msgid "Sets stripe width (blocks) for mballoc allocation alignment."
+msgstr "mballoc の割り当て整列用のストライプ幅（ブロック数）を設定します。"
+
+msgid "Sets end-of-file preallocation size for buffered I/O."
+msgstr "バッファリング I/O 用のファイル末尾の事前割り当てサイズを設定します。"
+
+msgid "Enables opportunistic inline xattr format; deprecated since 5.10."
+msgstr "機会的なインライン xattr 形式を有効にします（5.10 以降は非推奨）。"
+
+msgid "Disables attr2 format; deprecated, rejected on CRC filesystems."
+msgstr "attr2 形式を無効にします（非推奨、CRC ファイルシステムでは拒否されます）。"
+
+msgid "Sets direct-access mode: never, always, or inode."
+msgstr "直接アクセスモードを設定します（never、always、inode）。"
+
+msgid "Issues commands to reclaim freed blocks (SSD-friendly)."
+msgstr "解放ブロックを回収するコマンドを発行します（SSD に優しい）。"
+
+msgid "Disables issuing discard commands."
+msgstr "discard コマンドの発行を無効にします。"
+
+msgid "Applies filestreams allocation mode to whole filesystem."
+msgstr "filestreams の割り当てモードをファイルシステム全体に適用します。"
+
+msgid "Enables group quota accounting without enforcement."
+msgstr "グループクォータの集計を有効にします（強制なし）。"
+
+msgid "Enables group quota accounting and enforcement."
+msgstr "グループクォータの集計と強制を有効にします。"
+
+msgid "Same as gquota."
+msgstr "gquota と同じです。"
+
+msgid "New files inherit the parent directory's group ID."
+msgstr "新規ファイルは親ディレクトリのグループ ID を継承します。"
+
+msgid "New files take the process's fsgid (default)."
+msgstr "新規ファイルはプロセスの fsgid を継承します（デフォルト）。"
+
+msgid "Keeps empty inode clusters on disk; deprecated since 5.10."
+msgstr "空の inode クラスタをディスク上に保持します（5.10 以降は非推奨）。"
+
+msgid "Recycles empty inode clusters; deprecated since 5.10."
+msgstr "空の inode クラスタを再利用します（5.10 以降は非推奨）。"
+
+msgid "Restricts inode numbers to 32 bits."
+msgstr "inode 番号を 32 ビットに制限します。"
+
+msgid "Allows 64-bit inode numbers (default)."
+msgstr "64 ビットの inode 番号を許可します（デフォルト）。"
+
+msgid "Reports swidth/allocsize as st_blksize."
+msgstr "swidth/allocsize を st_blksize として報告します。"
+
+msgid "Reports minimal st_blksize (default)."
+msgstr "最小の st_blksize を報告します（デフォルト）。"
+
+msgid "Sets number of in-memory log buffers (2-8)."
+msgstr "メモリ内のログバッファ数を設定します（2-8）。"
+
+msgid "Sets size of each in-memory log buffer."
+msgstr "各メモリ内ログバッファのサイズを設定します。"
+
+msgid "Uses an external log (metadata journal) device."
+msgstr "外部のログ（メタデータジャーナル）デバイスを使用します。"
+
+msgid "Skips stripe-unit alignment for data allocations."
+msgstr "データ割り当てのストライプユニット整列をスキップします。"
+
+msgid "Mounts without running log recovery (read-only)."
+msgstr "ログ回復を実行せずにマウントします（読み取り専用）。"
+
+msgid "Skips duplicate-UUID mount detection."
+msgstr "重複 UUID のマウント検出をスキップします。"
+
+msgid "Forcibly turns off all quota accounting and enforcement."
+msgstr "すべてのクォータの集計と強制を強制的に無効にします。"
+
+msgid "Enables project quota accounting and enforcement."
+msgstr "プロジェクトクォータの集計と強制を有効にします。"
+
+msgid "Enables project quota accounting without enforcement."
+msgstr "プロジェクトクォータの集計を有効にします（強制なし）。"
+
+msgid "Same as pquota."
+msgstr "pquota と同じです。"
+
+msgid "Enables user quota accounting without enforcement."
+msgstr "ユーザークォータの集計を有効にします（強制なし）。"
+
+msgid "Enables user quota accounting and enforcement."
+msgstr "ユーザークォータの集計と強制を有効にします。"
+
+msgid "Uses an external realtime-section device."
+msgstr "外部のリアルタイムセクションデバイスを使用します。"
+
+msgid "Sets stripe unit in 512-byte blocks."
+msgstr "512 バイトブロック単位のストライプユニットを設定します。"
+
+msgid "Rounds data allocations up to stripe-width boundaries."
+msgstr "データ割り当てをストライプ幅の境界まで切り上げます。"
+
+msgid "Sets stripe width in 512-byte blocks."
+msgstr "512 バイトブロック単位のストライプ幅を設定します。"
+
+msgid "Same as uquota."
+msgstr "uquota と同じです。"
+
+msgid "Runs filesystem namespace operations synchronously."
+msgstr "ファイルシステムの名前空間操作を同期的に実行します。"
+
+msgid "Enables POSIX access control lists (default on)."
+msgstr "POSIX アクセス制御リストを有効にします（デフォルトで有効）。"
+
+msgid "Auto-defragments detected small random writes."
+msgstr "検出された小さなランダム書き込みを自動的にデフラグします。"
+
+msgid "Disables automatic file defragmentation."
+msgstr "ファイルの自動デフラグを無効にします。"
+
+msgid "Ensures writes flush to permanent storage at checkpoints."
+msgstr "チェックポイント時に、書き込みが永続ストレージにフラッシュされることを保証します。"
+
+msgid "Disables write barriers; risks corruption on crash."
+msgstr "ライトバリアを無効にします。クラッシュ時に破損のリスクがあります。"
+
+msgid "Clears and rebuilds the free space cache."
+msgstr "空き領域キャッシュをクリアして再構築します。"
+
+msgid "Sets transaction commit interval in seconds (default 30)."
+msgstr "トランザクションのコミット間隔を秒単位で設定します（デフォルト 30）。"
+
+msgid "Enables data compression, optionally with a level (for example zstd:3)."
+msgstr "データ圧縮を有効にします。レベルは任意で指定できます（例: zstd:3）。"
+
+msgid "Always attempts compression, even if ineffective, optionally with a level."
+msgstr "効果がなくても常に圧縮を試みる。レベルは任意で指定できる。"
+
+msgid "Enables data copy-on-write for new files."
+msgstr "新規ファイルのデータ COW を有効にする。"
+
+msgid "Disables data COW (implies nodatasum, no compression)."
+msgstr "データの COW を無効にする（nodatasum と非圧縮を意味する）。"
+
+msgid "Enables data checksumming."
+msgstr "データのチェックサム計算を有効にする。"
+
+msgid "Disables data checksumming."
+msgstr "データのチェックサム計算を無効にする。"
+
+msgid "Allows mount with fewer devices than RAID requires."
+msgstr "RAID が必要とするより少ないデバイス数でマウントすることを許可する。"
+
+msgid "Scans the given device for btrfs during mount."
+msgstr "マウント時に、指定したデバイスから btrfs をスキャンする。"
+
+msgid "Discards freed file blocks (TRIM)."
+msgstr "解放されたファイルブロックを破棄する（TRIM）。"
+
+msgid "Disables discarding of freed blocks."
+msgstr "解放されたブロックの破棄を無効にする。"
+
+msgid "Enables verbose output for ENOSPC conditions."
+msgstr "ENOSPC 時の詳細出力を有効にする。"
+
+msgid "Disables verbose ENOSPC output."
+msgstr "ENOSPC 時の詳細出力を無効にする。"
+
+msgid "Sets action on fatal errors: bug or panic."
+msgstr "致命的エラー時の動作を設定する：bug または panic。"
+
+msgid "Flushes all prior-transaction data at each commit."
+msgstr "各コミット時に、それ以前のすべてのトランザクションデータをフラッシュする。"
+
+msgid "Disables forced full flush on commit."
+msgstr "コミット時の強制フルフラッシュを無効にする。"
+
+msgid "Intentionally fragments block groups (debug builds only)."
+msgstr "ブロックグループを意図的に断片化する（デバッグビルドのみ）。"
+
+msgid "Max bytes that can be inlined in a metadata leaf."
+msgstr "メタデータリーフにインライン化できる最大バイト数。"
+
+msgid "Allocates one metadata chunk per N data chunks."
+msgstr "N 個のデータチャンクごとに、メタデータチャンクを 1 個割り当てる。"
+
+msgid "Does not replay the tree log (same as norecovery)."
+msgstr "ツリーログのリプレイを行わない（norecovery と同じ）。"
+
+msgid "Does not attempt recovery at mount time."
+msgstr "マウント時にリカバリーを試行しない。"
+
+msgid "Forces rebuild of the UUID tree."
+msgstr "UUID ツリーの再構築を強制する。"
+
+msgid "Applies recovery workarounds: usebackuproot, nologreplay, ignorebadroots, ignore*sums, or all (read-only)."
+msgstr "リカバリーワークアラウンドを適用する：usebackuproot、nologreplay、ignorebadroots、ignore*sums、または all（読み取り専用）。"
+
+msgid "Skips automatic resume of an interrupted balance."
+msgstr "中断されたバランスの自動再開をスキップする。"
+
+msgid "Enables free space caching (v1 or v2)."
+msgstr "空き領域キャッシュを有効にする（v1 または v2）。"
+
+msgid "Disables the free space cache."
+msgstr "空き領域キャッシュを無効にする。"
+
+msgid "Enables SSD allocation optimizations."
+msgstr "SSD 向け割り当て最適化を有効にする。"
+
+msgid "Disables SSD allocation optimizations."
+msgstr "SSD 向け割り当て最適化を無効にする。"
+
+msgid "Allocates into larger aligned chunks for low-end SSDs."
+msgstr "低性能な SSD 向けに、より大きなアラインメント済みチャンクへ割り当てる。"
+
+msgid "Disables the ssd_spread allocation scheme."
+msgstr "ssd_spread 割り当て方式を無効にする。"
+
+msgid "Mounts a subvolume at the given path, not the toplevel."
+msgstr "toplevel ではなく、指定パスにあるサブボリュームをマウントする。"
+
+msgid "Mounts the subvolume with the given numeric ID."
+msgstr "指定した数値 ID のサブボリュームをマウントする。"
+
+msgid "Sets number of worker threads."
+msgstr "ワーカースレッド数を設定する。"
+
+msgid "Enables tree logging for fsync/O_SYNC."
+msgstr "fsync/O_SYNC 用のツリーログを有効にする。"
+
+msgid "Disables tree logging."
+msgstr "ツリーログを無効にする。"
+
+msgid "Tries backup roots if the tree root is bad; removed since 7.3."
+msgstr "ツリールートが壊れている場合はバックアップルートを試行する。7.3 以降は削除された。"
+
+msgid "Lets subvolume owners delete their own subvolumes."
+msgstr "サブボリュームの所有者が、自分のサブボリュームを削除できるようにする。"
+
+msgid "Sets number of active log segments (2, 4, or 6)."
+msgstr "有効なログセグメント数を設定する（2、4、または 6）。"
+
+msgid "Enables age extent cache for allocation hints."
+msgstr "割り当てヒント用の age extent キャッシュを有効にする。"
+
+msgid "Sets block allocation policy: reuse or default."
+msgstr "ブロック割り当てポリシーを設定する：reuse または default。"
+
+msgid "Enables age-threshold background garbage collection."
+msgstr "経過時間しきい値ベースのバックグラウンドガベージコレクションを有効にする。"
+
+msgid "Turns background garbage collection on/off/sync."
+msgstr "バックグラウンドガベージコレクションを on/off/sync で切り替える。"
+
+msgid "Allows cache_flush commands to be issued."
+msgstr "cache_flush コマンドの発行を許可する。"
+
+msgid "Skips cache_flush commands if storage guarantees order."
+msgstr "ストレージが順序を保証している場合は、cache_flush コマンドをスキップする。"
+
+msgid "Enables or disables checkpointing (disable/enable)."
+msgstr "チェックポイント処理を有効または無効にする（disable/enable）。"
+
+msgid "Merges concurrent checkpoint requests via a daemon."
+msgstr "デーモンを介して、並行するチェックポイント要求をマージする。"
+
+msgid "Disables checkpoint merge feature."
+msgstr "チェックポイントマージ機能を無効にする。"
+
+msgid "Selects compression algorithm (lzo, lz4, zstd)."
+msgstr "圧縮アルゴリズムを選択する（lzo、lz4、zstd）。"
+
+msgid "Caches compressed blocks to improve read hit ratio."
+msgstr "読み取りヒット率を向上させるため、圧縮済みブロックをキャッシュする。"
+
+msgid "Verifies checksums of compressed clusters."
+msgstr "圧縮クラスタのチェックサムを検証する。"
+
+msgid "Adds extensions whose files are auto-compressed."
+msgstr "自動圧縮対象のファイルの拡張子を追加する。"
+
+msgid "Sets compress cluster size in 4KB units."
+msgstr "圧縮クラスタサイズを4KB単位で設定します。"
+
+msgid "Sets compression mode: fs (auto) or user (manual)."
+msgstr "圧縮モードを設定します: fs(自動)またはuser(手動)。"
+
+msgid "Flushes data before checkpoint to persist regular files."
+msgstr "チェックポイント前にデータをフラッシュし、通常ファイルを永続化します。"
+
+msgid "Ignores mkfs extension list for cold-file detection."
+msgstr "コールドファイル検出用のmkfs拡張子リストを無視します。"
+
+msgid "Disables the roll-forward recovery routine."
+msgstr "ロールフォワード復旧ルーチンを無効にします。"
+
+msgid "Enables real-time discard/TRIM commands."
+msgstr "リアルタイムのdiscard/TRIMコマンドを有効にします。"
+
+msgid "Disables real-time discard."
+msgstr "リアルタイムdiscardを無効にします。"
+
+msgid "Sets discard alignment unit: block, segment, or section."
+msgstr "discardアライメント単位を設定します: block、segment、またはsection。"
+
+msgid "Sets behavior on critical errors: panic, continue, remount-ro."
+msgstr "クリティカルエラー時の動作を設定します: panic、continue、またはremount-ro。"
+
+msgid "Enables the rb-tree extent cache (default)."
+msgstr "rb-tree extentキャッシュを有効にします(デフォルト)。"
+
+msgid "Disables the extent cache."
+msgstr "extentキャッシュを無効にします。"
+
+msgid "Reduces mount time at the cost of normal performance."
+msgstr "通常時のパフォーマンスを犠牲にしてマウント時間を短縮します。"
+
+msgid "Enables fault injection at a given rate (testing)."
+msgstr "指定した割合でのフォールト注入を有効にします(テスト用)。"
+
+msgid "Configures which fault types to inject (testing)."
+msgstr "注入するフォールトの種類を設定します(テスト用)。"
+
+msgid "Merges concurrent cache_flush commands."
+msgstr "並行するcache_flushコマンドをマージします。"
+
+msgid "Sets fsync policy: posix, strict, or nobarrier."
+msgstr "fsyncポリシーを設定します: posix、strict、またはnobarrier。"
+
+msgid "Handles foreground GC in the background GC thread."
+msgstr "フォアグラウンドGCをバックグラウンドGCスレッドで処理します。"
+
+msgid "Disables GC merge feature."
+msgstr "GCマージ機能を無効にします。"
+
+msgid "Points to group journaled quota file."
+msgstr "グループのジャーナル付きクォータファイルを指定します。"
+
+msgid "Enables group disk quota accounting."
+msgstr "グループディスククォータの集計を有効にします。"
+
+msgid "Allocates segments heap-based from disk end; deprecated."
+msgstr "ヒープベースでディスク末尾からセグメントを割り当てます(非推奨)。"
+
+msgid "Disables heap-based allocation; deprecated."
+msgstr "ヒープベース割り当てを無効にします(非推奨)。"
+
+msgid "Stores small file data inside the inode block."
+msgstr "小さいファイルのデータをinodeブロック内に保存します。"
+
+msgid "Stores directory entries inside the inode block."
+msgstr "ディレクトリエントリをinodeブロック内に保存します。"
+
+msgid "Disables the inline dentry feature."
+msgstr "インラインdentry機能を無効にします。"
+
+msgid "Enables inline extended attributes."
+msgstr "インラインの拡張属性を有効にします。"
+
+msgid "Disables inline extended attributes."
+msgstr "インラインの拡張属性を無効にします。"
+
+msgid "Sets the inline xattr size."
+msgstr "インラインxattrのサイズを設定します。"
+
+msgid "Uses blk-crypto for inline encryption hardware."
+msgstr "インライン暗号化ハードウェアにblk-cryptoを使用します。"
+
+msgid "Sets casefold directory lookup: perf, compat, or auto."
+msgstr "casefoldディレクトリ検索を設定します: perf、compat、またはauto。"
+
+msgid "Sets memory mode: normal or low."
+msgstr "メモリモードを設定します: normalまたはlow。"
+
+msgid "Sets block allocation mode: adaptive or lfs."
+msgstr "ブロック割り当てモードを設定します: adaptiveまたはlfs。"
+
+msgid "Enables faster full/empty NAT block access."
+msgstr "full/empty NATブロックへの高速アクセスを有効にします。"
+
+msgid "Disables the inline data feature."
+msgstr "インラインデータ機能を無効にします。"
+
+msgid "Disables roll-forward recovery and mounts read-only."
+msgstr "ロールフォワード復旧を無効にして、読み取り専用でマウントします。"
+
+msgid "Disables user extended attributes."
+msgstr "ユーザーの拡張属性を無効にします。"
+
+msgid "Disables all plain disk quota options."
+msgstr "通常のディスククォータオプションをすべて無効にします。"
+
+msgid "Points to project journaled quota file."
+msgstr "プロジェクトのジャーナル付きクォータファイルを指定します。"
+
+msgid "Enables project quota accounting."
+msgstr "プロジェクトクォータの集計を有効にします。"
+
+msgid "Enables plain user disk quota accounting."
+msgstr "通常のユーザーディスククォータの集計を有効にします。"
+
+msgid "Sets reserved nodes for privileged-user allocation."
+msgstr "特権ユーザー割り当て用の予約ノードを設定します。"
+
+msgid "Sets reserved space (%) for privileged-user allocation."
+msgstr "特権ユーザー割り当て用の予約容量(%)を設定します。"
+
+msgid "Group ID with access to reserved blocks and nodes."
+msgstr "予約ブロックとノードにアクセスできるグループID。"
+
+msgid "User ID with access to reserved blocks and nodes."
+msgstr "予約ブロックとノードにアクセスできるユーザーID。"
+
+msgid "Enables dummy fscrypt context for testing."
+msgstr "テスト用のダミーfscryptコンテキストを有効にします。"
+
+msgid "Points to user journaled quota file."
+msgstr "ユーザーのジャーナル付きクォータファイルを指定します。"
+
+msgid "Enables user disk quota accounting."
+msgstr "ユーザーディスククォータの集計を有効にします。"
+
+msgid "Enables POSIX Access Control List support."
+msgstr "POSIXアクセス制御リストのサポートを有効にします。"
+
+msgid "Enables TRIM support for SSD delete performance."
+msgstr "SSDの削除パフォーマンス向上のためのTRIMサポートを有効にします。"
+
+msgid "Permission mask for directories."
+msgstr "ディレクトリ用のパーミッションマスク。"
+
+msgid "Permission mask for files."
+msgstr "ファイル用のパーミッションマスク。"
+
+msgid "Forces mounting even if the volume is dirty (not recommended)."
+msgstr "ボリュームが dirty 状態でもマウントを強制します(推奨しません)。"
+
+msgid "Default group ID for created files and directories."
+msgstr "作成されるファイルとディレクトリの既定のグループ ID。"
+
+msgid "Sets the HIDDEN attribute for names starting with a dot."
+msgstr "ドットで始まる名前に HIDDEN 属性を設定します。"
+
+msgid "Charset used to translate path strings to Unicode."
+msgstr "パス文字列を Unicode に変換するために使用する文字セット。"
+
+msgid "Hides files with the Windows HIDDEN attribute."
+msgstr "Windows の HIDDEN 属性を持つファイルを非表示にします。"
+
+msgid "Preallocates space to reduce write fragmentation."
+msgstr "書き込みフラグメンテーションを減らすため、スペースを事前割り当てします。"
+
+msgid "Shows all NTFS meta-files (system files)."
+msgstr "すべての NTFS メタファイル(システムファイル)を表示します。"
+
+msgid "Creates new files as sparse."
+msgstr "新規ファイルをスパースファイルとして作成します。"
+
+msgid "Marks files with the SYSTEM attribute as immutable."
+msgstr "SYSTEM 属性を持つファイルを不変としてマークします。"
+
+msgid "Default user ID for created files and directories."
+msgstr "作成されるファイルとディレクトリの既定のユーザー ID。"
+
+msgid "Default permission mask for files and directories."
+msgstr "ファイルとディレクトリの既定のパーミッションマスク。"
+
+msgid "Rejects filenames not allowed by Windows."
+msgstr "Windows で許可されないファイル名を拒否します。"
+
+msgid "Relaxes utime() permission checks for changing timestamps."
+msgstr "タイムスタンプ変更時の utime() の権限チェックを緩和します。"
+
+msgid "Sets the block size; obsolete."
+msgstr "ブロックサイズを設定します(廃止)。"
+
+msgid "Sets case-sensitivity checking (strict, relaxed, or normal)."
+msgstr "大文字小文字の区別チェックを設定します(strict、relaxed、normal)。"
+
+msgid "Sets codepage for converting to shortname characters."
+msgstr "ショート名文字への変換に使用するコードページを設定します。"
+
+msgid "Obsolete; may fail or be ignored."
+msgstr "廃止。失敗するか無視される場合があります。"
+
+msgid "Obsolete; forces use of a CVF compressed-volume module."
+msgstr "廃止。CVF 圧縮ボリュームモジュールの使用を強制します。"
+
+msgid "Obsolete; passes an option to the CVF module."
+msgstr "廃止。CVF モジュールにオプションを渡します。"
+
+msgid "Enables debug output; unused by current implementation."
+msgstr "デバッグ出力を有効にします。現在の実装では未使用です。"
+
+msgid "Uses DOS 1.x BIOS Parameter Block defaults for small floppies."
+msgstr "小容量フロッピー用に DOS 1.x の BIOS パラメータブロックの既定値を使用します。"
+
+msgid "Forces DOS dot conventions on filenames (obsolete)."
+msgstr "ファイル名に DOS のドット規約を強制します(廃止)。"
+
+msgid "Forces Unix-style names without DOS dots (obsolete)."
+msgstr "DOS ドットのない Unix 形式の名前を強制します(廃止)。"
+
+msgid "Allows dots in 8.3 short names (obsolete)."
+msgstr "8.3 ショート名でのドットを許可します(廃止)。"
+
+msgid "Sets FAT behavior on errors: panic, continue, or remount-ro."
+msgstr "エラー時の FAT の動作を設定します: panic、continue、remount-ro。"
+
+msgid "Forces FAT type 12, 16, or 32, overriding auto-detection."
+msgstr "FAT タイプを 12、16、32 に強制し、自動検出を上書きします。"
+
+msgid "Flushes data to disk earlier than normal."
+msgstr "通常より早くデータをディスクにフラッシュします。"
+
+msgid "Permission mask for regular files."
+msgstr "通常ファイル用のパーミッションマスク。"
+
+msgid "Group ID applied to all files."
+msgstr "すべてのファイルに適用されるグループ ID。"
+
+msgid "Charset converting filenames between disk and Unicode."
+msgstr "ディスク上のファイル名と Unicode の間で変換するための文字セット。"
+
+msgid "Enables NFS export support (stale_rw or nostale_ro)."
+msgstr "NFS エクスポート対応を有効にします(stale_rw または nostale_ro)。"
+
+msgid "Deprecated; use shortname=win95 instead."
+msgstr "非推奨。代わりに shortname=win95 を使用してください。"
+
+msgid "Skips the ~number tail in 8.3 aliases when possible."
+msgstr "可能な場合は、8.3 エイリアスの末尾の ~数字 を省略します。"
+
+msgid "Obsolete; allowed files differing only in case."
+msgstr "廃止。大文字小文字のみ異なるファイルを許可していました。"
+
+msgid "Suppresses warning messages and chmod/chown errors."
+msgstr "警告メッセージと chmod/chown のエラーを抑制します。"
+
+msgid "Treats the FAT read-only attribute as read-only for directories."
+msgstr "ディレクトリでは、FAT の読み取り専用属性を読み取り専用として扱います。"
+
+msgid "Sets 8.3 short-name display/create mode (lower, win95, winnt, mixed)."
+msgstr "8.3 ショート名の表示/作成モードを設定します(lower、win95、winnt、mixed)。"
+
+msgid "Allows execute permission only for .EXE, .COM, or .BAT files."
+msgstr ".EXE、.COM、.BAT ファイルにのみ実行権限を許可します。"
+
+msgid "Treats the FAT system attribute as the immutable flag."
+msgstr "FAT のシステム属性を不変フラグとして扱います。"
+
+msgid "Sets minute offset converting FAT local time to UTC."
+msgstr "FAT のローカル時刻を UTC に変換するための分単位のオフセットを設定します。"
+
+msgid "Interprets timestamps as UTC instead of local time."
+msgstr "タイムスタンプをローカル時刻ではなく UTC として解釈します。"
+
+msgid "Owner user ID applied to all files."
+msgstr "すべてのファイルに適用されるオーナーのユーザー ID。"
+
+msgid "Permission mask for files and directories."
+msgstr "ファイルとディレクトリのパーミッションマスク。"
+
+msgid "Escapes unhandled Unicode characters as :XXXX sequences."
+msgstr "処理されない Unicode 文字を :XXXX シーケンスとしてエスケープします。"
+
+msgid "Uses the free-cluster count stored in FSINFO."
+msgstr "FSINFO に保存された空きクラスター数を使用します。"
+
+msgid "Use UTF-8 to encode long file names."
+msgstr "長いファイル名を UTF-8 でエンコードします。"
+
+msgid "Deprecated; accepted but has no effect."
+msgstr "非推奨。受け入れられますが、効果はありません。"
+
+msgid "Sets behavior on errors: panic, continue, or remount-ro."
+msgstr "エラー時の動作：panic、continue または remount-ro。"
+
+msgid "Default group ID applied to all files."
+msgstr "全ファイルに適用されるデフォルトのグループID。"
+
+msgid "Keeps trailing periods in path components and filenames."
+msgstr "パスの各要素とファイル名の末尾のピリオドを保持します。"
+
+msgid "Uses the system timezone for timestamps lacking a valid offset."
+msgstr "有効なオフセットのないタイムスタンプには、システムのタイムゾーンを使用します。"
+
+msgid "Sets minute offset converting timestamps to UTC."
+msgstr "タイムスタンプを UTC に変換するための分のオフセットを設定します。"
+
+msgid "Default user ID applied to all files."
+msgstr "全ファイルに適用されるデフォルトのユーザーID。"
+
+msgid "Creates directories with zero size, allocating no cluster."
+msgstr "サイズゼロのディレクトリを作成し、クラスタを割り当てません。"
+
+msgid "Enables swap discard; supports discard=once or discard=pages."
+msgstr "スワップの discard を有効にします。discard=once または discard=pages をサポートします。"
+
+msgid "Sets the swap device priority (0-32767)."
+msgstr "スワップデバイスの優先度 (0-32767) を設定します。"
+
+msgid "Maximum seconds to cache directory attributes."
+msgstr "ディレクトリ属性をキャッシュする最大秒数。"
+
+msgid "Maximum seconds to cache regular file attributes."
+msgstr "通常のファイルの属性をキャッシュする最大秒数。"
+
+msgid "Seconds to cache file/directory attributes before re-checking."
+msgstr "ファイル/ディレクトリの属性を再チェックする前にキャッシュする秒数。"
+
+msgid "Sets the destination IP address of the server."
+msgstr "サーバーの宛先 IP アドレスを設定します。"
+
+msgid "Members of this group open files with backup intent."
+msgstr "このグループのメンバーはバックアップ意図でファイルを開きます。"
+
+msgid "This user opens files with backup intent."
+msgstr "このユーザーはバックアップ意図でファイルを開きます。"
+
+msgid "Overrides the default block size reported on SMB3 files."
+msgstr "SMB3 ファイルで報告されるデフォルトのブロックサイズを上書きします。"
+
+msgid "Cache mode for file data: none, strict or loose."
+msgstr "ファイルデータのキャッシュモード：none、strict または loose。"
+
+msgid "Maps CIFS/NTFS ACLs and SIDs to/from Linux permissions."
+msgstr "CIFS/NTFS の ACL および SID を Linux の権限と双方向にマッピングします。"
+
+msgid "Max seconds to defer the final SMB3 file close."
+msgstr "SMB3 ファイルの最終的なクローズを遅延させる最大秒数。"
+
+msgid "Enables experimental SMB 3.1.1 message compression."
+msgstr "実験的な SMB 3.1.1 のメッセージ圧縮を有効にします。"
+
+msgid "Reads username/password from a credentials file."
+msgstr "認証情報ファイルからユーザー名/パスワードを読み取ります。"
+
+msgid "Uid owning the credentials cache (useful with krb5)."
+msgstr "認証情報キャッシュのオーナーとなる uid (krb5 使用時に有用)。"
+
+msgid "Overrides the default mode for directories."
+msgstr "ディレクトリのデフォルトモードを上書きします。"
+
+msgid "Sets the user's domain (workgroup)."
+msgstr "ユーザーのドメイン (ワークグループ) を設定します。"
+
+msgid "Auto-guesses the server domain from the NTLM challenge."
+msgstr "NTLM チャレンジからサーバーのドメインを自動的に推測します。"
+
+msgid "Keeps unsupported permissions in memory only; unreliable."
+msgstr "サポートされていない権限をメモリにのみ保持します。信頼性がありません。"
+
+msgid "Seconds between keepalive echo requests."
+msgstr "キープアライブのエコー要求間の秒数。"
+
+msgid "Min encrypted-read size before offloading decryption."
+msgstr "復号をオフロードするための最小の暗号化読み込みサイズ。"
+
+msgid "Overrides the default mode for regular files."
+msgstr "通常のファイルのデフォルトモードを上書きします。"
+
+msgid "Ignores server gid and always uses the gid value."
+msgstr "サーバーの gid を無視し、常に gid の値を使用します。"
+
+msgid "Ignores server uid and always uses the uid value."
+msgstr "サーバーの uid を無視し、常に uid の値を使用します。"
+
+msgid "Always uses CIFS-style mandatory locks."
+msgstr "常に CIFS 方式の必須ロックを使用します。"
+
+msgid "Enables local disk caching via FS-Cache."
+msgstr "FS-Cache によるローカルディスクキャッシュを有効にします。"
+
+msgid "Default gid owning files when the server gives none."
+msgstr "サーバーが gid を指定しない場合にファイルを所有するデフォルトの gid。"
+
+msgid "Don't prompt for a password; mount as guest."
+msgstr "パスワードを求めず、ゲストとしてマウントします。"
+
+msgid "Keeps the share root directory handle cached."
+msgstr "シェアのルートディレクトリのハンドルをキャッシュします。"
+
+msgid "Ms the server reserves handles after failover."
+msgstr "フェイルオーバー後、サーバーがハンドルを確保するミリ秒数。"
+
+msgid "Hangs when the server crashes instead of erroring."
+msgstr "サーバーがクラッシュした際、エラーにせずにハングします。"
+
+msgid "Extracts uid/gid from a special SID instead of mapping."
+msgstr "マッピングせずに特殊な SID から uid/gid を抽出します。"
+
+msgid "Synonym for nocase; case-insensitive matching."
+msgstr "nocase の同義語。大文字小文字を区別しない照合。"
+
+msgid "Allow interrupts while hung; currently unimplemented."
+msgstr "ハングしている間も割り込みを許可します。現在は未実装です。"
+
+msgid "Charset for converting path names to/from Unicode."
+msgstr "パス名を Unicode と双方向に変換するための文字セット。"
+
+msgid "Enables Unix Extensions (synonym for posix/unix)."
+msgstr "Unix Extensions を有効にします (posix/unix の同義語)。"
+
+msgid "Checks cached leases locally instead of querying server."
+msgstr "サーバーに問い合わせず、キャッシュされたリースをローカルでチェックします。"
+
+msgid "Translates reserved Windows filename characters."
+msgstr "Windows のファイル名の予約文字を変換します。"
+
+msgid "Maps reserved characters per Microsoft Services For Mac."
+msgstr "Microsoft Services For Mac に従って予約文字をマッピングします。"
+
+msgid "Maximum number of cached directories per share."
+msgstr "シェアごとにキャッシュされるディレクトリの最大数。"
+
+msgid "Number of multichannel transport connections (max 16)."
+msgstr "マルチチャンネルの転送接続数 (最大 16)。"
+
+msgid "Maximum SMB2 credits the client can hold."
+msgstr "クライアントが保持できる SMB2 クレジットの最大数。"
+
+msgid "Enables Minshall+French symlink support."
+msgstr "Minshall+French シンボリックリンクサポートを有効にします。"
+
+msgid "Uses multiple transport connections for one session."
+msgstr "1 つのセッションに対して複数のトランスポート接続を使用します。"
+
+msgid "Maps each user's access to individual credentials."
+msgstr "各ユーザーのアクセスを個別の認証情報にマッピングします。"
+
+msgid "Client netbios name used for port 139 connections."
+msgstr "ポート 139 の接続に使用されるクライアントの NetBIOS 名。"
+
+msgid "Disables POSIX ACL operations."
+msgstr "POSIX ACL 操作を無効にします。"
+
+msgid "Uses fixed kernel socket buffer sizes."
+msgstr "固定のカーネルソケットバッファサイズを使用します。"
+
+msgid "Don't send byte-range lock requests to the server."
+msgstr "サーバーにバイト範囲ロックのリクエストを送信しません。"
+
+msgid "Requests case-insensitive path name matching."
+msgstr "大文字小文字を区別しないパス名の一致を要求します。"
+
+msgid "Don't follow Distributed FileSystem referrals."
+msgstr "Distributed FileSystem のリファラルを追随しません。"
+
+msgid "Disables caching of the share root handle."
+msgstr "共有ルートハンドルのキャッシュを無効にします。"
+
+msgid "Don't allow interrupts; currently unimplemented."
+msgstr "割り込みを許可しません（現在未実装）。"
+
+msgid "Don't request leases/oplocks when opening files."
+msgstr "ファイルを開くときにリース/oplock を要求しません。"
+
+msgid "Disables Unix Extensions (synonym for noposix)."
+msgstr "Unix Extensions を無効にします（noposix の別名）。"
+
+msgid "Don't translate reserved filename characters."
+msgstr "ファイル名の予約文字の変換を行いません。"
+
+msgid "Disables client-side permission checking."
+msgstr "クライアント側の権限チェックを無効にします。"
+
+msgid "Disables persistent handles."
+msgstr "永続ハンドルを無効にします。"
+
+msgid "Disables Unix Extensions for this mount."
+msgstr "このマウントで Unix Extensions を無効にします。"
+
+msgid "Don't negotiate POSIX-style pathnames."
+msgstr "POSIX スタイルのパス名のネゴシエーションを行いません。"
+
+msgid "Disables resilient handles."
+msgstr "レジリエントハンドルを無効にします。"
+
+msgid "Client generates inode numbers locally."
+msgstr "クライアントがローカルで inode 番号を生成します。"
+
+msgid "Lets the server set uid/gid on new files."
+msgstr "サーバーが新規ファイルの uid/gid を設定できるようにします。"
+
+msgid "Never reuses existing sockets for new mounts."
+msgstr "新規マウントに既存のソケットを再利用しません。"
+
+msgid "Don't flush to the server on fsync()."
+msgstr "fsync() の際にサーバーへフラッシュしません。"
+
+msgid "Disables getfattr/setfattr xattr operations."
+msgstr "getfattr/setfattr の xattr 操作を無効にします。"
+
+msgid "Specifies the CIFS password (alias of password)."
+msgstr "CIFS パスワードを指定します（password の別名）。"
+
+msgid "Specifies an alternate password for password rotation."
+msgstr "パスワードローテーション用の代替パスワードを指定します。"
+
+msgid "Specifies the CIFS password."
+msgstr "CIFS パスワードを指定します。"
+
+msgid "Enables client-side permission checking (default)."
+msgstr "クライアント側の権限チェックを有効にします（デフォルト）。"
+
+msgid "Keeps opened files across reconnections."
+msgstr "再接続後も開いたファイルを保持します。"
+
+msgid "Port to connect to the CIFS server."
+msgstr "CIFS サーバーに接続するポート。"
+
+msgid "Enables Unix Extensions for this mount."
+msgstr "このマウントで Unix Extensions を有効にします。"
+
+msgid "Allows POSIX-style pathnames (inverse of noposixpaths)."
+msgstr "POSIX スタイルのパス名を許可します（noposixpaths の逆）。"
+
+msgid "Uses SMB Direct over an RDMA adapter."
+msgstr "RDMA アダプタ経由で SMB Direct を使用します。"
+
+msgid "Maximum bytes requested in each read request."
+msgstr "各リードリクエストで要求される最大バイト数。"
+
+msgid "Forwards the opening pid on read/write operations."
+msgstr "読み書き操作時にファイルを開いた pid を転送します。"
+
+msgid "Encrypts traffic at the SMB layer (SMB3+)."
+msgstr "SMB レイヤでトラフィックを暗号化します（SMB3+）。"
+
+msgid "Sets the session security mode (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+msgstr "セッションのセキュリティモードを設定します（none、krb5、krb5i、ntlm、ntlmi、ntlmv2、ntlmv2i、ntlmssp、ntlmsspi）。"
+
+msgid "Server netbios name for old port 139 servers."
+msgstr "ポート 139 の旧サーバー用のサーバー NetBIOS 名。"
+
+msgid "Uses inode numbers returned by the server."
+msgstr "サーバーから返された inode 番号を使用します。"
+
+msgid "Sets uid/gid of processes on newly created files."
+msgstr "新規作成ファイルのプロセスの uid/gid を設定します。"
+
+msgid "Creates device/fifo files in Services for Unix format."
+msgstr "Services for Unix 形式のデバイス/FIFO ファイルを作成します。"
+
+msgid "Ignores unrecognized mount options following it."
+msgstr "それ以降の認識されないマウントオプションを無視します。"
+
+msgid "Mounts a specific snapshot of the remote share."
+msgstr "リモート共有の特定のスナップショットをマウントします。"
+
+msgid "Returns errors instead of hanging when server crashes."
+msgstr "サーバーがクラッシュしたときにハングする代わりにエラーを返します。"
+
+msgid "Default uid owning files when the server gives none."
+msgstr "サーバーが uid を指定しない場合の、ファイルの所有者となる既定の uid。"
+
+msgid "Enables Unix Extensions (synonym for posix)."
+msgstr "Unix Extensions を有効にします（posix の別名）。"
+
+msgid "Namespace in which kernel upcalls are handled."
+msgstr "カーネルのアップコールを処理する名前空間。"
+
+msgid "Specifies the SMB username (alias of username)."
+msgstr "SMB ユーザー名を指定します（username の別名）。"
+
+msgid "Specifies the SMB username to connect as."
+msgstr "接続に使用する SMB ユーザー名を指定します。"
+
+msgid "SMB protocol version (e.g. 1.0, 2.1, 3.1.1)."
+msgstr "SMBプロトコルのバージョン（例：1.0、2.1、3.1.1）。"
+
+msgid "Maximum bytes sent in each write request."
+msgstr "各書き込みリクエストで送信される最大バイト数。"
+
+msgid "Enables attribute caching (default)."
+msgstr "属性キャッシュを有効にします（既定）。"
+
+msgid "Disables attribute caching; makes writes synchronous."
+msgstr "属性キャッシュを無効にし、書き込みを同期にします。"
+
+msgid "Max seconds directory attributes are cached."
+msgstr "ディレクトリの属性がキャッシュされる最大秒数。"
+
+msgid "Min seconds directory attributes are cached."
+msgstr "ディレクトリの属性がキャッシュされる最小秒数。"
+
+msgid "Max seconds regular file attributes are cached."
+msgstr "通常ファイルの属性がキャッシュされる最大秒数。"
+
+msgid "Min seconds regular file attributes are cached."
+msgstr "通常ファイルの属性がキャッシュされる最小秒数。"
+
+msgid "Sets all attribute-cache timeouts to this value."
+msgstr "すべての属性キャッシュのタイムアウトをこの値に設定します。"
+
+msgid "Enables the NFSACL sideband protocol."
+msgstr "NFSACLサイドバンドプロトコルを有効にします。"
+
+msgid "Disables the NFSACL sideband protocol."
+msgstr "NFSACLサイドバンドプロトコルを無効にします。"
+
+msgid "Retries a failed mount in the background."
+msgstr "失敗したマウントをバックグラウンドで再試行します。"
+
+msgid "Fails the mount in the foreground (default)."
+msgstr "マウントをフォアグラウンドで失敗させる（既定）。"
+
+msgid "Client IP advertised for NFSv4.0 callbacks."
+msgstr "NFSv4.0のコールバック用に公開されるクライアントIP。"
+
+msgid "Uses close-to-open cache coherence semantics."
+msgstr "クローズ・トゥ・オープンのキャッシュ整合性セマンティクスを使用します。"
+
+msgid "Disables close-to-open cache coherence."
+msgstr "クローズ・トゥ・オープンのキャッシュ整合性を無効にします。"
+
+msgid "Caches read-only pages on local disk via FS-Cache."
+msgstr "FS-Cacheを介して読み取り専用ページをローカルディスクにキャッシュします。"
+
+msgid "Disables FS-Cache local disk caching."
+msgstr "FS-Cacheによるローカルディスクキャッシュを無効にします。"
+
+msgid "Retries requests indefinitely after server timeouts."
+msgstr "サーバーのタイムアウト後もリクエストを無制限に再試行します。"
+
+msgid "Allow interrupts while hung; ignored after kernel 2.6.25."
+msgstr "ハング中の割り込みを許可します。カーネル2.6.25以降では無視されます。"
+
+msgid "Don't allow interrupts; ignored after kernel 2.6.25."
+msgstr "割り込みを許可しません。カーネル2.6.25以降では無視されます。"
+
+msgid "Treats flock/POSIX locks as local only."
+msgstr "flock/POSIXロックをローカル専用として扱います。"
+
+msgid "Uses the NLM protocol to lock files on the server."
+msgstr "NLMプロトコルを使用してサーバー上のファイルをロックします。"
+
+msgid "Don't use NLM locking; locks are local only."
+msgstr "NLMロックを使用しません。ロックはローカル専用になります。"
+
+msgid "Directory-entry cache mode: all, none, pos or positive."
+msgstr "ディレクトリエントリのキャッシュモード：all、none、posまたはpositive。"
+
+msgid "Max connections to IPs of one NFSv4.1+ server."
+msgstr "1つのNFSv4.1以降のサーバーのIPへの最大接続数。"
+
+msgid "Uses TSM-compatible ID for NFSv4 migration."
+msgstr "NFSv4マイグレーションにTSM互換のIDを使用します。"
+
+msgid "Uses legacy client ID string (default)."
+msgstr "従来のクライアントID文字列を使用します（既定）。"
+
+msgid "NFSv4 protocol minor version number."
+msgstr "NFSv4プロトコルのマイナーバージョン番号。"
+
+msgid "Hostname running the mountd service."
+msgstr "mountdサービスを動作させるホスト名。"
+
+msgid "Port of the server's mountd service."
+msgstr "サーバーのmountdサービスのポート。"
+
+msgid "Transport used to contact mountd (udp/tcp)."
+msgstr "mountdに接続するために使用するトランスポート（udp/tcp）。"
+
+msgid "RPC version used to contact mountd."
+msgstr "mountdに接続するために使用するRPCバージョン。"
+
+msgid "Maximum length of a pathname component."
+msgstr "パス名のコンポーネントの最大長。"
+
+msgid "Number of connections to establish to the server."
+msgstr "サーバーに確立する接続数。"
+
+msgid "NFS protocol version (synonym of vers)."
+msgstr "NFSプロトコルのバージョン（versの別名）。"
+
+msgid "Disables rounding buffered writes to page boundaries."
+msgstr "バッファリングされた書き込みのページ境界への丸めを無効にします。"
+
+msgid "Disables READDIRPLUS requests."
+msgstr "READDIRPLUSリクエストを無効にします。"
+
+msgid "Port of the server's NFS service."
+msgstr "サーバーのNFSサービスのポート。"
+
+msgid "Transport protocol: udp, tcp or rdma."
+msgstr "トランスポートプロトコル：udp、tcpまたはrdma。"
+
+msgid "Uses RDMA transport (synonym for proto=rdma)."
+msgstr "RDMAトランスポートを使用します（proto=rdmaの別名）。"
+
+msgid "Enables READDIRPLUS requests."
+msgstr "READDIRPLUSリクエストを有効にします。"
+
+msgid "Uses privileged source ports (default)."
+msgstr "特権付きのソースポートを使用します（既定）。"
+
+msgid "Uses non-privileged source ports."
+msgstr "非特権のソースポートを使用します。"
+
+msgid "Number of retries before further recovery action."
+msgstr "さらなる回復アクションを行うまでの再試行回数。"
+
+msgid "Minutes to retry a failed mount before giving up."
+msgstr "諦める前に失敗したマウントを再試行し続ける時間（分）。"
+
+msgid "Maximum bytes per network read request."
+msgstr "1回のネットワーク読み込みリクエストあたりの最大バイト数。"
+
+msgid "Maximum bytes per network write request."
+msgstr "1回のネットワーク書き込みリクエストあたりの最大バイト数。"
+
+msgid "Security flavors: none, sys, krb5, krb5i or krb5p."
+msgstr "セキュリティフレーバー：none、sys、krb5、krb5iまたはkrb5p。"
+
+msgid "Shares one data/attribute cache across mounts."
+msgstr "マウント間で 1 つのデータ/属性キャッシュを共有する。"
+
+msgid "Gives each mount its own cache."
+msgstr "各マウントに独自のキャッシュを割り当てる。"
+
+msgid "Ignores unrecognized mount options."
+msgstr "認識されないマウントオプションを無視する。"
+
+msgid "Returns EIO after retrans retries."
+msgstr "retrans のリトライ後に EIO を返す。"
+
+msgid "Returns ETIMEDOUT after retrans retries."
+msgstr "retrans のリトライ後に ETIMEDOUT を返す。"
+
+msgid "Serves cached data when revalidation times out."
+msgstr "再検証がタイムアウトした場合、キャッシュされたデータを返す。"
+
+msgid "Don't fall back to cache when revalidation fails."
+msgstr "再検証に失敗した場合、キャッシュにフォールバックしない。"
+
+msgid "Uses TCP transport (synonym for proto=tcp)."
+msgstr "TCP トランスポートを使用 (proto=tcp の別名)。"
+
+msgid "Deciseconds to wait before retrying a request."
+msgstr "リクエストのリトライまでの待機時間 (0.1 秒単位)。"
+
+msgid "Probes NFSv4.1 session trunking on new mounts."
+msgstr "新しいマウントで NFSv4.1 セッション・トランキングの検出を試みる。"
+
+msgid "Disables session trunking discovery (default)."
+msgstr "セッション・トランキングの検出を無効にする (デフォルト)。"
+
+msgid "Uses UDP transport (synonym for proto=udp)."
+msgstr "UDP トランスポートを使用 (proto=udp の別名)。"
+
+msgid "NFS protocol version (alternative to nfsvers)."
+msgstr "NFS プロトコルバージョン (nfsvers の代替)。"
+
+msgid "Transport security policy: none, tls or mtls."
+msgstr "トランスポートのセキュリティポリシー: none、tls または mtls。"
+
+msgid "Automatically reconnects if the connection is interrupted."
+msgstr "接続が中断された場合、自動的に再接続する。"
+
+msgid "Delays connecting until the mountpoint is first accessed."
+msgstr "マウントポイントが初めてアクセスされるまで、接続を遅延する。"
+
+msgid "Synchronous writes; slower but more reliable."
+msgstr "同期書き込み；遅いがより確実。"
+
+msgid "Disables speculative read-ahead beyond requested data."
+msgstr "要求されたデータを超える投機的なリードエヘッドを無効にする。"
+
+msgid "Synchronous readdir; slower but more reliable."
+msgstr "同期 readdir；遅いがより確実。"
+
+msgid "Enables workarounds for broken SFTP servers."
+msgstr "不具合のある SFTP サーバー向けのワークアラウンドを有効にする。"
+
+msgid "UID/GID mapping mode: none, user or file."
+msgstr "UID/GID マッピングモード: none、user または file。"
+
+msgid "File of username:uid mappings for idmap=file."
+msgstr "idmap=file 用のユーザー名:uid マッピングファイル。"
+
+msgid "File of groupname:gid mappings for idmap=file."
+msgstr "idmap=file 用のグループ名:gid マッピングファイル。"
+
+msgid "Handles missing idmap entries: ignore or error."
+msgstr "idmap エントリ欠如時の処理: ignore または error。"
+
+msgid "Command to run instead of ssh."
+msgstr "ssh の代わりに実行するコマンド。"
+
+msgid "SSH protocol version to use (default 2)."
+msgstr "使用する SSH プロトコルバージョン (デフォルト 2)。"
+
+msgid "Path to the sftp server or subsystem."
+msgstr "sftp サーバーまたはサブシステムへのパス。"
+
+msgid "Connects directly to a port, bypassing SSH."
+msgstr "SSH を経由せずにポートに直接接続する。"
+
+msgid "Connects via vsock to CID:PORT, bypassing SSH."
+msgstr "SSH を経由せずに、vsock で CID:PORT に接続する。"
+
+msgid "Communicates over stdin/stdout, bypassing the network."
+msgstr "ネットワークを介さず、stdin/stdout 経由で通信する。"
+
+msgid "Makes link(2) fail with ENOSYS."
+msgstr "link(2) を ENOSYS で失敗させる。"
+
+msgid "Turns absolute symlinks relative on the client."
+msgstr "クライアント側で絶対パスのシンボリックリンクを相対パスに変換する。"
+
+msgid "Presents server symlinks as regular files."
+msgstr "サーバーのシンボリックリンクを通常ファイルとして表示する。"
+
+msgid "Don't check that the remote directory exists."
+msgstr "リモートディレクトリの存在を確認しない。"
+
+msgid "Reads the password from stdin (for pam_mount only)."
+msgstr "stdin からパスワードを読み取る (pam_mount のみ)。"
+
+msgid "Enables or disables the SSHFS directory cache."
+msgstr "SSHFS のディレクトリキャッシュを有効または無効にする。"
+
+msgid "Maximum size of the directory cache."
+msgstr "ディレクトリキャッシュの最大サイズ。"
+
+msgid "Timeout in seconds for the directory cache."
+msgstr "ディレクトリキャッシュのタイムアウト (秒)。"
+
+msgid "Timeout for cached attributes."
+msgstr "キャッシュされた属性のタイムアウト。"
+
+msgid "Timeout for cached symlinks."
+msgstr "キャッシュされたシンボリックリンクのタイムアウト。"
+
+msgid "Timeout for cached directory names."
+msgstr "キャッシュされたディレクトリ名のタイムアウト。"
+
+msgid "Interval for cleaning the directory cache."
+msgstr "ディレクトリキャッシュのクリーンアップ間隔。"
+
+msgid "Interval for forced cleaning when full."
+msgstr "満杯時の強制クリーンアップ間隔。"
+
+msgid "Disables the kernel page cache for file content."
+msgstr "ファイル内容のカーネルページキャッシュを無効にする。"
+
+msgid "Maximum number of simultaneous SSH connections."
+msgstr "同時 SSH 接続の最大数。"
+
+msgid "Allows all users to access the mount."
+msgstr "すべてのユーザーのアクセスを許可する。"
+
+msgid "Allows root access in addition to the mounter."
+msgstr "マウントしたユーザーに加え、root のアクセスを許可する。"
+
+msgid "Unmounts automatically when the process exits."
+msgstr "プロセス終了時に自動的にアンマウントする。"
+
+msgid "Lets the kernel enforce permission checks."
+msgstr "カーネルによる権限チェックを強制する。"
+
+msgid "Caches file data in kernel without invalidation on open."
+msgstr "ファイルデータをカーネルにキャッシュし、オープン時に無効化しません。"
+
+msgid "Invalidates kernel data cache when file mtime changes."
+msgstr "ファイルの mtime が変更されたとき、カーネルのデータキャッシュを無効化します。"
+
+msgid "Uses filesystem-provided inode numbers."
+msgstr "ファイルシステムが提供する inode 番号を使用します。"
+
+msgid "Allows mounting over non-empty directories (obsolete, now default)."
+msgstr "空でないディレクトリ上へのマウントを許可します（非推奨、現在はデフォルト）。"
+
+msgid "Source string shown in /proc/mounts and mtab."
+msgstr "/proc/mounts と mtab に表示されるソース文字列。"
+
+msgid "Maximum size of read requests (bytes)."
+msgstr "読み込みリクエストの最大サイズ（バイト）。"
+
+msgid "Maximum size of write requests (bytes)."
+msgstr "書き込みリクエストの最大サイズ（バイト）。"
+
+msgid "Sets the block size to 512, 1024, or 2048."
+msgstr "ブロックサイズを 512、1024、または 2048 に設定します。"
+
+msgid "Sets filename case checking (relaxed or strict)."
+msgstr "ファイル名の大小文字チェックを設定します（relaxed または strict）。"
+
+msgid "Ignores high-order bits of file lengths (files limited to 16 MB)."
+msgstr "ファイル長の上位ビットを無視します（ファイルは 16 MB まで）。"
+
+msgid "Group ID given to all files."
+msgstr "全ファイルに付与されるグループ ID。"
+
+msgid "Charset converting Joliet Unicode names to 8-bit characters."
+msgstr "Joliet の Unicode 名を 8 ビット文字に変換する文字セット。"
+
+msgid "Sets non-Rock Ridge name translation (normal, off, or acorn)."
+msgstr "非 Rock Ridge の名前変換を設定します（normal、off、または acorn）。"
+
+msgid "Sets default permission mode for non-Rock Ridge files."
+msgstr "非 Rock Ridge ファイルのデフォルト権限モードを設定します。"
+
+msgid "Disables Microsoft Joliet extensions."
+msgstr "Microsoft Joliet 拡張を無効にします。"
+
+msgid "Disables Rock Ridge extensions."
+msgstr "Rock Ridge 拡張を無効にします。"
+
+msgid "Sets the sector where the session begins."
+msgstr "セッションの開始セクターを設定します。"
+
+msgid "Selects the session on a multisession CD."
+msgstr "マルチセッション CD のセッションを選択します。"
+
+msgid "User ID given to all files."
+msgstr "全ファイルに付与されるユーザー ID。"
+
+msgid "Shows hidden and associated files."
+msgstr "隠しファイルと関連ファイルを表示します。"
+
+msgid "Converts 16-bit Unicode CD names to UTF-8."
+msgstr "16 ビット Unicode の CD 名を UTF-8 に変換します。"
+
+msgid "Embeds file data in the inode (default)."
+msgstr "ファイルデータを inode に埋め込みます（デフォルト）。"
+
+msgid "Disables embedding file data in the inode."
+msgstr "ファイルデータの inode への埋め込みを無効にします。"
+
+msgid "Overrides the standard anchor location (default 256)."
+msgstr "標準のアンカー位置をオーバーライドします（デフォルト 256）。"
+
+msgid "Sets the block size."
+msgstr "ブロックサイズを設定します。"
+
+msgid "Sets default permission mode for directories."
+msgstr "ディレクトリのデフォルト権限モードを設定します。"
+
+msgid "Unimplemented and ignored."
+msgstr "未実装であり、無視されます。"
+
+msgid "Sets the default group for all files."
+msgstr "全ファイルのデフォルトグループを設定します。"
+
+msgid "Sets the NLS character set for filenames."
+msgstr "ファイル名の NLS 文字セットを設定します。"
+
+msgid "Sets the last block of the filesystem."
+msgstr "ファイルシステムの最終ブロックを設定します。"
+
+msgid "Uses long UDF address descriptors (default)."
+msgstr "長い UDF アドレスディスクリプタを使用します（デフォルト）。"
+
+msgid "Sets default permission mode for non-directory files."
+msgstr "非ディレクトリファイルのデフォルト権限モードを設定します。"
+
+msgid "Unsets strict UDF conformance."
+msgstr "厳密な UDF 準拠を解除します。"
+
+msgid "Skips volume recognition sequence and mounts anyway."
+msgstr "ボリューム認識シーケンスをスキップして、それでもマウントします。"
+
+msgid "Selects the session on multisession optical media."
+msgstr "マルチセッション光メディアのセッションを選択します。"
+
+msgid "Uses short UDF address descriptors."
+msgstr "短い UDF アドレスディスクリプタを使用します。"
+
+msgid "Sets the default user for all files."
+msgstr "全ファイルのデフォルトユーザーを設定します。"
+
+msgid "Masks out permissions from all inodes read."
+msgstr "読み込まれたすべての inode の権限をマスクします。"
+
+msgid "Shows deleted files in listings."
+msgstr "削除済みファイルをファイル一覧に表示します。"
+
+msgid "Shows otherwise hidden files."
+msgstr "通常は非表示のファイルを表示します。"
+
+msgid "Uses the UTF-8 character set."
+msgstr "UTF-8 文字セットを使用します。"
+
+msgid "Sets initial group ID of the root directory."
+msgstr "ルートディレクトリの初期グループ ID を設定します。"
+
+msgid "Huge-page policy for files: never, always, within_size, advise."
+msgstr "ファイルのハジュページポリシー: never、always、within_size、advise。"
+
+msgid "Sets initial permissions of the root directory."
+msgstr "ルートディレクトリの初期権限を設定します。"
+
+msgid "Sets NUMA memory allocation policy for all files."
+msgstr "全ファイルの NUMA メモリ割り当てポリシーを設定します。"
+
+msgid "Disables swap; files cannot be swapped out."
+msgstr "スワップを無効にし、ファイルはスワップアウトできません。"
+
+msgid "Same as size, but expressed in blocks of PAGE_SIZE."
+msgstr "size と同じですが、PAGE_SIZE のブロックで表されます。"
+
+msgid "Maximum number of inodes for this instance."
+msgstr "このインスタンスの inode の最大数。"
+
+msgid "Upper size limit, e.g. 8m or 50%; 0 removes the limit."
+msgstr "サイズの上限、例: 8m または 50%。0 で上限を解除します。"
+
+msgid "Sets initial user ID of the root directory."
+msgstr "ルートディレクトリの初期ユーザーIDを設定します。"
+
+msgid "Group whose members bypass hidepid access restrictions."
+msgstr "メンバーがhidepidのアクセス制限を回避できるグループ。"
+
+msgid "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible."
+msgstr "/proc/pidエントリを非表示にします。0: 無効、1: 自分のディレクトリのみ、2: 他のPIDを非表示。"
+
+msgid "Selects the PID namespace used to translate PIDs (new in 6.16)."
+msgstr "PIDの変換に使用するPID名前空間を選択します(6.16で追加)。"
+
+msgid "Shows only the pid subset, hiding other top-level proc files."
+msgstr "pidサブセットのみを表示し、他のトップレベルのprocファイルを非表示にします。"
+
+msgid "Sets group of newly created pseudo-terminals."
+msgstr "新規作成される擬似端末のグループを設定します。"
+
+msgid "Limits the number of pseudo-terminals in this instance."
+msgstr "このインスタンスの擬似端末の数を制限します。"
+
+msgid "Sets permissions of newly created pseudo-terminals."
+msgstr "新規作成される擬似端末の権限を設定します。"
+
+msgid "Creates a private instance with independent pty index space."
+msgstr "独立したptyインデックス空間を持つプライベートインスタンスを作成します。"
+
+msgid "Sets the mode of the instance's ptmx device node."
+msgstr "インスタンスのptmxデバイスノードのモードを設定します。"
+
+msgid "Sets owner of newly created pseudo-terminals."
+msgstr "新規作成される擬似端末の所有者を設定します。"
+
+msgid "Favors dynamic cgroup changes over hot-path fork/exit costs."
+msgstr "ホットパス上のfork/exitコストよりも、動的なcgroup変更を優先します。"
+
+msgid "Counts HugeTLB usage in memory controller accounting."
+msgstr "メモリコントローラーの集計にHugeTLBの使用量を含めます。"
+
+msgid "Reports only local memory.events, excluding subtree counts."
+msgstr "サブツリーの集計を除き、ローカルmemory.eventsのみを報告します。"
+
+msgid "Applies memory.min/low protection recursively to subtrees."
+msgstr "memory.min/lowの保護をサブツリーに再帰的に適用します。"
+
+msgid "Treats cgroup namespaces as delegation boundaries."
+msgstr "cgroup名前空間を委任境界として扱います。"
+
+msgid "Counts only local fork failures in pids.events.max."
+msgstr "pids.events.maxでは、ローカルでのfork失敗のみをカウントします。"
+
+msgid "Sets the group of the debugfs mount."
+msgstr "debugfsマウントのグループを設定します。"
+
+msgid "Sets permissions of the mountpoint."
+msgstr "マウントポイントの権限を設定します。"
+
+msgid "Sets the owner of the debugfs mount."
+msgstr "debugfsマウントの所有者を設定します。"
+
+msgid "Sets the group of the tracefs mount."
+msgstr "tracefsマウントのグループを設定します。"
+
+msgid "Sets the owner of the tracefs mount."
+msgstr "tracefsマウントの所有者を設定します。"
+
+msgid "Sets group of the filesystem root."
+msgstr "ファイルシステムルートのグループを設定します。"
+
+msgid "Reserves a minimum of huge-page memory; mount fails if short."
+msgstr "最低限のhuge-pageメモリを確保します。不足するとマウントが失敗します。"
+
+msgid "Sets permissions of the filesystem root."
+msgstr "ファイルシステムルートの権限を設定します。"
+
+msgid "Maximum number of inodes the filesystem can use."
+msgstr "ファイルシステムが使用できるinodeの最大数。"
+
+msgid "Uses the given huge-page size for this mount."
+msgstr "このマウントに指定されたhuge-pageサイズを使用します。"
+
+msgid "Maximum huge-page memory the filesystem may use."
+msgstr "ファイルシステムが使用できるhuge-pageメモリの最大値。"
+
+msgid "Sets owner of the filesystem root."
+msgstr "ファイルシステムルートの所有者を設定します。"
+
+msgid "Access mode: user, <uid>, any or client."
+msgstr "アクセスモード: user、<uid>、any または client。"
+
+msgid "Authentication fid used by Plan 9 security."
+msgstr "Plan 9セキュリティで使用する認証fid。"
+
+msgid "File tree to access on the server."
+msgstr "サーバー上でアクセスするファイルツリー。"
+
+msgid "Caching policy: none, readahead, mmap, loose or fscache."
+msgstr "キャッシュポリシー: none、readahead、mmap、loose または fscache。"
+
+msgid "Tag for the persistent fscache."
+msgstr "永続fscacheのタグ。"
+
+msgid "Debug level as a bitmask."
+msgstr "デバッグレベル(ビットマスク)。"
+
+msgid "Attempts to mount with this gid."
+msgstr "このgidでマウントを試みます。"
+
+msgid "Attempts to mount as this uid."
+msgstr "このuidでマウントを試みます。"
+
+msgid "Bypasses the page cache on all reads/writes."
+msgstr "すべての読み書きでページキャッシュをバイパスします。"
+
+msgid "Ignores qid.version==0 as a cache marker."
+msgstr "qid.version==0をキャッシュマーカーとして無視します。"
+
+msgid "Bytes used for 9p packet payload."
+msgstr "9pパケットのペイロードに使用されるバイト数。"
+
+msgid "Ms to retain negative dentries in cache."
+msgstr "負のdentryをキャッシュに保持するミリ秒数。"
+
+msgid "Forces legacy 9p2000 mode (no extensions)."
+msgstr "従来の9p2000モードを強制します(拡張なし)。"
+
+msgid "Don't map special files; shows them as normal files."
+msgstr "特殊ファイルをマッピングせず、通常ファイルとして表示します。"
+
+msgid "Don't offer xattr functions on this mount."
+msgstr "このマウントでxattr機能を提供しません。"
+
+msgid "Port to connect to on the remote server."
+msgstr "リモートサーバーへの接続先ポート。"
+
+msgid "File descriptor for reading with trans=fd."
+msgstr "trans=fdの読み取りに使用するファイルディスクリプタ。"
+
+msgid "Transport: unix, tcp, fd, virtio, rdma or usbg."
+msgstr "トランスポート: unix、tcp、fd、virtio、rdma または usbg。"
+
+msgid "User name to mount as on the server."
+msgstr "サーバーでマウントに使用するユーザー名。"
+
+msgid "9p protocol version: 9p2000, 9p2000.u or 9p2000.L."
+msgstr "9pプロトコルバージョン: 9p2000、9p2000.u または 9p2000.L。"
+
+msgid "File descriptor for writing with trans=fd."
+msgstr "trans=fd を使用した書き込み用のファイルディスクリプタ。"
+
+msgid "Appends a data-only lower layer directory (new mount API)."
+msgstr "データ専用の lower レイヤーディレクトリを追加します（新しいマウント API）。"
+
+msgid "Controls fsync during copy-up: auto, strict, or volatile."
+msgstr "copy-up 時の fsync を制御します：auto、strict、または volatile。"
+
+msgid "Use an index to avoid inode collisions: on or off."
+msgstr "inode の衝突を避けるためのインデックスを使用します：on または off。"
+
+msgid "Colon-separated list of lower-layer directories."
+msgstr "コロンで区切られた lower レイヤーディレクトリのリスト。"
+
+msgid "Copy up only metadata first, deferring data copy: on or off."
+msgstr "まずメタデータのみを copy-up し、データのコピーは後回しにします：on または off。"
+
+msgid "Make the overlay mountable via NFS: on or off."
+msgstr "overlay を NFS 経由でマウント可能にします：on または off。"
+
+msgid "Record the caller's credentials for permission checks."
+msgstr "権限チェック用に呼び出し元の認証情報を記録します。"
+
+msgid "Redirect directories on rename: on, off, follow, or nofollow."
+msgstr "rename 時にディレクトリをリダイレクトします：on、off、follow、または nofollow。"
+
+msgid "Directory used as the upper (writable) layer."
+msgstr "upper（書き込み可能）レイヤーとして使用されるディレクトリ。"
+
+msgid "Use the user.overlay.* xattr namespace instead of trusted.overlay.*."
+msgstr "trusted.overlay.* の代わりに user.overlay.* xattr 名前空間を使用します。"
+
+msgid "Control the overlay UUID and fsid: null, off, on, or auto."
+msgstr "overlay の UUID と fsid を制御します：null、off、on、または auto。"
+
+msgid "Verify metacopy digests with fs-verity: off, on, or require."
+msgstr "metacopy のダイジェストを fs-verity で検証します：off、on、または require。"
+
+msgid "Prefer performance over durability; data not crash-safe."
+msgstr "耐久性よりパフォーマンスを優先します。データはクラッシュ耐性がありません。"
+
+msgid "Scratch directory on the same filesystem as upperdir."
+msgstr "upperdir と同じファイルシステム上のスクラッチディレクトリ。"
+
+msgid "Appends an additional work directory (new mount API)."
+msgstr "work ディレクトリを追加します（新しいマウント API）。"
+
+msgid "Compose unique inode numbers across layers: on, off, or auto."
+msgstr "レイヤー間で一意の inode 番号を構成します：on、off、または auto。"
+
+msgid "Enable access control lists (legacy alias for acltype)."
+msgstr "アクセス制御リストを有効にします（acltype のレガシー別名）。"
+
+msgid "Disable ACLs (alias for acltype=off)."
+msgstr "ACL を無効にします（acltype=off の別名）。"
+
+msgid "Select ACL type: off, nfsv4, or posix."
+msgstr "ACL の種類を選択します：off、nfsv4、または posix。"
+
+msgid "Enable mandatory locking (alias for nbmand=on)."
+msgstr "義務的ロックを有効にします（nbmand=on の別名）。"
+
+msgid "Disable mandatory locking (alias for nbmand=off)."
+msgstr "義務的ロックを無効にします（nbmand=off の別名）。"
+
+msgid "Mount with non-blocking mandatory locks."
+msgstr "非ブロッキングな義務的ロックでマウントします。"
+
+msgid "Allow mounting over a non-empty or busy directory."
+msgstr "空でないまたは使用中のディレクトリ上のマウントを許可します。"
+
+msgid "Enable POSIX ACLs (alias for acltype=posix)."
+msgstr "POSIX ACL を有効にします（acltype=posix の別名）。"
+
+msgid "Disable relative access-time updates (plain atime)."
+msgstr "相対アクセス時刻の更新を無効にします（通常の atime）。"
+
+msgid "Enable extended attributes."
+msgstr "拡張属性を有効にします。"
+
+msgid "Disable extended attributes."
+msgstr "拡張属性を無効にします。"
+
+msgid "Private flag marking the mount as managed by ZFS."
+msgstr "マウントが ZFS によって管理されていることを示すプライベートフラグ。"
+
+msgid "Compression type used for background (rebalance) writes."
+msgstr "バックグラウンド（rebalance）書き込みで使用する圧縮タイプ。"
+
+msgid "Target device/label to move data to in the background."
+msgstr "バックグラウンドでデータを移動する対象デバイス/ラベル。"
+
+msgid "Compression type used for foreground writes."
+msgstr "フォアグラウンド書き込みで使用する圧縮タイプ。"
+
+msgid "Checksum type used for data writes."
+msgstr "データ書き込みに使用するチェックサムタイプ。"
+
+msgid "Number of replicas to keep for user data."
+msgstr "ユーザーデータ用に保持するレプリカ数。"
+
+msgid "Allows mounting with data degraded (missing a replica)."
+msgstr "データがデグレード（レプリカの欠落）している場合でもマウントすることを許可します。"
+
+msgid "Allows mounting even when data would be missing."
+msgstr "データが欠落する場合でもマウントを許可します。"
+
+msgid "Enables discard/TRIM support on member devices."
+msgstr "メンバーデバイスでの discard/TRIM 対応を有効にします。"
+
+msgid "Enables erasure coding."
+msgstr "エラージャーコーディングを有効にします。"
+
+msgid "Action to take on filesystem inconsistency: continue, fix_safe, panic, or ro."
+msgstr "ファイルシステムに不整合が生じた場合のアクション：continue、fix_safe、panic、または ro。"
+
+msgid "Fixes fsck errors without prompting during mount."
+msgstr "マウント時にプロンプトを表示せずに fsck のエラーを修正します。"
+
+msgid "Preferred target device/label for foreground writes."
+msgstr "フォアグラウンド書き込みで優先使用する対象デバイス/ラベル。"
+
+msgid "Runs fsck during mount."
+msgstr "マウント時に fsck を実行します。"
+
+msgid "Enables inline data extents for small files (default on)."
+msgstr "小ファイル用のインラインデータ extent を有効にします（デフォルト：on）。"
+
+msgid "Restricts new inode numbers to 32 bits."
+msgstr "新規 inode 番号を 32 ビットに制限します。"
+
+msgid "Milliseconds before an automatic journal commit (default 1000)."
+msgstr "自動ジャーナルコミットまでのミリ秒数（デフォルト：1000）。"
+
+msgid "Disables journal flush on sync/fsync."
+msgstr "sync/fsync 時のジャーナルフラッシュを無効にします。"
+
+msgid "Milliseconds before automatic journal reclaim."
+msgstr "自動ジャーナル回収までのミリ秒数。"
+
+msgid "Checksum type used for metadata writes."
+msgstr "メタデータ書き込みに使用するチェックサムタイプ。"
+
+msgid "Number of replicas to keep for metadata (journal and btree)."
+msgstr "メタデータ（ジャーナルと btree）に保持するレプリカ数。"
+
+msgid "Preferred target device/label for metadata writes."
+msgstr "メタデータ書き込み用の優先ターゲットデバイス/ラベル。"
+
+msgid "Issues no writes at all, even for journal replay (super read-only mode)."
+msgstr "ジャーナルのリプレイを含め、書き込みを一切行わない（完全読み専用モード）。"
+
+msgid "Doesn't open member devices in exclusive mode."
+msgstr "メンバーデバイスを排他モードで開かない。"
+
+msgid "Does not replay the journal on mount (not recommended)."
+msgstr "マウント時にジャーナルのリプレイを行わない（非推奨）。"
+
+msgid "Target device/label data is copied to on read."
+msgstr "読み取り時にターゲットデバイス/ラベルへデータがコピーされる。"
+
+msgid "Rate-limits error messages during fsck."
+msgstr "fsck実行中のエラーメッセージ頻度を制限する。"
+
+msgid "Mounts the filesystem in read-only mode."
+msgstr "ファイルシステムを読み専用モードでマウントする。"
+
+msgid "Uses the CPU id for the high bits of new inode numbers."
+msgstr "新しいinode番号の上位ビットにCPU IDを使用する。"
+
+msgid "Hash function used for string hash tables (directories and xattrs)."
+msgstr "文字列ハッシュテーブル（ディレクトリおよびxattr）に使用されるハッシュ関数。"
+
+msgid "Prints extra debugging info during mount/recovery."
+msgstr "マウント/リカバリー中に追加のデバッグ情報を出力する。"
+
+msgid "Upgrades the on-disk format to the latest version on mount."
+msgstr "マウント時にディスク上のフォーマットを最新版へアップグレードする。"
+
+msgid "Stores full 128-bit cryptographic MACs instead of the default 80-bit."
+msgstr "デフォルトの80ビットではなく、完全な128ビットの暗号MACを保存する。"
+
+msgid "Enables group quotas."
+msgstr "グループクォータを有効にする。"
+
+msgid "Enables project quotas."
+msgstr "プロジェクトクォータを有効にする。"
+
+msgid "Enables user quotas."
+msgstr "ユーザークォータを有効にする。"
+
+msgid "original non-journaling ext filesystem, still used for small boot partitions"
+msgstr "非ジャーナリングのオリジナルextファイルシステム。小容量ブートパーティションに現在も使用"
+
+msgid "ext2 with journaling added for crash-recovery reliability"
+msgstr "クラッシュ復旧の信頼性を高めるためジャーナルを追加したext2"
+
+msgid "default Linux journaling filesystem with extents and very large volume support"
+msgstr "エクステントと超大容量ボリュームをサポートするLinux標準のジャーナリングファイルシステム"
+
+msgid "copy-on-write filesystem with snapshots, subvolumes, and RAID"
+msgstr "スナップショット、サブボリューム、RAIDを備えたコピーオンライトファイルシステム"
+
+msgid "SGI-developed 64-bit journaling filesystem for high performance and large files"
+msgstr "高性能と大容量ファイル向け、SGI開発の64ビットジャーナリングファイルシステム"
+
+msgid "flash-friendly filesystem designed for NAND flash storage"
+msgstr "NANDフラッシュストレージ向けに設計されたフラッシュフレンドリーなファイルシステム"
+
+msgid "Linux kernel driver providing read/write access to Windows NTFS volumes"
+msgstr "Windows NTFSボリュームへの読み書きアクセスを提供するLinuxカーネルドライバ"
+
+msgid "FAT filesystem variant with long filename support for removable media"
+msgstr "リムーバブルメディア向けのロングファイルネーム対応FATファイルシステム変種"
+
+msgid "Microsoft filesystem for large removable drives and SD cards over 32 GB"
+msgstr "32GB超の大容量リムーバブルドライブとSDカード向けMicrosoftファイルシステム"
+
+msgid "disk space acting as virtual memory when physical RAM is exhausted"
+msgstr "物理RAMが枯渇した際に仮想メモリとして機能するディスク領域"
+
+msgid "network filesystem using the SMB protocol for Windows and NAS file shares"
+msgstr "WindowsとNASファイル共有向けSMBプロトコルを使うネットワークファイルシステム"
+
+msgid "modern, secure dialect of SMB used for Windows, Azure, and NAS shares"
+msgstr "Windows、Azure、NASの共有に使う最新で安全なSMBのダイアレクト"
+
+msgid "network filesystem for sharing files across machines over the network"
+msgstr "ネットワーク上でマシン間でファイルを共有するためのネットワークファイルシステム"
+
+msgid "newer NFS version adding security, statefulness, and better locking"
+msgstr "セキュリティ、状態管理、より良いロックを追加した新しいNFSバージョン"
+
+msgid "mounts a remote directory over SSH using SFTP, running in userspace via FUSE"
+msgstr "SFTPを使用してSSH経由でリモートディレクトリをマウント。FUSEによってユーザー空間で動作"
+
+msgid "standard filesystem format for CD-ROM optical media"
+msgstr "CD-ROM光メディアの標準ファイルシステムフォーマット"
+
+msgid "Universal Disk Format for writable optical discs like DVDs and Blu-rays"
+msgstr "DVDやBlu-rayなどの書き込み可能光ディスク向けユニバーサルディスクフォーマット"
+
+msgid "virtual filesystem storing files in RAM and swap for temporary in-memory data"
+msgstr "一時的なインメモリデータをRAMとスワップに保存する仮想ファイルシステム"
+
+msgid "virtual filesystem exposing kernel and process information as files"
+msgstr "カーネルおよびプロセス情報をファイルとして公開する仮想ファイルシステム"
+
+msgid "virtual filesystem exposing kernel objects, devices, and their attributes to userspace"
+msgstr "カーネルオブジェクト、デバイス、およびその属性をユーザー空間へ公開する仮想ファイルシステム"
+
+msgid "virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
+msgstr "/dev/pts配下に疑似ターミナルデバイスノードを提供する仮想ファイルシステム"
+
+msgid "virtual filesystem for the unified cgroup v2 hierarchy, managing resource limits and accounting"
+msgstr "cgroup v2の統合ヒエラルキー用仮想ファイルシステム。リソース制限とアカウンティングを管理"
+
+msgid "virtual filesystem backing security modules such as SELinux and IMA integrity interfaces"
+msgstr "SELinuxやIMA整合性インターフェースなどのセキュリティモジュールを支える仮想ファイルシステム"
+
+msgid "virtual filesystem exporting arbitrary kernel debugging data with no ABI stability guarantees"
+msgstr "ABIの安定性を保証しない任意のカーネルデバッグデータをエクスポートする仮想ファイルシステム"
+
+msgid "virtual filesystem holding ftrace control and trace-output files under /sys/kernel/tracing"
+msgstr "/sys/kernel/tracing配下にftrace制御ファイルとトレース出力ファイルを持つ仮想ファイルシステム"
+
+msgid "virtual filesystem where userspace creates and configures kernel objects via mkdir and rmdir"
+msgstr "ユーザー空間がmkdirとrmdirでカーネルオブジェクトを作成・設定する仮想ファイルシステム"
+
+msgid "POSIX message queue IPC exposed as files at /dev/mqueue"
+msgstr "/dev/mqueueでファイルとして公開されるPOSIXメッセージキューIPC"
+
+msgid "interface to huge page memory, mounted at /dev/hugepages"
+msgstr "/dev/hugepagesにマウントされるヒュージページメモリへのインターフェース"
+
+msgid "populates /dev with device nodes automatically at boot"
+msgstr "起動時に/devへデバイスノードを自動生成する"
+
+msgid "Plan 9 remote filesystem protocol, used for host-to-VM file sharing"
+msgstr "ホストとVM間のファイル共有に使うPlan 9リモートファイルシステムプロトコル"
+
+msgid "union filesystem stacking upper/lower layers, used by containers"
+msgstr "アッパー/ローヤー層を積層するユニオンファイルシステム。コンテナで使われる"
+
+msgid "OpenZFS copy-on-write filesystem with integrated volume management"
+msgstr "ボリューム管理を統合したOpenZFSコピーオンライトファイルシステム"
+
+msgid "copy-on-write, multi-device filesystem with built-in caching, compression, and checksumming"
+msgstr "キャッシュ、圧縮、チェックサムを内蔵したコピーオンライトのマルチデバイスファイルシステム"
+
+msgid "a custom filesystem type"
+msgstr "カスタムのファイルシステムタイプ"
+
+msgid "Other"
+msgstr "その他"
+
+msgid "Other…"
+msgstr "その他…"
+
+msgid "Search filesystems"
+msgstr "ファイルシステムを検索"
+
+msgid "Choose the filesystem type"
+msgstr "ファイルシステムの種類を選択"
+
+msgid "Error loading filesystem types"
+msgstr "ファイルシステム種類の読み込みエラー"
+
+msgid "File system:"
+msgstr "ファイルシステム:"
+
+msgid "File system"
+msgstr "ファイルシステム"
+
+msgid "Make backup"
+msgstr "バックアップ作成"
+
+msgid "Save changes"
+msgstr "変更を保存"
+
+msgid "Revert changes"
+msgstr "変更を取り消す"
+
+msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
+msgstr "変更はまだ保存されていません。バックアップには未保存の変更ではなく、保存済みの /etc/fstab が反映されます。続行しますか？"
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Are you sure you want to write these changes to /etc/fstab?"
+msgstr "これらの変更を /etc/fstab に書き込んでもよろしいですか？"
+
+msgid "Saved, but could not reload"
+msgstr "保存されましたが、再読込できませんでした"
+
+msgid "Saved to /etc/fstab"
+msgstr "/etc/fstab に保存しました"
+
+msgid "Could not save"
+msgstr "保存できませんでした"
+
+msgid "Revert"
+msgstr "取り消す"
+
+msgid "Are you sure? Any changes made will be lost!"
+msgstr "よろしいですか？行った変更はすべて失われます！"
+
+msgid "'/etc/fstab' entries:"
+msgstr "「/etc/fstab」のエントリ:"
+
+msgid "Error loading fstab file!"
+msgstr "fstab ファイルの読み込みエラー！"
+
+msgid "Backup created"
+msgstr "バックアップ作成済み"
+
+msgid "A backup of /etc/fstab was created."
+msgstr "/etc/fstab のバックアップを作成しました。"
+
+msgid "Could not create backup"
+msgstr "バックアップを作成できませんでした"
+
+#, rust-format
+msgid "Line {line}"
+msgstr "{line} 行目"
+
+msgid "This entry is disabled (commented out)."
+msgstr "このエントリは無効化（コメントアウト）されています。"
+
+msgid "The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \nUsually, this is wanted on root and home mounts."
+msgstr "このドライブがない場合、システムが起動を拒否する可能性があります。これが意図しないものである場合は、「nofail」オプションを追加してください。\n通常、ルートとホームのマウントではこれが望まれます。"
+
+msgid "This entry is invalid and cannot be parsed."
+msgstr "このエントリは無効で、解析できません。"
+
+msgid "Add new mount entry"
+msgstr "新しいマウントエントリを追加"
+
+#, rust-format
+msgid "You are about to restore backup from:\n{time}"
+msgstr "以下のバックアップから復元しようとしています:\n{time}"
+
+msgid "Restore"
+msgstr "復元"
+
+msgid "Restore backup"
+msgstr "バックアップを復元"
+
+msgid "Search backups"
+msgstr "バックアップを検索"
+
+msgid "Restore from a backup file"
+msgstr "バックアップファイルから復元"
+
+msgid "Failed to list backups"
+msgstr "バックアップ一覧を表示できません"
+
+msgid "Could not load backup"
+msgstr "バックアップを読み込めません"
+
+msgid "Cannot remount"
+msgstr "リマウントできません"
+
+msgid "Cannot unmount"
+msgstr "アンマウントできません"
+
+msgid "The entry has unsaved changes. Save your changes before mounting."
+msgstr "このエントリに未保存の変更があります。マウントする前に変更を保存してください。"
+
+msgid "The entry has unsaved changes. Save your changes before remounting."
+msgstr "このエントリに未保存の変更があります。リマウントする前に変更を保存してください。"
+
+msgid "The mount point has unsaved changes. Save your changes before unmounting."
+msgstr "マウントポイントに未保存の変更があります。アンマウントする前に変更を保存してください。"
+
+msgid "The mount point is empty."
+msgstr "マウントポイントが空です。"
+
+msgid "Delete entry"
+msgstr "エントリを削除"
+
+msgid "Device"
+msgstr "デバイス"
+
+msgid "Mount point"
+msgstr "マウントポイント"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Delete this entry?"
+msgstr "このエントリを削除しますか？"
+
+msgid "Reset"
+msgstr "リセット"
+
+msgid "Edit properties"
+msgstr "プロパティを編集"
+
+msgid "Options"
+msgstr "オプション"
+
+msgid "Active"
+msgstr "有効"
+
+msgid "Extra"
+msgstr "その他"
+
+msgid "Dump"
+msgstr "ダンプ"
+
+msgid "Controls the dump backup frequency; 0 disables"
+msgstr "ダンプバックアップの頻度を制御します。0 を指定すると無効になります"
+
+msgid "Pass"
+msgstr "パス"
+
+msgid "Controls the fsck check order; 0 disables"
+msgstr "fsck のチェック順を制御します。0 を指定すると無効になります"
+
+msgid "Mount actions"
+msgstr "マウント操作"
+
+msgid "Status"
+msgstr "状態"
+
+msgid "Mount"
+msgstr "マウント"
+
+msgid "Remount"
+msgstr "再マウント"
+
+msgid "Unmount"
+msgstr "アンマウント"
+
+msgid "Actions"
+msgstr "操作"
+
+msgid "Are you sure you want to mount this entry?"
+msgstr "このエントリをマウントしますか？"
+
+msgid "Are you sure you want to remount this entry?"
+msgstr "このエントリを再マウントしますか？"
+
+msgid "Swap cannot be remounted."
+msgstr "swap は再マウントできません。"
+
+#, rust-format
+msgid "Remounted {mount_point}."
+msgstr "{mount_point} を再マウントしました。"
+
+msgid "Remounted"
+msgstr "再マウントしました"
+
+msgid "Could not remount"
+msgstr "再マウントできませんでした"
+
+msgid "Are you sure you want to unmount this entry?"
+msgstr "このエントリをアンマウントしますか？"
+
+#, rust-format
+msgid "Unmounted {mount_point}."
+msgstr "{mount_point} をアンマウントしました。"
+
+msgid "Unmounted"
+msgstr "アンマウントしました"
+
+msgid "Could not unmount"
+msgstr "アンマウントできませんでした"
+
+msgid "Choose folder"
+msgstr "フォルダを選択"
+
+msgid "Choose mount point"
+msgstr "マウントポイントを選択"
+
+msgid "Path exists"
+msgstr "パスが存在します"
+
+msgid "Mount point missing"
+msgstr "マウントポイントがありません"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "このデバイスは現在、このマウントポイントにマウントされています。"
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "このデバイスは現在、このマウントポイントにマウントされていません。"
+
+msgid "This mount point does not exist on the system."
+msgstr "このマウントポイントはシステム上に存在しません。"
+
+msgid "Remove option"
+msgstr "オプションを削除"
+
+msgid "Option"
+msgstr "オプション"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "サブボリュームが存在しません：{subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "サブボリュームを確認できません：デバイスがマウントされていません"
+
+msgid "Could not check subvolume"
+msgstr "サブボリュームを確認できません"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "サブボリュームを確認できません：{error}"
+
+msgid "Search subvolumes"
+msgstr "サブボリュームを検索"
+
+msgid "Find a subvolume on this device"
+msgstr "このデバイスのサブボリュームを検索"
+
+msgid "Failed to fetch subvolumes"
+msgstr "サブボリュームの取得に失敗しました"
+
+msgid "Add option…"
+msgstr "オプションを追加…"
+
+msgid "Search options"
+msgstr "オプションを検索"
+
+msgid "Choose an option to add to this entry"
+msgstr "このエントリに追加するオプションを選択"
+
+msgid "Error loading options"
+msgstr "オプションの読み込みエラー"
+
+msgid "Add option"
+msgstr "オプションを追加"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "Failed to load"
+msgstr "読み込みに失敗しました"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Confirm"
+msgstr "確認"

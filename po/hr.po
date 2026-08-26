@@ -27,26 +27,26 @@ msgid "A password is required."
 msgstr "Potrebna je lozinka."
 
 msgid "A credentials file name is required when saving credentials."
-msgstr "Naziv datoteke s vjerodajnicama potreban je pri spremanju vjerodajnica."
+msgstr "Naziv datoteke s prijavnim podacima potreban je pri spremanju prijavnih podataka."
 
 msgid "Could not mount"
 msgstr "Nije moguće montirati"
 
 #, rust-format
 msgid "Would you like to delete the saved credentials file {path}?"
-msgstr "Želite li izbrisati spremljenu datoteku s vjerodajnicama {path}?"
+msgstr "Želite li izbrisati spremljenu datoteku s prijavnim podacima {path}?"
 
 msgid "Credentials deleted"
-msgstr "Vjerodajnice su izbrisane"
+msgstr "Prijavni podaci su izbrisani"
 
 msgid "The saved credentials file was deleted."
-msgstr "Spremljena datoteka s vjerodajnicama je izbrisana."
+msgstr "Spremljena datoteka s prijavnim podacima je izbrisana."
 
 msgid "Could not delete credentials"
-msgstr "Nije moguće izbrisati vjerodajnice"
+msgstr "Nije moguće izbrisati prijavne podatke"
 
 msgid "Delete credentials"
-msgstr "Izbriši vjerodajnice"
+msgstr "Izbriši prijavne podatke"
 
 msgid "login used for this mount only"
 msgstr "prijava samo za ovo montiranje"
@@ -87,19 +87,19 @@ msgid "Save for auto-mount"
 msgstr "Spremi za automatsko montiranje"
 
 msgid "Writes a credentials file referenced from the fstab entry."
-msgstr "Stvara datoteku s vjerodajnicama na koju upućuje unos u fstab-u."
+msgstr "Stvara datoteku s prijavnim podacima na koju upućuje unos u fstab-u."
 
 msgid "Credentials file"
-msgstr "Datoteka s vjerodajnicama"
+msgstr "Datoteka s prijavnim podacima"
 
 msgid "Load existing credentials"
-msgstr "Učitaj postojeće vjerodajnice"
+msgstr "Učitaj postojeće prijavne podatke"
 
 msgid "Will overwrite the existing file!"
 msgstr "Prebrisat će postojeću datoteku!"
 
 msgid "This filesystem may require credentials to mount."
-msgstr "Za montiranje ovog datotečnog sustava mogu biti potrebne vjerodajnice."
+msgstr "Za montiranje ovog datotečnog sustava mogu biti potrebni prijavni podaci."
 
 msgid "Cancel"
 msgstr "Odustani"
@@ -251,7 +251,7 @@ msgstr "{option} bi trebala biti {on} ili {off}"
 
 #, rust-format
 msgid "Credentials file does not exist: {path}"
-msgstr "Datoteka s vjerodajnicama ne postoji: {path}"
+msgstr "Datoteka s prijavnim podacima ne postoji: {path}"
 
 msgid "Edit as text"
 msgstr "Uredi kao tekst"
@@ -1280,10 +1280,10 @@ msgid "Enables experimental SMB 3.1.1 message compression."
 msgstr "Omogućuje eksperimentalnu kompresiju poruka SMB 3.1.1."
 
 msgid "Reads username/password from a credentials file."
-msgstr "Čita korisničko ime/lozinku iz datoteke vjerodajnica."
+msgstr "Čita korisničko ime/lozinku iz datoteke s prijavnim podacima."
 
 msgid "Uid owning the credentials cache (useful with krb5)."
-msgstr "UID vlasnika predmemorije vjerodajnica (koristan s krb5)."
+msgstr "UID vlasnika predmemorije prijavnih podataka (koristan s krb5)."
 
 msgid "Overrides the default mode for directories."
 msgstr "Previđa zadane ovlasti za direktorije."
@@ -1373,7 +1373,7 @@ msgid "Uses multiple transport connections for one session."
 msgstr "Koristi više prijenosnih veza za jednu sesiju."
 
 msgid "Maps each user's access to individual credentials."
-msgstr "Preslikava pristup svakog korisnika na pojedinačne vjerodajnice."
+msgstr "Preslikava pristup svakog korisnika na pojedinačne prijavne podatke."
 
 msgid "Client netbios name used for port 139 connections."
 msgstr "NetBIOS ime klijenta koje se koristi za veze na priključku 139."
@@ -2123,7 +2123,7 @@ msgid "Make the overlay mountable via NFS: on or off."
 msgstr "Omogućava montažu overlaya putem NFS: on ili off."
 
 msgid "Record the caller's credentials for permission checks."
-msgstr "Bilježi vjerodajnice pozivatelja za provjeru dozvola."
+msgstr "Bilježi prijavne podatke pozivatelja za provjeru dozvola."
 
 msgid "Redirect directories on rename: on, off, follow, or nofollow."
 msgstr "Preusmjerava direktorije pri preimenovanju: on, off, follow ili nofollow."
