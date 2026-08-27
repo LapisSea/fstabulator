@@ -120,6 +120,8 @@ pub enum OptionValue {
 	String,
 	/// A btrfs subvolume, picked from the subvolumes found on the entry's device
 	Subvol,
+	User,
+	Group,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -239,8 +241,8 @@ pub const EXT2_OPTIONS: &[OptionSpec] = &[
 	opt!("nouid32", OptionValue::Toggle, "Disables 32-bit UIDs/GIDs for old-kernel compatibility."),
 	opt!("oldalloc", OptionValue::Toggle, "Uses the old inode allocator instead of Orlov."),
 	opt!("orlov", OptionValue::Toggle, "Uses the Orlov allocator for new inodes (default)."),
-	opt!("resgid", OptionValue::Integer, "Group ID allowed to use reserved filesystem blocks.", "0"),
-	opt!("resuid", OptionValue::Integer, "User ID allowed to use reserved filesystem blocks.", "0"),
+	opt!("resgid", OptionValue::Group, "Group ID allowed to use reserved filesystem blocks.", "0"),
+	opt!("resuid", OptionValue::User, "User ID allowed to use reserved filesystem blocks.", "0"),
 	opt!("sb", OptionValue::Integer, "Mounts using an alternate superblock number (recovery)."),
 	opt!("user_xattr", OptionValue::Toggle, "Enables \"user.\" extended attributes."),
 	opt!("nouser_xattr", OptionValue::Toggle, "Disables \"user.\" extended attributes."),
@@ -463,8 +465,8 @@ pub const F2FS_OPTIONS: &[OptionSpec] = &[
 	opt!("quota", OptionValue::Toggle, "Enables plain user disk quota accounting."),
 	opt!("reserve_node", OptionValue::Integer, "Sets reserved nodes for privileged-user allocation.", "0"),
 	opt!("reserve_root", OptionValue::Integer, "Sets reserved space (%) for privileged-user allocation.", "0"),
-	opt!("resgid", OptionValue::Integer, "Group ID with access to reserved blocks and nodes."),
-	opt!("resuid", OptionValue::Integer, "User ID with access to reserved blocks and nodes."),
+	opt!("resgid", OptionValue::Group, "Group ID with access to reserved blocks and nodes."),
+	opt!("resuid", OptionValue::User, "User ID with access to reserved blocks and nodes."),
 	opt!("test_dummy_encryption", OptionValue::Enum(&["v1", "v2"]), "Enables dummy fscrypt context for testing.", "v2"),
 	opt!("usrjquota", OptionValue::String, "Points to user journaled quota file."),
 	opt!("usrquota", OptionValue::Toggle, "Enables user disk quota accounting."),
@@ -477,7 +479,7 @@ pub const NTFS3_OPTIONS: &[OptionSpec] = &[
 	opt!("dmask", OptionValue::Octal, "Permission mask for directories."),
 	opt!("fmask", OptionValue::Octal, "Permission mask for files."),
 	opt!("force", OptionValue::Toggle, "Forces mounting even if the volume is dirty (not recommended)."),
-	opt!("gid", OptionValue::Integer, "Default group ID for created files and directories."),
+	opt!("gid", OptionValue::Group, "Default group ID for created files and directories."),
 	opt!("hide_dot_files", OptionValue::Toggle, "Sets the HIDDEN attribute for names starting with a dot."),
 	opt!("iocharset", OptionValue::String, "Charset used to translate path strings to Unicode.", "utf8"),
 	opt!("nohidden", OptionValue::Toggle, "Hides files with the Windows HIDDEN attribute."),
@@ -485,7 +487,7 @@ pub const NTFS3_OPTIONS: &[OptionSpec] = &[
 	opt!("showmeta", OptionValue::Toggle, "Shows all NTFS meta-files (system files)."),
 	opt!("sparse", OptionValue::Toggle, "Creates new files as sparse."),
 	opt!("sys_immutable", OptionValue::Toggle, "Marks files with the SYSTEM attribute as immutable."),
-	opt!("uid", OptionValue::Integer, "Default user ID for created files and directories."),
+	opt!("uid", OptionValue::User, "Default user ID for created files and directories."),
 	opt!("umask", OptionValue::Octal, "Default permission mask for files and directories."),
 	opt!("windows_names", OptionValue::Toggle, "Rejects filenames not allowed by Windows."),
 ];
@@ -510,7 +512,7 @@ pub const VFAT_OPTIONS: &[OptionSpec] = &[
 	opt!("fat", OptionValue::Enum(&["12", "16", "32"]), "Forces FAT type 12, 16, or 32, overriding auto-detection."),
 	opt!("flush", OptionValue::Toggle, "Flushes data to disk earlier than normal."),
 	opt!("fmask", OptionValue::Octal, "Permission mask for regular files."),
-	opt!("gid", OptionValue::Integer, "Group ID applied to all files."),
+	opt!("gid", OptionValue::Group, "Group ID applied to all files."),
 	opt!("iocharset", OptionValue::String, "Charset converting filenames between disk and Unicode.", "iso8859-1"),
 	opt!("nfs", OptionValue::Enum(&["stale_rw", "nostale_ro"]), "Enables NFS export support (stale_rw or nostale_ro)."),
 	opt!("nocase", OptionValue::Toggle, "Deprecated; use shortname=win95 instead."),
@@ -523,7 +525,7 @@ pub const VFAT_OPTIONS: &[OptionSpec] = &[
 	opt!("sys_immutable", OptionValue::Toggle, "Treats the FAT system attribute as the immutable flag."),
 	opt!("time_offset", OptionValue::Integer, "Sets minute offset converting FAT local time to UTC.", "0"),
 	opt!("tz", OptionValue::Enum(&["UTC"]), "Interprets timestamps as UTC instead of local time."),
-	opt!("uid", OptionValue::Integer, "Owner user ID applied to all files."),
+	opt!("uid", OptionValue::User, "Owner user ID applied to all files."),
 	opt!("umask", OptionValue::Octal, "Permission mask for files and directories."),
 	opt!("uni_xlate", OptionValue::Bool(BoolType::OneZero), "Escapes unhandled Unicode characters as :XXXX sequences.", "0"),
 	opt!("usefree", OptionValue::Toggle, "Uses the free-cluster count stored in FSINFO."),
@@ -539,13 +541,13 @@ pub const EXFAT_OPTIONS: &[OptionSpec] = &[
 	opt!("dmask", OptionValue::Octal, "Permission mask for directories."),
 	opt!("errors", OptionValue::Enum(&["continue", "panic", "remount-ro"]), "Sets behavior on errors: panic, continue, or remount-ro.", "remount-ro"),
 	opt!("fmask", OptionValue::Octal, "Permission mask for regular files."),
-	opt!("gid", OptionValue::Integer, "Default group ID applied to all files."),
+	opt!("gid", OptionValue::Group, "Default group ID applied to all files."),
 	opt!("iocharset", OptionValue::String, "Charset converting filenames between disk and Unicode.", "utf8"),
 	opt!("keep_last_dots", OptionValue::Toggle, "Keeps trailing periods in path components and filenames."),
 	opt!("namecase", OptionValue::Integer, "Deprecated; accepted but has no effect."),
 	opt!("sys_tz", OptionValue::Toggle, "Uses the system timezone for timestamps lacking a valid offset."),
 	opt!("time_offset", OptionValue::IntegerRange(-1440, 1440), "Sets minute offset converting timestamps to UTC.", "0"),
-	opt!("uid", OptionValue::Integer, "Default user ID applied to all files."),
+	opt!("uid", OptionValue::User, "Default user ID applied to all files."),
 	opt!("umask", OptionValue::Octal, "Default permission mask for files and directories."),
 	opt!("utf8", OptionValue::Toggle, "Deprecated; accepted but has no effect."),
 	opt!("zero_size_dir", OptionValue::Toggle, "Creates directories with zero size, allocating no cluster."),
@@ -585,7 +587,7 @@ pub const CIFS_OPTIONS: &[OptionSpec] = &[
 	opt!("forceuid", OptionValue::Toggle, "Ignores server uid and always uses the uid value."),
 	opt!("forcemandatorylock", OptionValue::Toggle, "Always uses CIFS-style mandatory locks."),
 	opt!("fsc", OptionValue::Toggle, "Enables local disk caching via FS-Cache."),
-	opt!("gid", OptionValue::Integer, "Default gid owning files when the server gives none.", "0"),
+	opt!("gid", OptionValue::Group, "Default gid owning files when the server gives none.", "0"),
 	opt!("guest", OptionValue::Toggle, "Don't prompt for a password; mount as guest."),
 	opt!("handlecache", OptionValue::Toggle, "Keeps the share root directory handle cached."),
 	opt!("handletimeout", OptionValue::Integer, "Ms the server reserves handles after failover.", "0"),
@@ -653,7 +655,7 @@ pub const CIFS_OPTIONS: &[OptionSpec] = &[
 	opt!("sloppy", OptionValue::Toggle, "Ignores unrecognized mount options following it."),
 	opt!("snapshot", OptionValue::String, "Mounts a specific snapshot of the remote share."),
 	opt!("soft", OptionValue::Toggle, "Returns errors instead of hanging when server crashes."),
-	opt!("uid", OptionValue::Integer, "Default uid owning files when the server gives none.", "0"),
+	opt!("uid", OptionValue::User, "Default uid owning files when the server gives none.", "0"),
 	opt!("unix", OptionValue::Toggle, "Enables Unix Extensions (synonym for posix)."),
 	opt!("upcall_target", OptionValue::Enum(&["mount", "app"]), "Namespace in which kernel upcalls are handled.", "app"),
 	opt!("user", OptionValue::String, "Specifies the SMB username (alias of username)."),
@@ -780,7 +782,7 @@ pub const ISO9660_OPTIONS: &[OptionSpec] = &[
 	opt!("check", OptionValue::Enum(&["relaxed", "strict", "r", "s"]), "Sets filename case checking (relaxed or strict).", "strict"),
 	opt!("conv", OptionValue::String, "Obsolete; may fail or be ignored."),
 	opt!("cruft", OptionValue::Toggle, "Ignores high-order bits of file lengths (files limited to 16 MB)."),
-	opt!("gid", OptionValue::Integer, "Group ID given to all files.", "0"),
+	opt!("gid", OptionValue::Group, "Group ID given to all files.", "0"),
 	opt!("iocharset", OptionValue::String, "Charset converting Joliet Unicode names to 8-bit characters.", "iso8859-1"),
 	opt!("map", OptionValue::Enum(&["normal", "off", "acorn", "n", "o", "a"]), "Sets non-Rock Ridge name translation (normal, off, or acorn).", "normal"),
 	opt!("mode", OptionValue::Octal, "Sets default permission mode for non-Rock Ridge files.", "0555"),
@@ -788,7 +790,7 @@ pub const ISO9660_OPTIONS: &[OptionSpec] = &[
 	opt!("norock", OptionValue::Toggle, "Disables Rock Ridge extensions."),
 	opt!("sbsector", OptionValue::Integer, "Sets the sector where the session begins."),
 	opt!("session", OptionValue::Integer, "Selects the session on a multisession CD."),
-	opt!("uid", OptionValue::Integer, "User ID given to all files.", "0"),
+	opt!("uid", OptionValue::User, "User ID given to all files.", "0"),
 	opt!("unhide", OptionValue::Toggle, "Shows hidden and associated files."),
 	opt!("utf8", OptionValue::Toggle, "Converts 16-bit Unicode CD names to UTF-8."),
 ];
@@ -801,7 +803,7 @@ pub const UDF_OPTIONS: &[OptionSpec] = &[
 	opt!("bs", OptionValue::Integer, "Sets the block size.", "2048"),
 	opt!("dmode", OptionValue::Octal, "Sets default permission mode for directories."),
 	opt!("fileset", OptionValue::String, "Unimplemented and ignored."),
-	opt!("gid", OptionValue::Integer, "Sets the default group for all files.", "65534"),
+	opt!("gid", OptionValue::Group, "Sets the default group for all files.", "65534"),
 	opt!("iocharset", OptionValue::String, "Sets the NLS character set for filenames.", "utf8"),
 	opt!("lastblock", OptionValue::Integer, "Sets the last block of the filesystem."),
 	opt!("longad", OptionValue::Toggle, "Uses long UDF address descriptors (default)."),
@@ -812,7 +814,7 @@ pub const UDF_OPTIONS: &[OptionSpec] = &[
 	opt!("rootdir", OptionValue::String, "Unimplemented and ignored."),
 	opt!("session", OptionValue::Integer, "Selects the session on multisession optical media."),
 	opt!("shortad", OptionValue::Toggle, "Uses short UDF address descriptors."),
-	opt!("uid", OptionValue::Integer, "Sets the default user for all files.", "65534"),
+	opt!("uid", OptionValue::User, "Sets the default user for all files.", "65534"),
 	opt!("umask", OptionValue::Octal, "Masks out permissions from all inodes read.", "0"),
 	opt!("undelete", OptionValue::Toggle, "Shows deleted files in listings."),
 	opt!("unhide", OptionValue::Toggle, "Shows otherwise hidden files."),
@@ -822,7 +824,7 @@ pub const UDF_OPTIONS: &[OptionSpec] = &[
 
 #[rustfmt::skip]
 pub const TMPFS_OPTIONS: &[OptionSpec] = &[
-	opt!("gid", OptionValue::Integer, "Sets initial group ID of the root directory.", "0"),
+	opt!("gid", OptionValue::Group, "Sets initial group ID of the root directory.", "0"),
 	opt!("huge", OptionValue::Enum(&["never", "always", "within_size", "advise", "deny", "force"]), "Huge-page policy for files: never, always, within_size, advise.", "never"),
 	opt!("mode", OptionValue::Octal, "Sets initial permissions of the root directory.", "01777"),
 	opt!("mpol", OptionValue::String, "Sets NUMA memory allocation policy for all files."),
@@ -830,12 +832,12 @@ pub const TMPFS_OPTIONS: &[OptionSpec] = &[
 	opt!("nr_blocks", OptionValue::Size, "Same as size, but expressed in blocks of PAGE_SIZE."),
 	opt!("nr_inodes", OptionValue::Size, "Maximum number of inodes for this instance."),
 	opt!("size", OptionValue::Size, "Upper size limit, e.g. 8m or 50%; 0 removes the limit."),
-	opt!("uid", OptionValue::Integer, "Sets initial user ID of the root directory.", "0"),
+	opt!("uid", OptionValue::User, "Sets initial user ID of the root directory.", "0"),
 ];
 
 #[rustfmt::skip]
 pub const PROC_OPTIONS: &[OptionSpec] = &[
-	opt!("gid", OptionValue::Integer, "Group whose members bypass hidepid access restrictions.", "0"),
+	opt!("gid", OptionValue::Group, "Group whose members bypass hidepid access restrictions.", "0"),
 	opt!("hidepid", OptionValue::Enum(&["off", "0", "noaccess", "1", "invisible", "2", "ptraceable", "4"]), "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible.", "0"),
 	opt!("pidns", OptionValue::String, "Selects the PID namespace used to translate PIDs (new in 6.16)."),
 	opt!("subset", OptionValue::Enum(&["pid"]), "Shows only the pid subset, hiding other top-level proc files."),
@@ -845,12 +847,12 @@ pub const SYSFS_OPTIONS: &[OptionSpec] = &[];
 
 #[rustfmt::skip]
 pub const DEVPTS_OPTIONS: &[OptionSpec] = &[
-	opt!("gid", OptionValue::Integer, "Sets group of newly created pseudo-terminals."),
+	opt!("gid", OptionValue::Group, "Sets group of newly created pseudo-terminals."),
 	opt!("max", OptionValue::IntegerRange(0, 1048576), "Limits the number of pseudo-terminals in this instance.", "1048576"),
 	opt!("mode", OptionValue::Octal, "Sets permissions of newly created pseudo-terminals.", "0600"),
 	opt!("newinstance", OptionValue::Toggle, "Creates a private instance with independent pty index space."),
 	opt!("ptmxmode", OptionValue::Octal, "Sets the mode of the instance's ptmx device node.", "0000"),
-	opt!("uid", OptionValue::Integer, "Sets owner of newly created pseudo-terminals."),
+	opt!("uid", OptionValue::User, "Sets owner of newly created pseudo-terminals."),
 ];
 
 #[rustfmt::skip]
@@ -867,16 +869,16 @@ pub const SECURITYFS_OPTIONS: &[OptionSpec] = &[];
 
 #[rustfmt::skip]
 pub const DEBUGFS_OPTIONS: &[OptionSpec] = &[
-	opt!("gid", OptionValue::Integer, "Sets the group of the debugfs mount.", "0"),
+	opt!("gid", OptionValue::Group, "Sets the group of the debugfs mount.", "0"),
 	opt!("mode", OptionValue::Octal, "Sets permissions of the mountpoint.", "0700"),
-	opt!("uid", OptionValue::Integer, "Sets the owner of the debugfs mount.", "0"),
+	opt!("uid", OptionValue::User, "Sets the owner of the debugfs mount.", "0"),
 ];
 
 #[rustfmt::skip]
 pub const TRACEFS_OPTIONS: &[OptionSpec] = &[
-	opt!("gid", OptionValue::Integer, "Sets the group of the tracefs mount.", "0"),
+	opt!("gid", OptionValue::Group, "Sets the group of the tracefs mount.", "0"),
 	opt!("mode", OptionValue::Octal, "Sets permissions of the mountpoint.", "0700"),
-	opt!("uid", OptionValue::Integer, "Sets the owner of the tracefs mount.", "0"),
+	opt!("uid", OptionValue::User, "Sets the owner of the tracefs mount.", "0"),
 ];
 
 pub const CONFIGFS_OPTIONS: &[OptionSpec] = &[];
@@ -885,13 +887,13 @@ pub const MQUEUE_OPTIONS: &[OptionSpec] = &[];
 
 #[rustfmt::skip]
 pub const HUGETLBFS_OPTIONS: &[OptionSpec] = &[
-	opt!("gid", OptionValue::Integer, "Sets group of the filesystem root.", "0"),
+	opt!("gid", OptionValue::Group, "Sets group of the filesystem root.", "0"),
 	opt!("min_size", OptionValue::Size, "Reserves a minimum of huge-page memory; mount fails if short."),
 	opt!("mode", OptionValue::Octal, "Sets permissions of the filesystem root.", "0755"),
 	opt!("nr_inodes", OptionValue::Size, "Maximum number of inodes the filesystem can use."),
 	opt!("pagesize", OptionValue::Size, "Uses the given huge-page size for this mount."),
 	opt!("size", OptionValue::Size, "Maximum huge-page memory the filesystem may use."),
-	opt!("uid", OptionValue::Integer, "Sets owner of the filesystem root.", "0"),
+	opt!("uid", OptionValue::User, "Sets owner of the filesystem root.", "0"),
 ];
 
 #[rustfmt::skip]

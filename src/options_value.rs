@@ -5,6 +5,7 @@ use crate::i18n::{i18n, i18n_fmt};
 use crate::problem_reports::{CheckValue, Problem, check};
 use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
+use crate::user_group::{self, NamedId};
 use crate::{GC, fs_options, ui_commons};
 use adw::prelude::*;
 use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow};
@@ -205,6 +206,20 @@ fn add_option_row(ctx: AddContext) {
 		}) => {
 			add_subvol_option_row(ctx.clone(), &trash, &name, description, &current);
 		}
+		Some(OptionSpec {
+			description,
+			value: OptionValue::User,
+			..
+		}) => {
+			add_id_option_row(ctx.clone(), &trash, &name, description, &current, true);
+		}
+		Some(OptionSpec {
+			description,
+			value: OptionValue::Group,
+			..
+		}) => {
+			add_id_option_row(ctx.clone(), &trash, &name, description, &current, false);
+		}
 		None
 		| Some(OptionSpec {
 			value: OptionValue::Toggle, ..
@@ -360,10 +375,10 @@ fn filter_input(input: &gtk::Entry, valid: impl Fn(char) -> bool + 'static, on_c
 		if cleaned.as_str() != text.as_str() {
 			let before: String = text.chars().take(input.position().max(0) as usize).filter(|c| valid(*c)).collect();
 			let idle_input = apply_input.clone();
-			gtk::glib::idle_add_local(move || {
+			glib::idle_add_local(move || {
 				idle_input.set_text(&cleaned);
 				idle_input.set_position(before.chars().count() as i32);
-				gtk::glib::ControlFlow::Break
+				glib::ControlFlow::Break
 			});
 			return;
 		}
@@ -463,9 +478,9 @@ fn add_digits_option_row<T: Display>(
 		let value = map_value(cleaned).to_string();
 		if value.as_str() != cleaned {
 			let (idle_input, idle_value) = (apply_input.clone(), value.clone());
-			gtk::glib::idle_add_local(move || {
+			glib::idle_add_local(move || {
 				idle_input.set_text(&idle_value);
-				gtk::glib::ControlFlow::Break
+				glib::ControlFlow::Break
 			});
 		}
 		set_option(&ctx, FsOption::from_kv(&name, &value));
@@ -505,15 +520,15 @@ fn run_subvol_check(ctx: &AddContext, input: &gtk::Entry, issue_icon: &gtk::Imag
 		ui_commons::update_issue_icon(&issue_icon, problem.as_ref());
 		return;
 	}
-	gtk::glib::timeout_add_local(std::time::Duration::from_millis(100), move || match rx.try_recv() {
+	glib::timeout_add_local(std::time::Duration::from_millis(100), move || match rx.try_recv() {
 		Ok(problem) => {
 			if input.text().as_str() == value.as_str() {
 				ui_commons::update_issue_icon(&issue_icon, problem.as_ref());
 			}
-			gtk::glib::ControlFlow::Break
+			glib::ControlFlow::Break
 		}
-		Err(std::sync::mpsc::TryRecvError::Disconnected) => gtk::glib::ControlFlow::Break,
-		Err(_) => gtk::glib::ControlFlow::Continue,
+		Err(std::sync::mpsc::TryRecvError::Disconnected) => glib::ControlFlow::Break,
+		Err(_) => glib::ControlFlow::Continue,
 	});
 }
 
@@ -559,6 +574,59 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 	menu_btn.set_icon_name("folder-search-symbolic");
 	menu_btn.add_css_class("flat");
 	menu_btn
+}
+
+fn add_id_option_row(ctx: AddContext, trash: &Button, name: &str, description: &str, current: &str, is_user: bool) {
+	let button: GC<Option<MenuButton>> = GC::new(None);
+
+	let render_row = |e: &NamedId| ui_commons::activatable_row(e.name.clone(), format!("ID {}", e.id));
+	let on_select = {
+		let (ctx, name, button) = (ctx.clone(), name.to_string(), button.clone());
+		move |e: NamedId, _| {
+			set_option(&ctx, FsOption::from_kv(name.clone(), e.id.to_string()));
+			if let Some(button) = button.borrow().as_ref() {
+				button.set_label(e.name.as_str());
+			}
+		}
+	};
+	let dataset: anyhow::Result<_> = if is_user { user_group::users() } else { user_group::groups() };
+	let user = current.parse::<u32>().ok().and_then(|u| {
+		dataset
+			.as_ref()
+			.ok()
+			.and_then(|dataset| dataset.iter().find(|e| e.id == u).map(|e| e.name.clone()))
+	});
+
+	let row = ActionRow::builder().title(name).subtitle(i18n(description)).build();
+
+	let Some(user) = user else {
+		add_digits_option_row(ctx, trash, name, description, current, |e| e.is_numeric(), |e| e.to_string());
+		return;
+	};
+
+	let menu_btn = SearchPickerBuilder::new(
+		user,
+		{
+			move || match dataset.as_ref() {
+				Ok(ok) => Ok(ok.clone()),
+				Err(err) => Err(anyhow::anyhow!("{}", err)),
+			}
+		},
+		render_row,
+		on_select,
+	)
+	.search_placeholder(i18n("Search backups"))
+	.tooltip(i18n("Restore from a backup file"))
+	.filter(|query, e| e.id.to_string().contains(query) || e.name.to_ascii_lowercase().contains(&query.to_ascii_lowercase()))
+	.wrap_label(true)
+	.build();
+
+	menu_btn.set_valign(Align::Center);
+	row.add_suffix(&menu_btn);
+	*button.borrow_mut() = Some(menu_btn);
+
+	row.add_suffix(trash);
+	ctx.group.add(&row);
 }
 
 fn add_add_option_row(ctx: AddContext) {
@@ -613,6 +681,7 @@ fn default_option_value(option: OptionSpec) -> FsOption {
 		OptionValue::Bool(bool_type) => FsOption::from_kv(option.name, bool_type.values().0),
 		OptionValue::String => FsOption::from_kv(option.name, ""),
 		OptionValue::Subvol => FsOption::from_kv(option.name, ""),
+		OptionValue::User | OptionValue::Group => FsOption::from_kv(option.name, "0"),
 	}
 }
 
@@ -666,6 +735,8 @@ mod tests {
 		);
 		assert_eq!(default_option_value(opt(OptionValue::String)), FsOption::from_kv("opt", ""));
 		assert_eq!(default_option_value(opt(OptionValue::Subvol)), FsOption::from_kv("opt", ""));
+		assert_eq!(default_option_value(opt(OptionValue::User)), FsOption::from_kv("opt", "0"));
+		assert_eq!(default_option_value(opt(OptionValue::Group)), FsOption::from_kv("opt", "0"));
 	}
 
 	#[test]

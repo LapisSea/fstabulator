@@ -4,6 +4,7 @@ use crate::fs_value::FsType;
 use crate::i18n::{i18n, i18n_fmt};
 use crate::stab_yurself::StabEntry;
 use crate::subvolume::{find_mount_point, list_subvolumes_at};
+use crate::user_group;
 use adw::gio::ffi::g_action_name_is_valid;
 use std::path::{Path, PathBuf};
 
@@ -174,6 +175,8 @@ fn option_value_problem(spec: OptionSpec, option: &FsOption) -> Option<String> {
 		OptionValue::Integer => value
 			.filter(|value| value.parse::<i64>().is_ok())
 			.map_or_else(|| Some(i18n_fmt("{option} should be a number", &[("{option}", name)])), |_| None),
+		OptionValue::User => user_group_value_problem(name, value, true),
+		OptionValue::Group => user_group_value_problem(name, value, false),
 		OptionValue::IntegerRange(min, max) => value
 			.and_then(|value| value.parse::<i64>().ok())
 			.filter(|value| (min..=max).contains(value))
@@ -218,6 +221,28 @@ fn option_value_problem(spec: OptionSpec, option: &FsOption) -> Option<String> {
 		OptionValue::Subvol => None,
 		OptionValue::String => credentials_option_problem(name, value.map(|value| value.as_str())),
 	}
+}
+
+fn user_group_value_problem(name: &str, value: Option<&String>, is_user: bool) -> Option<String> {
+	let not_a_number = i18n_fmt("{option} should be a number", &[("{option}", name)]);
+	let id = match value {
+		Some(value) => match value.parse::<u32>() {
+			Ok(id) => id,
+			Err(_) => return Some(not_a_number),
+		},
+		None => return Some(not_a_number),
+	};
+	let list = if is_user { user_group::users() } else { user_group::groups() };
+	let Ok(list) = list else { return None };
+	if list.iter().any(|entry| entry.id == id) {
+		return None;
+	}
+	let (message, id) = if is_user {
+		("User does not exist: {id}", id.to_string())
+	} else {
+		("Group does not exist: {id}", id.to_string())
+	};
+	Some(i18n_fmt(message, &[("{id}", &id)]))
 }
 
 fn credentials_option_problem(name: &str, value: Option<&str>) -> Option<String> {
@@ -451,6 +476,33 @@ mod tests {
 				.iter()
 				.any(|issue| issue.level == ProblemLevel::Error && issue.message.contains("resgid"))
 		);
+	}
+
+	#[test]
+	fn unknown_uid_is_an_error() {
+		let issues = detect_issues(0, "none /mnt/x udf uid=4294967295 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.level == ProblemLevel::Error && issue.message.contains("User does not exist"))
+		);
+	}
+
+	#[test]
+	fn unknown_gid_is_an_error() {
+		let issues = detect_issues(0, "none /mnt/x udf gid=4294967295 0 0");
+		assert!(
+			issues
+				.iter()
+				.any(|issue| issue.level == ProblemLevel::Error && issue.message.contains("Group does not exist"))
+		);
+	}
+
+	#[test]
+	fn known_uid_and_gid_are_ok() {
+		let issues = detect_issues(0, "none /mnt/x udf uid=0,gid=0 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("User does not exist")));
+		assert!(!issues.iter().any(|issue| issue.message.contains("Group does not exist")));
 	}
 
 	#[test]
