@@ -269,28 +269,63 @@ pub fn confirm_popup(parent_widget: &impl IsA<Widget>, message: impl Into<String
 	}
 }
 
-pub fn connect_clicked_confirm(
-	button: &gtk::Button,
-	confirm_choice: impl Into<String>,
-	message: impl Into<String>,
-	extra_child: impl FnMut() -> Option<gtk::Widget> + 'static,
-	on_confirm: impl FnMut() + 'static,
-) {
-	let button_click = button.clone();
-	let confirm_choice = confirm_choice.into();
-	let message = message.into();
-	let extra_child = RefCell::new(extra_child);
-	let on_confirm = Rc::new(RefCell::new(on_confirm));
-	button.connect_clicked(move |_| {
-		let extra_child = extra_child.borrow_mut()();
-		let mut popup = confirm_popup(&button_click, message.clone(), {
-			let on_confirm = on_confirm.clone();
-			move || on_confirm.borrow_mut()()
-		})
-		.confirm_choice(confirm_choice.clone());
-		if let Some(extra_child) = extra_child {
-			popup = popup.extra_child(&extra_child);
-		}
-		popup.present();
-	});
+pub fn confirm_clicked_action(button: &gtk::Button, message: impl Into<String>) -> ConfirmActionBuilder {
+	ConfirmActionBuilder {
+		button: button.clone(),
+		confirm_choice: i18n("Confirm"),
+		message: message.into(),
+		guard: RefCell::new(Box::new(|| true)),
+		extra_child: RefCell::new(Box::new(|| None)),
+	}
+}
+
+pub struct ConfirmActionBuilder {
+	button: Button,
+	confirm_choice: String,
+	message: String,
+	guard: RefCell<Box<dyn FnMut() -> bool>>,
+	extra_child: RefCell<Box<dyn FnMut() -> Option<gtk::Widget>>>,
+}
+
+impl ConfirmActionBuilder {
+	pub fn guard(mut self, value: impl FnMut() -> bool + 'static) -> Self {
+		self.guard = RefCell::new(Box::new(value));
+		self
+	}
+
+	pub fn confirm_choice(mut self, value: impl Into<String>) -> Self {
+		self.confirm_choice = value.into();
+		self
+	}
+
+	pub fn extra_child(mut self, value: impl FnMut() -> Option<gtk::Widget> + 'static) -> Self {
+		self.extra_child = RefCell::new(Box::new(value));
+		self
+	}
+
+	pub fn connect(self, on_confirm: impl FnMut() + 'static) {
+		let Self {
+			button,
+			confirm_choice,
+			message,
+			guard,
+			extra_child,
+		} = self;
+		let on_confirm = Rc::new(RefCell::new(on_confirm));
+		button.clone().connect_clicked(move |_| {
+			if !guard.borrow_mut()() {
+				return;
+			}
+			let extra_child = extra_child.borrow_mut()();
+			let mut popup = confirm_popup(&button, message.clone(), {
+				let on_confirm = on_confirm.clone();
+				move || on_confirm.borrow_mut()()
+			})
+			.confirm_choice(confirm_choice.clone());
+			if let Some(extra_child) = extra_child {
+				popup = popup.extra_child(&extra_child);
+			}
+			popup.present();
+		});
+	}
 }

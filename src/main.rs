@@ -170,12 +170,9 @@ fn build_ui(application: &Application) {
 	{
 		let (file_ctx, list_panel, editor_panel) = (file_ctx.clone(), list_panel.clone(), editor_panel.clone());
 		let toast_overlay = toast_overlay.clone();
-		ui_commons::connect_clicked_confirm(
-			&save_changes_btn,
-			i18n("Save"),
-			i18n("Are you sure you want to write these changes to /etc/fstab?"),
-			|| None,
-			move || {
+		ui_commons::confirm_clicked_action(&save_changes_btn, i18n("Are you sure you want to write these changes to /etc/fstab?"))
+			.confirm_choice(i18n("Save"))
+			.connect(move || {
 				let content = {
 					let file = file_ctx.file().borrow();
 					file.to_string()
@@ -190,19 +187,14 @@ fn build_ui(application: &Application) {
 					}
 					Err(err) => ui_commons::present_simple_dialog(&editor_panel, i18n("Could not save").as_str(), &format!("{err:#}")),
 				}
-			},
-		);
+			});
 	}
 
 	{
 		let (file_ctx, list_panel, editor_panel) = (file_ctx.clone(), list_panel.clone(), editor_panel.clone());
-		ui_commons::connect_clicked_confirm(
-			&revert_changes_btn,
-			i18n("Revert"),
-			i18n("Are you sure? Any changes made will be lost!"),
-			|| None,
-			move || load_backup(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel),
-		);
+		ui_commons::confirm_clicked_action(&revert_changes_btn, i18n("Are you sure? Any changes made will be lost!"))
+			.confirm_choice(i18n("Revert"))
+			.connect(move || load_backup(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel));
 	}
 
 	row.append(&build_restore_picker(&file_ctx, &list_panel, &editor_panel));
@@ -618,6 +610,10 @@ fn warn_unsaved_changes(btn: &Button, action: MountAction, changed: bool) -> boo
 	false
 }
 
+fn mount_action_allowed(btn: &Button, action: MountAction, mount_point: &str, exempt_empty: bool, changed: bool) -> bool {
+	!warn_empty_mount_point(btn, action, mount_point, exempt_empty) && !warn_unsaved_changes(btn, action, changed)
+}
+
 fn add_info_row(grid: &gtk::Grid, row: i32, key: &str, value: &str) {
 	let key_label = gtk::Label::new(Some(key));
 	key_label.set_xalign(0.0);
@@ -682,7 +678,10 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext
 		}
 	};
 
-	ui_commons::connect_clicked_confirm(&delete_btn, i18n("Delete"), i18n("Delete this entry?"), extra_child, on_confirm);
+	ui_commons::confirm_clicked_action(&delete_btn, i18n("Delete this entry?"))
+		.confirm_choice(i18n("Delete"))
+		.extra_child(extra_child)
+		.connect(on_confirm);
 }
 
 fn build_split_layout(list_panel: &impl IsA<gtk::Widget>, editor_panel: &impl IsA<gtk::Widget>) -> GtkBox {
@@ -903,19 +902,18 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 	{
 		let (entry, refresh, rebuild_editor) = (entry.clone(), refresh.clone(), rebuild_editor.clone());
 		let btn = mount_btn.clone();
-		ui_commons::connect_clicked_confirm(
-			&mount_btn,
-			i18n("Mount"),
-			i18n("Are you sure you want to mount this entry?"),
-			|| None,
-			move || {
+		ui_commons::confirm_clicked_action(&mount_btn, i18n("Are you sure you want to mount this entry?"))
+			.confirm_choice(i18n("Mount"))
+			.guard({
+				let (entry, btn) = (entry.clone(), btn.clone());
+				move || {
+					let entry = entry.borrow();
+					let (mount_point, is_swap, changed) = (entry.mount_point.clone(), entry.fs_type == FsType::Swap, entry.is_changed());
+					mount_action_allowed(&btn, MountAction::Mount, &mount_point, is_swap, changed)
+				}
+			})
+			.connect(move || {
 				let snapshot = entry.cloned(|e| e);
-				if warn_empty_mount_point(&btn, MountAction::Mount, &snapshot.mount_point, snapshot.fs_type == FsType::Swap) {
-					return;
-				}
-				if warn_unsaved_changes(&btn, MountAction::Mount, snapshot.is_changed()) {
-					return;
-				}
 				if credentials_flow::needs_credentials(&snapshot) {
 					credentials_flow::mount_with_credentials(&btn, entry.clone(), snapshot.clone(), rebuild_editor.clone(), refresh.clone());
 				} else {
@@ -933,31 +931,29 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 						&refresh,
 					);
 				}
-			},
-		);
+			});
 	}
 	{
 		let (entry, refresh, btn) = (entry.clone(), refresh.clone(), remount_btn.clone());
-		ui_commons::connect_clicked_confirm(
-			&remount_btn,
-			i18n("Remount"),
-			i18n("Are you sure you want to remount this entry?"),
-			|| None,
-			move || {
-				let (mount_point, is_swap, changed) = {
+		ui_commons::confirm_clicked_action(&remount_btn, i18n("Are you sure you want to remount this entry?"))
+			.confirm_choice(i18n("Remount"))
+			.guard({
+				let (entry, btn) = (entry.clone(), btn.clone());
+				move || {
 					let entry = entry.borrow();
-					(entry.mount_point.clone(), entry.fs_type == FsType::Swap, entry.is_changed())
+					let (mount_point, is_swap, changed) = (entry.mount_point.clone(), entry.fs_type == FsType::Swap, entry.is_changed());
+					if is_swap {
+						ui_commons::present_simple_dialog(&btn, i18n("Cannot remount").as_str(), i18n("Swap cannot be remounted.").as_str());
+						return false;
+					}
+					mount_action_allowed(&btn, MountAction::Remount, &mount_point, false, changed)
+				}
+			})
+			.connect(move || {
+				let (mount_point, is_swap) = {
+					let entry = entry.borrow();
+					(entry.mount_point.clone(), entry.fs_type == FsType::Swap)
 				};
-				if is_swap {
-					ui_commons::present_simple_dialog(&btn, i18n("Cannot remount").as_str(), i18n("Swap cannot be remounted.").as_str());
-					return;
-				}
-				if warn_empty_mount_point(&btn, MountAction::Remount, &mount_point, false) {
-					return;
-				}
-				if warn_unsaved_changes(&btn, MountAction::Remount, changed) {
-					return;
-				}
 				let result = privileged::remount(&mount_point, is_swap);
 				let body = i18n_fmt("Remounted {mount_point}.", &[("{mount_point}", &mount_point)]);
 				report_action_outcome(
@@ -968,32 +964,29 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 					result,
 					&refresh,
 				);
-			},
-		);
+			});
 	}
 	{
 		let (entry, refresh, btn) = (entry.clone(), refresh.clone(), unmount_btn.clone());
-		ui_commons::connect_clicked_confirm(
-			&unmount_btn,
-			i18n("Unmount"),
-			i18n("Are you sure you want to unmount this entry?"),
-			|| None,
-			move || {
-				let (mount_point, device, is_swap, mount_point_changed) = {
+		ui_commons::confirm_clicked_action(&unmount_btn, i18n("Are you sure you want to unmount this entry?"))
+			.confirm_choice(i18n("Unmount"))
+			.guard({
+				let (entry, btn) = (entry.clone(), btn.clone());
+				move || {
+					let entry = entry.borrow();
+					let (mount_point, is_swap, changed) = (entry.mount_point.clone(), entry.fs_type == FsType::Swap, entry.mount_point_changed());
+					mount_action_allowed(&btn, MountAction::Unmount, &mount_point, is_swap, changed)
+				}
+			})
+			.connect(move || {
+				let (mount_point, device, is_swap) = {
 					let entry = entry.borrow();
 					(
 						entry.mount_point.clone(),
 						credentials_flow::action_device(&entry),
 						entry.fs_type == FsType::Swap,
-						entry.mount_point_changed(),
 					)
 				};
-				if warn_empty_mount_point(&btn, MountAction::Unmount, &mount_point, is_swap) {
-					return;
-				}
-				if warn_unsaved_changes(&btn, MountAction::Unmount, mount_point_changed) {
-					return;
-				}
 				let result = privileged::unmount(&mount_point, &device, is_swap);
 				let body = i18n_fmt("Unmounted {mount_point}.", &[("{mount_point}", &mount_point)]);
 				report_action_outcome(
@@ -1004,8 +997,7 @@ fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_edito
 					result,
 					&refresh,
 				);
-			},
-		);
+			});
 	}
 }
 
