@@ -488,7 +488,7 @@ mod tests {
 			"trailing ",
 			"",
 			"a\\040b",
-			"\040",
+			" ",
 			"cr\rmid",
 			"nbsp\u{00a0}mid",
 			"vt\u{000b}ff\u{000c}",
@@ -686,7 +686,7 @@ UUID=2 /home xfs defaults 0 2
 		file.push_entry(StabEntry::from(2, "UUID=3 /mnt ext4 defaults 0 2").unwrap());
 		assert!(file.is_changed(), "added entry should mark the file as changed");
 
-		let mut file = StabFile::from_raw(raw);
+		let file = StabFile::from_raw(raw);
 		let entry = file.entry_at(0).unwrap();
 		entry.borrow_mut().mount_point = "/other".to_string();
 		assert!(file.is_changed(), "modified entry should mark the file as changed");

@@ -59,7 +59,10 @@ fn default_credentials_filename(entry: &StabEntry) -> String {
 			.unwrap_or(&device),
 		FsType::FuseSshfs => device
 			.rsplit_once('@')
-			.map(|(_, host)| host.split(':').next().unwrap_or(""))
+			.map(|(_, host)| host)
+			.unwrap_or(device.as_str())
+			.split(':')
+			.next()
 			.filter(|host| !host.is_empty())
 			.unwrap_or(&device),
 		_ => &device,

@@ -400,11 +400,9 @@ impl DeviceRowController {
 		};
 		let (new_kinds, selected) = kinds_with_selected(&fs_type, device.kind);
 		*self.kinds.borrow_mut() = new_kinds;
-		self.model.splice(
-			0,
-			self.model.n_items(),
-			&self.kinds.borrow().iter().map(|k| k.label()).collect::<Vec<_>>(),
-		);
+		let labels: Vec<String> = self.kinds.borrow().iter().map(|k| i18n(k.label())).collect();
+		self.model
+			.splice(0, self.model.n_items(), &labels.iter().map(String::as_str).collect::<Vec<_>>());
 		self.dropdown.set_selected(selected as u32);
 		self.sync_kind();
 	}
@@ -853,7 +851,7 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 	let style: GC<NetworkStyle> = GC::new(network_style_for_fs(&entry.borrow().fs_type));
 
 	let issue_icon = ui_commons::issue_image();
-	let header = ui_commons::titled_header("Device", None, Some(&issue_icon), &dropdown);
+	let header = ui_commons::titled_header(i18n("Device").as_str(), None, Some(&issue_icon), &dropdown);
 
 	let value_entry = Entry::builder().text(&initial.value).hexpand(true).margin_start(12).build();
 	let picker_btn = Button::builder()

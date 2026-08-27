@@ -64,7 +64,16 @@ pub(super) fn mount_with_credentials(action: &MountAction, credentials: &MountCr
 			}
 			result
 		}
-		"fuse.sshfs" => run_command_with_stdin("mount", &["-o", "password_stdin", action.mount_point.as_str()], &credentials.password),
+		"fuse.sshfs" => {
+			let mut options = String::from("password_stdin");
+			if let Some(username) = &credentials.username
+				&& !username.is_empty()
+			{
+				options.push_str(",user=");
+				options.push_str(username);
+			}
+			run_command_with_stdin("mount", &["-o", &options, action.mount_point.as_str()], &credentials.password)
+		}
 		_ => run_command("mount", &[action.mount_point.as_str()]),
 	}
 }

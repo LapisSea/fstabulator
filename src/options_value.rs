@@ -1,7 +1,7 @@
 use crate::context::EntryContext;
 use crate::device_value::DeviceValue;
 use crate::fs_options::{CompressionSpec, FsOption, OptionSpec, OptionValue};
-use crate::i18n::i18n;
+use crate::i18n::{i18n, i18n_fmt};
 use crate::problem_reports::{CheckValue, Problem, check};
 use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
@@ -525,7 +525,9 @@ fn build_subvol_find_button(ctx: &AddContext, input: &gtk::Entry, name: &str) ->
 		move || {
 			let device = ctx.entry_ctx.entry().cloned(|e| &e.device);
 			let Some(path) = device.resolve_node() else {
-				return Err(anyhow::anyhow!("Could not find local device for \"{}\"", device.render()));
+				let rendered = device.render();
+				let message = i18n_fmt("Could not find local device for \"{device}\"", &[("{device}", &rendered)]);
+				return Err(anyhow::anyhow!("{}", message));
 			};
 			let mut cache = cache.borrow_mut();
 			let subvols = match cache.as_ref() {
