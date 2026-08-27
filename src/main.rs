@@ -67,6 +67,8 @@ impl<T> GC<T> {
 pub(crate) type RebuildEditor = GC<Option<Rc<dyn Fn()>>>;
 
 const APP_ID: &str = "org.lapissea.FSTabulator";
+const WINDOW_TITLE: &str = "FSTabulator";
+const WINDOW_TITLE_MODIFIED: &str = "FSTabulator •";
 
 fn register_icon() -> anyhow::Result<()> {
 	gtk::gio::resources_register_include!("compiled.gresource").context("Failed to register app resources")?;
@@ -100,7 +102,7 @@ fn build_ui(application: &Application) {
 
 	let window_build = ApplicationWindow::builder()
 		.application(application)
-		.title("FSTabulator")
+		.title(WINDOW_TITLE)
 		.default_width(800)
 		.default_height(600);
 
@@ -136,14 +138,19 @@ fn build_ui(application: &Application) {
 	save_changes_btn.add_css_class("suggested-action");
 	revert_changes_btn.add_css_class("destructive-action");
 
+	let title_window: GC<Option<ApplicationWindow>> = GC::new(None);
 	let file_ctx = FileContext::new(
 		stab_file.clone(),
 		Rc::new({
 			let (stab_file, save_changes_btn, revert_changes_btn) = (stab_file.clone(), save_changes_btn.clone(), revert_changes_btn.clone());
+			let title_window = title_window.clone();
 			move || {
 				let changed = stab_file.borrow().is_changed();
 				save_changes_btn.set_sensitive(changed);
 				revert_changes_btn.set_sensitive(changed);
+				if let Some(window) = title_window.borrow().as_ref() {
+					window.set_title(Some(if changed { WINDOW_TITLE_MODIFIED } else { WINDOW_TITLE }));
+				}
 			}
 		}),
 	);
@@ -276,6 +283,25 @@ fn build_ui(application: &Application) {
 
 	toast_overlay.set_child(Some(&main_box));
 	let window = window_build.content(&toast_overlay).build();
+	*title_window.borrow_mut() = Some(window.clone());
+
+	let exiting = GC::new(false);
+	{
+		let (stab_file, application, exiting) = (stab_file.clone(), application.clone(), exiting.clone());
+		window.connect_close_request(move |window| {
+			if *exiting.borrow() || !stab_file.borrow().is_changed() {
+				return gtk::glib::Propagation::Proceed;
+			}
+			let (window, application, exiting) = (window.clone(), application.clone(), exiting.clone());
+			ui_commons::confirm_popup(&window, i18n("You have unsaved changes. They will be lost if you exit now."), move || {
+				*exiting.borrow_mut() = true;
+				application.quit();
+			})
+			.confirm_choice(i18n("Exit"))
+			.present();
+			gtk::glib::Propagation::Stop
+		});
+	}
 
 	attach_responsive_breakpoint(&window, &split_box);
 

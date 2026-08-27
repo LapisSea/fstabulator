@@ -4,6 +4,7 @@ use crate::fs_value::FsType;
 use crate::i18n::{i18n, i18n_fmt};
 use crate::stab_yurself::StabEntry;
 use crate::subvolume::{find_mount_point, list_subvolumes_at};
+use adw::gio::ffi::g_action_name_is_valid;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -105,7 +106,7 @@ fn device_problem(device: &str, fs_type: &FsType) -> Option<Problem> {
 	}
 	if value.kind == DeviceKind::Other && !matches!(fs_type, FsType::Other(_)) && !DeviceKind::for_fs_type(fs_type).is_empty() {
 		return Some(Problem {
-			level: ProblemLevel::Warning,
+			level: ProblemLevel::Error,
 			message: i18n_fmt("Unknown device type: {device}", &[("{device}", device)]),
 		});
 	}
@@ -423,7 +424,7 @@ mod tests {
 		assert!(
 			issues
 				.iter()
-				.any(|issue| issue.level == ProblemLevel::Warning && issue.message.contains("LABEL=boot"))
+				.any(|issue| issue.level == ProblemLevel::Error && issue.message.contains("LABEL=boot"))
 		);
 	}
 
