@@ -321,6 +321,27 @@ impl StabFile {
 		self.lines.push(StabLine::Entry(GC::new(entry)));
 	}
 
+	pub fn move_entry(&mut self, from: usize, to: usize) {
+		let count = self.entries().count();
+		if count < 2 || from >= count || from == to {
+			return;
+		}
+		let to = to.min(count - 1);
+		let line = self.lines.remove(self.entry_line_pos(from));
+		let insert_at = if to < count - 1 { self.entry_line_pos(to) } else { self.lines.len() };
+		self.lines.insert(insert_at, line);
+	}
+
+	fn entry_line_pos(&self, entry_index: usize) -> usize {
+		self.lines
+			.iter()
+			.enumerate()
+			.filter(|(_, line)| matches!(line, StabLine::Entry(_)))
+			.nth(entry_index)
+			.map(|(pos, _)| pos)
+			.unwrap_or(self.lines.len())
+	}
+
 	/// Combine this file's entries with backup, keeps note of what changed between 2 files
 	pub fn overlay_backup(&self, backup: &StabFile) -> Vec<StabLine> {
 		let baseline: Vec<StabEntry> = self.entries().map(|entry| entry.borrow().clone()).collect();
@@ -690,5 +711,37 @@ UUID=2 /home xfs defaults 0 2
 		let entry = file.entry_at(0).unwrap();
 		entry.borrow_mut().mount_point = "/other".to_string();
 		assert!(file.is_changed(), "modified entry should mark the file as changed");
+	}
+
+	#[test]
+	fn move_entry_reorders() {
+		let raw = "\
+# first
+UUID=1 / ext4 defaults 0 1
+UUID=2 /home xfs defaults 0 2
+# third
+UUID=3 /mnt/a ext4 defaults 0 2
+UUID=4 /mnt/b ext4 defaults 0 2
+";
+		let mut file = StabFile::from_raw(raw);
+		assert!(!file.is_changed());
+
+		file.move_entry(0, 2);
+		assert!(file.is_changed(), "reordered entries should mark the file as changed");
+		let order: Vec<String> = file.entries().map(|e| e.borrow().mount_point.clone()).collect();
+		assert_eq!(order, ["/home", "/mnt/a", "/", "/mnt/b"]);
+		assert_eq!(
+			file.entry_at(2).unwrap().borrow().user_label.as_deref(),
+			Some("first"),
+			"label should move with its entry"
+		);
+
+		file.move_entry(0, 3);
+		let order: Vec<String> = file.entries().map(|e| e.borrow().mount_point.clone()).collect();
+		assert_eq!(order, ["/mnt/a", "/", "/mnt/b", "/home"]);
+
+		file.move_entry(1, 0);
+		file.move_entry(3, 1);
+		assert!(!file.is_changed(), "restoring the original order should leave the file unmodified");
 	}
 }

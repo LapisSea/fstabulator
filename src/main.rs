@@ -16,6 +16,7 @@ mod search_picker;
 mod stab_yurself;
 mod subvolume;
 mod ui_commons;
+mod user_group;
 
 use crate::context::FileContext;
 use crate::i18n::{i18n, i18n_fmt, localized_datetime};
@@ -24,10 +25,14 @@ use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::{StabEntry, StabFile};
 use crate::ui_commons::{ERROR_NAME, WARNING_NAME, activatable_row, clear_children, find_widget_with_class, query_matches, trash_button};
 use adw::gdk::pango;
+use adw::gdk::{ContentProvider, DragAction};
 use adw::prelude::*;
 use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, HeaderBar, LengthUnit, Toast, ToastOverlay};
 use anyhow::Context as _;
-use gtk::{Align, Box as GtkBox, Button, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget};
+use gtk::{
+	Align, Box as GtkBox, Button, DragSource, DropTarget, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget,
+	WidgetPaintable,
+};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::{PoisonError, RwLock, RwLockReadGuard, RwLockWriteGuard};
@@ -450,10 +455,62 @@ fn esc(s: &str) -> String {
 	s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;")
 }
 
+fn attach_row_dnd(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext) {
+	let drag_source = DragSource::new();
+	drag_source.set_actions(DragAction::MOVE);
+	drag_source.connect_prepare({
+		let row_weak = row.downgrade();
+		move |_source, _x, _y| {
+			let row = row_weak.upgrade()?;
+			Some(ContentProvider::for_value(&glib::Value::from(row.index())))
+		}
+	});
+	drag_source.connect_drag_begin({
+		let row_weak = row.downgrade();
+		move |source, _drag| {
+			if let Some(row) = row_weak.upgrade() {
+				let paintable = WidgetPaintable::new(Some(&row));
+				source.set_icon(Some(&paintable), 0, 0);
+			}
+		}
+	});
+	row.add_controller(drag_source);
+
+	let drop_target = DropTarget::new(glib::types::Type::I32, DragAction::MOVE);
+	drop_target.connect_drop({
+		let (row_weak, list_box, file_ctx) = (row.downgrade(), list_box.clone(), file_ctx.clone());
+		move |_target, value, _x, y| {
+			let (Ok(source_index), Some(target_row)) = (value.get::<i32>(), row_weak.upgrade()) else {
+				return false;
+			};
+			if source_index == target_row.index() {
+				return false;
+			}
+			let Some(source_row) = list_box.row_at_index(source_index) else {
+				return false;
+			};
+			list_box.remove(&source_row);
+			let mut new_index = target_row.index();
+			if y > target_row.height() as f64 / 2.0 {
+				new_index += 1;
+			}
+			list_box.insert(&source_row, new_index);
+			file_ctx.file().borrow_mut().move_entry(source_index as usize, new_index as usize);
+			// unselect_row is required: GTK leaves a stale selected flag on the reinserted row, which makes select_row a silent no-op.
+			list_box.unselect_row(&source_row);
+			list_box.select_row(Some(&source_row));
+			file_ctx.notify();
+			true
+		}
+	});
+	row.add_controller(drop_target);
+}
+
 fn make_list_row(list_box: &ListBox, file_ctx: &FileContext, editor_panel: &gtk::Box, entry: &StabEntry) -> ActionRow {
 	let row = ActionRow::new();
 	add_delete_button(list_box, &row, file_ctx, editor_panel);
 	render_list_entry(&row, entry, None);
+	attach_row_dnd(list_box, &row, file_ctx);
 	row
 }
 
