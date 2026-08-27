@@ -5,7 +5,6 @@ use crate::i18n::{i18n, i18n_fmt};
 use crate::stab_yurself::StabEntry;
 use crate::subvolume::{find_mount_point, list_subvolumes_at};
 use crate::user_group;
-use adw::gio::ffi::g_action_name_is_valid;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]

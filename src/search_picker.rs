@@ -118,6 +118,20 @@ impl<T: Clone + 'static, W: IsA<Widget>> SearchPickerBuilder<T, W> {
 
 		let popover = Popover::builder().child(&popover_content).build();
 
+		{
+			let (popover, controller) = (popover.clone(), gtk::EventControllerKey::new());
+			controller.set_propagation_phase(gtk::PropagationPhase::Capture);
+			popover.add_controller(controller.clone());
+			controller.connect_key_pressed(move |_controller, key, _keycode, _state| {
+				if key == gtk::gdk::Key::Escape {
+					popover.popdown();
+					gtk::glib::Propagation::Stop
+				} else {
+					gtk::glib::Propagation::Proceed
+				}
+			});
+		}
+
 		let menu_btn = MenuButton::builder().popover(&popover).build();
 		if wrap_label {
 			// For some reason label won't respect top and bottom margin... Not sure why.
