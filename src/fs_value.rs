@@ -157,7 +157,6 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 	let menu_label = if is_other { i18n("Other") } else { current.to_string() };
 
 	let value_entry = Entry::builder().hexpand(true).build();
-	value_entry.set_text(&current.to_string());
 	value_entry.set_visible(is_other);
 
 	let menu_btn_holder: GC<Option<gtk::MenuButton>> = GC::new(None);
@@ -251,6 +250,10 @@ pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_
 	content.append(&menu_btn);
 	content.append(&value_entry);
 
-	let row = PreferencesRow::builder().title(i18n("File system")).child(&content).build();
+	let row = PreferencesRow::builder()
+		.title(i18n("File system"))
+		.activatable(false)
+		.child(&content)
+		.build();
 	options.add(&row);
 }

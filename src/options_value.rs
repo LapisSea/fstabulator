@@ -7,8 +7,9 @@ use crate::search_picker::SearchPickerBuilder;
 use crate::subvolume::{Subvol, list_subvolumes};
 use crate::{GC, fs_options, ui_commons};
 use adw::prelude::*;
-use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow, SpinRow};
+use adw::{ActionRow, EntryRow, PreferencesGroup, PreferencesRow};
 use gtk::{Align, Box as GtkBox, Button, CheckButton, DropDown, MenuButton, Orientation, StringList};
+use std::fmt::Display;
 use std::rc::Rc;
 use std::time::Duration;
 
@@ -138,14 +139,35 @@ fn add_option_row(ctx: AddContext) {
 			value: OptionValue::Integer,
 			..
 		}) => {
-			add_digits_option_row(ctx.clone(), &trash, &name, description, &current, |c| c.is_ascii_digit());
+			add_digits_option_row(
+				ctx.clone(),
+				&trash,
+				&name,
+				description,
+				&current,
+				|c| c.is_ascii_digit(),
+				|value| value.to_string(),
+			);
 		}
 		Some(OptionSpec {
 			description,
 			value: OptionValue::IntegerRange(min, max),
 			..
 		}) => {
-			add_spin_option_row(ctx.clone(), &trash, &name, description, &current, min as f64, max as f64);
+			let negative = min < 0;
+			add_digits_option_row(
+				ctx.clone(),
+				&trash,
+				&name,
+				description,
+				&current,
+				move |c| c.is_ascii_digit() || (negative && c == '-'),
+				move |value| {
+					value
+						.parse::<i64>()
+						.map_or_else(|_| value.to_string(), |value| value.clamp(min, max).to_string())
+				},
+			);
 		}
 		Some(OptionSpec {
 			description,
@@ -166,7 +188,15 @@ fn add_option_row(ctx: AddContext) {
 			value: OptionValue::Octal,
 			..
 		}) => {
-			add_digits_option_row(ctx.clone(), &trash, &name, description, &current, |c| matches!(c, '0'..='7'));
+			add_digits_option_row(
+				ctx.clone(),
+				&trash,
+				&name,
+				description,
+				&current,
+				|c| matches!(c, '0'..='7'),
+				|value| value.to_string(),
+			);
 		}
 		Some(OptionSpec {
 			description,
@@ -253,7 +283,7 @@ fn add_entry_option_row(
 	let content = GtkBox::builder().orientation(Orientation::Vertical).spacing(6).margin_bottom(6).build();
 	content.append(&header);
 	content.append(&input_row);
-	ctx.group.add(&PreferencesRow::builder().child(&content).build());
+	ctx.group.add(&PreferencesRow::builder().activatable(false).child(&content).build());
 
 	let ctx = ctx.clone();
 	let name = name.to_string();
@@ -270,29 +300,6 @@ fn add_string_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descr
 
 	let (ctx, issue_icon) = (ctx.clone(), issue_icon.clone());
 	input.connect_changed(move |_| refresh_option_issue(Some(&issue_icon), &ctx));
-}
-
-fn add_spin_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, description: &str, current: &str, min: f64, max: f64) {
-	let row = SpinRow::builder()
-		.title(name)
-		.subtitle(i18n(description))
-		.value(current.parse::<f64>().unwrap_or_default())
-		.climb_rate(1.0)
-		.numeric(true)
-		.build();
-	row.set_range(min, max);
-	row.add_suffix(trash);
-	ctx.group.add(&row);
-
-	let row_icon = option_row_icon(row.clone());
-	refresh_option_issue(row_icon.as_ref(), &ctx);
-	let ctx = ctx.clone();
-	let name = name.to_string();
-	let row_icon = row_icon.clone();
-	row.adjustment().connect_value_changed(move |adjustment| {
-		set_option(&ctx, FsOption::from_kv(name.clone(), (adjustment.value().round() as i64).to_string()));
-		refresh_option_issue(row_icon.as_ref(), &ctx);
-	});
 }
 
 const SIZE_UNITS: [&str; 8] = ["B", "K", "M", "G", "T", "P", "E", "%"];
@@ -346,13 +353,18 @@ fn add_size_option_row(ctx: AddContext, trash: &gtk::Button, name: &str, descrip
 }
 
 fn filter_input(input: &gtk::Entry, valid: impl Fn(char) -> bool + 'static, on_changed: impl Fn(&str) + 'static) {
+	let apply_input = input.clone();
 	input.connect_changed(move |input| {
 		let text = input.text();
 		let cleaned: String = text.chars().filter(|c| valid(*c)).collect();
 		if cleaned.as_str() != text.as_str() {
 			let before: String = text.chars().take(input.position().max(0) as usize).filter(|c| valid(*c)).collect();
-			input.set_text(&cleaned);
-			input.set_position(before.chars().count() as i32);
+			let idle_input = apply_input.clone();
+			gtk::glib::idle_add_local(move || {
+				idle_input.set_text(&cleaned);
+				idle_input.set_position(before.chars().count() as i32);
+				gtk::glib::ControlFlow::Break
+			});
 			return;
 		}
 		on_changed(&cleaned);
@@ -422,13 +434,14 @@ fn add_compression_option_row(
 	filter_input(&level_entry, |c| c.is_ascii_digit(), move |_| apply());
 }
 
-fn add_digits_option_row(
+fn add_digits_option_row<T: Display>(
 	ctx: AddContext,
 	trash: &gtk::Button,
 	name: &str,
 	description: &str,
 	current: &str,
 	valid_digit: impl Fn(char) -> bool + 'static,
+	map_value: impl Fn(&str) -> T + 'static,
 ) {
 	let input = gtk::Entry::builder()
 		.text(current)
@@ -445,8 +458,17 @@ fn add_digits_option_row(
 	refresh_option_issue(row_icon.as_ref(), &ctx);
 	let (ctx, name) = (ctx.clone(), name.to_string());
 	let row_icon = row_icon.clone();
+	let apply_input = input.clone();
 	filter_input(&input, valid_digit, move |cleaned| {
-		set_option(&ctx, FsOption::from_kv(&name, cleaned));
+		let value = map_value(cleaned).to_string();
+		if value.as_str() != cleaned {
+			let (idle_input, idle_value) = (apply_input.clone(), value.clone());
+			gtk::glib::idle_add_local(move || {
+				idle_input.set_text(&idle_value);
+				gtk::glib::ControlFlow::Break
+			});
+		}
+		set_option(&ctx, FsOption::from_kv(&name, &value));
 		refresh_option_issue(row_icon.as_ref(), &ctx);
 	});
 }
