@@ -33,12 +33,12 @@ use gtk::{
 	Align, Box as GtkBox, Button, DragSource, DropTarget, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget,
 	WidgetPaintable,
 };
+use std::cell::{Ref, RefCell, RefMut};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
-use std::sync::{PoisonError, RwLock, RwLockReadGuard, RwLockWriteGuard};
 use std::time::SystemTime;
 
-pub(crate) struct GC<T>(Rc<RwLock<T>>);
+pub(crate) struct GC<T>(Rc<RefCell<T>>);
 
 impl<T> Clone for GC<T> {
 	fn clone(&self) -> Self {
@@ -48,24 +48,23 @@ impl<T> Clone for GC<T> {
 
 impl<T> GC<T> {
 	pub(crate) fn new(value: T) -> Self {
-		Self(Rc::new(RwLock::new(value)))
+		Self(Rc::new(RefCell::new(value)))
 	}
 
-	pub(crate) fn borrow(&self) -> RwLockReadGuard<'_, T> {
-		self.0.read().unwrap_or_else(PoisonError::into_inner)
+	pub(crate) fn borrow(&self) -> Ref<'_, T> {
+		self.0.borrow()
 	}
 
 	pub(crate) fn cloned<F, V: Clone>(&self, get: F) -> V
 	where
 		F: FnOnce(&T) -> &V,
 	{
-		let val = self.0.read().unwrap_or_else(PoisonError::into_inner);
-		let ret = get(&val);
-		ret.clone()
+		let val = self.0.borrow();
+		get(&val).clone()
 	}
 
-	pub(crate) fn borrow_mut(&self) -> RwLockWriteGuard<'_, T> {
-		self.0.write().unwrap_or_else(PoisonError::into_inner)
+	pub(crate) fn borrow_mut(&self) -> RefMut<'_, T> {
+		self.0.borrow_mut()
 	}
 }
 
@@ -85,6 +84,11 @@ fn register_icon() -> anyhow::Result<()> {
 }
 
 fn main() -> gtk::glib::ExitCode {
+	// SAFETY: called once at startup before any threads are spawned; only sets a
+	// well-known variable to a known value so panic reports include a backtrace.
+	if std::env::var_os("RUST_BACKTRACE").is_none() {
+		unsafe { std::env::set_var("RUST_BACKTRACE", "1") };
+	}
 	i18n::init();
 	if std::env::args().any(|arg| arg == "--root-helper") {
 		if let Err(err) = privileged::run_root_helper() {
