@@ -67,6 +67,14 @@ impl StabEntry {
 		self.pass = original.pass;
 	}
 
+	pub fn set_fs_type(&mut self, fs_type: FsType) {
+		self.device = self.device.reclassify_for(&fs_type);
+		if matches!(fs_type, FsType::Swap) && self.mount_point.trim().is_empty() {
+			self.mount_point = "none".to_string();
+		}
+		self.fs_type = fs_type;
+	}
+
 	pub fn has_option(&self, name: &str) -> bool {
 		self.options.iter().any(|o| o.name() == name)
 	}
@@ -657,6 +665,22 @@ UUID=11111111-1111-1111-1111-111111111111 /home xfs rw 0 2
 		assert!(!blank.mount_point_changed());
 		blank.mount_point = "/mnt/data".to_string();
 		assert!(blank.mount_point_changed());
+	}
+
+	#[test]
+	fn set_fs_type_swap_defaults_empty_mount_point_to_none() {
+		let mut blank = StabEntry::blank(0);
+		blank.device = DeviceValue::from("/dev/zram0", DeviceKind::DevicePath);
+		blank.set_fs_type(FsType::Swap);
+		assert_eq!(blank.fs_type, FsType::Swap);
+		assert_eq!(blank.mount_point, "none");
+
+		let mut entry = StabEntry::from(0, "UUID=1 /mnt/data ext4 defaults 0 2").unwrap();
+		entry.set_fs_type(FsType::Swap);
+		assert_eq!(entry.mount_point, "/mnt/data");
+
+		entry.set_fs_type(FsType::Ext4);
+		assert_eq!(entry.mount_point, "/mnt/data");
 	}
 
 	#[test]

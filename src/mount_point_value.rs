@@ -19,8 +19,9 @@ impl MountPointRow {
 	}
 
 	pub fn refresh(&self) {
-		let text = self.entry.borrow().mount_point.clone();
-		self.row.set_text(&text);
+		let entry = self.entry.borrow().clone();
+		self.row.set_visible(entry.fs_type != FsType::Swap);
+		self.row.set_text(&entry.mount_point);
 		update_status_icon(&self.icon, &self.entry.borrow());
 	}
 }
@@ -37,6 +38,7 @@ pub fn add_mount_point_row(options: &PreferencesGroup, entry_ctx: &EntryContext)
 	let row = EntryRow::builder().title(i18n("Mount point")).text(&entry.borrow().mount_point).build();
 	row.add_suffix(&folder_btn);
 	row.add_prefix(&exists_icon);
+	row.set_visible(entry.borrow().fs_type != FsType::Swap);
 	update_status_icon(&exists_icon, &entry.borrow());
 	{
 		let (entry_ctx, entry, exists_icon) = (entry_ctx.clone(), entry.clone(), exists_icon.clone());

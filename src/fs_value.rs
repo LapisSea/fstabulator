@@ -138,9 +138,7 @@ enum FsChoice {
 }
 
 fn apply_fs_type(entry: &GC<StabEntry>, fs_type: FsType) {
-	let mut entry = entry.borrow_mut();
-	entry.device = entry.device.reclassify_for(&fs_type);
-	entry.fs_type = fs_type;
+	entry.borrow_mut().set_fs_type(fs_type);
 }
 
 pub fn add_fs_type_row(options: &PreferencesGroup, entry_ctx: &EntryContext, on_change: impl Fn() + 'static) {
