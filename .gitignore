@@ -6,7 +6,6 @@
 !Cargo.lock
 !Cargo.toml
 !fstab-dummy
-!install.sh
 !README.md
 !.rustfmt.toml
 
@@ -14,6 +13,7 @@
 !.idea/**
 !resources/**
 !icon_concepting/**
+!scripts/**
 
 !po/**
 

@@ -2,13 +2,14 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 APP_ID="org.lapissea.FSTabulator"
 ICON_NAME="fstabulator"
 
 # Default to the dev build; pass a path to install a different binary,
-# e.g. ./install.sh /usr/local/bin/fstabulator
-EXEC="${1:-$SCRIPT_DIR/target/debug/fstabulator}"
+# e.g. ./scripts/install.sh /usr/local/bin/fstabulator
+EXEC="${1:-$ROOT_DIR/target/debug/fstabulator}"
 
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 APPLICATIONS_DIR="$DATA_DIR/applications"
@@ -31,10 +32,10 @@ Categories=System;Utility;
 EOF
 
 # Light icon
-cp "$SCRIPT_DIR/resources/fstabulator_icon.png" "$HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.png"
+cp "$ROOT_DIR/resources/fstabulator_icon.svg" "$HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.svg"
 
 # Dark icon
-cp "$SCRIPT_DIR/resources/fstabulator_icon_dark.png" "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"
+cp "$ROOT_DIR/resources/fstabulator_icon_dark.png" "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"
 if [[ ! -f "$DARK_THEME_DIR/index.theme" ]]; then
 	cat > "$DARK_THEME_DIR/index.theme" <<EOF
 [Icon Theme]
@@ -57,5 +58,5 @@ fi
 
 echo "Installed:"
 echo "  $APPLICATIONS_DIR/$APP_ID.desktop (Exec=$EXEC)"
-echo "  $HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.png"
+echo "  $HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.svg"
 echo "  $DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"

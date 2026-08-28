@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
 	<gresource prefix="/org/lapissea/FSTabulator/icons">
-		<file alias="512x512/apps/fstabulator.png">fstabulator_icon.png</file>
+		<file alias="512x512/apps/fstabulator.svg">fstabulator_icon.svg</file>
 	</gresource>
 </gresources>
