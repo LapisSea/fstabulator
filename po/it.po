@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-25 18:49+0200\n"
-"PO-Revision-Date: 2026-08-25 14:00+0200\n"
+"POT-Creation-Date: 2026-08-28 01:57+0200\n"
+"PO-Revision-Date: 2026-08-28 02:34+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Italian <it@li.org>\n"
 "Language: it\n"
@@ -183,74 +183,15 @@ msgstr "Sistema di file"
 msgid "Model"
 msgstr "Modello"
 
+msgid "Device"
+msgstr "Dispositivo"
+
 msgid "Edit device"
 msgstr "Modifica dispositivo"
 
 #, rust-format
 msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
 msgstr "Impossibile risolvere un {kind} per {value}. Il valore è stato mantenuto invariato."
-
-msgid "Could not parse entry"
-msgstr "Impossibile analizzare la voce"
-
-#, rust-format
-msgid "Unknown file system: {fs_type}"
-msgstr "Sistema di file sconosciuto: {fs_type}"
-
-msgid "No problems detected"
-msgstr "Nessun problema rilevato"
-
-#, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr "Il punto di montaggio non esiste: {point}"
-
-#, rust-format
-msgid "Unknown device type: {device}"
-msgstr "Tipo di dispositivo sconosciuto: {device}"
-
-#, rust-format
-msgid "Device does not exist: {device}"
-msgstr "Il dispositivo non esiste: {device}"
-
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr "Opzione sconosciuta: {option}"
-
-#, rust-format
-msgid "{option} should not have a value"
-msgstr "{option} non deve avere un valore"
-
-#, rust-format
-msgid "{option} should be one of: {values}"
-msgstr "{option} deve essere uno di: {values}"
-
-#, rust-format
-msgid "{option} should be one of: {values}, optionally followed by a level"
-msgstr "{option} deve essere uno di: {values}, seguito opzionalmente da un livello"
-
-#, rust-format
-msgid "{option} should be a number"
-msgstr "{option} deve essere un numero"
-
-#, rust-format
-msgid "{option} should be a number between {min} and {max}"
-msgstr "{option} deve essere un numero compreso tra {min} e {max}"
-
-#, rust-format
-msgid "{option} should be an octal number"
-msgstr "{option} deve essere un numero ottale"
-
-#, rust-format
-msgid "{option} should be a number with a size unit, for example 16K"
-msgstr "{option} deve essere un numero con un'unità di misura, ad esempio 16K"
-
-#, rust-format
-msgid "{option} should be {on} or {off}"
-msgstr "{option} deve essere {on} o {off}"
-
-#, rust-format
-msgid "Credentials file does not exist: {path}"
-msgstr "Il file di credenziali non esiste: {path}"
 
 msgid "Edit as text"
 msgstr "Modifica come testo"
@@ -2427,11 +2368,11 @@ msgstr "Annulla le modifiche"
 msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
 msgstr "Le tue modifiche non sono ancora state salvate. Il backup rifletterà il /etc/fstab salvato, non le modifiche non ancora salvate. Vuoi continuare?"
 
-msgid "Save"
-msgstr "Salva"
-
 msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr "Vuoi davvero scrivere queste modifiche in /etc/fstab?"
+
+msgid "Save"
+msgstr "Salva"
 
 msgid "Saved, but could not reload"
 msgstr "Salvato, ma impossibile ricaricare"
@@ -2442,14 +2383,20 @@ msgstr "Salvato in /etc/fstab"
 msgid "Could not save"
 msgstr "Impossibile salvare"
 
-msgid "Revert"
-msgstr "Annulla"
-
 msgid "Are you sure? Any changes made will be lost!"
 msgstr "Sei sicuro? Tutte le modifiche apportate andranno perse!"
 
+msgid "Revert"
+msgstr "Annulla"
+
 msgid "'/etc/fstab' entries:"
 msgstr "Voci di '/etc/fstab':"
+
+msgid "You have unsaved changes. They will be lost if you exit now."
+msgstr "Ci sono modifiche non salvate. Se esci adesso, andranno perse."
+
+msgid "Exit"
+msgstr "Esci"
 
 msgid "Error loading fstab file!"
 msgstr "Errore di caricamento del file fstab!"
@@ -2501,6 +2448,164 @@ msgstr "Impossibile elencare i backup"
 msgid "Could not load backup"
 msgstr "Impossibile caricare il backup"
 
+msgid "Delete entry"
+msgstr "Elimina voce"
+
+msgid "Mount point"
+msgstr "Punto di montaggio"
+
+msgid "Delete this entry?"
+msgstr "Eliminare questa voce?"
+
+msgid "Delete"
+msgstr "Elimina"
+
+msgid "Choose folder"
+msgstr "Scegli una cartella"
+
+msgid "Choose mount point"
+msgstr "Scegli un punto di montaggio"
+
+msgid "Path exists"
+msgstr "Il percorso esiste"
+
+msgid "Unmounted"
+msgstr "Smontato"
+
+msgid "Mount point missing"
+msgstr "Punto di montaggio mancante"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "Il dispositivo è attualmente montato su questo punto di montaggio."
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "Il dispositivo non è attualmente montato su questo punto di montaggio."
+
+msgid "This mount point does not exist on the system."
+msgstr "Questo punto di montaggio non esiste nel sistema."
+
+msgid "Remove option"
+msgstr "Rimuovi opzione"
+
+msgid "Option"
+msgstr "Opzione"
+
+#, rust-format
+msgid "Could not find local device for \"{device}\""
+msgstr "Impossibile trovare il dispositivo locale per \"{device}\""
+
+msgid "Search subvolumes"
+msgstr "Cerca sottovolumi"
+
+msgid "Find a subvolume on this device"
+msgstr "Trova un sottovolume su questo dispositivo"
+
+msgid "Failed to fetch subvolumes"
+msgstr "Impossibile recuperare i sottovolumi"
+
+msgid "Search users"
+msgstr "Cerca utenti"
+
+msgid "Choose the user for this option"
+msgstr "Scegli l'utente per questa opzione"
+
+msgid "Search groups"
+msgstr "Cerca gruppi"
+
+msgid "Choose the group for this option"
+msgstr "Scegli il gruppo per questa opzione"
+
+msgid "Add option…"
+msgstr "Aggiungi opzione…"
+
+msgid "Search options"
+msgstr "Cerca opzioni"
+
+msgid "Choose an option to add to this entry"
+msgstr "Scegli un'opzione da aggiungere a questa voce"
+
+msgid "Error loading options"
+msgstr "Errore nel caricare le opzioni"
+
+msgid "Add option"
+msgstr "Aggiungi opzione"
+
+msgid "Could not parse entry"
+msgstr "Impossibile analizzare la voce"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "Sistema di file sconosciuto: {fs_type}"
+
+msgid "No problems detected"
+msgstr "Nessun problema rilevato"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Il punto di montaggio non esiste: {point}"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "Tipo di dispositivo sconosciuto: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "Il dispositivo non esiste: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Opzione sconosciuta: {option}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} non deve avere un valore"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} deve essere uno di: {values}"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} deve essere uno di: {values}, seguito opzionalmente da un livello"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} deve essere un numero"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} deve essere un numero compreso tra {min} e {max}"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} deve essere un numero ottale"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} deve essere un numero con un'unità di misura, ad esempio 16K"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} deve essere {on} o {off}"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "Il file di credenziali non esiste: {path}"
+
+msgid "Could not check subvolume"
+msgstr "Impossibile verificare il sottovolume"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "Il sottovolume non esiste: {subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "Impossibile verificare il sottovolume: il dispositivo non è montato"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "Impossibile verificare il sottovolume: {error}"
+
 msgid "Cannot remount"
 msgstr "Impossibile rimontare"
 
@@ -2518,21 +2623,6 @@ msgstr "Il punto di montaggio ha modifiche non salvate. Salva le modifiche prima
 
 msgid "The mount point is empty."
 msgstr "Il punto di montaggio è vuoto."
-
-msgid "Delete entry"
-msgstr "Elimina voce"
-
-msgid "Device"
-msgstr "Dispositivo"
-
-msgid "Mount point"
-msgstr "Punto di montaggio"
-
-msgid "Delete"
-msgstr "Elimina"
-
-msgid "Delete this entry?"
-msgstr "Eliminare questa voce?"
 
 msgid "Reset"
 msgstr "Ripristina"
@@ -2605,76 +2695,8 @@ msgstr "Sei sicuro di voler smontare questa voce?"
 msgid "Unmounted {mount_point}."
 msgstr "Smontato {mount_point}."
 
-msgid "Unmounted"
-msgstr "Smontato"
-
 msgid "Could not unmount"
 msgstr "Impossibile smontare"
-
-msgid "Choose folder"
-msgstr "Scegli una cartella"
-
-msgid "Choose mount point"
-msgstr "Scegli un punto di montaggio"
-
-msgid "Path exists"
-msgstr "Il percorso esiste"
-
-msgid "Mount point missing"
-msgstr "Punto di montaggio mancante"
-
-msgid "The device is currently mounted at this mount point."
-msgstr "Il dispositivo è attualmente montato su questo punto di montaggio."
-
-msgid "The device is not currently mounted at this mount point."
-msgstr "Il dispositivo non è attualmente montato su questo punto di montaggio."
-
-msgid "This mount point does not exist on the system."
-msgstr "Questo punto di montaggio non esiste nel sistema."
-
-msgid "Remove option"
-msgstr "Rimuovi opzione"
-
-msgid "Option"
-msgstr "Opzione"
-
-#, rust-format
-msgid "Subvolume does not exist: {subvol}"
-msgstr "Il sottovolume non esiste: {subvol}"
-
-msgid "Could not check subvolume: the device is not mounted"
-msgstr "Impossibile verificare il sottovolume: il dispositivo non è montato"
-
-msgid "Could not check subvolume"
-msgstr "Impossibile verificare il sottovolume"
-
-#, rust-format
-msgid "Could not check subvolume: {error}"
-msgstr "Impossibile verificare il sottovolume: {error}"
-
-msgid "Search subvolumes"
-msgstr "Cerca sottovolumi"
-
-msgid "Find a subvolume on this device"
-msgstr "Trova un sottovolume su questo dispositivo"
-
-msgid "Failed to fetch subvolumes"
-msgstr "Impossibile recuperare i sottovolumi"
-
-msgid "Add option…"
-msgstr "Aggiungi opzione…"
-
-msgid "Search options"
-msgstr "Cerca opzioni"
-
-msgid "Choose an option to add to this entry"
-msgstr "Scegli un'opzione da aggiungere a questa voce"
-
-msgid "Error loading options"
-msgstr "Errore nel caricare le opzioni"
-
-msgid "Add option"
-msgstr "Aggiungi opzione"
 
 msgid "Search"
 msgstr "Cerca"

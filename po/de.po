@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-25 18:49+0200\n"
-"PO-Revision-Date: 2026-08-25 14:00+0200\n"
+"POT-Creation-Date: 2026-08-28 01:57+0200\n"
+"PO-Revision-Date: 2026-08-28 02:34+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: German <de@li.org>\n"
 "Language: de\n"
@@ -183,74 +183,15 @@ msgstr "Dateisystem"
 msgid "Model"
 msgstr "Modell"
 
+msgid "Device"
+msgstr "Gerät"
+
 msgid "Edit device"
 msgstr "Gerät bearbeiten"
 
 #, rust-format
 msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
 msgstr "Konnte {kind} für {value} nicht auflösen. Der Wert wurde unverändert beibehalten."
-
-msgid "Could not parse entry"
-msgstr "Eintrag konnte nicht geparst werden"
-
-#, rust-format
-msgid "Unknown file system: {fs_type}"
-msgstr "Unbekanntes Dateisystem: {fs_type}"
-
-msgid "No problems detected"
-msgstr "Keine Probleme erkannt"
-
-#, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr "Einhängepunkt existiert nicht: {point}"
-
-#, rust-format
-msgid "Unknown device type: {device}"
-msgstr "Unbekannter Gerätetyp: {device}"
-
-#, rust-format
-msgid "Device does not exist: {device}"
-msgstr "Gerät existiert nicht: {device}"
-
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr "Unbekannte Option: {option}"
-
-#, rust-format
-msgid "{option} should not have a value"
-msgstr "{option} darf keinen Wert haben"
-
-#, rust-format
-msgid "{option} should be one of: {values}"
-msgstr "{option} muss einer dieser Werte sein: {values}"
-
-#, rust-format
-msgid "{option} should be one of: {values}, optionally followed by a level"
-msgstr "{option} muss einer dieser Werte sein: {values}, optional gefolgt von einer Stufe"
-
-#, rust-format
-msgid "{option} should be a number"
-msgstr "{option} muss eine Zahl sein"
-
-#, rust-format
-msgid "{option} should be a number between {min} and {max}"
-msgstr "{option} muss eine Zahl zwischen {min} und {max} sein"
-
-#, rust-format
-msgid "{option} should be an octal number"
-msgstr "{option} muss eine oktale Zahl sein"
-
-#, rust-format
-msgid "{option} should be a number with a size unit, for example 16K"
-msgstr "{option} muss eine Zahl mit einer Größeneinheit sein, zum Beispiel 16K"
-
-#, rust-format
-msgid "{option} should be {on} or {off}"
-msgstr "{option} muss {on} oder {off} sein"
-
-#, rust-format
-msgid "Credentials file does not exist: {path}"
-msgstr "Zugangsdatendatei existiert nicht: {path}"
 
 msgid "Edit as text"
 msgstr "Als Text bearbeiten"
@@ -2427,11 +2368,11 @@ msgstr "Änderungen verwerfen"
 msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
 msgstr "Ihre Änderungen wurden noch nicht gespeichert. Die Sicherung entspricht dem gespeicherten /etc/fstab, nicht Ihren ungespeicherten Änderungen. Fortfahren?"
 
-msgid "Save"
-msgstr "Speichern"
-
 msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr "Sind Sie sicher, dass Sie diese Änderungen in /etc/fstab schreiben möchten?"
+
+msgid "Save"
+msgstr "Speichern"
 
 msgid "Saved, but could not reload"
 msgstr "Gespeichert, aber Neuladen fehlgeschlagen"
@@ -2442,14 +2383,20 @@ msgstr "In /etc/fstab gespeichert"
 msgid "Could not save"
 msgstr "Speichern fehlgeschlagen"
 
-msgid "Revert"
-msgstr "Verwerfen"
-
 msgid "Are you sure? Any changes made will be lost!"
 msgstr "Sind Sie sicher? Alle vorgenommenen Änderungen gehen verloren!"
 
+msgid "Revert"
+msgstr "Verwerfen"
+
 msgid "'/etc/fstab' entries:"
 msgstr "Einträge in '/etc/fstab':"
+
+msgid "You have unsaved changes. They will be lost if you exit now."
+msgstr "Sie haben ungespeicherte Änderungen. Wenn Sie jetzt beenden, gehen diese verloren."
+
+msgid "Exit"
+msgstr "Beenden"
 
 msgid "Error loading fstab file!"
 msgstr "Fehler beim Laden der fstab-Datei!"
@@ -2501,6 +2448,164 @@ msgstr "Fehler beim Auflisten der Sicherungen"
 msgid "Could not load backup"
 msgstr "Sicherung konnte nicht geladen werden"
 
+msgid "Delete entry"
+msgstr "Eintrag löschen"
+
+msgid "Mount point"
+msgstr "Einhängepunkt"
+
+msgid "Delete this entry?"
+msgstr "Diesen Eintrag löschen?"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Choose folder"
+msgstr "Ordner auswählen"
+
+msgid "Choose mount point"
+msgstr "Einhängepunkt auswählen"
+
+msgid "Path exists"
+msgstr "Pfad existiert"
+
+msgid "Unmounted"
+msgstr "Ausgebunden"
+
+msgid "Mount point missing"
+msgstr "Einhängepunkt fehlt"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "Das Gerät ist derzeit unter diesem Einhängepunkt eingebunden."
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "Das Gerät ist derzeit nicht unter diesem Einhängepunkt eingebunden."
+
+msgid "This mount point does not exist on the system."
+msgstr "Dieser Einhängepunkt existiert nicht auf dem System."
+
+msgid "Remove option"
+msgstr "Option entfernen"
+
+msgid "Option"
+msgstr "Option"
+
+#, rust-format
+msgid "Could not find local device for \"{device}\""
+msgstr "Das lokale Gerät für \"{device}\" konnte nicht gefunden werden"
+
+msgid "Search subvolumes"
+msgstr "Subvolumes durchsuchen"
+
+msgid "Find a subvolume on this device"
+msgstr "Ein Subvolume auf diesem Gerät finden"
+
+msgid "Failed to fetch subvolumes"
+msgstr "Abrufen der Subvolumes fehlgeschlagen"
+
+msgid "Search users"
+msgstr "Benutzer suchen"
+
+msgid "Choose the user for this option"
+msgstr "Benutzer für diese Option auswählen"
+
+msgid "Search groups"
+msgstr "Gruppen suchen"
+
+msgid "Choose the group for this option"
+msgstr "Gruppe für diese Option auswählen"
+
+msgid "Add option…"
+msgstr "Option hinzufügen…"
+
+msgid "Search options"
+msgstr "Optionen durchsuchen"
+
+msgid "Choose an option to add to this entry"
+msgstr "Option auswählen, die diesem Eintrag hinzugefügt wird"
+
+msgid "Error loading options"
+msgstr "Fehler beim Laden der Optionen"
+
+msgid "Add option"
+msgstr "Option hinzufügen"
+
+msgid "Could not parse entry"
+msgstr "Eintrag konnte nicht geparst werden"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "Unbekanntes Dateisystem: {fs_type}"
+
+msgid "No problems detected"
+msgstr "Keine Probleme erkannt"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Einhängepunkt existiert nicht: {point}"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "Unbekannter Gerätetyp: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "Gerät existiert nicht: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Unbekannte Option: {option}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} darf keinen Wert haben"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} muss einer dieser Werte sein: {values}"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} muss einer dieser Werte sein: {values}, optional gefolgt von einer Stufe"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} muss eine Zahl sein"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} muss eine Zahl zwischen {min} und {max} sein"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} muss eine oktale Zahl sein"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} muss eine Zahl mit einer Größeneinheit sein, zum Beispiel 16K"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} muss {on} oder {off} sein"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "Zugangsdatendatei existiert nicht: {path}"
+
+msgid "Could not check subvolume"
+msgstr "Subvolume konnte nicht geprüft werden"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "Subvolume existiert nicht: {subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "Subvolume konnte nicht geprüft werden: Das Gerät ist nicht eingehängt"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "Subvolume konnte nicht geprüft werden: {error}"
+
 msgid "Cannot remount"
 msgstr "Erneutes Einhängen nicht möglich"
 
@@ -2518,21 +2623,6 @@ msgstr "Der Einhängepunkt hat ungespeicherte Änderungen. Speichern Sie Ihre Ä
 
 msgid "The mount point is empty."
 msgstr "Der Einhängepunkt ist leer."
-
-msgid "Delete entry"
-msgstr "Eintrag löschen"
-
-msgid "Device"
-msgstr "Gerät"
-
-msgid "Mount point"
-msgstr "Einhängepunkt"
-
-msgid "Delete"
-msgstr "Löschen"
-
-msgid "Delete this entry?"
-msgstr "Diesen Eintrag löschen?"
 
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -2605,76 +2695,8 @@ msgstr "Möchten Sie diesen Eintrag wirklich aushängen?"
 msgid "Unmounted {mount_point}."
 msgstr "{mount_point} wurde ausgebunden."
 
-msgid "Unmounted"
-msgstr "Ausgebunden"
-
 msgid "Could not unmount"
 msgstr "Aushängen fehlgeschlagen"
-
-msgid "Choose folder"
-msgstr "Ordner auswählen"
-
-msgid "Choose mount point"
-msgstr "Einhängepunkt auswählen"
-
-msgid "Path exists"
-msgstr "Pfad existiert"
-
-msgid "Mount point missing"
-msgstr "Einhängepunkt fehlt"
-
-msgid "The device is currently mounted at this mount point."
-msgstr "Das Gerät ist derzeit unter diesem Einhängepunkt eingebunden."
-
-msgid "The device is not currently mounted at this mount point."
-msgstr "Das Gerät ist derzeit nicht unter diesem Einhängepunkt eingebunden."
-
-msgid "This mount point does not exist on the system."
-msgstr "Dieser Einhängepunkt existiert nicht auf dem System."
-
-msgid "Remove option"
-msgstr "Option entfernen"
-
-msgid "Option"
-msgstr "Option"
-
-#, rust-format
-msgid "Subvolume does not exist: {subvol}"
-msgstr "Subvolume existiert nicht: {subvol}"
-
-msgid "Could not check subvolume: the device is not mounted"
-msgstr "Subvolume konnte nicht geprüft werden: Das Gerät ist nicht eingehängt"
-
-msgid "Could not check subvolume"
-msgstr "Subvolume konnte nicht geprüft werden"
-
-#, rust-format
-msgid "Could not check subvolume: {error}"
-msgstr "Subvolume konnte nicht geprüft werden: {error}"
-
-msgid "Search subvolumes"
-msgstr "Subvolumes durchsuchen"
-
-msgid "Find a subvolume on this device"
-msgstr "Ein Subvolume auf diesem Gerät finden"
-
-msgid "Failed to fetch subvolumes"
-msgstr "Abrufen der Subvolumes fehlgeschlagen"
-
-msgid "Add option…"
-msgstr "Option hinzufügen…"
-
-msgid "Search options"
-msgstr "Optionen durchsuchen"
-
-msgid "Choose an option to add to this entry"
-msgstr "Option auswählen, die diesem Eintrag hinzugefügt wird"
-
-msgid "Error loading options"
-msgstr "Fehler beim Laden der Optionen"
-
-msgid "Add option"
-msgstr "Option hinzufügen"
 
 msgid "Search"
 msgstr "Suchen"

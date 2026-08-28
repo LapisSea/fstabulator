@@ -18,3 +18,5 @@
 !po/**
 
 !scripts/update-pot.sh
+
+__pycache__

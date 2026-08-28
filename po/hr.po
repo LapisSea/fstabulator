@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-25 18:49+0200\n"
-"PO-Revision-Date: 2026-08-24 16:00+0200\n"
+"POT-Creation-Date: 2026-08-28 01:57+0200\n"
+"PO-Revision-Date: 2026-08-28 02:34+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Croatian <hr@li.org>\n"
 "Language: hr\n"
@@ -184,74 +184,15 @@ msgstr "Datotečni sustav"
 msgid "Model"
 msgstr "Model"
 
+msgid "Device"
+msgstr "Uređaj"
+
 msgid "Edit device"
 msgstr "Uredi uređaj"
 
 #, rust-format
 msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
 msgstr "Nije moguće rezolvirati {kind} za {value}. Vrijednost je ostala nepromijenjena."
-
-msgid "Could not parse entry"
-msgstr "Nije moguće obraditi unos"
-
-#, rust-format
-msgid "Unknown file system: {fs_type}"
-msgstr "Nepoznat datotečni sustav: {fs_type}"
-
-msgid "No problems detected"
-msgstr "Nema otkrivenih problema"
-
-#, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr "Točka montiranja ne postoji: {point}"
-
-#, rust-format
-msgid "Unknown device type: {device}"
-msgstr "Nepoznat tip uređaja: {device}"
-
-#, rust-format
-msgid "Device does not exist: {device}"
-msgstr "Uređaj ne postoji: {device}"
-
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr "Nepoznata opcija: {option}"
-
-#, rust-format
-msgid "{option} should not have a value"
-msgstr "{option} ne smije imati vrijednost"
-
-#, rust-format
-msgid "{option} should be one of: {values}"
-msgstr "{option} bi trebala biti jedna od: {values}"
-
-#, rust-format
-msgid "{option} should be one of: {values}, optionally followed by a level"
-msgstr "{option} bi trebala biti jedna od: {values}, uz mogućnost da joj slijedi razina"
-
-#, rust-format
-msgid "{option} should be a number"
-msgstr "{option} bi trebala biti broj"
-
-#, rust-format
-msgid "{option} should be a number between {min} and {max}"
-msgstr "{option} bi trebala biti broj između {min} i {max}"
-
-#, rust-format
-msgid "{option} should be an octal number"
-msgstr "{option} bi trebala biti oktalni broj"
-
-#, rust-format
-msgid "{option} should be a number with a size unit, for example 16K"
-msgstr "{option} bi trebala biti broj s jedinicom veličine, na primjer 16K"
-
-#, rust-format
-msgid "{option} should be {on} or {off}"
-msgstr "{option} bi trebala biti {on} ili {off}"
-
-#, rust-format
-msgid "Credentials file does not exist: {path}"
-msgstr "Datoteka s prijavnim podacima ne postoji: {path}"
 
 msgid "Edit as text"
 msgstr "Uredi kao tekst"
@@ -2428,11 +2369,11 @@ msgstr "Poništi promjene"
 msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
 msgstr "Vaše promjene još nisu spremljene. Sigurnosna kopija će odražavati spremljeni /etc/fstab, a ne vaše nespremljene promjene. Nastaviti?"
 
-msgid "Save"
-msgstr "Spremi"
-
 msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr "Jeste li sigurni da želite zapisati ove promjene u /etc/fstab?"
+
+msgid "Save"
+msgstr "Spremi"
 
 msgid "Saved, but could not reload"
 msgstr "Spremljeno, ali nije moguće ponovno učitati"
@@ -2443,14 +2384,20 @@ msgstr "Spremljeno u /etc/fstab"
 msgid "Could not save"
 msgstr "Nije moguće spremiti"
 
-msgid "Revert"
-msgstr "Vrati"
-
 msgid "Are you sure? Any changes made will be lost!"
 msgstr "Jeste li sigurni? Sve izmjene bit će izgubljene!"
 
+msgid "Revert"
+msgstr "Vrati"
+
 msgid "'/etc/fstab' entries:"
 msgstr "Unosi u '/etc/fstab':"
+
+msgid "You have unsaved changes. They will be lost if you exit now."
+msgstr "Imaš nespremljene promjene. One će biti izgubljene ako sada izađeš."
+
+msgid "Exit"
+msgstr "Izlaz"
 
 msgid "Error loading fstab file!"
 msgstr "Pogreška pri učitavanju fstab datoteke!"
@@ -2502,6 +2449,164 @@ msgstr "Nije moguće izlistati sigurnosne kopije"
 msgid "Could not load backup"
 msgstr "Nije moguće učitati sigurnosnu kopiju"
 
+msgid "Delete entry"
+msgstr "Obriši unos"
+
+msgid "Mount point"
+msgstr "Točka montiranja"
+
+msgid "Delete this entry?"
+msgstr "Obrisati ovaj unos?"
+
+msgid "Delete"
+msgstr "Obriši"
+
+msgid "Choose folder"
+msgstr "Odaberi mapu"
+
+msgid "Choose mount point"
+msgstr "Odaberi točku montiranja"
+
+msgid "Path exists"
+msgstr "Putanja postoji"
+
+msgid "Unmounted"
+msgstr "Odmontrirano"
+
+msgid "Mount point missing"
+msgstr "Točka montiranja nedostaje"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "Uređaj je trenutno montiran na ovu točku montiranja."
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "Uređaj trenutno nije montiran na ovu točku montiranja."
+
+msgid "This mount point does not exist on the system."
+msgstr "Ova točka montiranja ne postoji na sustavu."
+
+msgid "Remove option"
+msgstr "Ukloni opciju"
+
+msgid "Option"
+msgstr "Opcija"
+
+#, rust-format
+msgid "Could not find local device for \"{device}\""
+msgstr "Nije pronađen lokalni uređaj za \"{device}\""
+
+msgid "Search subvolumes"
+msgstr "Pretraži podvolumene"
+
+msgid "Find a subvolume on this device"
+msgstr "Pronađi podvolumen na ovom uređaju"
+
+msgid "Failed to fetch subvolumes"
+msgstr "Preuzimanje podvolumena nije uspjelo"
+
+msgid "Search users"
+msgstr "Pretraži korisnike"
+
+msgid "Choose the user for this option"
+msgstr "Odaberi korisnika za ovu opciju"
+
+msgid "Search groups"
+msgstr "Pretraži grupe"
+
+msgid "Choose the group for this option"
+msgstr "Odaberi grupu za ovu opciju"
+
+msgid "Add option…"
+msgstr "Dodaj opciju…"
+
+msgid "Search options"
+msgstr "Pretraži opcije"
+
+msgid "Choose an option to add to this entry"
+msgstr "Odaberi opciju za dodavanje u ovaj unos"
+
+msgid "Error loading options"
+msgstr "Greška pri učitavanju opcija"
+
+msgid "Add option"
+msgstr "Dodaj opciju"
+
+msgid "Could not parse entry"
+msgstr "Nije moguće obraditi unos"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "Nepoznat datotečni sustav: {fs_type}"
+
+msgid "No problems detected"
+msgstr "Nema otkrivenih problema"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Točka montiranja ne postoji: {point}"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "Nepoznat tip uređaja: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "Uređaj ne postoji: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Nepoznata opcija: {option}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} ne smije imati vrijednost"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} bi trebala biti jedna od: {values}"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} bi trebala biti jedna od: {values}, uz mogućnost da joj slijedi razina"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} bi trebala biti broj"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} bi trebala biti broj između {min} i {max}"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} bi trebala biti oktalni broj"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} bi trebala biti broj s jedinicom veličine, na primjer 16K"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} bi trebala biti {on} ili {off}"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "Datoteka s prijavnim podacima ne postoji: {path}"
+
+msgid "Could not check subvolume"
+msgstr "Nije moguće provjeriti podvolumen"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "Podvolumen ne postoji: {subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "Nije moguće provjeriti podvolumen: uređaj nije montiran"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "Nije moguće provjeriti podvolumen: {error}"
+
 msgid "Cannot remount"
 msgstr "Nije moguće ponovno montirati"
 
@@ -2519,21 +2624,6 @@ msgstr "Točka montiranja ima nespremljene izmjene. Spremite izmjene prije odmon
 
 msgid "The mount point is empty."
 msgstr "Točka montiranja je prazna."
-
-msgid "Delete entry"
-msgstr "Obriši unos"
-
-msgid "Device"
-msgstr "Uređaj"
-
-msgid "Mount point"
-msgstr "Točka montiranja"
-
-msgid "Delete"
-msgstr "Obriši"
-
-msgid "Delete this entry?"
-msgstr "Obrisati ovaj unos?"
 
 msgid "Reset"
 msgstr "Poništi"
@@ -2606,76 +2696,8 @@ msgstr "Želite li stvarno odmontirati ovaj unos?"
 msgid "Unmounted {mount_point}."
 msgstr "Odmontrirano {mount_point}."
 
-msgid "Unmounted"
-msgstr "Odmontrirano"
-
 msgid "Could not unmount"
 msgstr "Nije moguće odmontirati"
-
-msgid "Choose folder"
-msgstr "Odaberi mapu"
-
-msgid "Choose mount point"
-msgstr "Odaberi točku montiranja"
-
-msgid "Path exists"
-msgstr "Putanja postoji"
-
-msgid "Mount point missing"
-msgstr "Točka montiranja nedostaje"
-
-msgid "The device is currently mounted at this mount point."
-msgstr "Uređaj je trenutno montiran na ovu točku montiranja."
-
-msgid "The device is not currently mounted at this mount point."
-msgstr "Uređaj trenutno nije montiran na ovu točku montiranja."
-
-msgid "This mount point does not exist on the system."
-msgstr "Ova točka montiranja ne postoji na sustavu."
-
-msgid "Remove option"
-msgstr "Ukloni opciju"
-
-msgid "Option"
-msgstr "Opcija"
-
-#, rust-format
-msgid "Subvolume does not exist: {subvol}"
-msgstr "Podvolumen ne postoji: {subvol}"
-
-msgid "Could not check subvolume: the device is not mounted"
-msgstr "Nije moguće provjeriti podvolumen: uređaj nije montiran"
-
-msgid "Could not check subvolume"
-msgstr "Nije moguće provjeriti podvolumen"
-
-#, rust-format
-msgid "Could not check subvolume: {error}"
-msgstr "Nije moguće provjeriti podvolumen: {error}"
-
-msgid "Search subvolumes"
-msgstr "Pretraži podvolumene"
-
-msgid "Find a subvolume on this device"
-msgstr "Pronađi podvolumen na ovom uređaju"
-
-msgid "Failed to fetch subvolumes"
-msgstr "Preuzimanje podvolumena nije uspjelo"
-
-msgid "Add option…"
-msgstr "Dodaj opciju…"
-
-msgid "Search options"
-msgstr "Pretraži opcije"
-
-msgid "Choose an option to add to this entry"
-msgstr "Odaberi opciju za dodavanje u ovaj unos"
-
-msgid "Error loading options"
-msgstr "Greška pri učitavanju opcija"
-
-msgid "Add option"
-msgstr "Dodaj opciju"
 
 msgid "Search"
 msgstr "Pretraži"

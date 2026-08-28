@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-26 00:56+0200\n"
-"PO-Revision-Date: 2026-08-26 02:07+0200\n"
+"POT-Creation-Date: 2026-08-28 01:57+0200\n"
+"PO-Revision-Date: 2026-08-28 02:34+0200\n"
 "Last-Translator: Automatically translated (machine-assisted)\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "Language: ja\n"
@@ -183,74 +183,15 @@ msgstr "ファイルシステム"
 msgid "Model"
 msgstr "モデル"
 
+msgid "Device"
+msgstr "デバイス"
+
 msgid "Edit device"
 msgstr "デバイスを編集"
 
 #, rust-format
 msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
 msgstr "{kind} を解決できませんでした({value})。値はそのまま保持されました。"
-
-msgid "Could not parse entry"
-msgstr "エントリを解析できませんでした"
-
-#, rust-format
-msgid "Unknown file system: {fs_type}"
-msgstr "不明なファイルシステム: {fs_type}"
-
-msgid "No problems detected"
-msgstr "問題が検出されませんでした"
-
-#, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr "マウントポイントが存在しません: {point}"
-
-#, rust-format
-msgid "Unknown device type: {device}"
-msgstr "不明なデバイスタイプ: {device}"
-
-#, rust-format
-msgid "Device does not exist: {device}"
-msgstr "デバイスが存在しません: {device}"
-
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr "不明なオプション: {option}"
-
-#, rust-format
-msgid "{option} should not have a value"
-msgstr "{option} には値を指定しないでください"
-
-#, rust-format
-msgid "{option} should be one of: {values}"
-msgstr "{option} は {values} のいずれかである必要があります"
-
-#, rust-format
-msgid "{option} should be one of: {values}, optionally followed by a level"
-msgstr "{option} は {values} のいずれかの値で、任意でレベルを続けて指定できます"
-
-#, rust-format
-msgid "{option} should be a number"
-msgstr "{option} は数値である必要があります"
-
-#, rust-format
-msgid "{option} should be a number between {min} and {max}"
-msgstr "{option} は {min} から {max} までの数値である必要があります"
-
-#, rust-format
-msgid "{option} should be an octal number"
-msgstr "{option} は 8 進数である必要があります"
-
-#, rust-format
-msgid "{option} should be a number with a size unit, for example 16K"
-msgstr "{option} はサイズ単位付きの数値である必要があります(例: 16K)"
-
-#, rust-format
-msgid "{option} should be {on} or {off}"
-msgstr "{option} は {on} または {off} である必要があります"
-
-#, rust-format
-msgid "Credentials file does not exist: {path}"
-msgstr "認証情報ファイルが存在しません: {path}"
 
 msgid "Edit as text"
 msgstr "テキストとして編集"
@@ -2427,11 +2368,11 @@ msgstr "変更を取り消す"
 msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
 msgstr "変更はまだ保存されていません。バックアップには未保存の変更ではなく、保存済みの /etc/fstab が反映されます。続行しますか？"
 
-msgid "Save"
-msgstr "保存"
-
 msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr "これらの変更を /etc/fstab に書き込んでもよろしいですか？"
+
+msgid "Save"
+msgstr "保存"
 
 msgid "Saved, but could not reload"
 msgstr "保存されましたが、再読込できませんでした"
@@ -2442,14 +2383,20 @@ msgstr "/etc/fstab に保存しました"
 msgid "Could not save"
 msgstr "保存できませんでした"
 
-msgid "Revert"
-msgstr "取り消す"
-
 msgid "Are you sure? Any changes made will be lost!"
 msgstr "よろしいですか？行った変更はすべて失われます！"
 
+msgid "Revert"
+msgstr "取り消す"
+
 msgid "'/etc/fstab' entries:"
 msgstr "「/etc/fstab」のエントリ:"
+
+msgid "You have unsaved changes. They will be lost if you exit now."
+msgstr "未保存の変更があります。今終了すると、それらは失われます。"
+
+msgid "Exit"
+msgstr "終了"
 
 msgid "Error loading fstab file!"
 msgstr "fstab ファイルの読み込みエラー！"
@@ -2501,6 +2448,164 @@ msgstr "バックアップ一覧を表示できません"
 msgid "Could not load backup"
 msgstr "バックアップを読み込めません"
 
+msgid "Delete entry"
+msgstr "エントリを削除"
+
+msgid "Mount point"
+msgstr "マウントポイント"
+
+msgid "Delete this entry?"
+msgstr "このエントリを削除しますか？"
+
+msgid "Delete"
+msgstr "削除"
+
+msgid "Choose folder"
+msgstr "フォルダを選択"
+
+msgid "Choose mount point"
+msgstr "マウントポイントを選択"
+
+msgid "Path exists"
+msgstr "パスが存在します"
+
+msgid "Unmounted"
+msgstr "アンマウントしました"
+
+msgid "Mount point missing"
+msgstr "マウントポイントがありません"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "このデバイスは現在、このマウントポイントにマウントされています。"
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "このデバイスは現在、このマウントポイントにマウントされていません。"
+
+msgid "This mount point does not exist on the system."
+msgstr "このマウントポイントはシステム上に存在しません。"
+
+msgid "Remove option"
+msgstr "オプションを削除"
+
+msgid "Option"
+msgstr "オプション"
+
+#, rust-format
+msgid "Could not find local device for \"{device}\""
+msgstr "\"{device}\" のローカルデバイスが見つかりません"
+
+msgid "Search subvolumes"
+msgstr "サブボリュームを検索"
+
+msgid "Find a subvolume on this device"
+msgstr "このデバイスのサブボリュームを検索"
+
+msgid "Failed to fetch subvolumes"
+msgstr "サブボリュームの取得に失敗しました"
+
+msgid "Search users"
+msgstr "ユーザーを検索"
+
+msgid "Choose the user for this option"
+msgstr "このオプションのユーザーを選択"
+
+msgid "Search groups"
+msgstr "グループを検索"
+
+msgid "Choose the group for this option"
+msgstr "このオプションのグループを選択"
+
+msgid "Add option…"
+msgstr "オプションを追加…"
+
+msgid "Search options"
+msgstr "オプションを検索"
+
+msgid "Choose an option to add to this entry"
+msgstr "このエントリに追加するオプションを選択"
+
+msgid "Error loading options"
+msgstr "オプションの読み込みエラー"
+
+msgid "Add option"
+msgstr "オプションを追加"
+
+msgid "Could not parse entry"
+msgstr "エントリを解析できませんでした"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "不明なファイルシステム: {fs_type}"
+
+msgid "No problems detected"
+msgstr "問題が検出されませんでした"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "マウントポイントが存在しません: {point}"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "不明なデバイスタイプ: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "デバイスが存在しません: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "不明なオプション: {option}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "{option} には値を指定しないでください"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "{option} は {values} のいずれかである必要があります"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "{option} は {values} のいずれかの値で、任意でレベルを続けて指定できます"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "{option} は数値である必要があります"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "{option} は {min} から {max} までの数値である必要があります"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "{option} は 8 進数である必要があります"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "{option} はサイズ単位付きの数値である必要があります(例: 16K)"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "{option} は {on} または {off} である必要があります"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "認証情報ファイルが存在しません: {path}"
+
+msgid "Could not check subvolume"
+msgstr "サブボリュームを確認できません"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "サブボリュームが存在しません：{subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "サブボリュームを確認できません：デバイスがマウントされていません"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "サブボリュームを確認できません：{error}"
+
 msgid "Cannot remount"
 msgstr "リマウントできません"
 
@@ -2518,21 +2623,6 @@ msgstr "マウントポイントに未保存の変更があります。アンマ
 
 msgid "The mount point is empty."
 msgstr "マウントポイントが空です。"
-
-msgid "Delete entry"
-msgstr "エントリを削除"
-
-msgid "Device"
-msgstr "デバイス"
-
-msgid "Mount point"
-msgstr "マウントポイント"
-
-msgid "Delete"
-msgstr "削除"
-
-msgid "Delete this entry?"
-msgstr "このエントリを削除しますか？"
 
 msgid "Reset"
 msgstr "リセット"
@@ -2605,76 +2695,8 @@ msgstr "このエントリをアンマウントしますか？"
 msgid "Unmounted {mount_point}."
 msgstr "{mount_point} をアンマウントしました。"
 
-msgid "Unmounted"
-msgstr "アンマウントしました"
-
 msgid "Could not unmount"
 msgstr "アンマウントできませんでした"
-
-msgid "Choose folder"
-msgstr "フォルダを選択"
-
-msgid "Choose mount point"
-msgstr "マウントポイントを選択"
-
-msgid "Path exists"
-msgstr "パスが存在します"
-
-msgid "Mount point missing"
-msgstr "マウントポイントがありません"
-
-msgid "The device is currently mounted at this mount point."
-msgstr "このデバイスは現在、このマウントポイントにマウントされています。"
-
-msgid "The device is not currently mounted at this mount point."
-msgstr "このデバイスは現在、このマウントポイントにマウントされていません。"
-
-msgid "This mount point does not exist on the system."
-msgstr "このマウントポイントはシステム上に存在しません。"
-
-msgid "Remove option"
-msgstr "オプションを削除"
-
-msgid "Option"
-msgstr "オプション"
-
-#, rust-format
-msgid "Subvolume does not exist: {subvol}"
-msgstr "サブボリュームが存在しません：{subvol}"
-
-msgid "Could not check subvolume: the device is not mounted"
-msgstr "サブボリュームを確認できません：デバイスがマウントされていません"
-
-msgid "Could not check subvolume"
-msgstr "サブボリュームを確認できません"
-
-#, rust-format
-msgid "Could not check subvolume: {error}"
-msgstr "サブボリュームを確認できません：{error}"
-
-msgid "Search subvolumes"
-msgstr "サブボリュームを検索"
-
-msgid "Find a subvolume on this device"
-msgstr "このデバイスのサブボリュームを検索"
-
-msgid "Failed to fetch subvolumes"
-msgstr "サブボリュームの取得に失敗しました"
-
-msgid "Add option…"
-msgstr "オプションを追加…"
-
-msgid "Search options"
-msgstr "オプションを検索"
-
-msgid "Choose an option to add to this entry"
-msgstr "このエントリに追加するオプションを選択"
-
-msgid "Error loading options"
-msgstr "オプションの読み込みエラー"
-
-msgid "Add option"
-msgstr "オプションを追加"
 
 msgid "Search"
 msgstr "検索"

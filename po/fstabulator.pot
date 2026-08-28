@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-25 18:49+0200\n"
+"POT-Creation-Date: 2026-08-28 01:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -185,73 +185,14 @@ msgstr ""
 msgid "Model"
 msgstr ""
 
+msgid "Device"
+msgstr ""
+
 msgid "Edit device"
 msgstr ""
 
 #, rust-format
 msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
-msgstr ""
-
-msgid "Could not parse entry"
-msgstr ""
-
-#, rust-format
-msgid "Unknown file system: {fs_type}"
-msgstr ""
-
-msgid "No problems detected"
-msgstr ""
-
-#, rust-format
-msgid "Mount point does not exist: {point}"
-msgstr ""
-
-#, rust-format
-msgid "Unknown device type: {device}"
-msgstr ""
-
-#, rust-format
-msgid "Device does not exist: {device}"
-msgstr ""
-
-#, rust-format
-msgid "Unknown option: {option}"
-msgstr ""
-
-#, rust-format
-msgid "{option} should not have a value"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be one of: {values}"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be one of: {values}, optionally followed by a level"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be a number"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be a number between {min} and {max}"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be an octal number"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be a number with a size unit, for example 16K"
-msgstr ""
-
-#, rust-format
-msgid "{option} should be {on} or {off}"
-msgstr ""
-
-#, rust-format
-msgid "Credentials file does not exist: {path}"
 msgstr ""
 
 msgid "Edit as text"
@@ -2464,10 +2405,10 @@ msgid ""
 "fstab, not your unsaved changes. Continue?"
 msgstr ""
 
-msgid "Save"
+msgid "Are you sure you want to write these changes to /etc/fstab?"
 msgstr ""
 
-msgid "Are you sure you want to write these changes to /etc/fstab?"
+msgid "Save"
 msgstr ""
 
 msgid "Saved, but could not reload"
@@ -2479,13 +2420,19 @@ msgstr ""
 msgid "Could not save"
 msgstr ""
 
-msgid "Revert"
-msgstr ""
-
 msgid "Are you sure? Any changes made will be lost!"
 msgstr ""
 
+msgid "Revert"
+msgstr ""
+
 msgid "'/etc/fstab' entries:"
+msgstr ""
+
+msgid "You have unsaved changes. They will be lost if you exit now."
+msgstr ""
+
+msgid "Exit"
 msgstr ""
 
 msgid "Error loading fstab file!"
@@ -2543,6 +2490,164 @@ msgstr ""
 msgid "Could not load backup"
 msgstr ""
 
+msgid "Delete entry"
+msgstr ""
+
+msgid "Mount point"
+msgstr ""
+
+msgid "Delete this entry?"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Choose folder"
+msgstr ""
+
+msgid "Choose mount point"
+msgstr ""
+
+msgid "Path exists"
+msgstr ""
+
+msgid "Unmounted"
+msgstr ""
+
+msgid "Mount point missing"
+msgstr ""
+
+msgid "The device is currently mounted at this mount point."
+msgstr ""
+
+msgid "The device is not currently mounted at this mount point."
+msgstr ""
+
+msgid "This mount point does not exist on the system."
+msgstr ""
+
+msgid "Remove option"
+msgstr ""
+
+msgid "Option"
+msgstr ""
+
+#, rust-format
+msgid "Could not find local device for \"{device}\""
+msgstr ""
+
+msgid "Search subvolumes"
+msgstr ""
+
+msgid "Find a subvolume on this device"
+msgstr ""
+
+msgid "Failed to fetch subvolumes"
+msgstr ""
+
+msgid "Search users"
+msgstr ""
+
+msgid "Choose the user for this option"
+msgstr ""
+
+msgid "Search groups"
+msgstr ""
+
+msgid "Choose the group for this option"
+msgstr ""
+
+msgid "Add option…"
+msgstr ""
+
+msgid "Search options"
+msgstr ""
+
+msgid "Choose an option to add to this entry"
+msgstr ""
+
+msgid "Error loading options"
+msgstr ""
+
+msgid "Add option"
+msgstr ""
+
+msgid "Could not parse entry"
+msgstr ""
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr ""
+
+msgid "No problems detected"
+msgstr ""
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr ""
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr ""
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr ""
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr ""
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr ""
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr ""
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr ""
+
+msgid "Could not check subvolume"
+msgstr ""
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr ""
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr ""
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr ""
+
 msgid "Cannot remount"
 msgstr ""
 
@@ -2560,21 +2665,6 @@ msgid ""
 msgstr ""
 
 msgid "The mount point is empty."
-msgstr ""
-
-msgid "Delete entry"
-msgstr ""
-
-msgid "Device"
-msgstr ""
-
-msgid "Mount point"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Delete this entry?"
 msgstr ""
 
 msgid "Reset"
@@ -2648,75 +2738,7 @@ msgstr ""
 msgid "Unmounted {mount_point}."
 msgstr ""
 
-msgid "Unmounted"
-msgstr ""
-
 msgid "Could not unmount"
-msgstr ""
-
-msgid "Choose folder"
-msgstr ""
-
-msgid "Choose mount point"
-msgstr ""
-
-msgid "Path exists"
-msgstr ""
-
-msgid "Mount point missing"
-msgstr ""
-
-msgid "The device is currently mounted at this mount point."
-msgstr ""
-
-msgid "The device is not currently mounted at this mount point."
-msgstr ""
-
-msgid "This mount point does not exist on the system."
-msgstr ""
-
-msgid "Remove option"
-msgstr ""
-
-msgid "Option"
-msgstr ""
-
-#, rust-format
-msgid "Subvolume does not exist: {subvol}"
-msgstr ""
-
-msgid "Could not check subvolume: the device is not mounted"
-msgstr ""
-
-msgid "Could not check subvolume"
-msgstr ""
-
-#, rust-format
-msgid "Could not check subvolume: {error}"
-msgstr ""
-
-msgid "Search subvolumes"
-msgstr ""
-
-msgid "Find a subvolume on this device"
-msgstr ""
-
-msgid "Failed to fetch subvolumes"
-msgstr ""
-
-msgid "Add option…"
-msgstr ""
-
-msgid "Search options"
-msgstr ""
-
-msgid "Choose an option to add to this entry"
-msgstr ""
-
-msgid "Error loading options"
-msgstr ""
-
-msgid "Add option"
 msgstr ""
 
 msgid "Search"

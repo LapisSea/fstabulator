@@ -20,3 +20,12 @@ xgettext \
 	src/*.rs
 
 echo "wrote po/fstabulator.pot"
+
+# Non-destructive sync check: report when po files diverged from the new pot.
+# Deliberately NOT auto-fixed here — review the pot diff first, then run
+# `python3 scripts/po_tool.py reorder` (it drops entries that left the pot).
+if ! python3 scripts/po_tool.py stats >/dev/null 2>&1; then
+	echo "note: po files are out of sync with the pot (missing/empty entries or wrong order)."
+	echo "      inspect: python3 scripts/po_tool.py missing"
+	echo "      fix:     python3 scripts/po_tool.py reorder"
+fi
