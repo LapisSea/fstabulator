@@ -14,6 +14,10 @@ pub struct MountPointRow {
 }
 
 impl MountPointRow {
+	pub fn row(&self) -> &EntryRow {
+		&self.row
+	}
+
 	pub fn refresh(&self) {
 		let text = self.entry.borrow().mount_point.clone();
 		self.row.set_text(&text);

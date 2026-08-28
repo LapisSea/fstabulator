@@ -129,7 +129,7 @@ pub(crate) fn build_editor_panel(
 	button_row.append(&reset_btn);
 	editor_panel.append(&button_row);
 
-	add_mount_group(editor_panel, entry_ctx.entry(), rebuild_editor);
+	add_mount_group(editor_panel, entry_ctx.entry(), &mount_point_row, rebuild_editor);
 
 	let fsck_group = PreferencesGroup::builder().title(i18n("Extra")).build();
 	add_spin_row(
@@ -185,10 +185,23 @@ fn report_action_outcome(btn: &Button, heading: &str, body: &str, failed: &str, 
 	}
 }
 
-fn add_mount_group(editor_panel: &gtk::Box, entry: &GC<StabEntry>, rebuild_editor: RebuildEditor) {
-	let group = PreferencesGroup::builder().title(i18n("Mount actions")).build();
+fn refresh_mount_group_visibility(group: &PreferencesGroup, entry: &GC<StabEntry>) {
 	group.set_visible(entry.borrow().mount_point.trim() != "/");
+}
+
+fn add_mount_group(
+	editor_panel: &gtk::Box,
+	entry: &GC<StabEntry>,
+	mount_point_row: &mount_point_value::MountPointRow,
+	rebuild_editor: RebuildEditor,
+) {
+	let group = PreferencesGroup::builder().title(i18n("Mount actions")).build();
+	refresh_mount_group_visibility(&group, entry);
 	editor_panel.append(&group);
+	{
+		let (group, entry, row) = (group.clone(), entry.clone(), mount_point_row.row().clone());
+		row.connect_changed(move |_| refresh_mount_group_visibility(&group, &entry));
+	}
 
 	let status_label = gtk::Label::new(None);
 	status_label.set_xalign(0.5);

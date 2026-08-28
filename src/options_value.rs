@@ -604,6 +604,12 @@ fn add_id_option_row(ctx: AddContext, trash: &Button, name: &str, description: &
 		return;
 	};
 
+	let (placeholder, tooltip) = if is_user {
+		(i18n("Search users"), i18n("Choose the user for this option"))
+	} else {
+		(i18n("Search groups"), i18n("Choose the group for this option"))
+	};
+
 	let menu_btn = SearchPickerBuilder::new(
 		user,
 		{
@@ -615,8 +621,8 @@ fn add_id_option_row(ctx: AddContext, trash: &Button, name: &str, description: &
 		render_row,
 		on_select,
 	)
-	.search_placeholder(i18n("Search backups"))
-	.tooltip(i18n("Restore from a backup file"))
+	.search_placeholder(placeholder)
+	.tooltip(tooltip)
 	.filter(|query, e| e.id.to_string().contains(query) || e.name.to_ascii_lowercase().contains(&query.to_ascii_lowercase()))
 	.wrap_label(true)
 	.build();

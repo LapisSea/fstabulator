@@ -193,12 +193,10 @@ fn command_error(cmd: &str, stderr: &str) -> anyhow::Error {
 }
 
 fn create_backup() -> Result<()> {
-	let backups = scan_for_backups().context("Could not scan for backups")?;
-
-	if backups.len() >= 3
-		&& let Some(oldest) = backups.iter().min_by_key(|backup| backup.1)
-	{
-		std::fs::remove_file(&oldest.0).with_context(|| format!("Could not remove old backup {}", oldest.0.display()))?;
+	let mut backups = scan_for_backups().context("Could not scan for backups")?;
+	backups.sort_by_key(|backup| backup.1);
+	for backup in backups.iter().take(backups.len().saturating_sub(2)) {
+		std::fs::remove_file(&backup.0).with_context(|| format!("Could not remove old backup {}", backup.0.display()))?;
 	}
 
 	let backup_path = format!(
