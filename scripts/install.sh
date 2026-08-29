@@ -35,7 +35,8 @@ EOF
 cp "$ROOT_DIR/resources/fstabulator_icon.svg" "$HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.svg"
 
 # Dark icon
-cp "$ROOT_DIR/resources/fstabulator_icon_dark.png" "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"
+rm -f "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"
+cp "$ROOT_DIR/resources/fstabulator_icon_dark.svg" "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.svg"
 if [[ ! -f "$DARK_THEME_DIR/index.theme" ]]; then
 	cat > "$DARK_THEME_DIR/index.theme" <<EOF
 [Icon Theme]
@@ -59,4 +60,4 @@ fi
 echo "Installed:"
 echo "  $APPLICATIONS_DIR/$APP_ID.desktop (Exec=$EXEC)"
 echo "  $HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.svg"
-echo "  $DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"
+echo "  $DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.svg"

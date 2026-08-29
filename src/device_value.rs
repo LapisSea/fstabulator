@@ -964,6 +964,95 @@ pub fn add_device_row(options: &PreferencesGroup, entry_ctx: &EntryContext) -> D
 #[cfg(test)]
 mod tests {
 	use super::*;
+	use crate::context::FileContext;
+	use crate::stab_yurself::StabFile;
+	use adw::ActionRow;
+
+	fn skip_if_no_display() -> bool {
+		let opened = gtk::gdk::Display::default().is_some() || gtk::gdk::Display::open(None).is_some();
+		if !opened {
+			eprintln!("skipping UI test: no display available");
+		}
+		!opened
+	}
+
+	fn device_row(raw: &str) -> (DeviceRowController, GC<StabEntry>, PreferencesGroup) {
+		let entry = GC::new(StabEntry::from(0, raw).unwrap());
+		let file_ctx = FileContext::new(GC::new(StabFile::empty()), Rc::new(|| {}));
+		let list_row = ActionRow::builder().build();
+		let entry_ctx = file_ctx.entry(entry.clone(), &list_row);
+		let group = PreferencesGroup::builder().build();
+		let controller = add_device_row(&group, &entry_ctx);
+		(controller, entry, group)
+	}
+
+	#[gtk::test]
+	fn fs_type_change_reclassifies_device_in_ui() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (controller, entry, _group) = device_row("UUID=abc /mnt/data ext4 defaults 0 2");
+		assert_eq!(controller.dropdown.selected(), 0);
+		assert_eq!(controller.value_entry.text().to_string(), "abc");
+
+		entry.borrow_mut().set_fs_type(FsType::Tmpfs);
+		controller.refresh_kinds();
+		assert_eq!(controller.dropdown.selected(), 0);
+		assert_eq!(controller.model.n_items(), 1);
+		assert_eq!(controller.value_entry.text().to_string(), "UUID=abc");
+
+		let (controller, entry, _group) = device_row("//server/share /mnt/share ext4 defaults 0 0");
+		assert_eq!(controller.dropdown.selected(), 5);
+		assert_eq!(controller.value_entry.text().to_string(), "//server/share");
+
+		entry.borrow_mut().set_fs_type(FsType::Cifs);
+		controller.refresh_kinds();
+		assert_eq!(controller.dropdown.selected(), 0);
+		assert_eq!(controller.value_entry.text().to_string(), "//server/share");
+	}
+
+	#[gtk::test]
+	fn swap_device_row_preselects_by_kind() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (controller, _, _group) = device_row("/dev/zram0 none swap defaults 0 0");
+		assert_eq!(controller.dropdown.selected(), 4);
+		assert_eq!(controller.value_entry.text().to_string(), "/dev/zram0");
+
+		let (controller, _, _group) = device_row("/swapfile none swap defaults 0 0");
+		assert_eq!(controller.dropdown.selected(), 5);
+		assert_eq!(controller.value_entry.text().to_string(), "/swapfile");
+	}
+
+	#[gtk::test]
+	fn dropdown_switch_transforms_uuid_to_device_path() {
+		if skip_if_no_display() {
+			return;
+		}
+		let dir = match std::fs::read_dir("/dev/disk/by-uuid") {
+			Ok(dir) => dir,
+			Err(_) => {
+				eprintln!("skipping UI test: /dev/disk/by-uuid unavailable");
+				return;
+			}
+		};
+		let Some(entry) = dir.filter_map(Result::ok).next() else {
+			eprintln!("skipping UI test: no uuid entries");
+			return;
+		};
+		let uuid = entry.file_name().to_string_lossy().into_owned();
+
+		let (controller, _, _group) = device_row(&format!("UUID={uuid} /mnt/data ext4 defaults 0 2"));
+		assert_eq!(controller.dropdown.selected(), 0);
+
+		controller.dropdown.set_selected(4);
+		let path = controller.value_entry.text().to_string();
+		assert!(path.starts_with("/dev/"), "expected a /dev path, got {path}");
+
+		controller.dropdown.set_selected(0);
+		assert_eq!(controller.value_entry.text().to_string(), uuid);
+	}
 
 	#[test]
 	fn reclassify_for_fs() {
