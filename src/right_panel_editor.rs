@@ -74,16 +74,20 @@ pub(crate) fn build_editor_panel(
 	let options_group = PreferencesGroup::builder().title(i18n("Options")).build();
 	editor_panel.append(&options_group);
 
+	let fsck_group = PreferencesGroup::builder().title(i18n("Extra")).build();
+	refresh_fsck_group_visibility(&fsck_group, entry_ctx.entry());
+
 	add_user_label_row(&edit_props, entry_ctx);
 	let device_row = device_value::add_device_row(&edit_props, entry_ctx);
 	let mount_point_row = mount_point_value::add_mount_point_row(&edit_props, entry_ctx);
 	{
 		let (entry_ctx, device_row, options_group) = (entry_ctx.clone(), device_row.clone(), options_group.clone());
-		let mount_point_row = mount_point_row.clone();
+		let (mount_point_row, fsck_group) = (mount_point_row.clone(), fsck_group.clone());
 		fs_value::add_fs_type_row(&edit_props.clone(), &entry_ctx.clone(), {
 			move || {
 				device_row.refresh_kinds();
 				mount_point_row.refresh();
+				refresh_fsck_group_visibility(&fsck_group, entry_ctx.entry());
 				build_options_group(&options_group, &entry_ctx);
 			}
 		});
@@ -131,7 +135,6 @@ pub(crate) fn build_editor_panel(
 
 	add_mount_group(editor_panel, entry_ctx.entry(), &mount_point_row, rebuild_editor);
 
-	let fsck_group = PreferencesGroup::builder().title(i18n("Extra")).build();
 	add_spin_row(
 		&fsck_group,
 		entry_ctx,
@@ -175,6 +178,10 @@ fn refresh_entry_editor(
 	list_box.select_row(Some(list_row));
 }
 
+fn action_target(is_swap: bool, mount_point: &str, device: &str) -> String {
+	if is_swap { device.to_string() } else { mount_point.to_string() }
+}
+
 fn report_action_outcome(btn: &Button, heading: &str, body: &str, failed: &str, result: anyhow::Result<()>, refresh: &Rc<dyn Fn()>) {
 	match result {
 		Ok(()) => {
@@ -187,6 +194,10 @@ fn report_action_outcome(btn: &Button, heading: &str, body: &str, failed: &str, 
 
 fn refresh_mount_group_visibility(group: &PreferencesGroup, entry: &GC<StabEntry>) {
 	group.set_visible(entry.borrow().mount_point.trim() != "/");
+}
+
+fn refresh_fsck_group_visibility(group: &PreferencesGroup, entry: &GC<StabEntry>) {
+	group.set_visible(entry.borrow().fs_type != FsType::Swap);
 }
 
 fn add_mount_group(
@@ -281,7 +292,8 @@ fn add_mount_group(
 					let is_swap = snapshot.fs_type == FsType::Swap;
 					let fs_type = snapshot.fs_type.to_string();
 					let result = privileged::mount(&snapshot.mount_point, &device, is_swap, &fs_type, None);
-					let body = i18n_fmt("Mounted {mount_point}.", &[("{mount_point}", &snapshot.mount_point)]);
+					let target = action_target(is_swap, &snapshot.mount_point, &device);
+					let body = i18n_fmt("Mounted {mount_point}.", &[("{mount_point}", &target)]);
 					report_action_outcome(
 						&btn,
 						i18n("Mounted").as_str(),
@@ -348,7 +360,8 @@ fn add_mount_group(
 					)
 				};
 				let result = privileged::unmount(&mount_point, &device, is_swap);
-				let body = i18n_fmt("Unmounted {mount_point}.", &[("{mount_point}", &mount_point)]);
+				let target = action_target(is_swap, &mount_point, &device);
+				let body = i18n_fmt("Unmounted {mount_point}.", &[("{mount_point}", &target)]);
 				report_action_outcome(
 					&btn,
 					i18n("Unmounted").as_str(),

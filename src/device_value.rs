@@ -265,7 +265,7 @@ impl DeviceKind {
 			DeviceKind::Label => device.strip_prefix("LABEL="),
 			DeviceKind::PartLabel => device.strip_prefix("PARTLABEL="),
 			DeviceKind::DevicePath => device.starts_with("/dev/").then_some(device),
-			DeviceKind::FilePath => device.starts_with('/').then_some(device),
+			DeviceKind::FilePath => (device.starts_with('/') && !device.starts_with("/dev/")).then_some(device),
 			DeviceKind::Network => (device.starts_with("//") || device.contains(":/")).then_some(device),
 			DeviceKind::Other => Some(device),
 		};
@@ -997,6 +997,7 @@ mod tests {
 		assert_eq!(file.render(), "/swapfile");
 
 		assert_eq!(DeviceKind::classify("/dev/zram0", allowed).kind, DeviceKind::DevicePath);
+		assert_eq!(DeviceKind::FilePath.value_of("/dev/sda1"), None);
 		assert_eq!(
 			DeviceKind::classify("UUID=77777777-7777-7777-7777-777777777777", allowed).kind,
 			DeviceKind::Uuid
