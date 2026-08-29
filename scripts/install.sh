@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The desktop entry and icons are per-user; only the polkit step below
+# self-elevates. Running as root would install under /root and can clobber
+# the polkit annotation with the wrong binary path.
+if [[ $EUID -eq 0 ]]; then
+	echo "error: run as a normal user, not with sudo (the polkit step uses sudo itself)" >&2
+	exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
@@ -15,9 +23,9 @@ DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 APPLICATIONS_DIR="$DATA_DIR/applications"
 HICOLOR_DIR="$DATA_DIR/icons/hicolor"
 DARK_THEME_DIR="$DATA_DIR/icons/Adwaita-dark"
-ICON_DIR_512="512x512/apps"
+ICON_DIR="scalable/apps"
 
-mkdir -p "$APPLICATIONS_DIR" "$HICOLOR_DIR/$ICON_DIR_512" "$DARK_THEME_DIR/$ICON_DIR_512"
+mkdir -p "$APPLICATIONS_DIR" "$HICOLOR_DIR/$ICON_DIR" "$DARK_THEME_DIR/$ICON_DIR"
 
 # Desktop entry
 cat > "$APPLICATIONS_DIR/$APP_ID.desktop" <<EOF
@@ -31,30 +39,37 @@ Terminal=false
 Categories=System;Utility;
 EOF
 
-# Light icon
-cp "$ROOT_DIR/resources/fstabulator_icon.svg" "$HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.svg"
+# Launcher icon: the light variant in hicolor, which every desktop resolves.
+cp "$ROOT_DIR/resources/fstabulator_icon.svg" "$HICOLOR_DIR/$ICON_DIR/$ICON_NAME.svg"
 
-# Dark icon
-rm -f "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.png"
-cp "$ROOT_DIR/resources/fstabulator_icon_dark.svg" "$DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.svg"
+# Dark variant in a local Adwaita-dark theme: DEs that let the user pick the
+# icon theme (KDE Plasma, XFCE) can swap to it; GNOME never does, which is fine.
+cp "$ROOT_DIR/resources/fstabulator_icon_dark.svg" "$DARK_THEME_DIR/$ICON_DIR/$ICON_NAME.svg"
 if [[ ! -f "$DARK_THEME_DIR/index.theme" ]]; then
 	cat > "$DARK_THEME_DIR/index.theme" <<EOF
 [Icon Theme]
 Name=Adwaita-dark
 Inherits=Adwaita,hicolor
-Directories=512x512/apps
+Directories=scalable/apps
 
-[512x512/apps]
-Size=512
-Type=Fixed
-Context=Apps
+[scalable/apps]
+Context=Applications
+Size=128
+MinSize=8
+MaxSize=512
+Type=Scalable
 EOF
 fi
 
-# Refresh icon caches
+# Refresh icon and app databases. The user's hicolor dir may have no
+# index.theme of its own, in which case building its cache fails; that's
+# fine, GTK scans the directory directly.
 if command -v gtk-update-icon-cache >/dev/null 2>&1; then
-	gtk-update-icon-cache -f -t "$HICOLOR_DIR" >/dev/null
-	gtk-update-icon-cache -f -t "$DARK_THEME_DIR" >/dev/null
+	gtk-update-icon-cache -f -t "$HICOLOR_DIR" >/dev/null 2>&1 || true
+	gtk-update-icon-cache -f -t "$DARK_THEME_DIR" >/dev/null 2>&1 || true
+fi
+if command -v update-desktop-database >/dev/null 2>&1; then
+	update-desktop-database "$APPLICATIONS_DIR" >/dev/null 2>&1 || true
 fi
 
 # Polkit action: friendly text for the root helper's authentication dialog.
@@ -74,11 +89,11 @@ elif command -v sudo >/dev/null 2>&1; then
 <policyconfig>
 	<vendor>FSTabulator</vendor>
 	<vendor_url>https://github.com/LapisSea/fstabulator</vendor_url>
-	<icon_name>$APP_ID</icon_name>
+	<icon_name>$ICON_NAME</icon_name>
 	<action id="$APP_ID.root-helper">
 		<description>FSTabulator is requesting system access</description>
 		<message>FSTabulator needs administrator access to edit /etc/fstab, keep backups of it, and to mount, unmount or swap your drives.</message>
-		<icon_name>$APP_ID</icon_name>
+		<icon_name>$ICON_NAME</icon_name>
 		<defaults>
 			<allow_any>auth_admin</allow_any>
 			<allow_inactive>auth_admin</allow_inactive>
@@ -88,6 +103,7 @@ elif command -v sudo >/dev/null 2>&1; then
 		<annotate key="org.freedesktop.policykit.exec.argv1">--root-helper</annotate>
 	</action>
 </policyconfig>
+
 EOF
 	sudo chmod 0644 "$POLKIT_FILE"
 	POLKIT_STATUS="installed"
@@ -97,6 +113,6 @@ fi
 
 echo "Installed:"
 echo "  $APPLICATIONS_DIR/$APP_ID.desktop (Exec=$EXEC)"
-echo "  $HICOLOR_DIR/$ICON_DIR_512/$ICON_NAME.svg"
-echo "  $DARK_THEME_DIR/$ICON_DIR_512/$ICON_NAME.svg"
+echo "  $HICOLOR_DIR/$ICON_DIR/$ICON_NAME.svg"
+echo "  $DARK_THEME_DIR/$ICON_DIR/$ICON_NAME.svg"
 echo "  $POLKIT_FILE ($POLKIT_STATUS)"
