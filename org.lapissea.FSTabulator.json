@@ -1,0 +1,37 @@
+{
+	"app-id": "org.lapissea.FSTabulator",
+	"name": "FSTabulator",
+	"runtime": "org.gnome.Platform",
+	"runtime-version": "50",
+	"sdk": "org.gnome.Sdk",
+	"version": "0.1.0",
+	"revision": 1,
+	"icon": "org.lapissea.FSTabulator",
+	"categories": ["System", "Utility"],
+	"extensions": {
+		"org.gnome.Sdk.Extension.rust.cargo": {}
+	},
+	"build-options": {
+		"append-path": "FLATPAK_RUST_PATH=/usr/lib/rustlib"
+	},
+	"build-commands": [
+		"cargo build --release --frozen",
+		"install -Dm 0755 target/release/fstabulator /app/bin/fstabulator",
+		"install -Dm 0644 org.lapissea.FSTabulator.desktop /app/share/applications/org.lapissea.FSTabulator.desktop",
+		"install -Dm 0644 resources/fstabulator_icon.svg /app/share/icons/hicolor/scalable/apps/org.lapissea.FSTabulator.svg"
+	],
+	"sources": [
+		{
+			"type": "dir",
+			"path": "flatpak/source"
+		}
+	],
+	"finish-args": [
+		"--share=ipc",
+		"--share=network",
+		"--socket=wayland",
+		"--socket=fallback-x11",
+		"--device=dri",
+		"--talk-name=org.freedesktop.PolicyKit1"
+	]
+}

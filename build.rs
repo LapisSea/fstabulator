@@ -11,9 +11,17 @@ fn main() {
 
 fn compile_locales() {
 	println!("cargo:rerun-if-changed=po");
-	let locale_root = match std::env::var_os("OUT_DIR") {
+	println!("cargo:rerun-if-env-changed=LOCALEDIR");
+	let build_root = match std::env::var_os("OUT_DIR") {
 		Some(out_dir) => PathBuf::from(out_dir).join("locale"),
 		None => return,
+	};
+	// .mo files are always compiled into OUT_DIR; the LOCALEDIR env var
+	// (set by the RPM build) overrides the directory the binary looks in
+	// at runtime.
+	let locale_root = match std::env::var_os("LOCALEDIR") {
+		Some(dir) => PathBuf::from(dir),
+		None => build_root.clone(),
 	};
 	println!("cargo:rustc-env=LOCALEDIR={}", locale_root.display());
 
@@ -26,7 +34,7 @@ fn compile_locales() {
 		.filter(|path| path.extension().is_some_and(|ext| ext == "po"))
 	{
 		let Some(lang) = po.file_stem() else { continue };
-		let messages_dir = locale_root.join(lang).join("LC_MESSAGES");
+		let messages_dir = build_root.join(lang).join("LC_MESSAGES");
 		if let Err(err) = fs::create_dir_all(&messages_dir) {
 			println!("cargo:warning=could not create {}: {err}", messages_dir.display());
 			continue;
