@@ -94,3 +94,77 @@ fn update_status_icon(icon: &gtk::Image, entry: &StabEntry) {
 		icon.set_tooltip_text(Some(i18n("Path exists").as_str()));
 	}
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::context::FileContext;
+	use crate::stab_yurself::StabFile;
+	use adw::ActionRow;
+	use std::rc::Rc;
+
+	fn skip_if_no_display() -> bool {
+		let opened = gtk::gdk::Display::default().is_some() || gtk::gdk::Display::open(None).is_some();
+		if !opened {
+			eprintln!("skipping UI test: no display available");
+		}
+		!opened
+	}
+
+	fn entry_ctx(entry: GC<StabEntry>) -> EntryContext {
+		let file_ctx = FileContext::new(GC::new(StabFile::empty()), Rc::new(|| {}));
+		file_ctx.entry(entry, &ActionRow::builder().build())
+	}
+
+	fn mount_point_row(raw: &str) -> (MountPointRow, GC<StabEntry>) {
+		let entry = GC::new(StabEntry::from(0, raw).unwrap());
+		let row = add_mount_point_row(&PreferencesGroup::builder().build(), &entry_ctx(entry.clone()));
+		(row, entry)
+	}
+
+	#[gtk::test]
+	fn swap_entry_hides_mount_point_row() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (row, _) = mount_point_row("/dev/zram0 none swap defaults 0 0");
+		assert!(!row.row().is_visible());
+	}
+
+	#[gtk::test]
+	fn non_swap_entry_shows_mount_point_row() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (row, _) = mount_point_row("UUID=1 /mnt/data ext4 defaults 0 2");
+		assert!(row.row().is_visible());
+		assert_eq!(row.row().text().to_string(), "/mnt/data");
+	}
+
+	#[gtk::test]
+	fn refresh_survives_fs_type_transition() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (row, entry) = mount_point_row("/dev/zram0 none swap defaults 0 0");
+		assert!(!row.row().is_visible());
+
+		entry.borrow_mut().set_fs_type(FsType::Ext4);
+		entry.borrow_mut().mount_point = "/mnt/data".to_string();
+		row.refresh();
+
+		assert!(row.row().is_visible());
+		assert_eq!(row.row().text().to_string(), "/mnt/data");
+		assert_eq!(entry.borrow().mount_point.as_str(), "/mnt/data");
+	}
+
+	#[gtk::test]
+	fn typing_mount_point_updates_entry() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (row, entry) = mount_point_row("UUID=1 /mnt/data ext4 defaults 0 2");
+		row.row().set_text("/mnt/edited");
+		assert_eq!(entry.borrow().mount_point.as_str(), "/mnt/edited");
+	}
+}

@@ -423,3 +423,218 @@ fn add_spin_row(
 	});
 	options.add(&row);
 }
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+	use crate::context::FileContext;
+	use crate::stab_yurself::StabFile;
+	use adw::ActionRow;
+	use std::rc::Rc;
+
+	fn skip_if_no_display() -> bool {
+		let opened = gtk::gdk::Display::default().is_some() || gtk::gdk::Display::open(None).is_some();
+		if !opened {
+			eprintln!("skipping UI test: no display available");
+		}
+		!opened
+	}
+
+	fn build_panel_entry(entry: GC<StabEntry>) -> (gtk::Box, GC<StabEntry>) {
+		let file_ctx = FileContext::new(GC::new(StabFile::empty()), Rc::new(|| {}));
+		let list_row = ActionRow::builder().build();
+		let entry_ctx = file_ctx.entry(entry.clone(), &list_row);
+		let panel = GtkBox::new(Orientation::Vertical, 6);
+		let list_box = ListBox::builder().build();
+		build_editor_panel(&panel, &entry_ctx, &list_box, &list_row.upcast(), GC::new(None));
+		(panel, entry)
+	}
+
+	fn build_panel(raw: &str) -> (gtk::Box, GC<StabEntry>) {
+		build_panel_entry(GC::new(StabEntry::from(0, raw).unwrap()))
+	}
+
+	fn find_row_by_title(widget: &gtk::Widget, title: &str) -> Option<PreferencesRow> {
+		if let Some(row) = widget.downcast_ref::<PreferencesRow>()
+			&& row.title() == title
+		{
+			return Some(row.clone());
+		}
+		let mut child = widget.first_child();
+		while let Some(current) = child {
+			if let Some(row) = find_row_by_title(&current, title) {
+				return Some(row);
+			}
+			child = current.next_sibling();
+		}
+		None
+	}
+
+	fn find_mount_point_row(widget: &gtk::Widget) -> Option<EntryRow> {
+		find_row_by_title(widget, i18n("Mount point").as_str()).and_then(|row| row.downcast::<EntryRow>().ok())
+	}
+
+	fn find_status_label(panel: &gtk::Widget) -> gtk::Label {
+		find_row_by_title(panel, i18n("Status").as_str())
+			.expect("status row should exist")
+			.child()
+			.expect("status row should have a child")
+			.downcast::<gtk::Label>()
+			.expect("status child should be a label")
+	}
+
+	fn collect_buttons(widget: &gtk::Widget) -> Vec<Button> {
+		let mut buttons = Vec::new();
+		let mut child = widget.first_child();
+		while let Some(current) = child {
+			if let Some(btn) = current.downcast_ref::<Button>() {
+				buttons.push(btn.clone());
+			}
+			child = current.next_sibling();
+		}
+		buttons
+	}
+
+	fn find_mount_buttons(panel: &gtk::Widget) -> (Button, Button, Button) {
+		let buttons = collect_buttons(
+			&find_row_by_title(panel, i18n("Actions").as_str())
+				.expect("actions row should exist")
+				.child()
+				.expect("actions row should have a child"),
+		);
+		let [mount_btn, remount_btn, unmount_btn] = buttons.as_slice() else {
+			panic!("expected three mount action buttons");
+		};
+		(mount_btn.clone(), remount_btn.clone(), unmount_btn.clone())
+	}
+
+	fn find_group_by_title(widget: &gtk::Widget, title: &str) -> Option<PreferencesGroup> {
+		if let Some(group) = widget.downcast_ref::<PreferencesGroup>()
+			&& group.title() == title
+		{
+			return Some(group.clone());
+		}
+		let mut child = widget.first_child();
+		while let Some(current) = child {
+			if let Some(group) = find_group_by_title(&current, title) {
+				return Some(group);
+			}
+			child = current.next_sibling();
+		}
+		None
+	}
+
+	#[gtk::test]
+	fn swap_panel_hides_mount_point_row() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel("/dev/zram0 none swap defaults 0 0");
+		let row = find_mount_point_row(panel.upcast_ref()).expect("mount point row should exist");
+		assert!(!row.is_visible());
+	}
+
+	#[gtk::test]
+	fn ext4_panel_shows_mount_point_row() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel("UUID=1 /mnt/data ext4 defaults 0 2");
+		let row = find_mount_point_row(panel.upcast_ref()).expect("mount point row should exist");
+		assert!(row.is_visible());
+		assert_eq!(row.text().to_string(), "/mnt/data");
+	}
+
+	#[gtk::test]
+	fn mount_actions_hidden_for_root_mount_point() {
+		if skip_if_no_display() {
+			return;
+		}
+		let group = PreferencesGroup::builder().build();
+		let entry = GC::new(StabEntry::from(0, "UUID=1 / ext4 defaults 0 1").unwrap());
+		refresh_mount_group_visibility(&group, &entry);
+		assert!(!group.is_visible());
+		entry.borrow_mut().mount_point = "/mnt".to_string();
+		refresh_mount_group_visibility(&group, &entry);
+		assert!(group.is_visible());
+	}
+
+	#[gtk::test]
+	fn missing_mount_point_reports_missing_status() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel("UUID=deadbeef00 /mnt/does_not_exist_fstabulator_test ext4 defaults 0 2");
+		let status = find_status_label(panel.upcast_ref());
+		assert!(status.has_css_class(MountStatus::Missing.css_class()));
+		assert_eq!(status.label().to_string(), i18n("Mount point missing"));
+		let (mount_btn, _remount_btn, unmount_btn) = find_mount_buttons(panel.upcast_ref());
+		assert!(mount_btn.is_sensitive());
+		assert!(!unmount_btn.is_sensitive());
+	}
+
+	#[gtk::test]
+	fn network_fs_with_missing_path_is_unmounted_not_missing() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel("//server/share /mnt/does_not_exist_fstabulator_test cifs defaults 0 2");
+		let status = find_status_label(panel.upcast_ref());
+		assert!(!status.has_css_class(MountStatus::Missing.css_class()));
+		assert!(status.has_css_class(MountStatus::Unmounted.css_class()));
+	}
+
+	#[gtk::test]
+	fn empty_mount_point_reports_missing_status() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel_entry(GC::new(StabEntry::blank(0)));
+		let status = find_status_label(panel.upcast_ref());
+		assert!(status.has_css_class(MountStatus::Missing.css_class()));
+	}
+
+	#[gtk::test]
+	fn swap_panel_hides_fsck_group() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel("/dev/zram0 none swap defaults 0 0");
+		let group = find_group_by_title(panel.upcast_ref(), i18n("Extra").as_str()).expect("fsck group should exist");
+		assert!(!group.is_visible());
+	}
+
+	#[gtk::test]
+	fn non_swap_panel_shows_fsck_group() {
+		if skip_if_no_display() {
+			return;
+		}
+		let (panel, _) = build_panel("UUID=1 /mnt/data ext4 defaults 0 2");
+		let group = find_group_by_title(panel.upcast_ref(), i18n("Extra").as_str()).expect("fsck group should exist");
+		assert!(group.is_visible());
+	}
+
+	#[gtk::test]
+	fn fsck_group_toggles_with_fs_type() {
+		if skip_if_no_display() {
+			return;
+		}
+		let group = PreferencesGroup::builder().build();
+		let entry = GC::new(StabEntry::from(0, "UUID=1 /mnt/data ext4 defaults 0 2").unwrap());
+		refresh_fsck_group_visibility(&group, &entry);
+		assert!(group.is_visible());
+		entry.borrow_mut().set_fs_type(FsType::Swap);
+		refresh_fsck_group_visibility(&group, &entry);
+		assert!(!group.is_visible());
+		entry.borrow_mut().set_fs_type(FsType::Ext4);
+		refresh_fsck_group_visibility(&group, &entry);
+		assert!(group.is_visible());
+	}
+
+	#[test]
+	fn action_target_names_the_device_for_swap() {
+		assert_eq!(action_target(true, "none", "/swapfile"), "/swapfile");
+		assert_eq!(action_target(true, "none", "/dev/dm-0"), "/dev/dm-0");
+		assert_eq!(action_target(false, "/mnt/data", "/dev/sda2"), "/mnt/data");
+	}
+}
