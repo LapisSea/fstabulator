@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Inverse of scripts/install.sh: removes the dev install from the user's XDG
+# Inverse of scripts/dev_install.sh: removes the dev install from the user's XDG
 # dirs (desktop entry, both icon variants in current and legacy locations,
 # the script-written index.theme, stale caches) and the polkit action when
-# install.sh created it. The build tree (target/) is untouched, and files
+# dev_install.sh created it. The build tree (target/) is untouched, and files
 # owned by an installed package are never removed.
 set -euo pipefail
 
@@ -56,7 +56,7 @@ EOF
 		rm -f "$DARK_THEME_DIR/index.theme"
 		echo "removed:  $DARK_THEME_DIR/index.theme"
 	else
-		echo "kept:     $DARK_THEME_DIR/index.theme (not written by install.sh)"
+		echo "kept:     $DARK_THEME_DIR/index.theme (not written by dev_install.sh)"
 	fi
 fi
 
@@ -82,7 +82,7 @@ if command -v update-desktop-database >/dev/null 2>&1 && [[ -d "$APPLICATIONS_DI
 	update-desktop-database "$APPLICATIONS_DIR" >/dev/null 2>&1 || true
 fi
 
-# Polkit action: remove only when install.sh created it (no package owns it).
+# Polkit action: remove only when dev_install.sh created it (no package owns it).
 POLKIT_FILE="/usr/share/polkit-1/actions/$APP_ID.root-helper.policy"
 if [[ -e "$POLKIT_FILE" ]]; then
 	if pkg="$(rpm -qf "$POLKIT_FILE" 2>/dev/null)"; then

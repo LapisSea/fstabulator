@@ -62,3 +62,6 @@ else
 	echo "RPM ready: $BUILT"
 	echo "Install with: sudo dnf install '$BUILT'"
 fi
+
+# Restore the dev binary's locale dir (the packaging build repointed it).
+( cd "$ROOT_DIR" && cargo build --release )

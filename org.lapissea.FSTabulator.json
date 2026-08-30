@@ -1,29 +1,27 @@
 {
 	"app-id": "org.lapissea.FSTabulator",
-	"name": "FSTabulator",
+	"default-branch": "stable",
+	"command": "fstabulator",
 	"runtime": "org.gnome.Platform",
 	"runtime-version": "50",
 	"sdk": "org.gnome.Sdk",
-	"version": "0.1.0",
-	"revision": 1,
-	"icon": "org.lapissea.FSTabulator",
-	"categories": ["System", "Utility"],
-	"extensions": {
-		"org.gnome.Sdk.Extension.rust.cargo": {}
-	},
-	"build-options": {
-		"append-path": "FLATPAK_RUST_PATH=/usr/lib/rustlib"
-	},
-	"build-commands": [
-		"cargo build --release --frozen",
-		"install -Dm 0755 target/release/fstabulator /app/bin/fstabulator",
-		"install -Dm 0644 org.lapissea.FSTabulator.desktop /app/share/applications/org.lapissea.FSTabulator.desktop",
-		"install -Dm 0644 resources/fstabulator_icon.svg /app/share/icons/hicolor/scalable/apps/org.lapissea.FSTabulator.svg"
-	],
-	"sources": [
+	"separate-locales": false,
+	"modules": [
 		{
-			"type": "dir",
-			"path": "flatpak/source"
+			"name": "fstabulator",
+			"buildsystem": "simple",
+			"sources": [
+				{
+					"type": "dir",
+					"path": "flatpak/source"
+				}
+			],
+			"build-commands": [
+				"install -Dm 0755 fstabulator /app/bin/fstabulator",
+				"install -Dm 0644 org.lapissea.FSTabulator.desktop /app/share/applications/org.lapissea.FSTabulator.desktop",
+				"install -Dm 0644 resources/fstabulator_icon.svg /app/share/icons/hicolor/scalable/apps/org.lapissea.FSTabulator.svg",
+				"for lang in locale/*; do [ -f \"$lang/LC_MESSAGES/fstabulator.mo\" ] || continue; install -d /app/share/locale/$(basename $lang)/LC_MESSAGES; install -m 0644 $lang/LC_MESSAGES/fstabulator.mo /app/share/locale/$(basename $lang)/LC_MESSAGES/fstabulator.mo; done"
+			]
 		}
 	],
 	"finish-args": [

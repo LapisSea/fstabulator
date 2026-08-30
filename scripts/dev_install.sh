@@ -16,7 +16,7 @@ APP_ID="org.lapissea.FSTabulator"
 ICON_NAME="fstabulator"
 
 # Default to the dev build; pass a path to install a different binary,
-# e.g. ./scripts/install.sh /usr/local/bin/fstabulator
+# e.g. ./scripts/dev_install.sh /usr/local/bin/fstabulator
 EXEC="${1:-$ROOT_DIR/target/debug/fstabulator}"
 
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}"
