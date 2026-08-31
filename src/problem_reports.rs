@@ -407,6 +407,12 @@ mod tests {
 	}
 
 	#[test]
+	fn swap_legacy_sw_option_is_recognized() {
+		let issues = detect_issues(0, "/swapfile none swap sw 0 0");
+		assert!(!issues.iter().any(|issue| issue.message.contains("Unknown option")));
+	}
+
+	#[test]
 	fn missing_swap_file_is_an_error() {
 		let issues = detect_issues(0, "/no/such/swapfile none swap defaults 0 0");
 		assert!(

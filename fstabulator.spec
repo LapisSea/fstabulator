@@ -15,8 +15,8 @@ Requires:	libadwaita >= 1.9
 Requires:	glib2
 Requires:	polkit
 Requires:	util-linux
-Recommends:	btrfs-progs
 Recommends:	shadow-utils
+Suggests:	btrfs-progs
 
 %description
 FSTabulator is a GTK4/libadwaita front end for /etc/fstab. It lists the

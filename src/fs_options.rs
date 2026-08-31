@@ -557,6 +557,7 @@ pub const EXFAT_OPTIONS: &[OptionSpec] = &[
 pub const SWAP_OPTIONS: &[OptionSpec] = &[
 	opt!("discard", OptionValue::Toggle, "Enables swap discard; supports discard=once or discard=pages."),
 	opt!("pri", OptionValue::IntegerRange(0, 32767), "Sets the swap device priority (0-32767).", "-1"),
+	opt!("sw", OptionValue::Toggle, "Legacy swap marker from BSD-era fstab; has no effect on Linux."),
 ];
 
 #[rustfmt::skip]
