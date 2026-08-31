@@ -318,10 +318,14 @@ pub fn check_subvols_in_text(line: usize, text: &str) -> Vec<Problem> {
 	let Ok(entry) = StabEntry::from(line, text) else {
 		return Vec::new();
 	};
-	subvol_option_problems(&entry)
+	subvol_option_problems(&entry, false)
 }
 
-fn subvol_option_problems(entry: &StabEntry) -> Vec<Problem> {
+pub fn subvol_problems_if_alive(entry: &StabEntry) -> Vec<Problem> {
+	subvol_option_problems(entry, true)
+}
+
+fn subvol_option_problems(entry: &StabEntry, no_permission_ask: bool) -> Vec<Problem> {
 	let mut problems = Vec::new();
 	for option in &entry.options {
 		let Some(spec) = fs_options::lookup(&entry.fs_type, option.name()) else {
@@ -333,7 +337,7 @@ fn subvol_option_problems(entry: &StabEntry) -> Vec<Problem> {
 		let FsOption::KeyValue(_, value) = option else {
 			continue;
 		};
-		if let Some(problem) = subvol_problem(entry, value, option.name() == "subvolid", false) {
+		if let Some(problem) = subvol_problem(entry, value, option.name() == "subvolid", no_permission_ask) {
 			problems.push(problem);
 		}
 	}
@@ -600,5 +604,12 @@ mod tests {
 				.iter()
 				.any(|problem| problem.level == ProblemLevel::Warning && problem.message.contains("subvolume"))
 		);
+	}
+
+	#[test]
+	fn subvol_problems_if_alive_warns_but_does_not_error_when_uncheckable() {
+		let entry = StabEntry::from(0, "none /mnt/x btrfs subvol=@home 0 0").unwrap();
+		let problems = subvol_problems_if_alive(&entry);
+		assert!(!problems.iter().any(|problem| problem.level == ProblemLevel::Error));
 	}
 }

@@ -20,6 +20,7 @@ mod user_group;
 
 use crate::context::FileContext;
 use crate::i18n::{i18n, i18n_fmt, localized_datetime};
+use crate::problem_reports::ProblemLevel;
 use crate::right_panel_editor::build_editor_panel;
 use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::{StabEntry, StabFile};
@@ -317,6 +318,7 @@ fn build_ui(application: &Application) {
 	let provider = gtk::CssProvider::new();
 	provider.load_from_string(
 		".invalid-alert { color: red; }\
+		.entry-error { color: @error_color; }\
 		.mount-status-mounted { color: @success_color; }\
 		.mount-status-unmounted { color: @warning_color; }\
 		.mount-status-missing { color: @error_color; }\
@@ -403,8 +405,9 @@ pub(crate) fn render_list_entry(action_row: &ActionRow, entry: &StabEntry, reset
 
 const NOFAIL_WARNING_CLASS: &str = "nofail-warning";
 const INVALID_ALERT_CLASS: &str = "invalid-alert";
+const ENTRY_ERROR_CLASS: &str = "entry-error";
 const DISABLED_ICON_CLASS: &str = "disabled-icon";
-const LIST_ICON_CLASSES: [&str; 3] = [NOFAIL_WARNING_CLASS, INVALID_ALERT_CLASS, DISABLED_ICON_CLASS];
+const LIST_ICON_CLASSES: [&str; 4] = [NOFAIL_WARNING_CLASS, INVALID_ALERT_CLASS, ENTRY_ERROR_CLASS, DISABLED_ICON_CLASS];
 
 fn make_icon(icon: &str, class: &str) -> Image {
 	let icon = Image::from_icon_name(icon);
@@ -439,11 +442,30 @@ fn update_list_icons(action_row: &ActionRow, entry: &StabEntry) {
 		action_row.add_suffix(&warning);
 	}
 
+	if entry.is_valid()
+		&& let Some(messages) = entry_error_messages(entry)
+	{
+		let error = make_icon(ERROR_NAME, ENTRY_ERROR_CLASS);
+		error.set_tooltip_text(Some(messages.as_str()));
+		action_row.add_suffix(&error);
+	}
+
 	if !entry.is_valid() {
 		let alert = make_icon(ERROR_NAME, INVALID_ALERT_CLASS);
 		alert.set_tooltip_text(Some(i18n("This entry is invalid and cannot be parsed.").as_str()));
 		action_row.add_suffix(&alert);
 	}
+}
+
+fn entry_error_messages(entry: &StabEntry) -> Option<String> {
+	let mut problems = problem_reports::detect_issues(entry.line, &entry.to_string());
+	problems.extend(problem_reports::subvol_problems_if_alive(entry));
+	let messages: Vec<String> = problems
+		.into_iter()
+		.filter(|problem| problem.level == ProblemLevel::Error)
+		.map(|problem| problem.message)
+		.collect();
+	if messages.is_empty() { None } else { Some(messages.join("\n")) }
 }
 
 fn render_subtitle(entry: &StabEntry) -> String {
@@ -741,4 +763,56 @@ fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &Gtk
 	breakpoint.add_setter(split_box, "homogeneous", Some(&false.to_value()));
 
 	window.add_breakpoint(breakpoint);
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	fn skip_if_no_display() -> bool {
+		let opened = gtk::gdk::Display::default().is_some() || gtk::gdk::Display::open(None).is_some();
+		if !opened {
+			eprintln!("skipping UI test: no display available");
+		}
+		!opened
+	}
+
+	fn row_with_icons(raw: &str) -> ActionRow {
+		let row = ActionRow::builder().build();
+		let entry = StabEntry::from(0, raw).unwrap();
+		update_list_icons(&row, &entry);
+		row
+	}
+
+	#[gtk::test]
+	fn entry_with_errors_shows_error_icon() {
+		if skip_if_no_display() {
+			return;
+		}
+		let row = row_with_icons("UUID=1234 /no/such/mount ext4 defaults 0 2");
+		assert!(find_widget_with_class(row.clone(), ENTRY_ERROR_CLASS).is_some());
+	}
+
+	#[gtk::test]
+	fn clean_entry_has_no_error_icon() {
+		if skip_if_no_display() {
+			return;
+		}
+		let row = row_with_icons("none / tmpfs defaults 0 0");
+		assert!(find_widget_with_class(row.clone(), ENTRY_ERROR_CLASS).is_none());
+	}
+
+	#[gtk::test]
+	fn error_icon_removed_when_entry_becomes_clean() {
+		if skip_if_no_display() {
+			return;
+		}
+		let row = ActionRow::builder().build();
+		let bad = StabEntry::from(0, "UUID=1234 /no/such/mount ext4 defaults 0 2").unwrap();
+		let good = StabEntry::from(0, "none / tmpfs defaults 0 0").unwrap();
+		update_list_icons(&row, &bad);
+		assert!(find_widget_with_class(row.clone(), ENTRY_ERROR_CLASS).is_some());
+		update_list_icons(&row, &good);
+		assert!(find_widget_with_class(row.clone(), ENTRY_ERROR_CLASS).is_none());
+	}
 }
