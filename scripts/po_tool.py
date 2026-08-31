@@ -191,8 +191,8 @@ def resolve_script(lang=None, script=None):
 
 def is_allowed(o, ranges):
 	# neutral: printable ASCII, nbsp, general punctuation (…, ‘, ’, “, ”, –, —),
-	# a few symbols — allowed in every language
-	if (0x20 <= o <= 0x7e) or o == 0xa0 or (0x2000 <= o <= 0x206f) or o in (0xb7, 0xd7, 0x20ac):
+	# Latin-1 punctuation (¡ ¿ « »), a few symbols (·, ×, €, µ) — allowed in every language
+	if (0x20 <= o <= 0x7e) or o == 0xa0 or (0x2000 <= o <= 0x206f) or o in (0xa1, 0xab, 0xb5, 0xb7, 0xbb, 0xbf, 0xd7, 0x20ac):
 		return True
 	for lo, hi in ranges:
 		if lo <= o <= hi:

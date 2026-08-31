@@ -1186,6 +1186,9 @@ msgstr "スワップの discard を有効にします。discard=once または d
 msgid "Sets the swap device priority (0-32767)."
 msgstr "スワップデバイスの優先度 (0-32767) を設定します。"
 
+msgid "Legacy swap marker from BSD-era fstab; has no effect on Linux."
+msgstr "BSD 時代の fstab 由来のレガシーなスワップマーカー。Linux では無効です。"
+
 msgid "Maximum seconds to cache directory attributes."
 msgstr "ディレクトリ属性をキャッシュする最大秒数。"
 
@@ -2633,11 +2636,11 @@ msgstr "プロパティを編集"
 msgid "Options"
 msgstr "オプション"
 
-msgid "Active"
-msgstr "有効"
-
 msgid "Extra"
 msgstr "その他"
+
+msgid "Active"
+msgstr "有効"
 
 msgid "Dump"
 msgstr "ダンプ"

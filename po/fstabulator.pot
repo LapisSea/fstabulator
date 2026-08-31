@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fstabulator 0.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-28 01:57+0200\n"
+"POT-Creation-Date: 2026-08-31 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1192,6 +1192,9 @@ msgid "Enables swap discard; supports discard=once or discard=pages."
 msgstr ""
 
 msgid "Sets the swap device priority (0-32767)."
+msgstr ""
+
+msgid "Legacy swap marker from BSD-era fstab; has no effect on Linux."
 msgstr ""
 
 msgid "Maximum seconds to cache directory attributes."
@@ -2676,10 +2679,10 @@ msgstr ""
 msgid "Options"
 msgstr ""
 
-msgid "Active"
+msgid "Extra"
 msgstr ""
 
-msgid "Extra"
+msgid "Active"
 msgstr ""
 
 msgid "Dump"

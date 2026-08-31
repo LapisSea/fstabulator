@@ -1187,6 +1187,9 @@ msgstr "Uključuje discard za swap. Podržava discard=once ili discard=pages."
 msgid "Sets the swap device priority (0-32767)."
 msgstr "Postavlja prioritet swap uređaja (0-32767)."
 
+msgid "Legacy swap marker from BSD-era fstab; has no effect on Linux."
+msgstr "Zastarjela swap oznaka iz fstab-a iz doba BSD-a; nema učinka u Linuxu."
+
 msgid "Maximum seconds to cache directory attributes."
 msgstr "Maksimalni broj sekundi za predmemoriziranje atributa direktorija."
 
@@ -2634,11 +2637,11 @@ msgstr "Uredi svojstva"
 msgid "Options"
 msgstr "Opcije"
 
-msgid "Active"
-msgstr "Aktivno"
-
 msgid "Extra"
 msgstr "Dodatno"
+
+msgid "Active"
+msgstr "Aktivno"
 
 msgid "Dump"
 msgstr "Dump"

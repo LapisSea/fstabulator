@@ -1,0 +1,2715 @@
+# Russian translations for fstabulator.
+# This file is distributed under the same license as the fstabulator package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: fstabulator 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
+"POT-Creation-Date: 2026-08-29 08:16+0200\n"
+"PO-Revision-Date: 2026-08-30 03:00+0200\n"
+"Last-Translator: Automatically translated (machine-assisted)\n"
+"Language-Team: Russian <ru@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#, rust-format
+msgid "Mount {mount_point}"
+msgstr "Смонтировать {mount_point}"
+
+msgid "Cannot mount"
+msgstr "Не удалось смонтировать"
+
+msgid "A password is required."
+msgstr "Требуется пароль."
+
+msgid "A credentials file name is required when saving credentials."
+msgstr "Для сохранения учётных данных необходимо указать имя файла учётных данных."
+
+msgid "Could not mount"
+msgstr "Не удалось смонтировать"
+
+#, rust-format
+msgid "Would you like to delete the saved credentials file {path}?"
+msgstr "Удалить сохранённый файл учётных данных {path}?"
+
+msgid "Credentials deleted"
+msgstr "Учётные данные удалены"
+
+msgid "The saved credentials file was deleted."
+msgstr "Сохранённый файл учётных данных был удалён."
+
+msgid "Could not delete credentials"
+msgstr "Не удалось удалить учётные данные"
+
+msgid "Delete credentials"
+msgstr "Удалить учётные данные"
+
+msgid "login used for this mount only"
+msgstr "логин используется только для этого монтирования"
+
+#, rust-format
+msgid "login saved to {path}"
+msgstr "логин сохранён в {path}"
+
+#. xgettext: keep the <b> markup tags intact
+msgid "linked login to entry, <b>you must save changes to preserve this</b>"
+msgstr "логин привязан к записи, <b>чтобы сохранить это, необходимо сохранить изменения</b>"
+
+#, rust-format
+msgid "updated existing login in {path}"
+msgstr "существующий логин в {path} обновлён"
+
+#, rust-format
+msgid "using existing login from {path}"
+msgstr "используется существующий логин из {path}"
+
+#, rust-format
+msgid "Mounted {mount_point}."
+msgstr "Смонтировано {mount_point}."
+
+msgid "Mounted"
+msgstr "Смонтировано"
+
+msgid "Username"
+msgstr "Имя пользователя"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Domain (optional)"
+msgstr "Домен (необязательно)"
+
+msgid "Save for auto-mount"
+msgstr "Сохранить для автомонтирования"
+
+msgid "Writes a credentials file referenced from the fstab entry."
+msgstr "Создаёт файл учётных данных, на который ссылается запись в fstab."
+
+msgid "Credentials file"
+msgstr "Файл учётных данных"
+
+msgid "Load existing credentials"
+msgstr "Загрузить существующие учётные данные"
+
+msgid "Will overwrite the existing file!"
+msgstr "Существующий файл будет перезаписан!"
+
+msgid "This filesystem may require credentials to mount."
+msgstr "Для монтирования этой файловой системы могут потребоваться учётные данные."
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Connect"
+msgstr "Подключить"
+
+#, rust-format
+msgid "Could not resolve '{host}': {err}"
+msgstr "Не удалось разрешить '{host}': {err}"
+
+#, rust-format
+msgid "Could not resolve '{host}'."
+msgstr "Не удалось разрешить '{host}'."
+
+#, rust-format
+msgid "Could not connect to {host}:{port}: {err}"
+msgstr "Не удалось подключиться к {host}:{port}: {err}"
+
+msgid "User"
+msgstr "Пользователь"
+
+msgid "Host"
+msgstr "Узел"
+
+msgid "Port"
+msgstr "Порт"
+
+msgid "Path"
+msgstr "Путь"
+
+msgid "Test connection"
+msgstr "Проверить соединение"
+
+msgid "Network location"
+msgstr "Сетевое расположение"
+
+msgid "Enter a valid port to test."
+msgstr "Введите корректный порт для проверки."
+
+msgid "Enter a host to test."
+msgstr "Введите узел для проверки."
+
+msgid "Testing connection…"
+msgstr "Проверка соединения…"
+
+#, rust-format
+msgid "Connected to {host}:{port}."
+msgstr "Подключено к {host}:{port}."
+
+msgid "Test connection failed."
+msgstr "Проверка соединения не удалась."
+
+msgid "Enter a host to save."
+msgstr "Введите узел для сохранения."
+
+msgid "Could not list devices"
+msgstr "Не удалось перечислить устройства"
+
+msgid "Filter devices…"
+msgstr "Фильтр устройств…"
+
+msgid "No devices found"
+msgstr "Устройства не найдены"
+
+#, rust-format
+msgid "Select {kind}"
+msgstr "Выбрать {kind}"
+
+msgid "Device name"
+msgstr "Имя устройства"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Label"
+msgstr "Метка"
+
+msgid "File System"
+msgstr "Файловая система"
+
+msgid "Model"
+msgstr "Модель"
+
+msgid "Device"
+msgstr "Устройство"
+
+msgid "Edit device"
+msgstr "Изменить устройство"
+
+#, rust-format
+msgid "Could not resolve a {kind} for {value}. The value was kept as-is."
+msgstr "Не удалось определить {kind} для {value}. Значение сохранено без изменений."
+
+msgid "Edit as text"
+msgstr "Изменить как текст"
+
+msgid "Edit the raw fstab line. Problems with its values are listed below."
+msgstr "Редактирование исходной строки fstab. Проблемы с её значениями перечислены ниже."
+
+msgid "All I/O to the filesystem is done asynchronously."
+msgstr "Весь ввод-вывод в файловой системе выполняется асинхронно."
+
+msgid "Update inode access time on every access."
+msgstr "Обновляет время доступа к inode при каждом обращении."
+
+msgid "Can be mounted with the -a (mount all) option."
+msgstr "Монтируется с помощью опции -a (монтировать все)."
+
+msgid "Remount a subtree elsewhere; mount only that subtree."
+msgstr "Перемонтирует поддерево в другое место; монтируется только это поддерево."
+
+msgid "Comment field; ignored by the mount command."
+msgstr "Поле комментария; игнорируется командой mount."
+
+msgid "Set the SELinux context for the whole filesystem."
+msgstr "Задаёт контекст SELinux для всей файловой системы."
+
+msgid "Use default options: rw, suid, dev, exec, auto, nouser, async."
+msgstr "Использует параметры по умолчанию: rw, suid, dev, exec, auto, nouser, async."
+
+msgid "Set the default SELinux context for unlabeled files."
+msgstr "Задаёт контекст SELinux по умолчанию для файлов без метки."
+
+msgid "Interpret character or block special devices on the filesystem."
+msgstr "Интерпретирует спецустройства символьного или блочного типа в файловой системе."
+
+msgid "Update directory access times on reads."
+msgstr "Обновляет время доступа к каталогам при чтении."
+
+msgid "Make all directory updates synchronous."
+msgstr "Выполняет все обновления каталогов синхронно."
+
+msgid "Permit execution of binaries on the filesystem."
+msgstr "Разрешает выполнение исполняемых файлов в файловой системе."
+
+msgid "Set the SELinux context for the filesystem being mounted."
+msgstr "Задаёт контекст SELinux для монтируемой файловой системы."
+
+msgid "Allow mounting by a user whose group matches the device's group."
+msgstr "Разрешает монтирование пользователем, группа которого совпадает с группой устройства."
+
+msgid "Increment the inode version on every inode modification."
+msgstr "Увеличивает версию inode при каждом изменении inode."
+
+msgid "Update on-disk timestamps lazily, flushing them later."
+msgstr "Лениво обновляет метки времени на диске, выгружая их позже."
+
+msgid "Mount the file through a loop device."
+msgstr "Монтирует файл через loop-устройство."
+
+msgid "Turn off the silent flag (verbose errors)."
+msgstr "Отключает флаг silent (подробные сообщения об ошибках)."
+
+msgid "Allow mandatory locking on the filesystem."
+msgstr "Разрешает обязательную блокировку в файловой системе."
+
+msgid "Atomically move a mounted tree to a new location."
+msgstr "Атомарно перемещает смонтированное дерево в новое место."
+
+msgid "Do not update inode access times on reads."
+msgstr "Не обновляет время доступа к inode при чтении."
+
+msgid "Can only be mounted explicitly, never with -a."
+msgstr "Монтируется только явно, никогда с помощью -a."
+
+msgid "Do not interpret character or block special devices."
+msgstr "Не интерпретирует спецустройства символьного или блочного типа."
+
+msgid "Do not update directory access times."
+msgstr "Не обновляет время доступа к каталогам."
+
+msgid "Do not permit execution of binaries on the filesystem."
+msgstr "Не разрешает выполнение исполняемых файлов в файловой системе."
+
+msgid "Do not report errors if the device does not exist."
+msgstr "Не сообщает об ошибках, если устройство не существует."
+
+msgid "Do not increment the inode version counter."
+msgstr "Не увеличивает счётчик версий inode."
+
+msgid "Do not use the lazytime feature; flush timestamps at once."
+msgstr "Не использует функцию lazytime; выгружает метки времени сразу."
+
+msgid "Do not allow mandatory locking on the filesystem."
+msgstr "Не разрешает обязательную блокировку в файловой системе."
+
+msgid "Do not use the relatime feature."
+msgstr "Не использует функцию relatime."
+
+msgid "Do not honor setuid or setgid bits or file capabilities."
+msgstr "Не учитывает биты setuid и setgid или возможности файлов."
+
+msgid "Do not follow symbolic links when resolving paths."
+msgstr "Не переходит по символическим ссылкам при разрешении путей."
+
+msgid "Use the kernel's default access-time behavior."
+msgstr "Использует поведение ядра по умолчанию для времени доступа."
+
+msgid "Only root may mount the filesystem."
+msgstr "Монтирование файловой системы разрешено только root."
+
+msgid "Mount only after the network is available."
+msgstr "Монтирует только после того, как сеть станет доступной."
+
+msgid "Allow mounting by the owner of the device."
+msgstr "Разрешает монтирование владельцу устройства."
+
+msgid "Make the mount private (no propagation to other mounts)."
+msgstr "Делает точку монтирования приватной (без распространения на другие точки монтирования)."
+
+msgid "Remount a subtree and all its submounts elsewhere."
+msgstr "Перемонтирует поддерево вместе со всеми подмонтировками в другое место."
+
+msgid "Update access times relative to modify or change time."
+msgstr "Обновляет время доступа относительно времени модификации или изменения."
+
+msgid "Attempt to remount an already-mounted filesystem."
+msgstr "Пытается перемонтировать уже смонтированную файловую систему."
+
+msgid "Mount the filesystem read-only."
+msgstr "Монтирует файловую систему только для чтения."
+
+msgid "Set the SELinux context of the filesystem's root inode."
+msgstr "Задаёт контекст SELinux корневого inode файловой системы."
+
+msgid "Make the mount and its submounts private."
+msgstr "Делает точку монтирования и её подмонтировки приватными."
+
+msgid "Make the mount and its submounts shared."
+msgstr "Сделать точку монтирования и все подмонтирования общими."
+
+msgid "Make the mount and its submounts slaves of their master."
+msgstr "Сделать точку монтирования и все подмонтирования подчинёнными основной."
+
+msgid "Make the mount and its submounts unbindable."
+msgstr "Сделать точку монтирования и все подмонтирования непривязываемыми."
+
+msgid "Mount the filesystem read-write."
+msgstr "Монтировать файловую систему на чтение и запись."
+
+msgid "Turn on the silent flag (suppress errors)."
+msgstr "Включить флаг silent (подавление ошибок)."
+
+msgid "Make the mount a slave of its master (receive propagation)."
+msgstr "Сделать точку монтирования подчинённой основной (получать распространение)."
+
+msgid "Make the mount shared with peer mounts."
+msgstr "Сделать точку общей с одноранговыми точками монтирования."
+
+msgid "Update access times on every access (full atime)."
+msgstr "Обновлять время доступа при каждом обращении (полное atime)."
+
+msgid "Honor setuid or setgid bits and file capabilities."
+msgstr "Учитывать биты setuid или setgid и возможности файлов."
+
+msgid "All I/O to the filesystem is done synchronously."
+msgstr "Все операции ввода-вывода с файловой системой выполняются синхронно."
+
+msgid "Make the mount unbindable."
+msgstr "Сделать точку непривязываемой."
+
+msgid "Allow an ordinary user to mount the filesystem."
+msgstr "Разрешить обычному пользователю монтировать файловую систему."
+
+msgid "Allow every user to mount and unmount the filesystem."
+msgstr "Разрешить всем пользователям монтировать и размонтировать файловую систему."
+
+msgid "Restrict automatic filesystem detection to the listed types."
+msgstr "Ограничить автоматическое определение файловых систем указанными типами."
+
+msgid "Set the group that may unmount the mount."
+msgstr "Указать группу, которой разрешено размонтировать."
+
+msgid "Create an idmapped mount using the given ID mapping."
+msgstr "Создать idmapped-монтирование с заданным сопоставлением ID."
+
+msgid "Create the mountpoint directory if it does not exist."
+msgstr "Создать каталог точки монтирования, если он не существует."
+
+msgid "Set the mountpoint directory mode after mounting."
+msgstr "Установить режим каталога точки монтирования после монтирования."
+
+msgid "Do not canonicalize mount source and target paths."
+msgstr "Не приводить к каноническому виду пути источника и цели монтирования."
+
+msgid "Do not create a loop device even if the source is a regular file."
+msgstr "Не создавать loop-устройство, даже если источник — обычный файл."
+
+msgid "Set the owner that may unmount the mount."
+msgstr "Указать владельца, которому разрешено размонтировать."
+
+msgid "Mount a subdirectory of the filesystem instead of its root."
+msgstr "Монтировать подкаталог файловой системы вместо её корня."
+
+msgid "Enables POSIX access control lists."
+msgstr "Включает списки контроля доступа POSIX."
+
+msgid "Disables POSIX access control lists."
+msgstr "Отключает списки контроля доступа POSIX."
+
+msgid "statfs reports usable blocks minus filesystem overhead."
+msgstr "statfs сообщает о доступных блоках за вычетом накладных расходов файловой системы."
+
+msgid "statfs reports total blocks including overhead."
+msgstr "statfs сообщает о всех блоках, включая накладные расходы."
+
+msgid "Performs mount-time checking; only check=none supported now."
+msgstr "Выполняет проверку при монтировании; сейчас поддерживается только check=none."
+
+msgid "Skips checking at mount time (default)."
+msgstr "Пропускает проверку при монтировании (по умолчанию)."
+
+msgid "Prints debugging info upon each (re)mount."
+msgstr "Выводит отладочную информацию при каждом (пере)монтировании."
+
+msgid "Sets behavior on errors: continue, remount-ro, or panic."
+msgstr "Устанавливает поведение при ошибках: continue, remount-ro или panic."
+
+msgid "New files inherit the group ID of their parent directory."
+msgstr "Новые файлы наследуют идентификатор группы родительского каталога."
+
+msgid "Same as grpid."
+msgstr "То же, что и grpid."
+
+msgid "New files take the creating process's fsgid (default)."
+msgstr "Новые файлы получают fsgid процесса, создавшего их (по умолчанию)."
+
+msgid "Same as nogrpid."
+msgstr "То же, что и nogrpid."
+
+msgid "Enables group quota support."
+msgstr "Включает поддержку квот групп."
+
+msgid "Enables user quota support."
+msgstr "Включает поддержку квот пользователей."
+
+msgid "Enables user quota support (same as usrquota)."
+msgstr "Включает поддержку квот пользователей (то же, что и usrquota)."
+
+msgid "Disables all quota support."
+msgstr "Отключает поддержку всех квот."
+
+msgid "Disables 32-bit UIDs/GIDs for old-kernel compatibility."
+msgstr "Отключает 32-битные UID/GID для совместимости со старыми ядрами."
+
+msgid "Uses the old inode allocator instead of Orlov."
+msgstr "Использует старый аллокатор inode вместо Orlov."
+
+msgid "Uses the Orlov allocator for new inodes (default)."
+msgstr "Использует аллокатор Orlov для новых inode (по умолчанию)."
+
+msgid "Group ID allowed to use reserved filesystem blocks."
+msgstr "ID группы, которой разрешено использовать зарезервированные блоки."
+
+msgid "User ID allowed to use reserved filesystem blocks."
+msgstr "ID пользователя, которому разрешено использовать зарезервированные блоки."
+
+msgid "Mounts using an alternate superblock number (recovery)."
+msgstr "Монтирует с использованием альтернативного номера суперблока (восстановление)."
+
+msgid "Enables \"user.\" extended attributes."
+msgstr "Включает расширенные атрибуты \"user.\"."
+
+msgid "Disables \"user.\" extended attributes."
+msgstr "Отключает расширенные атрибуты \"user.\"."
+
+msgid "Enables write barriers in the journal code."
+msgstr "Включает барьеры записи в коде журнала."
+
+msgid "Sets journal commit interval in seconds (default 5)."
+msgstr "Устанавливает интервал фиксации журнала в секундах (по умолчанию 5)."
+
+msgid "Sets data journaling mode: journal, ordered, or writeback."
+msgstr "Устанавливает режим журналирования данных: journal, ordered или writeback."
+
+msgid "Action on data errors in ordered mode: abort or ignore."
+msgstr "Действие при ошибках данных в режиме ordered: abort или ignore."
+
+msgid "Sets the group quota database file for journaled quotas."
+msgstr "Задаёт файл базы данных квот группы для квот с журналом."
+
+msgid "Specifies external journal device by major/minor number."
+msgstr "Указывает внешнее устройство журнала по номеру major/minor."
+
+msgid "Specifies external journal device by device path."
+msgstr "Указывает внешнее устройство журнала по пути к устройству."
+
+msgid "Sets quota format: vfsold, vfsv0, or vfsv1."
+msgstr "Задаёт формат квот: vfsold, vfsv0 или vfsv1."
+
+msgid "Does not load the journal on mount."
+msgstr "Не загружает журнал при монтировании."
+
+msgid "Does not load the journal on mount (same as noload)."
+msgstr "Не загружает журнал при монтировании (то же, что noload)."
+
+msgid "Sets the user quota database file for journaled quotas."
+msgstr "Задаёт файл базы данных квот пользователя для квот с журналом."
+
+msgid "Simulates an ext4_abort() for debugging purposes."
+msgstr "Имитирует вызов ext4_abort() для отладки."
+
+msgid "Forces delayed blocks to disk before rename/truncate commits."
+msgstr "Принудительно записывает отложенные блоки на диск до фиксации переименования/усечения."
+
+msgid "Disables forced allocation on rename/truncate."
+msgstr "Отключает принудительное выделение при переименовании/усечении."
+
+msgid "Tracks metadata blocks internally (debug; off by default)."
+msgstr "Внутренне отслеживает блоки метаданных (отладка; по умолчанию отключено)."
+
+msgid "Disables internal metadata block tracking."
+msgstr "Отключает внутреннее отслеживание блоков метаданных."
+
+msgid "Defers block allocation until write-out time."
+msgstr "Откладывает выделение блоков до момента записи на диск."
+
+msgid "Disables delayed allocation."
+msgstr "Отключает отложенное выделение."
+
+msgid "Uses inode mutex for DIO reads (default)."
+msgstr "Использует мьютекс inode для чтений DIO (по умолчанию)."
+
+msgid "Avoids inode mutex for DIO reads for scalability."
+msgstr "Избегает мьютекса inode при чтениях DIO для масштабируемости."
+
+msgid "Issues discard/TRIM commands when blocks are freed."
+msgstr "Отправляет команды discard/TRIM при освобождении блоков."
+
+msgid "Disables issuing discard/TRIM commands."
+msgstr "Отключает отправку команд discard/TRIM."
+
+msgid "Sets the case-insensitive lookup charset for casefolded directories (e.g. utf8-12.1)."
+msgstr "Задаёт набор символов для поиска без учёта регистра в каталогах casefold (например, utf8-12.1)."
+
+msgid "Sets flags controlling casefold behavior (e.g. strict)."
+msgstr "Задаёт флаги, управляющие поведением casefold (например, strict)."
+
+msgid "Enables fast commits, a lightweight journaling mode for lower commit latency."
+msgstr "Включает fast commits — облегчённый режим журналирования с меньшей задержкой коммитов."
+
+msgid "Tunes the lazy inode-table initialization speed."
+msgstr "Регулирует скорость ленивой инициализации таблиц inode."
+
+msgid "Does not initialize inode tables in the background."
+msgstr "Не инициализирует таблицы inode в фоновом режиме."
+
+msgid "Max inode table blocks pre-read during mount."
+msgstr "Максимум блоков таблиц inode для предчтения при монтировании."
+
+msgid "Enables 64-bit inode version support."
+msgstr "Включает поддержку 64-разрядных версий inode."
+
+msgid "Writes commit block without waiting for descriptors."
+msgstr "Записывает блок коммита без ожидания дескрипторов."
+
+msgid "Enables checksumming of journal transactions."
+msgstr "Включает контрольные суммы транзакций журнала."
+
+msgid "Disables journal transaction checksumming."
+msgstr "Отключает контрольные суммы транзакций журнала."
+
+msgid "Sets I/O priority for journal commits (0-7)."
+msgstr "Задаёт приоритет ввода/вывода для коммитов журнала (0-7)."
+
+msgid "Max microseconds to wait to batch sync-write operations."
+msgstr "Максимум микросекунд ожидания для пакетирования операций синхронной записи."
+
+msgid "Limits maximum directory size in kilobytes."
+msgstr "Ограничивает максимальный размер каталога в килобайтах."
+
+msgid "Minimum commit time for batch optimization (us)."
+msgstr "Минимальное время коммита для пакетной оптимизации (мкс)."
+
+msgid "Disables write barriers."
+msgstr "Отключает барьеры записи."
+
+msgid "Disables mbcache for extended attribute deduplication."
+msgstr "Отключает mbcache для дедупликации расширенных атрибутов."
+
+msgid "Enables project quota support."
+msgstr "Включает поддержку проектных квот."
+
+msgid "Sets stripe width (blocks) for mballoc allocation alignment."
+msgstr "Задаёт ширину полосы (в блоках) для выравнивания выделений mballoc."
+
+msgid "Sets end-of-file preallocation size for buffered I/O."
+msgstr "Задаёт размер предвыделения в конце файла для буферизованного ввода/вывода."
+
+msgid "Enables opportunistic inline xattr format; deprecated since 5.10."
+msgstr "Включает оппортунистический inline-формат xattr; устарело с версии 5.10."
+
+msgid "Disables attr2 format; deprecated, rejected on CRC filesystems."
+msgstr "Отключает формат attr2; устарело, отклоняется на файловых системах с CRC."
+
+msgid "Sets direct-access mode: never, always, or inode."
+msgstr "Задаёт режим прямого доступа: never, always или inode."
+
+msgid "Issues commands to reclaim freed blocks (SSD-friendly)."
+msgstr "Отправляет команды возврата освобождённых блоков (дружественно к SSD)."
+
+msgid "Disables issuing discard commands."
+msgstr "Отключает отправку команд discard."
+
+msgid "Applies filestreams allocation mode to whole filesystem."
+msgstr "Применяет режим выделения filestreams ко всей файловой системе."
+
+msgid "Enables group quota accounting without enforcement."
+msgstr "Включает учёт квот группы без принудительного применения."
+
+msgid "Enables group quota accounting and enforcement."
+msgstr "Включает учёт и принудительное применение квот группы."
+
+msgid "Same as gquota."
+msgstr "То же, что gquota."
+
+msgid "New files inherit the parent directory's group ID."
+msgstr "Новые файлы наследуют идентификатор группы родительского каталога."
+
+msgid "New files take the process's fsgid (default)."
+msgstr "Новые файлы получают fsgid процесса (по умолчанию)."
+
+msgid "Keeps empty inode clusters on disk; deprecated since 5.10."
+msgstr "Оставляет пустые кластеры inode на диске; устарело с версии 5.10."
+
+msgid "Recycles empty inode clusters; deprecated since 5.10."
+msgstr "Перезаиспользует пустые кластеры inode; устарело с версии 5.10."
+
+msgid "Restricts inode numbers to 32 bits."
+msgstr "Ограничивает номера inode до 32 бит."
+
+msgid "Allows 64-bit inode numbers (default)."
+msgstr "Разрешает 64-битные номера inode (по умолчанию)."
+
+msgid "Reports swidth/allocsize as st_blksize."
+msgstr "Сообщает swidth/allocsize как st_blksize."
+
+msgid "Reports minimal st_blksize (default)."
+msgstr "Сообщает минимальный st_blksize (по умолчанию)."
+
+msgid "Sets number of in-memory log buffers (2-8)."
+msgstr "Задает количество буферов журнала в памяти (2-8)."
+
+msgid "Sets size of each in-memory log buffer."
+msgstr "Задает размер каждого буфера журнала в памяти."
+
+msgid "Uses an external log (metadata journal) device."
+msgstr "Использует внешее устройство журнала (журнала метаданных)."
+
+msgid "Skips stripe-unit alignment for data allocations."
+msgstr "Пропускает выравнивание по элементу полосы при выделении данных."
+
+msgid "Mounts without running log recovery (read-only)."
+msgstr "Монтирует без восстановления журнала (только чтение)."
+
+msgid "Skips duplicate-UUID mount detection."
+msgstr "Пропускает проверку UUID на дубликаты при монтировании."
+
+msgid "Forcibly turns off all quota accounting and enforcement."
+msgstr "Принудительно отключает учёт и контроль всех квот."
+
+msgid "Enables project quota accounting and enforcement."
+msgstr "Включает учёт и контроль проектных квот."
+
+msgid "Enables project quota accounting without enforcement."
+msgstr "Включает учёт проектных квот без контроля."
+
+msgid "Same as pquota."
+msgstr "То же, что pquota."
+
+msgid "Enables user quota accounting without enforcement."
+msgstr "Включает учёт пользовательских квот без контроля."
+
+msgid "Enables user quota accounting and enforcement."
+msgstr "Включает учёт и контроль пользовательских квот."
+
+msgid "Uses an external realtime-section device."
+msgstr "Использует внешнее устройство realtime-раздела."
+
+msgid "Sets stripe unit in 512-byte blocks."
+msgstr "Задает элемент полосы в блоках по 512 байт."
+
+msgid "Rounds data allocations up to stripe-width boundaries."
+msgstr "Округляет выделения данных до границ ширины полосы."
+
+msgid "Sets stripe width in 512-byte blocks."
+msgstr "Задает ширину полосы в блоках по 512 байт."
+
+msgid "Same as uquota."
+msgstr "То же, что uquota."
+
+msgid "Runs filesystem namespace operations synchronously."
+msgstr "Выполняет операции пространства имён файловой системы синхронно."
+
+msgid "Enables POSIX access control lists (default on)."
+msgstr "Включает списки контроля доступа POSIX (включены по умолчанию)."
+
+msgid "Auto-defragments detected small random writes."
+msgstr "Автоматически дефрагментирует обнаруженные мелкие случайные записи."
+
+msgid "Disables automatic file defragmentation."
+msgstr "Отключает автоматическую дефрагментацию файлов."
+
+msgid "Ensures writes flush to permanent storage at checkpoints."
+msgstr "Обеспечивает запись данных в долговременное хранилище на контрольных точках."
+
+msgid "Disables write barriers; risks corruption on crash."
+msgstr "Отключает барьеры записи; риск повреждения при сбое."
+
+msgid "Clears and rebuilds the free space cache."
+msgstr "Очищает и перестраивает кэш свободного пространства."
+
+msgid "Sets transaction commit interval in seconds (default 30)."
+msgstr "Задает интервал фиксации транзакций в секундах (по умолчанию 30)."
+
+msgid "Enables data compression, optionally with a level (for example zstd:3)."
+msgstr "Включает сжатие данных, опционально с уровнем (например, zstd:3)."
+
+msgid "Always attempts compression, even if ineffective, optionally with a level."
+msgstr "Всегда пытается сжимать данные, даже если это неэффективно, опционально с уровнем."
+
+msgid "Enables data copy-on-write for new files."
+msgstr "Включает COW данных для новых файлов."
+
+msgid "Disables data COW (implies nodatasum, no compression)."
+msgstr "Отключает COW данных (подразумевает nodatasum, без сжатия)."
+
+msgid "Enables data checksumming."
+msgstr "Включает контрольные суммы данных."
+
+msgid "Disables data checksumming."
+msgstr "Отключает контрольные суммы данных."
+
+msgid "Allows mount with fewer devices than RAID requires."
+msgstr "Разрешает монтирование с меньшим числом устройств, чем требует RAID."
+
+msgid "Scans the given device for btrfs during mount."
+msgstr "Сканирует указанное устройство на наличие btrfs при монтировании."
+
+msgid "Discards freed file blocks (TRIM)."
+msgstr "Отбрасывает освобожденные блоки файлов (TRIM)."
+
+msgid "Disables discarding of freed blocks."
+msgstr "Отключает отбрасывание освобожденных блоков."
+
+msgid "Enables verbose output for ENOSPC conditions."
+msgstr "Включает подробный вывод для условий ENOSPC."
+
+msgid "Disables verbose ENOSPC output."
+msgstr "Отключает подробный вывод ENOSPC."
+
+msgid "Sets action on fatal errors: bug or panic."
+msgstr "Задает действие при фатальных ошибках: bug или panic."
+
+msgid "Flushes all prior-transaction data at each commit."
+msgstr "Выгружает данные всех предыдущих транзакций при каждой фиксации."
+
+msgid "Disables forced full flush on commit."
+msgstr "Отключает принудительную полную выгрузку при фиксации."
+
+msgid "Intentionally fragments block groups (debug builds only)."
+msgstr "Намеренно фрагментирует группы блоков (только отладочные сборки)."
+
+msgid "Max bytes that can be inlined in a metadata leaf."
+msgstr "Максимальное число байт, встраиваемых в лист метаданных."
+
+msgid "Allocates one metadata chunk per N data chunks."
+msgstr "Выделяет один чанк метаданных на N чанков данных."
+
+msgid "Does not replay the tree log (same as norecovery)."
+msgstr "Не воспроизводит журнал дерева (то же, что norecovery)."
+
+msgid "Does not attempt recovery at mount time."
+msgstr "Не пытается выполнять восстановление при монтировании."
+
+msgid "Forces rebuild of the UUID tree."
+msgstr "Принудительно перестраивает дерево UUID."
+
+msgid "Applies recovery workarounds: usebackuproot, nologreplay, ignorebadroots, ignore*sums, or all (read-only)."
+msgstr "Применяет обходные приёмы восстановления: usebackuproot, nologreplay, ignorebadroots, ignore*sums или all (только чтение)."
+
+msgid "Skips automatic resume of an interrupted balance."
+msgstr "Пропускает автоматическое возобновление прерванного балансирования."
+
+msgid "Enables free space caching (v1 or v2)."
+msgstr "Включает кэширование свободного места (v1 или v2)."
+
+msgid "Disables the free space cache."
+msgstr "Отключает кэш свободного места."
+
+msgid "Enables SSD allocation optimizations."
+msgstr "Включает оптимизации размещения для SSD."
+
+msgid "Disables SSD allocation optimizations."
+msgstr "Отключает оптимизации размещения для SSD."
+
+msgid "Allocates into larger aligned chunks for low-end SSDs."
+msgstr "Выделяет более крупные выровненные блоки для недорожных SSD."
+
+msgid "Disables the ssd_spread allocation scheme."
+msgstr "Отключает схему размещения ssd_spread."
+
+msgid "Mounts a subvolume at the given path, not the toplevel."
+msgstr "Монтирует подтом в указанном пути, а не верхнеуровневый."
+
+msgid "Mounts the subvolume with the given numeric ID."
+msgstr "Монтирует подтом с указанным числовым идентификатором."
+
+msgid "Sets number of worker threads."
+msgstr "Задает количество рабочих потоков."
+
+msgid "Enables tree logging for fsync/O_SYNC."
+msgstr "Включает журналирование дерева для fsync/O_SYNC."
+
+msgid "Disables tree logging."
+msgstr "Отключает журналирование дерева."
+
+msgid "Tries backup roots if the tree root is bad; removed since 7.3."
+msgstr "Пробует запасные корни, если корень дерева повреждён; удалён с версии 7.3."
+
+msgid "Lets subvolume owners delete their own subvolumes."
+msgstr "Позволяет владельцам подтомов удалять собственные подтомы."
+
+msgid "Sets number of active log segments (2, 4, or 6)."
+msgstr "Задает количество активных сегментов журнала (2, 4 или 6)."
+
+msgid "Enables age extent cache for allocation hints."
+msgstr "Включает кэш extents по возрасту для подсказок о выделении."
+
+msgid "Sets block allocation policy: reuse or default."
+msgstr "Задает политику выделения блоков: reuse или default."
+
+msgid "Enables age-threshold background garbage collection."
+msgstr "Включает фоновый сбор мусора по порогу возраста."
+
+msgid "Turns background garbage collection on/off/sync."
+msgstr "Переключает фоновый сбор мусора: on/off/sync."
+
+msgid "Allows cache_flush commands to be issued."
+msgstr "Позволяет отправлять команды cache_flush."
+
+msgid "Skips cache_flush commands if storage guarantees order."
+msgstr "Пропускает команды cache_flush, если накопитель гарантирует порядок записи."
+
+msgid "Enables or disables checkpointing (disable/enable)."
+msgstr "Включает или отключает контрольные точки (disable/enable)."
+
+msgid "Merges concurrent checkpoint requests via a daemon."
+msgstr "Объединяет одновременные запросы контрольных точек через демон."
+
+msgid "Disables checkpoint merge feature."
+msgstr "Отключает объединение контрольных точек."
+
+msgid "Selects compression algorithm (lzo, lz4, zstd)."
+msgstr "Выбирает алгоритм сжатия (lzo, lz4, zstd)."
+
+msgid "Caches compressed blocks to improve read hit ratio."
+msgstr "Кэширует сжатые блоки для повышения доли попаданий при чтении."
+
+msgid "Verifies checksums of compressed clusters."
+msgstr "Проверяет контрольные суммы сжатых кластеров."
+
+msgid "Adds extensions whose files are auto-compressed."
+msgstr "Добавляет расширения файлов, сжимаемых автоматически."
+
+msgid "Sets compress cluster size in 4KB units."
+msgstr "Задает размер кластера сжатия в единицах 4 КБ."
+
+msgid "Sets compression mode: fs (auto) or user (manual)."
+msgstr "Задает режим сжатия: fs (авто) или user (вручную)."
+
+msgid "Flushes data before checkpoint to persist regular files."
+msgstr "Проводит данные перед контрольной точкой для надёжного сохранения обычных файлов."
+
+msgid "Ignores mkfs extension list for cold-file detection."
+msgstr "Игнорирует список расширений mkfs при обнаружении холодных файлов."
+
+msgid "Disables the roll-forward recovery routine."
+msgstr "Отключает процедуру восстановления roll-forward."
+
+msgid "Enables real-time discard/TRIM commands."
+msgstr "Включает команды discard/TRIM в реальном времени."
+
+msgid "Disables real-time discard."
+msgstr "Отключает discard в реальном времени."
+
+msgid "Sets discard alignment unit: block, segment, or section."
+msgstr "Задает единицу выравнивания discard: block, segment или section."
+
+msgid "Sets behavior on critical errors: panic, continue, remount-ro."
+msgstr "Задает поведение при критических ошибках: panic, continue, remount-ro."
+
+msgid "Enables the rb-tree extent cache (default)."
+msgstr "Включает кэш extents на основе rb-tree (по умолчанию)."
+
+msgid "Disables the extent cache."
+msgstr "Отключает кэш extents."
+
+msgid "Reduces mount time at the cost of normal performance."
+msgstr "Сокращает время монтирования за счёт обычной производительности."
+
+msgid "Enables fault injection at a given rate (testing)."
+msgstr "Включает введение сбоев с заданной частотой (тестирование)."
+
+msgid "Configures which fault types to inject (testing)."
+msgstr "Задает типы вводимых сбоев (тестирование)."
+
+msgid "Merges concurrent cache_flush commands."
+msgstr "Объединяет одновременные команды cache_flush."
+
+msgid "Sets fsync policy: posix, strict, or nobarrier."
+msgstr "Задает политику fsync: posix, strict или nobarrier."
+
+msgid "Handles foreground GC in the background GC thread."
+msgstr "Обрабатывает сбор мусора переднего плана в фононом потоке."
+
+msgid "Disables GC merge feature."
+msgstr "Отключает объединение сборов мусора."
+
+msgid "Points to group journaled quota file."
+msgstr "Указывает на файл журналируемой квоты групп."
+
+msgid "Enables group disk quota accounting."
+msgstr "Включает учёт дисковой квоты групп."
+
+msgid "Allocates segments heap-based from disk end; deprecated."
+msgstr "Выделяет сегменты на основе кучи от конца диска; устарело."
+
+msgid "Disables heap-based allocation; deprecated."
+msgstr "Отключает выделение на основе кучи; устарело."
+
+msgid "Stores small file data inside the inode block."
+msgstr "Хранит данные небольших файлов в блоке inode."
+
+msgid "Stores directory entries inside the inode block."
+msgstr "Хранит записи каталогов в блоке inode."
+
+msgid "Disables the inline dentry feature."
+msgstr "Отключает встроенные записи dentry."
+
+msgid "Enables inline extended attributes."
+msgstr "Включает встроенные расширенные атрибуты."
+
+msgid "Disables inline extended attributes."
+msgstr "Отключает встроенные расширенные атрибуты."
+
+msgid "Sets the inline xattr size."
+msgstr "Задаёт размер встроенных xattr."
+
+msgid "Uses blk-crypto for inline encryption hardware."
+msgstr "Использует blk-crypto для аппаратного встроенного шифрования."
+
+msgid "Sets casefold directory lookup: perf, compat, or auto."
+msgstr "Задаёт поиск по каталогам casefold: perf, compat или auto."
+
+msgid "Sets memory mode: normal or low."
+msgstr "Задаёт режим памяти: normal или low."
+
+msgid "Sets block allocation mode: adaptive or lfs."
+msgstr "Задаёт режим выделения блоков: adaptive или lfs."
+
+msgid "Enables faster full/empty NAT block access."
+msgstr "Включает ускоренный доступ к полным/пустым NAT-блокам."
+
+msgid "Disables the inline data feature."
+msgstr "Отключает встроенные данные."
+
+msgid "Disables roll-forward recovery and mounts read-only."
+msgstr "Отключает восстановление roll-forward и монтирует только для чтения."
+
+msgid "Disables user extended attributes."
+msgstr "Отключает пользовательские расширенные атрибуты."
+
+msgid "Disables all plain disk quota options."
+msgstr "Отключает все опции обычных дисковых квот."
+
+msgid "Points to project journaled quota file."
+msgstr "Указывает на файл журналируемой квоты проектов."
+
+msgid "Enables project quota accounting."
+msgstr "Включает учёт проектных квот."
+
+msgid "Enables plain user disk quota accounting."
+msgstr "Включает учёт обычных дисковых квот пользователей."
+
+msgid "Sets reserved nodes for privileged-user allocation."
+msgstr "Задаёт зарезервированные узлы для выделения привилегированным пользователем."
+
+msgid "Sets reserved space (%) for privileged-user allocation."
+msgstr "Задаёт зарезервированное место (%) для выделения привилегированным пользователем."
+
+msgid "Group ID with access to reserved blocks and nodes."
+msgstr "Идентификатор группы с доступом к зарезервированным блокам и узлам."
+
+msgid "User ID with access to reserved blocks and nodes."
+msgstr "Идентификатор пользователя с доступом к зарезервированным блокам и узлам."
+
+msgid "Enables dummy fscrypt context for testing."
+msgstr "Включает фиктивный контекст fscrypt для тестирования."
+
+msgid "Points to user journaled quota file."
+msgstr "Указывает на файл журналируемой квоты пользователя."
+
+msgid "Enables user disk quota accounting."
+msgstr "Включает учёт дисковых квот пользователей."
+
+msgid "Enables POSIX Access Control List support."
+msgstr "Включает поддержку списков контроля доступа POSIX."
+
+msgid "Enables TRIM support for SSD delete performance."
+msgstr "Включает поддержку TRIM для производительности удаления на SSD."
+
+msgid "Permission mask for directories."
+msgstr "Маска прав доступа для каталогов."
+
+msgid "Permission mask for files."
+msgstr "Маска прав доступа для файлов."
+
+msgid "Forces mounting even if the volume is dirty (not recommended)."
+msgstr "Принудительное монтирование, даже если том не в чистом состоянии (не рекомендуется)."
+
+msgid "Default group ID for created files and directories."
+msgstr "Идентификатор группы по умолчанию для создаваемых файлов и каталогов."
+
+msgid "Sets the HIDDEN attribute for names starting with a dot."
+msgstr "Задаёт атрибут HIDDEN для имён, начинающихся с точки."
+
+msgid "Charset used to translate path strings to Unicode."
+msgstr "Кодировка для преобразования строк пути в Unicode."
+
+msgid "Hides files with the Windows HIDDEN attribute."
+msgstr "Скрывает файлы с атрибутом HIDDEN Windows."
+
+msgid "Preallocates space to reduce write fragmentation."
+msgstr "Предварительно выделяет место для уменьшения фрагментации при записи."
+
+msgid "Shows all NTFS meta-files (system files)."
+msgstr "Показывает все метафайлы NTFS (системные файлы)."
+
+msgid "Creates new files as sparse."
+msgstr "Создаёт новые файлы как разреженные."
+
+msgid "Marks files with the SYSTEM attribute as immutable."
+msgstr "Отмечает файлы с атрибутом SYSTEM как неизменяемые."
+
+msgid "Default user ID for created files and directories."
+msgstr "Идентификатор пользователя по умолчанию для создаваемых файлов и каталогов."
+
+msgid "Default permission mask for files and directories."
+msgstr "Маска прав доступа по умолчанию для файлов и каталогов."
+
+msgid "Rejects filenames not allowed by Windows."
+msgstr "Отклоняет имена файлов, недопустимые в Windows."
+
+msgid "Relaxes utime() permission checks for changing timestamps."
+msgstr "Ослабляет проверки разрешений utime() при изменении меток времени."
+
+msgid "Sets the block size; obsolete."
+msgstr "Задаёт размер блока; устарело."
+
+msgid "Sets case-sensitivity checking (strict, relaxed, or normal)."
+msgstr "Задаёт проверку различения регистра (strict, relaxed или normal)."
+
+msgid "Sets codepage for converting to shortname characters."
+msgstr "Задаёт кодовую страницу для преобразования в символы коротких имён."
+
+msgid "Obsolete; may fail or be ignored."
+msgstr "Устарело; может привести к ошибке или быть проигнорировано."
+
+msgid "Obsolete; forces use of a CVF compressed-volume module."
+msgstr "Устарело; принудительно использует модуль сжатого тома CVF."
+
+msgid "Obsolete; passes an option to the CVF module."
+msgstr "Устаревший; передаёт параметр модулю CVF."
+
+msgid "Enables debug output; unused by current implementation."
+msgstr "Включает отладочный вывод; не используется в текущей реализации."
+
+msgid "Uses DOS 1.x BIOS Parameter Block defaults for small floppies."
+msgstr "Использует параметры по умолчанию блока параметров BIOS DOS 1.x для малых дискет."
+
+msgid "Forces DOS dot conventions on filenames (obsolete)."
+msgstr "Принудительно применяет к именам файлов DOS-конвенции с точками (устаревший)."
+
+msgid "Forces Unix-style names without DOS dots (obsolete)."
+msgstr "Принудительно использует имена в стиле Unix без DOS-точек (устаревший)."
+
+msgid "Allows dots in 8.3 short names (obsolete)."
+msgstr "Разрешает точки в коротких именах 8.3 (устаревший)."
+
+msgid "Sets FAT behavior on errors: panic, continue, or remount-ro."
+msgstr "Устанавливает поведение FAT при ошибках: panic, continue или remount-ro."
+
+msgid "Forces FAT type 12, 16, or 32, overriding auto-detection."
+msgstr "Принудительно устанавливает тип FAT 12, 16 или 32, переопределяя автоопределение."
+
+msgid "Flushes data to disk earlier than normal."
+msgstr "Выгружает данные на диск раньше, чем обычно."
+
+msgid "Permission mask for regular files."
+msgstr "Маска прав доступа для обычных файлов."
+
+msgid "Group ID applied to all files."
+msgstr "Идентификатор группы для всех файлов."
+
+msgid "Charset converting filenames between disk and Unicode."
+msgstr "Кодировка для преобразования имён файлов между диском и Unicode."
+
+msgid "Enables NFS export support (stale_rw or nostale_ro)."
+msgstr "Включает поддержку экспорта NFS (stale_rw или nostale_ro)."
+
+msgid "Deprecated; use shortname=win95 instead."
+msgstr "Устаревший; вместо него используйте shortname=win95."
+
+msgid "Skips the ~number tail in 8.3 aliases when possible."
+msgstr "Пропускает окончание ~число в 8.3-псевдонимах, когда это возможно."
+
+msgid "Obsolete; allowed files differing only in case."
+msgstr "Устаревший; разрешал файлы, отличающиеся только регистром."
+
+msgid "Suppresses warning messages and chmod/chown errors."
+msgstr "Подавляет предупреждения и ошибки chmod/chown."
+
+msgid "Treats the FAT read-only attribute as read-only for directories."
+msgstr "Применяет атрибут FAT «только для чтения» и к каталогам."
+
+msgid "Sets 8.3 short-name display/create mode (lower, win95, winnt, mixed)."
+msgstr "Устанавливает режим отображения/создания коротких имён 8.3 (lower, win95, winnt, mixed)."
+
+msgid "Allows execute permission only for .EXE, .COM, or .BAT files."
+msgstr "Разрешает права на выполнение только для файлов .EXE, .COM или .BAT."
+
+msgid "Treats the FAT system attribute as the immutable flag."
+msgstr "Рассматривает системный атрибут FAT как флаг неизменяемости."
+
+msgid "Sets minute offset converting FAT local time to UTC."
+msgstr "Устанавливает минутное смещение, преобразующее локальное время FAT в UTC."
+
+msgid "Interprets timestamps as UTC instead of local time."
+msgstr "Интерпретирует метки времени как UTC, а не как локальное время."
+
+msgid "Owner user ID applied to all files."
+msgstr "Идентификатор пользователя-владельца для всех файлов."
+
+msgid "Permission mask for files and directories."
+msgstr "Маска прав доступа для файлов и каталогов."
+
+msgid "Escapes unhandled Unicode characters as :XXXX sequences."
+msgstr "Экранирует необработанные символы Unicode последовательностями :XXXX."
+
+msgid "Uses the free-cluster count stored in FSINFO."
+msgstr "Использует количество свободных кластеров, сохранённое в FSINFO."
+
+msgid "Use UTF-8 to encode long file names."
+msgstr "Использует UTF-8 для кодирования длинных имён файлов."
+
+msgid "Deprecated; accepted but has no effect."
+msgstr "Устаревший; принимается, но не имеет эффекта."
+
+msgid "Sets behavior on errors: panic, continue, or remount-ro."
+msgstr "Устанавливает поведение при ошибках: panic, continue или remount-ro."
+
+msgid "Default group ID applied to all files."
+msgstr "Идентификатор группы по умолчанию для всех файлов."
+
+msgid "Keeps trailing periods in path components and filenames."
+msgstr "Сохраняет завершающие точки в компонентах пути и именах файлов."
+
+msgid "Uses the system timezone for timestamps lacking a valid offset."
+msgstr "Использует системный часовой пояс для меток времени без допустимого смещения."
+
+msgid "Sets minute offset converting timestamps to UTC."
+msgstr "Устанавливает смещение в минутах для преобразования меток времени в UTC."
+
+msgid "Default user ID applied to all files."
+msgstr "Идентификатор пользователя по умолчанию для всех файлов."
+
+msgid "Creates directories with zero size, allocating no cluster."
+msgstr "Создаёт каталоги нулевого размера без выделения кластеров."
+
+msgid "Enables swap discard; supports discard=once or discard=pages."
+msgstr "Включает discard для swap; поддерживаются discard=once или discard=pages."
+
+msgid "Sets the swap device priority (0-32767)."
+msgstr "Устанавливает приоритет swap-устройства (0-32767)."
+
+msgid "Legacy swap marker from BSD-era fstab; has no effect on Linux."
+msgstr "Устаревший маркер swap из fstab эпохи BSD; в Linux не действует."
+
+msgid "Maximum seconds to cache directory attributes."
+msgstr "Максимальное число секунд кэширования атрибутов каталогов."
+
+msgid "Maximum seconds to cache regular file attributes."
+msgstr "Максимальное число секунд кэширования атрибутов обычных файлов."
+
+msgid "Seconds to cache file/directory attributes before re-checking."
+msgstr "Число секунд кэширования атрибутов файлов/каталогов перед повторной проверкой."
+
+msgid "Sets the destination IP address of the server."
+msgstr "Устанавливает IP-адрес назначения для сервера."
+
+msgid "Members of this group open files with backup intent."
+msgstr "Члены этой группы открывают файлы с намерением резервного копирования."
+
+msgid "This user opens files with backup intent."
+msgstr "Этот пользователь открывает файлы с намерением резервного копирования."
+
+msgid "Overrides the default block size reported on SMB3 files."
+msgstr "Переопределяет размер блока по умолчанию, сообщаемый для файлов SMB3."
+
+msgid "Cache mode for file data: none, strict or loose."
+msgstr "Режим кэширования данных файлов: none, strict или loose."
+
+msgid "Maps CIFS/NTFS ACLs and SIDs to/from Linux permissions."
+msgstr "Соотносит ACL и SID CIFS/NTFS с правами Linux."
+
+msgid "Max seconds to defer the final SMB3 file close."
+msgstr "Максимум секунд для отсрочки окончательного закрытия файла SMB3."
+
+msgid "Enables experimental SMB 3.1.1 message compression."
+msgstr "Включает экспериментальное сжатие сообщений SMB 3.1.1."
+
+msgid "Reads username/password from a credentials file."
+msgstr "Читает имя пользователя и пароль из файла учётных данных."
+
+msgid "Uid owning the credentials cache (useful with krb5)."
+msgstr "UID владельца кэша учётных данных (полезно при использовании krb5)."
+
+msgid "Overrides the default mode for directories."
+msgstr "Переопределяет режим по умолчанию для каталогов."
+
+msgid "Sets the user's domain (workgroup)."
+msgstr "Устанавливает домен пользователя (рабочую группу)."
+
+msgid "Auto-guesses the server domain from the NTLM challenge."
+msgstr "Автоматически определяет домен сервера по запросу NTLM."
+
+msgid "Keeps unsupported permissions in memory only; unreliable."
+msgstr "Хранит неподдерживаемые права доступа только в памяти; ненадёжно."
+
+msgid "Seconds between keepalive echo requests."
+msgstr "Интервал (в секундах) между запросами эха keepalive."
+
+msgid "Min encrypted-read size before offloading decryption."
+msgstr "Минимальный размер шифрованного чтения перед переносом расшифровки."
+
+msgid "Overrides the default mode for regular files."
+msgstr "Переопределяет режим по умолчанию для обычных файлов."
+
+msgid "Ignores server gid and always uses the gid value."
+msgstr "Игнорирует GID сервера и всегда использует значение GID."
+
+msgid "Ignores server uid and always uses the uid value."
+msgstr "Игнорирует UID сервера и всегда использует значение UID."
+
+msgid "Always uses CIFS-style mandatory locks."
+msgstr "Всегда использует обязательные блокировки в стиле CIFS."
+
+msgid "Enables local disk caching via FS-Cache."
+msgstr "Включает локальный дисковый кэш через FS-Cache."
+
+msgid "Default gid owning files when the server gives none."
+msgstr "GID по умолчанию для файлов, если сервер его не указывает."
+
+msgid "Don't prompt for a password; mount as guest."
+msgstr "Не запрашивать пароль; примонтировать как гость."
+
+msgid "Keeps the share root directory handle cached."
+msgstr "Удерживает в кэше дескриптор корневого каталога шары."
+
+msgid "Ms the server reserves handles after failover."
+msgstr "Мс, на которые сервер резервирует дескрипторы после переключения."
+
+msgid "Hangs when the server crashes instead of erroring."
+msgstr "Виснет при сбое сервера, а не возвращает ошибку."
+
+msgid "Extracts uid/gid from a special SID instead of mapping."
+msgstr "Извлекает UID/GID из специального SID вместо сопоставления."
+
+msgid "Synonym for nocase; case-insensitive matching."
+msgstr "Синоним nocase; сопоставление без учёта регистра."
+
+msgid "Allow interrupts while hung; currently unimplemented."
+msgstr "Разрешить прерывания при зависании; в настоящее время не реализовано."
+
+msgid "Charset for converting path names to/from Unicode."
+msgstr "Кодировка для преобразования имён путей в Unicode и обратно."
+
+msgid "Enables Unix Extensions (synonym for posix/unix)."
+msgstr "Включает расширения Unix (синоним posix/unix)."
+
+msgid "Checks cached leases locally instead of querying server."
+msgstr "Локально проверяет закэшированные аренды вместо запроса к серверу."
+
+msgid "Translates reserved Windows filename characters."
+msgstr "Преобразует зарезервированные символы в именах файлов Windows."
+
+msgid "Maps reserved characters per Microsoft Services For Mac."
+msgstr "Сопоставляет зарезервированные символы согласно Microsoft Services For Mac."
+
+msgid "Maximum number of cached directories per share."
+msgstr "Максимальное число закэшированных каталогов на шару."
+
+msgid "Number of multichannel transport connections (max 16)."
+msgstr "Число мультиканальных транспортных соединений (не более 16)."
+
+msgid "Maximum SMB2 credits the client can hold."
+msgstr "Максимум кредитов SMB2, которые клиент может удерживать."
+
+msgid "Enables Minshall+French symlink support."
+msgstr "Включает поддержку символьных ссылок Minshall+French."
+
+msgid "Uses multiple transport connections for one session."
+msgstr "Использует несколько транспортных соединений для одной сессии."
+
+msgid "Maps each user's access to individual credentials."
+msgstr "Привязывает доступ каждого пользователя к индивидуальным учётным данным."
+
+msgid "Client netbios name used for port 139 connections."
+msgstr "Имя NetBIOS клиента, используемое для соединений через порт 139."
+
+msgid "Disables POSIX ACL operations."
+msgstr "Отключает операции с POSIX ACL."
+
+msgid "Uses fixed kernel socket buffer sizes."
+msgstr "Использует фиксированные размеры буферов сокетов ядра."
+
+msgid "Don't send byte-range lock requests to the server."
+msgstr "Не отправлять серверу запросы блокировки диапазонов байтов."
+
+msgid "Requests case-insensitive path name matching."
+msgstr "Запрашивает сопоставление имён путей без учёта регистра."
+
+msgid "Don't follow Distributed FileSystem referrals."
+msgstr "Не следовать перенаправлениям Distributed FileSystem."
+
+msgid "Disables caching of the share root handle."
+msgstr "Отключает кэширование дескриптора корневого каталога шары."
+
+msgid "Don't allow interrupts; currently unimplemented."
+msgstr "Не разрешать прерывания; в настоящее время не реализовано."
+
+msgid "Don't request leases/oplocks when opening files."
+msgstr "Не запрашивать аренды/oplocks при открытии файлов."
+
+msgid "Disables Unix Extensions (synonym for noposix)."
+msgstr "Отключает расширения Unix (синоним noposix)."
+
+msgid "Don't translate reserved filename characters."
+msgstr "Не преобразовывать зарезервированные символы в именах файлов."
+
+msgid "Disables client-side permission checking."
+msgstr "Отключает проверку прав доступа на стороне клиента."
+
+msgid "Disables persistent handles."
+msgstr "Отключает постоянные дескрипторы."
+
+msgid "Disables Unix Extensions for this mount."
+msgstr "Отключает расширения Unix для этого монтирования."
+
+msgid "Don't negotiate POSIX-style pathnames."
+msgstr "Не согласовывать имена путей в стиле POSIX."
+
+msgid "Disables resilient handles."
+msgstr "Отключает устойчивые дескрипторы."
+
+msgid "Client generates inode numbers locally."
+msgstr "Клиент генерирует номера inode локально."
+
+msgid "Lets the server set uid/gid on new files."
+msgstr "Позволяет серверу задавать uid/gid для новых файлов."
+
+msgid "Never reuses existing sockets for new mounts."
+msgstr "Никогда не переиспользует существующие сокеты для новых монтирований."
+
+msgid "Don't flush to the server on fsync()."
+msgstr "Не сбрасывает данные на сервер при вызове fsync()."
+
+msgid "Disables getfattr/setfattr xattr operations."
+msgstr "Отключает операции xattr getfattr/setfattr."
+
+msgid "Specifies the CIFS password (alias of password)."
+msgstr "Указывает пароль CIFS (псевдоним password)."
+
+msgid "Specifies an alternate password for password rotation."
+msgstr "Указывает альтернативный пароль для ротации паролей."
+
+msgid "Specifies the CIFS password."
+msgstr "Указывает пароль CIFS."
+
+msgid "Enables client-side permission checking (default)."
+msgstr "Включает проверку прав доступа на стороне клиента (по умолчанию)."
+
+msgid "Keeps opened files across reconnections."
+msgstr "Сохраняет открытые файлы при переподключении."
+
+msgid "Port to connect to the CIFS server."
+msgstr "Порт для подключения к серверу CIFS."
+
+msgid "Enables Unix Extensions for this mount."
+msgstr "Включает Unix Extensions для этого монтирования."
+
+msgid "Allows POSIX-style pathnames (inverse of noposixpaths)."
+msgstr "Разрешает имена путей в стиле POSIX (обратное к noposixpaths)."
+
+msgid "Uses SMB Direct over an RDMA adapter."
+msgstr "Использует SMB Direct через адаптер RDMA."
+
+msgid "Maximum bytes requested in each read request."
+msgstr "Максимум байт, запрашиваемых в каждом запросе на чтение."
+
+msgid "Forwards the opening pid on read/write operations."
+msgstr "Передаёт PID открывшего процесса при операциях чтения/записи."
+
+msgid "Encrypts traffic at the SMB layer (SMB3+)."
+msgstr "Шифрует трафик на уровне SMB (SMB3+)."
+
+msgid "Sets the session security mode (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+msgstr "Задаёт режим безопасности сеанса (none, krb5, krb5i, ntlm, ntlmi, ntlmv2, ntlmv2i, ntlmssp, ntlmsspi)."
+
+msgid "Server netbios name for old port 139 servers."
+msgstr "NetBIOS-имя сервера для старых серверов с портом 139."
+
+msgid "Uses inode numbers returned by the server."
+msgstr "Использует номера inode, возвращаемые сервером."
+
+msgid "Sets uid/gid of processes on newly created files."
+msgstr "Задаёт uid/gid процессов для вновь создаваемых файлов."
+
+msgid "Creates device/fifo files in Services for Unix format."
+msgstr "Создаёт файлы устройств и FIFO в формате Services for Unix."
+
+msgid "Ignores unrecognized mount options following it."
+msgstr "Игнорирует нераспознанные параметры монтирования, следующие за ним."
+
+msgid "Mounts a specific snapshot of the remote share."
+msgstr "Монтирует конкретный снимок удалённой шары."
+
+msgid "Returns errors instead of hanging when server crashes."
+msgstr "Возвращает ошибки вместо зависания при падении сервера."
+
+msgid "Default uid owning files when the server gives none."
+msgstr "uid по умолчанию для файлов, если сервер не указывает владельца."
+
+msgid "Enables Unix Extensions (synonym for posix)."
+msgstr "Включает Unix Extensions (синоним posix)."
+
+msgid "Namespace in which kernel upcalls are handled."
+msgstr "Пространство имён, в котором обрабатываются обратные вызовы ядра."
+
+msgid "Specifies the SMB username (alias of username)."
+msgstr "Указывает имя пользователя SMB (псевдоним username)."
+
+msgid "Specifies the SMB username to connect as."
+msgstr "Указывает имя пользователя SMB для подключения."
+
+msgid "SMB protocol version (e.g. 1.0, 2.1, 3.1.1)."
+msgstr "Версия протокола SMB (например, 1.0, 2.1, 3.1.1)."
+
+msgid "Maximum bytes sent in each write request."
+msgstr "Максимум байт, отправляемых в каждом запросе на запись."
+
+msgid "Enables attribute caching (default)."
+msgstr "Включает кэширование атрибутов (по умолчанию)."
+
+msgid "Disables attribute caching; makes writes synchronous."
+msgstr "Отключает кэширование атрибутов; делает запись синхронной."
+
+msgid "Max seconds directory attributes are cached."
+msgstr "Максимальное время кэширования атрибутов каталогов (в секундах)."
+
+msgid "Min seconds directory attributes are cached."
+msgstr "Минимальное время кэширования атрибутов каталогов (в секундах)."
+
+msgid "Max seconds regular file attributes are cached."
+msgstr "Максимальное время кэширования атрибутов обычных файлов (в секундах)."
+
+msgid "Min seconds regular file attributes are cached."
+msgstr "Минимальное время кэширования атрибутов обычных файлов (в секундах)."
+
+msgid "Sets all attribute-cache timeouts to this value."
+msgstr "Задаёт это значение для всех таймаутов кэша атрибутов."
+
+msgid "Enables the NFSACL sideband protocol."
+msgstr "Включает протокол sideband NFSACL."
+
+msgid "Disables the NFSACL sideband protocol."
+msgstr "Отключает протокол sideband NFSACL."
+
+msgid "Retries a failed mount in the background."
+msgstr "Повторяет неудачное монтирование в фоновом режиме."
+
+msgid "Fails the mount in the foreground (default)."
+msgstr "Проваливает монтирование в переднем плане (по умолчанию)."
+
+msgid "Client IP advertised for NFSv4.0 callbacks."
+msgstr "IP-адрес клиента, указываемый для обратных вызовов NFSv4.0."
+
+msgid "Uses close-to-open cache coherence semantics."
+msgstr "Использует семантику согласованности кэша close-to-open."
+
+msgid "Disables close-to-open cache coherence."
+msgstr "Отключает согласованность кэша close-to-open."
+
+msgid "Caches read-only pages on local disk via FS-Cache."
+msgstr "Кэширует страницы только для чтения на локальном диске через FS-Cache."
+
+msgid "Disables FS-Cache local disk caching."
+msgstr "Отключает кэширование на локальный диск через FS-Cache."
+
+msgid "Retries requests indefinitely after server timeouts."
+msgstr "Повторяет запросы неограниченно после превышения таймаута сервера."
+
+msgid "Allow interrupts while hung; ignored after kernel 2.6.25."
+msgstr "Разрешает прерывания при зависании; игнорируется после ядра 2.6.25."
+
+msgid "Don't allow interrupts; ignored after kernel 2.6.25."
+msgstr "Не разрешает прерывания; игнорируется начиная с ядра 2.6.25."
+
+msgid "Treats flock/POSIX locks as local only."
+msgstr "Рассматривает блокировки flock/POSIX как чисто локальные."
+
+msgid "Uses the NLM protocol to lock files on the server."
+msgstr "Использует протокол NLM для блокировки файлов на сервере."
+
+msgid "Don't use NLM locking; locks are local only."
+msgstr "Не использует блокировку NLM; блокировки только локальные."
+
+msgid "Directory-entry cache mode: all, none, pos or positive."
+msgstr "Режим кэширования записей каталогов: all, none, pos или positive."
+
+msgid "Max connections to IPs of one NFSv4.1+ server."
+msgstr "Максимальное число соединений с IP-адресами одного сервера NFSv4.1+."
+
+msgid "Uses TSM-compatible ID for NFSv4 migration."
+msgstr "Использует ID, совместимый с TSM, для миграции NFSv4."
+
+msgid "Uses legacy client ID string (default)."
+msgstr "Использует устаревшую строку ID клиента (по умолчанию)."
+
+msgid "NFSv4 protocol minor version number."
+msgstr "Номер минорной версии протокола NFSv4."
+
+msgid "Hostname running the mountd service."
+msgstr "Имя узла, на котором запущена служба mountd."
+
+msgid "Port of the server's mountd service."
+msgstr "Порт службы mountd сервера."
+
+msgid "Transport used to contact mountd (udp/tcp)."
+msgstr "Транспорт для связи с mountd (udp/tcp)."
+
+msgid "RPC version used to contact mountd."
+msgstr "Версия RPC для связи с mountd."
+
+msgid "Maximum length of a pathname component."
+msgstr "Максимальная длина компонента пути."
+
+msgid "Number of connections to establish to the server."
+msgstr "Число устанавливаемых соединений с сервером."
+
+msgid "NFS protocol version (synonym of vers)."
+msgstr "Версия протокола NFS (синоним vers)."
+
+msgid "Disables rounding buffered writes to page boundaries."
+msgstr "Отключает выравнивание буферизованных записей по границам страниц."
+
+msgid "Disables READDIRPLUS requests."
+msgstr "Отключает запросы READDIRPLUS."
+
+msgid "Port of the server's NFS service."
+msgstr "Порт службы NFS сервера."
+
+msgid "Transport protocol: udp, tcp or rdma."
+msgstr "Транспортный протокол: udp, tcp или rdma."
+
+msgid "Uses RDMA transport (synonym for proto=rdma)."
+msgstr "Использует транспорт RDMA (синоним proto=rdma)."
+
+msgid "Enables READDIRPLUS requests."
+msgstr "Включает запросы READDIRPLUS."
+
+msgid "Uses privileged source ports (default)."
+msgstr "Использует привилегированные исходные порты (по умолчанию)."
+
+msgid "Uses non-privileged source ports."
+msgstr "Использует непривилегированные исходные порты."
+
+msgid "Number of retries before further recovery action."
+msgstr "Число повторных попыток перед дальнейшими действиями по восстановлению."
+
+msgid "Minutes to retry a failed mount before giving up."
+msgstr "Минуты повторных попыток неудачного монтирования до их прекращения."
+
+msgid "Maximum bytes per network read request."
+msgstr "Максимальное число байт в сетевом запросе на чтение."
+
+msgid "Maximum bytes per network write request."
+msgstr "Максимальное число байт в сетевом запросе на запись."
+
+msgid "Security flavors: none, sys, krb5, krb5i or krb5p."
+msgstr "Виды безопасности: none, sys, krb5, krb5i или krb5p."
+
+msgid "Shares one data/attribute cache across mounts."
+msgstr "Использует один общий кэш данных/атрибутов для всех монтирований."
+
+msgid "Gives each mount its own cache."
+msgstr "Выделяет каждому монтированию собственный кэш."
+
+msgid "Ignores unrecognized mount options."
+msgstr "Игнорирует нераспознанные параметры монтирования."
+
+msgid "Returns EIO after retrans retries."
+msgstr "Возвращает EIO после повторных попыток retrans."
+
+msgid "Returns ETIMEDOUT after retrans retries."
+msgstr "Возвращает ETIMEDOUT после повторных попыток retrans."
+
+msgid "Serves cached data when revalidation times out."
+msgstr "Возвращает данные из кэша при превышении таймаута повторной проверки."
+
+msgid "Don't fall back to cache when revalidation fails."
+msgstr "Не переходит к кэшу при неудаче повторной проверки."
+
+msgid "Uses TCP transport (synonym for proto=tcp)."
+msgstr "Использует транспорт TCP (синоним proto=tcp)."
+
+msgid "Deciseconds to wait before retrying a request."
+msgstr "Децисекунды ожидания перед повторной попыткой запроса."
+
+msgid "Probes NFSv4.1 session trunking on new mounts."
+msgstr "Проверяет объединение сессий NFSv4.1 при новых монтированиях."
+
+msgid "Disables session trunking discovery (default)."
+msgstr "Отключает обнаружение объединения сессий (по умолчанию)."
+
+msgid "Uses UDP transport (synonym for proto=udp)."
+msgstr "Использует транспорт UDP (синоним proto=udp)."
+
+msgid "NFS protocol version (alternative to nfsvers)."
+msgstr "Версия протокола NFS (альтернатива nfsvers)."
+
+msgid "Transport security policy: none, tls or mtls."
+msgstr "Политика безопасности транспорта: none, tls или mtls."
+
+msgid "Automatically reconnects if the connection is interrupted."
+msgstr "Автоматически переподключается при обрыве соединения."
+
+msgid "Delays connecting until the mountpoint is first accessed."
+msgstr "Откладывает подключение до первого обращения к точке монтирования."
+
+msgid "Synchronous writes; slower but more reliable."
+msgstr "Синхронная запись; медленнее, но надёжнее."
+
+msgid "Disables speculative read-ahead beyond requested data."
+msgstr "Отключает спекулятивное предварительное чтение за пределы запрошенных данных."
+
+msgid "Synchronous readdir; slower but more reliable."
+msgstr "Синхронное readdir; медленнее, но надёжнее."
+
+msgid "Enables workarounds for broken SFTP servers."
+msgstr "Включает обходные приёмы для неисправных серверов SFTP."
+
+msgid "UID/GID mapping mode: none, user or file."
+msgstr "Режим сопоставления UID/GID: none, user или file."
+
+msgid "File of username:uid mappings for idmap=file."
+msgstr "Файл сопоставлений username:uid для idmap=file."
+
+msgid "File of groupname:gid mappings for idmap=file."
+msgstr "Файл сопоставлений groupname:gid для idmap=file."
+
+msgid "Handles missing idmap entries: ignore or error."
+msgstr "Обработка отсутствующих записей idmap: ignore или error."
+
+msgid "Command to run instead of ssh."
+msgstr "Команда, запускаемая вместо ssh."
+
+msgid "SSH protocol version to use (default 2)."
+msgstr "Используемая версия протокола SSH (по умолчанию 2)."
+
+msgid "Path to the sftp server or subsystem."
+msgstr "Путь к sftp-серверу или подсистеме."
+
+msgid "Connects directly to a port, bypassing SSH."
+msgstr "Подключается напрямую к порту, минуя SSH."
+
+msgid "Connects via vsock to CID:PORT, bypassing SSH."
+msgstr "Подключается через vsock к CID:PORT, минуя SSH."
+
+msgid "Communicates over stdin/stdout, bypassing the network."
+msgstr "Взаимодействует через stdin/stdout, минуя сеть."
+
+msgid "Makes link(2) fail with ENOSYS."
+msgstr "Заставляет link(2) возвращать ENOSYS."
+
+msgid "Turns absolute symlinks relative on the client."
+msgstr "Превращает абсолютные символьные ссылки в относительные на клиенте."
+
+msgid "Presents server symlinks as regular files."
+msgstr "Представляет символьные ссылки сервера как обычные файлы."
+
+msgid "Don't check that the remote directory exists."
+msgstr "Не проверять существование удалённого каталога."
+
+msgid "Reads the password from stdin (for pam_mount only)."
+msgstr "Читает пароль из stdin (только для pam_mount)."
+
+msgid "Enables or disables the SSHFS directory cache."
+msgstr "Включает или отключает кэш каталогов SSHFS."
+
+msgid "Maximum size of the directory cache."
+msgstr "Максимальный размер кэша каталогов."
+
+msgid "Timeout in seconds for the directory cache."
+msgstr "Таймаут кэша каталогов в секундах."
+
+msgid "Timeout for cached attributes."
+msgstr "Таймаут кэшированных атрибутов."
+
+msgid "Timeout for cached symlinks."
+msgstr "Таймаут кэшированных символьных ссылок."
+
+msgid "Timeout for cached directory names."
+msgstr "Таймаут кэшированных имён каталогов."
+
+msgid "Interval for cleaning the directory cache."
+msgstr "Интервал очистки кэша каталогов."
+
+msgid "Interval for forced cleaning when full."
+msgstr "Интервал принудительной очистки при переполнении."
+
+msgid "Disables the kernel page cache for file content."
+msgstr "Отключает страничный кэш ядра для содержимого файлов."
+
+msgid "Maximum number of simultaneous SSH connections."
+msgstr "Максимальное количество одновременных SSH-подключений."
+
+msgid "Allows all users to access the mount."
+msgstr "Разрешает всем пользователям доступ к точке монтирования."
+
+msgid "Allows root access in addition to the mounter."
+msgstr "Разрешает доступ root в дополнение к монтировавшему."
+
+msgid "Unmounts automatically when the process exits."
+msgstr "Автоматически размонтирует при завершении процесса."
+
+msgid "Lets the kernel enforce permission checks."
+msgstr "Позволяет ядру применять проверки разрешений."
+
+msgid "Caches file data in kernel without invalidation on open."
+msgstr "Кэширует данные файлов в ядре без инвалидации при открытии."
+
+msgid "Invalidates kernel data cache when file mtime changes."
+msgstr "Инвалидирует кэш данных ядра при изменении mtime файла."
+
+msgid "Uses filesystem-provided inode numbers."
+msgstr "Использует номера inode, заданные файловой системой."
+
+msgid "Allows mounting over non-empty directories (obsolete, now default)."
+msgstr "Разрешает монтирование поверх непустых каталогов (устарело, теперь по умолчанию)."
+
+msgid "Source string shown in /proc/mounts and mtab."
+msgstr "Строка источника, отображаемая в /proc/mounts и mtab."
+
+msgid "Maximum size of read requests (bytes)."
+msgstr "Максимальный размер запросов на чтение (байты)."
+
+msgid "Maximum size of write requests (bytes)."
+msgstr "Максимальный размер запросов на запись (байты)."
+
+msgid "Sets the block size to 512, 1024, or 2048."
+msgstr "Устанавливает размер блока в 512, 1024 или 2048."
+
+msgid "Sets filename case checking (relaxed or strict)."
+msgstr "Устанавливает проверку регистра имён файлов (relaxed или strict)."
+
+msgid "Ignores high-order bits of file lengths (files limited to 16 MB)."
+msgstr "Игнорирует старшие биты длины файлов (файлы ограничены 16 МБ)."
+
+msgid "Group ID given to all files."
+msgstr "ID группы для всех файлов."
+
+msgid "Charset converting Joliet Unicode names to 8-bit characters."
+msgstr "Кодировка для преобразования имён Joliet Unicode в 8-битные символы."
+
+msgid "Sets non-Rock Ridge name translation (normal, off, or acorn)."
+msgstr "Устанавливает преобразование имён без Rock Ridge (normal, off или acorn)."
+
+msgid "Sets default permission mode for non-Rock Ridge files."
+msgstr "Устанавливает режим разрешений по умолчанию для файлов без Rock Ridge."
+
+msgid "Disables Microsoft Joliet extensions."
+msgstr "Отключает расширения Microsoft Joliet."
+
+msgid "Disables Rock Ridge extensions."
+msgstr "Отключает расширения Rock Ridge."
+
+msgid "Sets the sector where the session begins."
+msgstr "Устанавливает сектор, с которого начинается сессия."
+
+msgid "Selects the session on a multisession CD."
+msgstr "Выбирает сессию на многосессионном компакт-диске."
+
+msgid "User ID given to all files."
+msgstr "ID пользователя для всех файлов."
+
+msgid "Shows hidden and associated files."
+msgstr "Показывает скрытые и связанные файлы."
+
+msgid "Converts 16-bit Unicode CD names to UTF-8."
+msgstr "Преобразует имена на CD из 16-битного Unicode в UTF-8."
+
+msgid "Embeds file data in the inode (default)."
+msgstr "Встраивает данные файла в inode (по умолчанию)."
+
+msgid "Disables embedding file data in the inode."
+msgstr "Отключает встраивание данных файла в inode."
+
+msgid "Overrides the standard anchor location (default 256)."
+msgstr "Переопределяет стандартное расположение якоря (по умолчанию 256)."
+
+msgid "Sets the block size."
+msgstr "Устанавливает размер блока."
+
+msgid "Sets default permission mode for directories."
+msgstr "Устанавливает режим прав доступа по умолчанию для каталогов."
+
+msgid "Unimplemented and ignored."
+msgstr "Не реализован и игнорируется."
+
+msgid "Sets the default group for all files."
+msgstr "Устанавливает группу по умолчанию для всех файлов."
+
+msgid "Sets the NLS character set for filenames."
+msgstr "Устанавливает набор символов NLS для имён файлов."
+
+msgid "Sets the last block of the filesystem."
+msgstr "Устанавливает последний блок файловой системы."
+
+msgid "Uses long UDF address descriptors (default)."
+msgstr "Использует длинные дескрипторы адресов UDF (по умолчанию)."
+
+msgid "Sets default permission mode for non-directory files."
+msgstr "Устанавливает режим прав доступа по умолчанию для файлов, не являющихся каталогами."
+
+msgid "Unsets strict UDF conformance."
+msgstr "Отключает строгое соответствие стандарту UDF."
+
+msgid "Skips volume recognition sequence and mounts anyway."
+msgstr "Пропускает последовательность распознавания тома и монтирует его в любом случае."
+
+msgid "Selects the session on multisession optical media."
+msgstr "Выбирает сессию на оптических носителях с несколькими сессиями."
+
+msgid "Uses short UDF address descriptors."
+msgstr "Использует короткие дескрипторы адресов UDF."
+
+msgid "Sets the default user for all files."
+msgstr "Устанавливает пользователя по умолчанию для всех файлов."
+
+msgid "Masks out permissions from all inodes read."
+msgstr "Применяет маску к правам доступа всех читаемых inode."
+
+msgid "Shows deleted files in listings."
+msgstr "Показывает удалённые файлы в списках."
+
+msgid "Shows otherwise hidden files."
+msgstr "Показывает файлы, скрытые по умолчанию."
+
+msgid "Uses the UTF-8 character set."
+msgstr "Использует набор символов UTF-8."
+
+msgid "Sets initial group ID of the root directory."
+msgstr "Устанавливает начальный идентификатор группы корневого каталога."
+
+msgid "Huge-page policy for files: never, always, within_size, advise."
+msgstr "Политика больших страниц для файлов: never, always, within_size, advise."
+
+msgid "Sets initial permissions of the root directory."
+msgstr "Устанавливает начальные права доступа корневого каталога."
+
+msgid "Sets NUMA memory allocation policy for all files."
+msgstr "Устанавливает политику выделения памяти NUMA для всех файлов."
+
+msgid "Disables swap; files cannot be swapped out."
+msgstr "Отключает подкачку; файлы нельзя выгружать в подкачку."
+
+msgid "Same as size, but expressed in blocks of PAGE_SIZE."
+msgstr "Аналогично size, но выражено в блоках размером PAGE_SIZE."
+
+msgid "Maximum number of inodes for this instance."
+msgstr "Максимальное количество inode для этого экземпляра."
+
+msgid "Upper size limit, e.g. 8m or 50%; 0 removes the limit."
+msgstr "Верхний предел размера, например 8m или 50%; 0 снимает ограничение."
+
+msgid "Sets initial user ID of the root directory."
+msgstr "Устанавливает начальный идентификатор пользователя корневого каталога."
+
+msgid "Group whose members bypass hidepid access restrictions."
+msgstr "Группа, члены которой обходят ограничения доступа hidepid."
+
+msgid "Hides /proc/pid entries: 0 off, 1 own dirs, 2 other PIDs invisible."
+msgstr "Скрывает записи /proc/pid: 0 — выключено, 1 — только свои каталоги, 2 — чужие PID невидимы."
+
+msgid "Selects the PID namespace used to translate PIDs (new in 6.16)."
+msgstr "Выбирает пространство имён PID, используемое для перевода PID (появилось в 6.16)."
+
+msgid "Shows only the pid subset, hiding other top-level proc files."
+msgstr "Показывает только подмножество pid, скрывая другие файлы proc верхнего уровня."
+
+msgid "Sets group of newly created pseudo-terminals."
+msgstr "Устанавливает группу вновь создаваемых псевдотерминалов."
+
+msgid "Limits the number of pseudo-terminals in this instance."
+msgstr "Ограничивает количество псевдотерминалов в этом экземпляре."
+
+msgid "Sets permissions of newly created pseudo-terminals."
+msgstr "Устанавливает права доступа вновь создаваемых псевдотерминалов."
+
+msgid "Creates a private instance with independent pty index space."
+msgstr "Создаёт приватный экземпляр с независимым пространством индексов pty."
+
+msgid "Sets the mode of the instance's ptmx device node."
+msgstr "Устанавливает режим узла устройства ptmx экземпляра."
+
+msgid "Sets owner of newly created pseudo-terminals."
+msgstr "Устанавливает владельца вновь создаваемых псевдотерминалов."
+
+msgid "Favors dynamic cgroup changes over hot-path fork/exit costs."
+msgstr "Предпочитает динамическим изменениям cgroup затраты на fork/exit в горячих путях."
+
+msgid "Counts HugeTLB usage in memory controller accounting."
+msgstr "Учитывает использование HugeTLB в учёте контроллера памяти."
+
+msgid "Reports only local memory.events, excluding subtree counts."
+msgstr "Отчитывается только о локальных memory.events, исключая счётчики поддерева."
+
+msgid "Applies memory.min/low protection recursively to subtrees."
+msgstr "Применяет защиту memory.min/low рекурсивно к поддеревьям."
+
+msgid "Treats cgroup namespaces as delegation boundaries."
+msgstr "Рассматривает пространства имён cgroup как границы делегирования."
+
+msgid "Counts only local fork failures in pids.events.max."
+msgstr "Учитывает только локальные ошибки fork в pids.events.max."
+
+msgid "Sets the group of the debugfs mount."
+msgstr "Устанавливает группу монтирования debugfs."
+
+msgid "Sets permissions of the mountpoint."
+msgstr "Устанавливает права доступа точки монтирования."
+
+msgid "Sets the owner of the debugfs mount."
+msgstr "Устанавливает владельца монтирования debugfs."
+
+msgid "Sets the group of the tracefs mount."
+msgstr "Задаёт группу точки монтирования tracefs."
+
+msgid "Sets the owner of the tracefs mount."
+msgstr "Задаёт владельца точки монтирования tracefs."
+
+msgid "Sets group of the filesystem root."
+msgstr "Задаёт группу корневого каталога файловой системы."
+
+msgid "Reserves a minimum of huge-page memory; mount fails if short."
+msgstr "Выделяет минимум памяти больших страниц; при нехватке памяти монтирование не выполняется."
+
+msgid "Sets permissions of the filesystem root."
+msgstr "Задаёт права доступа корневого каталога файловой системы."
+
+msgid "Maximum number of inodes the filesystem can use."
+msgstr "Максимальное количество i-узлов, доступное файловой системе."
+
+msgid "Uses the given huge-page size for this mount."
+msgstr "Использует заданный размер больших страниц для этой точки монтирования."
+
+msgid "Maximum huge-page memory the filesystem may use."
+msgstr "Максимальный объём памяти больших страниц, доступный файловой системе."
+
+msgid "Sets owner of the filesystem root."
+msgstr "Задаёт владельца корневого каталога файловой системы."
+
+msgid "Access mode: user, <uid>, any or client."
+msgstr "Режим доступа: user, <uid>, any или client."
+
+msgid "Authentication fid used by Plan 9 security."
+msgstr "fid аутентификации, используемый системой безопасности Plan 9."
+
+msgid "File tree to access on the server."
+msgstr "Файловое дерево для доступа на сервере."
+
+msgid "Caching policy: none, readahead, mmap, loose or fscache."
+msgstr "Политика кэширования: none, readahead, mmap, loose или fscache."
+
+msgid "Tag for the persistent fscache."
+msgstr "Метка постоянного кэша fscache."
+
+msgid "Debug level as a bitmask."
+msgstr "Уровень отладки в виде битовой маски."
+
+msgid "Attempts to mount with this gid."
+msgstr "Пытается выполнить монтирование с этим gid."
+
+msgid "Attempts to mount as this uid."
+msgstr "Пытается выполнить монтирование под этим uid."
+
+msgid "Bypasses the page cache on all reads/writes."
+msgstr "Обходит кэш страниц при всех операциях чтения/записи."
+
+msgid "Ignores qid.version==0 as a cache marker."
+msgstr "Игнорирует qid.version==0 в качестве маркера кэша."
+
+msgid "Bytes used for 9p packet payload."
+msgstr "Количество байтов в полезной нагрузке пакетов 9p."
+
+msgid "Ms to retain negative dentries in cache."
+msgstr "Миллисекунды хранения отрицательных dentry в кэше."
+
+msgid "Forces legacy 9p2000 mode (no extensions)."
+msgstr "Принудительно включает устаревший режим 9p2000 (без расширений)."
+
+msgid "Don't map special files; shows them as normal files."
+msgstr "Не отображать специальные файлы; показывать их как обычные."
+
+msgid "Don't offer xattr functions on this mount."
+msgstr "Не предоставлять функции xattr для этой точки монтирования."
+
+msgid "Port to connect to on the remote server."
+msgstr "Порт для подключения на удалённом сервере."
+
+msgid "File descriptor for reading with trans=fd."
+msgstr "Файловый дескриптор для чтения при trans=fd."
+
+msgid "Transport: unix, tcp, fd, virtio, rdma or usbg."
+msgstr "Транспорт: unix, tcp, fd, virtio, rdma или usbg."
+
+msgid "User name to mount as on the server."
+msgstr "Имя пользователя для монтирования на сервере."
+
+msgid "9p protocol version: 9p2000, 9p2000.u or 9p2000.L."
+msgstr "Версия протокола 9p: 9p2000, 9p2000.u или 9p2000.L."
+
+msgid "File descriptor for writing with trans=fd."
+msgstr "Файловый дескриптор для записи при trans=fd."
+
+msgid "Appends a data-only lower layer directory (new mount API)."
+msgstr "Добавляет каталог нижнего слоя, содержащий только данные (новый API монтирования)."
+
+msgid "Controls fsync during copy-up: auto, strict, or volatile."
+msgstr "Управляет fsync во время copy-up: auto, strict или volatile."
+
+msgid "Use an index to avoid inode collisions: on or off."
+msgstr "Использовать индекс для предотвращения коллизий i-узлов: on или off."
+
+msgid "Colon-separated list of lower-layer directories."
+msgstr "Список каталогов нижних слоёв, разделённых двоеточием."
+
+msgid "Copy up only metadata first, deferring data copy: on or off."
+msgstr "Сначала копировать только метаданные, откладывая копирование данных: on или off."
+
+msgid "Make the overlay mountable via NFS: on or off."
+msgstr "Разрешить монтирование overlay через NFS: on или off."
+
+msgid "Record the caller's credentials for permission checks."
+msgstr "Записывать учётные данные вызывающего процесса для проверки разрешений."
+
+msgid "Redirect directories on rename: on, off, follow, or nofollow."
+msgstr "Перенаправлять каталоги при переименовании: on, off, follow или nofollow."
+
+msgid "Directory used as the upper (writable) layer."
+msgstr "Каталог, используемый в качестве верхнего (записываемого) слоя."
+
+msgid "Use the user.overlay.* xattr namespace instead of trusted.overlay.*."
+msgstr "Использовать пространство имён xattr user.overlay.* вместо trusted.overlay.*."
+
+msgid "Control the overlay UUID and fsid: null, off, on, or auto."
+msgstr "Управлять UUID и fsid overlay: null, off, on или auto."
+
+msgid "Verify metacopy digests with fs-verity: off, on, or require."
+msgstr "Проверять контрольные суммы metacopy с помощью fs-verity: off, on или require."
+
+msgid "Prefer performance over durability; data not crash-safe."
+msgstr "Приоритет производительности перед долговечностью; данные не защищены от сбоя."
+
+msgid "Scratch directory on the same filesystem as upperdir."
+msgstr "Служебный каталог на той же файловой системе, что и upperdir."
+
+msgid "Appends an additional work directory (new mount API)."
+msgstr "Добавляет дополнительный рабочий каталог (новый API монтирования)."
+
+msgid "Compose unique inode numbers across layers: on, off, or auto."
+msgstr "Формировать уникальные номера i-узлов во всех слоях: on, off или auto."
+
+msgid "Enable access control lists (legacy alias for acltype)."
+msgstr "Включить списки контроля доступа (устаревший синоним для acltype)."
+
+msgid "Disable ACLs (alias for acltype=off)."
+msgstr "Отключить ACL (синоним для acltype=off)."
+
+msgid "Select ACL type: off, nfsv4, or posix."
+msgstr "Выбрать тип ACL: off, nfsv4 или posix."
+
+msgid "Enable mandatory locking (alias for nbmand=on)."
+msgstr "Включает принудительную блокировку (псевдоним nbmand=on)."
+
+msgid "Disable mandatory locking (alias for nbmand=off)."
+msgstr "Отключает принудительную блокировку (псевдоним nbmand=off)."
+
+msgid "Mount with non-blocking mandatory locks."
+msgstr "Монтирует с неблокирующими принудительными блокировками."
+
+msgid "Allow mounting over a non-empty or busy directory."
+msgstr "Разрешает монтирование поверх непустого или занятого каталога."
+
+msgid "Enable POSIX ACLs (alias for acltype=posix)."
+msgstr "Включает POSIX ACL (псевдоним acltype=posix)."
+
+msgid "Disable relative access-time updates (plain atime)."
+msgstr "Отключает обновление относительного времени доступа (обычный atime)."
+
+msgid "Enable extended attributes."
+msgstr "Включает расширенные атрибуты."
+
+msgid "Disable extended attributes."
+msgstr "Отключает расширенные атрибуты."
+
+msgid "Private flag marking the mount as managed by ZFS."
+msgstr "Частный флаг, отмечающий монтирование как управляемое ZFS."
+
+msgid "Compression type used for background (rebalance) writes."
+msgstr "Тип сжатия, используемый для фоновых записей (rebalance)."
+
+msgid "Target device/label to move data to in the background."
+msgstr "Целевое устройство/метка для фоновой миграции данных."
+
+msgid "Compression type used for foreground writes."
+msgstr "Тип сжатия, используемый для записей на переднем плане."
+
+msgid "Checksum type used for data writes."
+msgstr "Тип контрольной суммы для записей данных."
+
+msgid "Number of replicas to keep for user data."
+msgstr "Количество реплик, сохраняемых для пользовательских данных."
+
+msgid "Allows mounting with data degraded (missing a replica)."
+msgstr "Разрешает монтирование с деградированными данными (отсутствует реплика)."
+
+msgid "Allows mounting even when data would be missing."
+msgstr "Разрешает монтирование даже при отсутствии данных."
+
+msgid "Enables discard/TRIM support on member devices."
+msgstr "Включает поддержку discard/TRIM на устройствах-членах."
+
+msgid "Enables erasure coding."
+msgstr "Включает erasure coding (исключающее кодирование)."
+
+msgid "Action to take on filesystem inconsistency: continue, fix_safe, panic, or ro."
+msgstr "Действие при несогласованности файловой системы: continue, fix_safe, panic или ro."
+
+msgid "Fixes fsck errors without prompting during mount."
+msgstr "Исправляет ошибки fsck без запроса при монтировании."
+
+msgid "Preferred target device/label for foreground writes."
+msgstr "Предпочтительное целевое устройство/метка для записей на переднем плане."
+
+msgid "Runs fsck during mount."
+msgstr "Запускает fsck при монтировании."
+
+msgid "Enables inline data extents for small files (default on)."
+msgstr "Включает inline-размещение данных для мелких файлов (включено по умолчанию)."
+
+msgid "Restricts new inode numbers to 32 bits."
+msgstr "Ограничивает номера новых inode 32 битами."
+
+msgid "Milliseconds before an automatic journal commit (default 1000)."
+msgstr "Миллисекунды до автоматической фиксации журнала (по умолчанию 1000)."
+
+msgid "Disables journal flush on sync/fsync."
+msgstr "Отключает сброс журнала при sync/fsync."
+
+msgid "Milliseconds before automatic journal reclaim."
+msgstr "Миллисекунды до автоматического освобождения журнала."
+
+msgid "Checksum type used for metadata writes."
+msgstr "Тип контрольной суммы для записей метаданных."
+
+msgid "Number of replicas to keep for metadata (journal and btree)."
+msgstr "Количество реплик, сохраняемых для метаданных (журнал и btree)."
+
+msgid "Preferred target device/label for metadata writes."
+msgstr "Предпочтительное целевое устройство/метка для записей метаданных."
+
+msgid "Issues no writes at all, even for journal replay (super read-only mode)."
+msgstr "Не выполняет никаких записей, даже при воспроизведении журнала (полный режим только для чтения)."
+
+msgid "Doesn't open member devices in exclusive mode."
+msgstr "Не открывает устройства-члены в эксклюзивном режиме."
+
+msgid "Does not replay the journal on mount (not recommended)."
+msgstr "Не воспроизводит журнал при монтировании (не рекомендуется)."
+
+msgid "Target device/label data is copied to on read."
+msgstr "Целевое устройство/метка, на которое данные копируются при чтении."
+
+msgid "Rate-limits error messages during fsck."
+msgstr "Ограничивает частоту сообщений об ошибках во время fsck."
+
+msgid "Mounts the filesystem in read-only mode."
+msgstr "Монтирует файловую систему в режиме только для чтения."
+
+msgid "Uses the CPU id for the high bits of new inode numbers."
+msgstr "Использует идентификатор CPU для старших битов новых номеров inode."
+
+msgid "Hash function used for string hash tables (directories and xattrs)."
+msgstr "Хеш-функция, используемая для хеш-таблиц строк (каталоги и xattrs)."
+
+msgid "Prints extra debugging info during mount/recovery."
+msgstr "Выводит дополнительные отладочные данные при монтировании/восстановлении."
+
+msgid "Upgrades the on-disk format to the latest version on mount."
+msgstr "Обновляет формат на диске до последней версии при монтировании."
+
+msgid "Stores full 128-bit cryptographic MACs instead of the default 80-bit."
+msgstr "Хранит полные 128-битные криптографические MAC вместо 80-битных по умолчанию."
+
+msgid "Enables group quotas."
+msgstr "Включает квоты групп."
+
+msgid "Enables project quotas."
+msgstr "Включает квоты проектов."
+
+msgid "Enables user quotas."
+msgstr "Включает квоты пользователей."
+
+msgid "original non-journaling ext filesystem, still used for small boot partitions"
+msgstr "изначальная файловая система ext без журналирования, до сих пор используется для небольших загрузочных разделов"
+
+msgid "ext2 with journaling added for crash-recovery reliability"
+msgstr "ext2 с добавленным журналированием для надёжного восстановления после сбоев"
+
+msgid "default Linux journaling filesystem with extents and very large volume support"
+msgstr "стандартная журналируемая файловая система Linux с поддержкой extents и очень больших томов"
+
+msgid "copy-on-write filesystem with snapshots, subvolumes, and RAID"
+msgstr "файловая система copy-on-write со снапшотами, подтомами и RAID"
+
+msgid "SGI-developed 64-bit journaling filesystem for high performance and large files"
+msgstr "64-битная журналируемая файловая система, разработанная SGI, для высокой производительности и больших файлов"
+
+msgid "flash-friendly filesystem designed for NAND flash storage"
+msgstr "Файловая система, оптимизированная для флеш-накопителей NAND"
+
+msgid "Linux kernel driver providing read/write access to Windows NTFS volumes"
+msgstr "Драйвер ядра Linux, обеспечивающий чтение и запись томов NTFS Windows"
+
+msgid "FAT filesystem variant with long filename support for removable media"
+msgstr "Вариант файловой системы FAT с поддержкой длинных имён файлов для съёмных носителей"
+
+msgid "Microsoft filesystem for large removable drives and SD cards over 32 GB"
+msgstr "Файловая система Microsoft для крупных съёмных дисков и SD-карт объёмом более 32 ГБ"
+
+msgid "disk space acting as virtual memory when physical RAM is exhausted"
+msgstr "Место на диске, работающее как виртуальная память при исчерпании физической ОЗУ"
+
+msgid "network filesystem using the SMB protocol for Windows and NAS file shares"
+msgstr "Сетевая файловая система, использующая протокол SMB для общих ресурсов Windows и NAS"
+
+msgid "modern, secure dialect of SMB used for Windows, Azure, and NAS shares"
+msgstr "Современный защищённый диалект SMB, используемый для общих ресурсов Windows, Azure и NAS"
+
+msgid "network filesystem for sharing files across machines over the network"
+msgstr "Сетевая файловая система для совместного использования файлов между компьютерами по сети"
+
+msgid "newer NFS version adding security, statefulness, and better locking"
+msgstr "Более новая версия NFS, добавляющая безопасность, состояние и улучшенный механизм блокировки"
+
+msgid "mounts a remote directory over SSH using SFTP, running in userspace via FUSE"
+msgstr "Монтирует удалённую директорию по SSH с помощью SFTP; работает в пользовательском пространстве через FUSE"
+
+msgid "standard filesystem format for CD-ROM optical media"
+msgstr "Стандартный формат файловой системы для оптических носителей CD-ROM"
+
+msgid "Universal Disk Format for writable optical discs like DVDs and Blu-rays"
+msgstr "Универсальный формат диска для записываемых оптических дисков, таких как DVD и Blu-ray"
+
+msgid "virtual filesystem storing files in RAM and swap for temporary in-memory data"
+msgstr "Виртуальная файловая система, хранящая файлы в ОЗУ и swap для временных данных в памяти"
+
+msgid "virtual filesystem exposing kernel and process information as files"
+msgstr "Виртуальная файловая система, представляющая информацию о ядре и процессах в виде файлов"
+
+msgid "virtual filesystem exposing kernel objects, devices, and their attributes to userspace"
+msgstr "Виртуальная файловая система, предоставляющая пользовательскому пространству доступ к объектам ядра, устройствам и их атрибутам"
+
+msgid "virtual filesystem providing pseudo-terminal device nodes under /dev/pts"
+msgstr "Виртуальная файловая система, предоставляющая узлы устройств псевдотерминалов в /dev/pts"
+
+msgid "virtual filesystem for the unified cgroup v2 hierarchy, managing resource limits and accounting"
+msgstr "Виртуальная файловая система для единой иерархии cgroup v2, управляющая ограничениями ресурсов и учётом"
+
+msgid "virtual filesystem backing security modules such as SELinux and IMA integrity interfaces"
+msgstr "Виртуальная файловая система, обеспечивающая работу модулей безопасности, таких как SELinux, и интерфейсов целостности IMA"
+
+msgid "virtual filesystem exporting arbitrary kernel debugging data with no ABI stability guarantees"
+msgstr "Виртуальная файловая система, предоставляющая произвольные данные отладки ядра без гарантий стабильности ABI"
+
+msgid "virtual filesystem holding ftrace control and trace-output files under /sys/kernel/tracing"
+msgstr "Виртуальная файловая система с файлами управления ftrace и вывода трассировки в /sys/kernel/tracing"
+
+msgid "virtual filesystem where userspace creates and configures kernel objects via mkdir and rmdir"
+msgstr "Виртуальная файловая система, в которой пользовательское пространство создаёт и настраивает объекты ядра с помощью mkdir и rmdir"
+
+msgid "POSIX message queue IPC exposed as files at /dev/mqueue"
+msgstr "Очереди сообщений POSIX (IPC), представленные в виде файлов в /dev/mqueue"
+
+msgid "interface to huge page memory, mounted at /dev/hugepages"
+msgstr "Интерфейс к памяти с крупными страницами, смонтированный в /dev/hugepages"
+
+msgid "populates /dev with device nodes automatically at boot"
+msgstr "Автоматически заполняет /dev узлами устройств при загрузке системы"
+
+msgid "Plan 9 remote filesystem protocol, used for host-to-VM file sharing"
+msgstr "Протокол удалённых файловых систем Plan 9 для обмена файлами между хостом и виртуальной машиной"
+
+msgid "union filesystem stacking upper/lower layers, used by containers"
+msgstr "Файловая система объединения, складывающая верхние/нижние слои; используется в контейнерах"
+
+msgid "OpenZFS copy-on-write filesystem with integrated volume management"
+msgstr "Файловая система OpenZFS с копированием при записи и встроенным управлением томами"
+
+msgid "copy-on-write, multi-device filesystem with built-in caching, compression, and checksumming"
+msgstr "Файловая система с копированием при записи для нескольких устройств со встроенным кэшированием, сжатием и контрольными суммами"
+
+msgid "a custom filesystem type"
+msgstr "Собственный тип файловой системы"
+
+msgid "Other"
+msgstr "Другое"
+
+msgid "Other…"
+msgstr "Другое…"
+
+msgid "Search filesystems"
+msgstr "Поиск файловых систем"
+
+msgid "Choose the filesystem type"
+msgstr "Выберите тип файловой системы"
+
+msgid "Error loading filesystem types"
+msgstr "Ошибка загрузки типов файловых систем"
+
+msgid "File system:"
+msgstr "Файловая система:"
+
+msgid "File system"
+msgstr "Файловая система"
+
+msgid "Make backup"
+msgstr "Создать резервную копию"
+
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+msgid "Revert changes"
+msgstr "Отменить изменения"
+
+msgid "Your changes have not been saved yet. The backup will reflect the saved /etc/fstab, not your unsaved changes. Continue?"
+msgstr "Ваши изменения ещё не сохранены. Резервная копия будет содержать сохранённый /etc/fstab, а не ваши несохранённые изменения. Продолжить?"
+
+msgid "Are you sure you want to write these changes to /etc/fstab?"
+msgstr "Вы действительно хотите записать эти изменения в /etc/fstab?"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Saved, but could not reload"
+msgstr "Сохранено, но не удалось перечитать файл"
+
+msgid "Saved to /etc/fstab"
+msgstr "Сохранено в /etc/fstab"
+
+msgid "Could not save"
+msgstr "Не удалось сохранить"
+
+msgid "Are you sure? Any changes made will be lost!"
+msgstr "Вы уверены? Все внесённые изменения будут потеряны!"
+
+msgid "Revert"
+msgstr "Отменить"
+
+msgid "'/etc/fstab' entries:"
+msgstr "Записи '/etc/fstab':"
+
+msgid "You have unsaved changes. They will be lost if you exit now."
+msgstr "У вас есть несохранённые изменения. Если выйти сейчас, они будут потеряны."
+
+msgid "Exit"
+msgstr "Выход"
+
+msgid "Error loading fstab file!"
+msgstr "Ошибка при загрузке файла fstab!"
+
+msgid "Backup created"
+msgstr "Резервная копия создана"
+
+msgid "A backup of /etc/fstab was created."
+msgstr "Создана резервная копия /etc/fstab."
+
+msgid "Could not create backup"
+msgstr "Не удалось создать резервную копию"
+
+#, rust-format
+msgid "Line {line}"
+msgstr "Строка {line}"
+
+msgid "This entry is disabled (commented out)."
+msgstr "Эта запись отключена (закомментирована)."
+
+msgid "The system may refuse to boot without this drive. If this is not intended, add the 'nofail' option. \nUsually, this is wanted on root and home mounts."
+msgstr "Система может не загрузиться без этого диска. Если это не задумано, добавьте параметр «nofail». \nОбычно он нужен для корневой и домашней точек монтирования."
+
+msgid "This entry is invalid and cannot be parsed."
+msgstr "Эта запись недействительна и не может быть разобрана."
+
+msgid "Add new mount entry"
+msgstr "Добавить новую точку монтирования"
+
+#, rust-format
+msgid "You are about to restore backup from:\n{time}"
+msgstr "Вы собираетесь восстановить резервную копию от:\n{time}"
+
+msgid "Restore"
+msgstr "Восстановить"
+
+msgid "Restore backup"
+msgstr "Восстановить резервную копию"
+
+msgid "Search backups"
+msgstr "Поиск резервных копий"
+
+msgid "Restore from a backup file"
+msgstr "Восстановить из файла резервной копии"
+
+msgid "Failed to list backups"
+msgstr "Не удалось получить список резервных копий"
+
+msgid "Could not load backup"
+msgstr "Не удалось загрузить резервную копию"
+
+msgid "Delete entry"
+msgstr "Удалить запись"
+
+msgid "Mount point"
+msgstr "Точка монтирования"
+
+msgid "Delete this entry?"
+msgstr "Удалить эту запись?"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Choose folder"
+msgstr "Выбрать папку"
+
+msgid "Choose mount point"
+msgstr "Выбрать точку монтирования"
+
+msgid "Path exists"
+msgstr "Путь существует"
+
+msgid "Unmounted"
+msgstr "Не смонтировано"
+
+msgid "Mount point missing"
+msgstr "Точка монтирования отсутствует"
+
+msgid "The device is currently mounted at this mount point."
+msgstr "Устройство в настоящее время смонтировано в эту точку монтирования."
+
+msgid "The device is not currently mounted at this mount point."
+msgstr "Устройство в настоящее время не смонтировано в эту точку монтирования."
+
+msgid "This mount point does not exist on the system."
+msgstr "Эта точка монтирования не существует в системе."
+
+msgid "Remove option"
+msgstr "Удалить параметр"
+
+msgid "Option"
+msgstr "Параметр"
+
+#, rust-format
+msgid "Could not find local device for \"{device}\""
+msgstr "Не удалось найти локальное устройство для «{device}»"
+
+msgid "Search subvolumes"
+msgstr "Поиск подтомов"
+
+msgid "Find a subvolume on this device"
+msgstr "Найти подтом на этом устройстве"
+
+msgid "Failed to fetch subvolumes"
+msgstr "Не удалось получить подтомы"
+
+msgid "Search users"
+msgstr "Поиск пользователей"
+
+msgid "Choose the user for this option"
+msgstr "Выберите пользователя для этого параметра"
+
+msgid "Search groups"
+msgstr "Поиск групп"
+
+msgid "Choose the group for this option"
+msgstr "Выберите группу для этого параметра"
+
+msgid "Add option…"
+msgstr "Добавить параметр…"
+
+msgid "Search options"
+msgstr "Поиск параметров"
+
+msgid "Choose an option to add to this entry"
+msgstr "Выберите параметр, который нужно добавить в эту запись"
+
+msgid "Error loading options"
+msgstr "Ошибка при загрузке параметров"
+
+msgid "Add option"
+msgstr "Добавить параметр"
+
+msgid "Could not parse entry"
+msgstr "Не удалось разобрать запись"
+
+#, rust-format
+msgid "Unknown file system: {fs_type}"
+msgstr "Неизвестная файловая система: {fs_type}"
+
+msgid "No problems detected"
+msgstr "Проблемы не обнаружены"
+
+#, rust-format
+msgid "Mount point does not exist: {point}"
+msgstr "Точка монтирования не существует: {point}"
+
+#, rust-format
+msgid "Unknown device type: {device}"
+msgstr "Неизвестный тип устройства: {device}"
+
+#, rust-format
+msgid "Device does not exist: {device}"
+msgstr "Устройство не существует: {device}"
+
+#, rust-format
+msgid "Unknown option: {option}"
+msgstr "Неизвестная опция: {option}"
+
+#, rust-format
+msgid "{option} should not have a value"
+msgstr "Опция {option} не должна иметь значение"
+
+#, rust-format
+msgid "{option} should be one of: {values}"
+msgstr "Опция {option} должна быть одной из: {values}"
+
+#, rust-format
+msgid "{option} should be one of: {values}, optionally followed by a level"
+msgstr "Опция {option} должна быть одной из: {values}, необязательно с указанием уровня"
+
+#, rust-format
+msgid "{option} should be a number"
+msgstr "Опция {option} должна быть числом"
+
+#, rust-format
+msgid "{option} should be a number between {min} and {max}"
+msgstr "Опция {option} должна быть числом от {min} до {max}"
+
+#, rust-format
+msgid "{option} should be an octal number"
+msgstr "Опция {option} должна быть восьмеричным числом"
+
+#, rust-format
+msgid "{option} should be a number with a size unit, for example 16K"
+msgstr "Опция {option} должна быть числом с единицей измерения размера, например 16K"
+
+#, rust-format
+msgid "{option} should be {on} or {off}"
+msgstr "Опция {option} должна быть {on} или {off}"
+
+#, rust-format
+msgid "Credentials file does not exist: {path}"
+msgstr "Файл учётных данных не существует: {path}"
+
+msgid "Could not check subvolume"
+msgstr "Не удалось проверить подтом"
+
+#, rust-format
+msgid "Subvolume does not exist: {subvol}"
+msgstr "Подтом не существует: {subvol}"
+
+msgid "Could not check subvolume: the device is not mounted"
+msgstr "Не удалось проверить подтом: устройство не смонтировано"
+
+#, rust-format
+msgid "Could not check subvolume: {error}"
+msgstr "Не удалось проверить подтом: {error}"
+
+msgid "Cannot remount"
+msgstr "Нельзя перемонтировать"
+
+msgid "Cannot unmount"
+msgstr "Нельзя размонтировать"
+
+msgid "The entry has unsaved changes. Save your changes before mounting."
+msgstr "В записи есть несохранённые изменения. Сохраните изменения перед монтированием."
+
+msgid "The entry has unsaved changes. Save your changes before remounting."
+msgstr "В записи есть несохранённые изменения. Сохраните изменения перед перемонтированием."
+
+msgid "The mount point has unsaved changes. Save your changes before unmounting."
+msgstr "В точке монтирования есть несохранённые изменения. Сохраните изменения перед размонтированием."
+
+msgid "The mount point is empty."
+msgstr "Точка монтирования пуста."
+
+msgid "Reset"
+msgstr "Сброс"
+
+msgid "Edit properties"
+msgstr "Изменить свойства"
+
+msgid "Options"
+msgstr "Опции"
+
+msgid "Extra"
+msgstr "Дополнительно"
+
+msgid "Active"
+msgstr "Активно"
+
+msgid "Dump"
+msgstr "Dump"
+
+msgid "Controls the dump backup frequency; 0 disables"
+msgstr "Управляет частотой резервного копирования (dump); 0 отключает"
+
+msgid "Pass"
+msgstr "Pass"
+
+msgid "Controls the fsck check order; 0 disables"
+msgstr "Управляет порядком проверки fsck; 0 отключает"
+
+msgid "Mount actions"
+msgstr "Действия по монтированию"
+
+msgid "Status"
+msgstr "Статус"
+
+msgid "Mount"
+msgstr "Смонтировать"
+
+msgid "Remount"
+msgstr "Перемонтировать"
+
+msgid "Unmount"
+msgstr "Размонтировать"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Are you sure you want to mount this entry?"
+msgstr "Вы уверены, что хотите смонтировать эту запись?"
+
+msgid "Are you sure you want to remount this entry?"
+msgstr "Вы уверены, что хотите перемонтировать эту запись?"
+
+msgid "Swap cannot be remounted."
+msgstr "Разменную память нельзя перемонтировать."
+
+#, rust-format
+msgid "Remounted {mount_point}."
+msgstr "Перемонтировано {mount_point}."
+
+msgid "Remounted"
+msgstr "Перемонтировано"
+
+msgid "Could not remount"
+msgstr "Не удалось перемонтировать"
+
+msgid "Are you sure you want to unmount this entry?"
+msgstr "Вы уверены, что хотите размонтировать эту запись?"
+
+#, rust-format
+msgid "Unmounted {mount_point}."
+msgstr "Размонтировано {mount_point}."
+
+msgid "Could not unmount"
+msgstr "Не удалось размонтировать"
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "Failed to load"
+msgstr "Не удалось загрузить"
+
+msgid "OK"
+msgstr "ОК"
+
+msgid "Confirm"
+msgstr "Подтвердить"

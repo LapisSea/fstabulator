@@ -1186,6 +1186,9 @@ msgstr "Abilita il discard dello swap; supporta discard=once o discard=pages."
 msgid "Sets the swap device priority (0-32767)."
 msgstr "Imposta la priorità del dispositivo di swap (0-32767)."
 
+msgid "Legacy swap marker from BSD-era fstab; has no effect on Linux."
+msgstr "Segnaposto swap legacy del fstab dell'era BSD; non ha effetto su Linux."
+
 msgid "Maximum seconds to cache directory attributes."
 msgstr "Secondi massimi per la cache degli attributi delle directory."
 
@@ -2633,11 +2636,11 @@ msgstr "Modifica proprietà"
 msgid "Options"
 msgstr "Opzioni"
 
-msgid "Active"
-msgstr "Attiva"
-
 msgid "Extra"
 msgstr "Extra"
+
+msgid "Active"
+msgstr "Attiva"
 
 msgid "Dump"
 msgstr "Dump"
