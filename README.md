@@ -1,6 +1,6 @@
 # FSTabulator
 
-<img src="./resources/fstabulator_icon.svg" width="256" alt="Icon" style="max-height: 300px">
+<img src="./resources/fstabulator_icon.svg" width="256" alt="Icon">
 
 FSTabulator is a Linux GUI application for helping you permanently mount your drives, whether local or network drives.
 
@@ -15,17 +15,17 @@ Hopefully, now you wont need to google how to find a drive you want every time y
 
 - You can edit (or add) your mount properties (device, mount point, filesystem type, options...) through an accessible UI form
 - There is extensive (hopefully exhaustive) typed mount options for all file systems you might use with carefully designed UI that helps you configure things correctly.
-  <br/><img src="./media/options.png" alt="options group" style="max-height: 300px">
+  <br/>  ![options group](./media/options.png)
 - Storage device picker with easy conversion between UUID, PARTUUID, LABEL, PARTLABEL to suite what you prefer
-  <br/><img src="./media/disk-picker.png" alt="disk picker" style="max-height: 300px">
+  <br/>  ![disk picker](./media/disk-picker.png)
 - Network mounts (SMB, NFS, sshfs) with an address editor, a live connection test, and easy credential saving
-  <br/><img src="./media/network-loc.png" alt="network location" style="max-height: 300px">
+  <br/>  ![network location](./media/network-loc.png)
 - Btrfs subvolume browser straight from the filesystem so you don't doubt yourself
-  <br/><img src="./media/subvols.png" alt="subvolume picker" style="max-height: 300px">
+  <br/>  ![subvolume picker](./media/subvols.png)
 - Edit raw fstab entries with live validation (syntax errors block saving...)
-  <br/><img src="./media/text-edit.png" alt="entry text edit" style="max-height: 300px">
+  <br/>  ![entry text edit](./media/text-edit.png)
 - Easy reverts if you messed something up and fstab backup creation
-  <br/><img src="./media/restore.png" alt="restore backup" style="max-height: 300px">
+  <br/>  ![restore backup](./media/restore.png)
 - Mount, remount and unmount from the app, next to a live mounted-status indicator
 
 ## Safety first!
