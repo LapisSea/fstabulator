@@ -52,16 +52,10 @@ rm -rf "$STAGE"
 mkdir -p "$STAGE/resources"
 cp -a "$ROOT_DIR/target/release/fstabulator" "$STAGE/fstabulator"
 cp -a "$ROOT_DIR/resources/fstabulator_icon.svg" "$STAGE/resources/"
-cat > "$STAGE/org.lapissea.FSTabulator.desktop" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=FSTabulator
-Comment=Edit /etc/fstab
-Exec=fstabulator
-Icon=org.lapissea.FSTabulator
-Terminal=false
-Categories=System;Utility;
-EOF
+# The in-sandbox icon is installed under the app-id name, so point the
+# desktop entry at it (the shared resource uses the plain icon name).
+sed 's|^Icon=fstabulator$|Icon=org.lapissea.FSTabulator|' \
+	"$ROOT_DIR/resources/org.lapissea.FSTabulator.desktop" > "$STAGE/org.lapissea.FSTabulator.desktop"
 LOCALE_SRC="$(ls -1dt "$ROOT_DIR"/target/release/build/fstabulator-*/out/locale 2>/dev/null | head -n1 || true)"
 if [[ -n "$LOCALE_SRC" ]]; then
 	cp -a "$LOCALE_SRC" "$STAGE/locale"

@@ -45,58 +45,18 @@ mkdir -p "$DEB_DIR/DEBIAN" \
 
 install -m 0755 "$ROOT_DIR/target/release/fstabulator" "$DEB_DIR/usr/bin/fstabulator"
 
-cat > "$DEB_DIR/usr/share/applications/org.lapissea.FSTabulator.desktop" <<'EOF'
-[Desktop Entry]
-Type=Application
-Name=FSTabulator
-Comment=Edit /etc/fstab
-Exec=fstabulator
-Icon=fstabulator
-Terminal=false
-Categories=System;Utility;
-EOF
+install -m 0644 "$ROOT_DIR/resources/org.lapissea.FSTabulator.desktop" \
+	"$DEB_DIR/usr/share/applications/org.lapissea.FSTabulator.desktop"
 
 install -m 0644 "$ROOT_DIR/resources/fstabulator_icon.svg" \
 	"$DEB_DIR/usr/share/icons/hicolor/scalable/apps/fstabulator.svg"
 install -m 0644 "$ROOT_DIR/resources/fstabulator_icon_dark.svg" \
 	"$DEB_DIR/usr/share/icons/Adwaita-dark/scalable/apps/fstabulator.svg"
-cat > "$DEB_DIR/usr/share/icons/Adwaita-dark/index.theme" <<'EOF'
-[Icon Theme]
-Name=Adwaita-dark
-Inherits=Adwaita,hicolor
-Directories=scalable/apps
+install -m 0644 "$ROOT_DIR/resources/index.theme" \
+	"$DEB_DIR/usr/share/icons/Adwaita-dark/index.theme"
 
-[scalable/apps]
-Context=Applications
-Size=128
-MinSize=8
-MaxSize=512
-Type=Scalable
-EOF
-
-cat > "$DEB_DIR/usr/share/polkit-1/actions/org.lapissea.FSTabulator.root-helper.policy" <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE policyconfig PUBLIC
- "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
-<policyconfig>
-	<vendor>FSTabulator</vendor>
-	<vendor_url>https://github.com/LapisSea/fstabulator</vendor_url>
-	<icon_name>org.lapissea.FSTabulator</icon_name>
-	<action id="org.lapissea.FSTabulator.root-helper">
-		<description>FSTabulator is requesting system access</description>
-		<message>FSTabulator needs administrator access to edit /etc/fstab, keep backups of it, and to mount, unmount or swap your drives.</message>
-		<icon_name>org.lapissea.FSTabulator</icon_name>
-		<defaults>
-			<allow_any>auth_admin</allow_any>
-			<allow_inactive>auth_admin</allow_inactive>
-			<allow_active>auth_admin</allow_active>
-		</defaults>
-		<annotate key="org.freedesktop.policykit.exec.path">/usr/bin/fstabulator</annotate>
-		<annotate key="org.freedesktop.policykit.exec.argv1">--root-helper</annotate>
-	</action>
-</policyconfig>
-EOF
+install -m 0644 "$ROOT_DIR/resources/org.lapissea.FSTabulator.root-helper.policy" \
+	"$DEB_DIR/usr/share/polkit-1/actions/org.lapissea.FSTabulator.root-helper.policy"
 
 install -m 0644 "$ROOT_DIR/LICENSE" "$DEB_DIR/usr/share/doc/fstabulator/copyright"
 

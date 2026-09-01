@@ -28,16 +28,8 @@ ICON_DIR="scalable/apps"
 mkdir -p "$APPLICATIONS_DIR" "$HICOLOR_DIR/$ICON_DIR" "$DARK_THEME_DIR/$ICON_DIR"
 
 # Desktop entry
-cat > "$APPLICATIONS_DIR/$APP_ID.desktop" <<EOF
-[Desktop Entry]
-Type=Application
-Name=FSTabulator
-Comment=Edit /etc/fstab
-Exec=$EXEC
-Icon=$ICON_NAME
-Terminal=false
-Categories=System;Utility;
-EOF
+sed "s|^Exec=.*|Exec=$EXEC|" "$ROOT_DIR/resources/org.lapissea.FSTabulator.desktop" \
+	> "$APPLICATIONS_DIR/$APP_ID.desktop"
 
 # Launcher icon: the light variant in hicolor, which every desktop resolves.
 cp "$ROOT_DIR/resources/fstabulator_icon.svg" "$HICOLOR_DIR/$ICON_DIR/$ICON_NAME.svg"
@@ -46,19 +38,7 @@ cp "$ROOT_DIR/resources/fstabulator_icon.svg" "$HICOLOR_DIR/$ICON_DIR/$ICON_NAME
 # icon theme (KDE Plasma, XFCE) can swap to it; GNOME never does, which is fine.
 cp "$ROOT_DIR/resources/fstabulator_icon_dark.svg" "$DARK_THEME_DIR/$ICON_DIR/$ICON_NAME.svg"
 if [[ ! -f "$DARK_THEME_DIR/index.theme" ]]; then
-	cat > "$DARK_THEME_DIR/index.theme" <<EOF
-[Icon Theme]
-Name=Adwaita-dark
-Inherits=Adwaita,hicolor
-Directories=scalable/apps
-
-[scalable/apps]
-Context=Applications
-Size=128
-MinSize=8
-MaxSize=512
-Type=Scalable
-EOF
+	cp "$ROOT_DIR/resources/index.theme" "$DARK_THEME_DIR/index.theme"
 fi
 
 # Refresh icon and app databases. The user's hicolor dir may have no
@@ -81,30 +61,10 @@ if [[ -f "$POLKIT_FILE" ]] && grep -qF "exec.path\">$EXEC<" "$POLKIT_FILE"; then
 	POLKIT_STATUS="already up to date"
 elif command -v sudo >/dev/null 2>&1; then
 	sudo install -d "$POLKIT_ACTIONS_DIR"
-	sudo tee "$POLKIT_FILE" >/dev/null <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE policyconfig PUBLIC
- "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
-<policyconfig>
-	<vendor>FSTabulator</vendor>
-	<vendor_url>https://github.com/LapisSea/fstabulator</vendor_url>
-	<icon_name>$ICON_NAME</icon_name>
-	<action id="$APP_ID.root-helper">
-		<description>FSTabulator is requesting system access</description>
-		<message>FSTabulator needs administrator access to edit /etc/fstab, keep backups of it, and to mount, unmount or swap your drives.</message>
-		<icon_name>$ICON_NAME</icon_name>
-		<defaults>
-			<allow_any>auth_admin</allow_any>
-			<allow_inactive>auth_admin</allow_inactive>
-			<allow_active>auth_admin</allow_active>
-		</defaults>
-		<annotate key="org.freedesktop.policykit.exec.path">$EXEC</annotate>
-		<annotate key="org.freedesktop.policykit.exec.argv1">--root-helper</annotate>
-	</action>
-</policyconfig>
-
-EOF
+	sed -e "s|<icon_name>[^<]*</icon_name>|<icon_name>$ICON_NAME</icon_name>|" \
+		-e "s|<annotate key=\"org.freedesktop.policykit.exec.path\">[^<]*</annotate>|<annotate key=\"org.freedesktop.policykit.exec.path\">$EXEC</annotate>|" \
+		"$ROOT_DIR/resources/org.lapissea.FSTabulator.root-helper.policy" \
+		| sudo tee "$POLKIT_FILE" >/dev/null
 	sudo chmod 0644 "$POLKIT_FILE"
 	POLKIT_STATUS="installed"
 else

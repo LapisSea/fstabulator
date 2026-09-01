@@ -53,61 +53,19 @@ sha256sums=()
 package() {
 	install -Dm0755 "$ROOT_DIR/target/release/fstabulator" "\$pkgdir/usr/bin/fstabulator"
 
-	install -d "\$pkgdir/usr/share/applications"
-	cat > "\$pkgdir/usr/share/applications/org.lapissea.FSTabulator.desktop" <<'DESKTOP'
-[Desktop Entry]
-Type=Application
-Name=FSTabulator
-Comment=Edit /etc/fstab
-Exec=fstabulator
-Icon=fstabulator
-Terminal=false
-Categories=System;Utility;
-DESKTOP
+	install -Dm0644 "$ROOT_DIR/resources/org.lapissea.FSTabulator.desktop" \
+		"\$pkgdir/usr/share/applications/org.lapissea.FSTabulator.desktop"
 
 	install -Dm0644 "$ROOT_DIR/resources/fstabulator_icon.svg" \
 		"\$pkgdir/usr/share/icons/hicolor/scalable/apps/fstabulator.svg"
 
 	install -Dm0644 "$ROOT_DIR/resources/fstabulator_icon_dark.svg" \
 		"\$pkgdir/usr/share/icons/Adwaita-dark/scalable/apps/fstabulator.svg"
-	cat > "\$pkgdir/usr/share/icons/Adwaita-dark/index.theme" <<'THEME'
-[Icon Theme]
-Name=Adwaita-dark
-Inherits=Adwaita,hicolor
-Directories=scalable/apps
+	install -Dm0644 "$ROOT_DIR/resources/index.theme" \
+		"\$pkgdir/usr/share/icons/Adwaita-dark/index.theme"
 
-[scalable/apps]
-Context=Applications
-Size=128
-MinSize=8
-MaxSize=512
-Type=Scalable
-THEME
-
-	install -d "\$pkgdir/usr/share/polkit-1/actions"
-	cat > "\$pkgdir/usr/share/polkit-1/actions/org.lapissea.FSTabulator.root-helper.policy" <<'POLICY'
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE policyconfig PUBLIC
- "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
-<policyconfig>
-	<vendor>FSTabulator</vendor>
-	<vendor_url>https://github.com/LapisSea/fstabulator</vendor_url>
-	<icon_name>org.lapissea.FSTabulator</icon_name>
-	<action id="org.lapissea.FSTabulator.root-helper">
-		<description>FSTabulator is requesting system access</description>
-		<message>FSTabulator needs administrator access to edit /etc/fstab, keep backups of it, and to mount, unmount or swap your drives.</message>
-		<icon_name>org.lapissea.FSTabulator</icon_name>
-		<defaults>
-			<allow_any>auth_admin</allow_any>
-			<allow_inactive>auth_admin</allow_inactive>
-			<allow_active>auth_admin</allow_active>
-		</defaults>
-		<annotate key="org.freedesktop.policykit.exec.path">/usr/bin/fstabulator</annotate>
-		<annotate key="org.freedesktop.policykit.exec.argv1">--root-helper</annotate>
-	</action>
-</policyconfig>
-POLICY
+	install -Dm0644 "$ROOT_DIR/resources/org.lapissea.FSTabulator.root-helper.policy" \
+		"\$pkgdir/usr/share/polkit-1/actions/org.lapissea.FSTabulator.root-helper.policy"
 
 	install -Dm0644 "$ROOT_DIR/LICENSE" "\$pkgdir/usr/share/licenses/\$pkgname/LICENSE"
 

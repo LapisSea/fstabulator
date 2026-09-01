@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=FSTabulator
+Comment=Edit /etc/fstab
+Exec=fstabulator
+Icon=fstabulator
+Terminal=false
+Categories=System;Utility;
