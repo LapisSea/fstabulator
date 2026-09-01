@@ -28,7 +28,10 @@ use crate::ui_commons::{ERROR_NAME, WARNING_NAME, activatable_row, clear_childre
 use adw::gdk::pango;
 use adw::gdk::{ContentProvider, DragAction};
 use adw::prelude::*;
-use adw::{ActionRow, Application, ApplicationWindow, HeaderBar, PreferencesGroup, Toast, ToastOverlay};
+use adw::{
+	ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, BreakpointConditionLengthType, HeaderBar, LengthUnit,
+	PreferencesGroup, Toast, ToastOverlay,
+};
 use anyhow::Context as _;
 use gtk::{
 	Align, Box as GtkBox, Button, DragSource, DropTarget, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget,
@@ -266,14 +269,13 @@ fn build_ui(application: &Application) {
 		options_panel,
 		options_scroll,
 		options_group: GC::new(None),
-		mode: GC::new(None),
+		three_column: GC::new(false),
 	};
 
 	let rebuild_editor: RebuildEditor = GC::new(None);
 	{
 		let (editor_panel, list_panel_cb, stab_file) = (editor_panel.clone(), list_panel.clone(), stab_file.clone());
 		let (file_ctx, rebuild_editor, layout) = (file_ctx.clone(), rebuild_editor.clone(), layout.clone());
-		let title_window = title_window.clone();
 		list_panel.connect_row_selected(move |_, row| {
 			clear_children(&editor_panel);
 			let Some(row) = row else { return };
@@ -288,12 +290,11 @@ fn build_ui(application: &Application) {
 			let rebuild: Rc<dyn Fn()> = Rc::new({
 				let (editor_panel, list_panel_cb, entry_ctx) = (editor_panel.clone(), list_panel_cb.clone(), entry_ctx.clone());
 				let (row, layout, rebuild_editor) = (row.clone(), layout.clone(), rebuild_editor.clone());
-				let title_window = title_window.clone();
 				move || {
 					clear_children(&editor_panel);
 					let group = build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, &row, rebuild_editor.clone());
 					*layout.options_group.borrow_mut() = Some(group);
-					refresh_list_layout(&title_window, &layout);
+					layout.place_options_group();
 				}
 			});
 			rebuild();
@@ -340,7 +341,7 @@ fn build_ui(application: &Application) {
 		});
 	}
 
-	refresh_list_layout(&title_window, &layout);
+	attach_layout_breakpoints(&window, &layout);
 
 	let provider = gtk::CssProvider::new();
 	provider.load_from_string(
@@ -364,13 +365,6 @@ fn build_ui(application: &Application) {
 	}
 
 	window.present();
-	{
-		if let Some(surface) = window.surface() {
-			let (layout, window) = (layout.clone(), window.clone());
-			surface.connect_width_notify(move |_| layout.apply(layout_mode_for_width(&window)));
-		}
-		layout.apply(layout_mode_for_width(&window));
-	}
 }
 
 fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
@@ -774,34 +768,6 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext
 		.connect(on_confirm);
 }
 
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum LayoutMode {
-	Stacked,
-	TwoColumn,
-	ThreeColumn,
-}
-
-const STACKED_MAX_WIDTH_SP: f64 = 750.0;
-const THREE_COLUMN_MIN_WIDTH_SP: f64 = 1500.0;
-
-fn layout_mode_for_width(window: &ApplicationWindow) -> LayoutMode {
-	let scale = window.scale_factor().max(1) as f64;
-	// The surface width is current when `width-notify` fires, while the widget
-	// allocation lags it (stale in both directions), so prefer the surface.
-	let width = window
-		.surface()
-		.map(|surface| surface.width() as f64 / scale)
-		.unwrap_or(window.width() as f64);
-
-	if width > THREE_COLUMN_MIN_WIDTH_SP {
-		LayoutMode::ThreeColumn
-	} else if width > STACKED_MAX_WIDTH_SP {
-		LayoutMode::TwoColumn
-	} else {
-		LayoutMode::Stacked
-	}
-}
-
 #[derive(Clone)]
 struct LayoutState {
 	split_box: GtkBox,
@@ -809,37 +775,20 @@ struct LayoutState {
 	options_panel: GtkBox,
 	options_scroll: ScrolledWindow,
 	options_group: GC<Option<PreferencesGroup>>,
-	mode: GC<Option<LayoutMode>>,
+	three_column: GC<bool>,
 }
 
 impl LayoutState {
-	fn refresh(&self, window: &ApplicationWindow) {
-		self.apply(layout_mode_for_width(window));
-	}
-
-	fn apply(&self, mode: LayoutMode) {
-		if *self.mode.borrow() != Some(mode) {
-			self.split_box.set_orientation(if mode == LayoutMode::Stacked {
-				Orientation::Vertical
-			} else {
-				Orientation::Horizontal
-			});
-			self.split_box.set_homogeneous(mode != LayoutMode::Stacked);
-			self.options_scroll.set_visible(mode == LayoutMode::ThreeColumn);
-			*self.mode.borrow_mut() = Some(mode);
-		}
-		self.place_options_group(mode);
-	}
-
-	fn place_options_group(&self, mode: LayoutMode) {
+	fn place_options_group(&self) {
 		let Some(group) = self.options_group.borrow().clone() else {
 			return;
 		};
+		let three_column = *self.three_column.borrow();
 		let in_options_panel = group.parent().as_ref() == Some(self.options_panel.upcast_ref::<gtk::Widget>());
-		if in_options_panel == (mode == LayoutMode::ThreeColumn) {
+		if in_options_panel == three_column {
 			return;
 		}
-		if mode == LayoutMode::ThreeColumn {
+		if three_column {
 			clear_children(&self.options_panel);
 			reparent(&group, &self.options_panel, None);
 		} else {
@@ -848,11 +797,33 @@ impl LayoutState {
 	}
 }
 
-fn refresh_list_layout(title_window: &GC<Option<ApplicationWindow>>, layout: &LayoutState) {
-	let Some(window) = title_window.borrow().clone() else {
-		return;
-	};
-	layout.refresh(&window);
+fn attach_layout_breakpoints(window: &ApplicationWindow, layout: &LayoutState) {
+	let stacked = Breakpoint::new(BreakpointCondition::new_length(
+		BreakpointConditionLengthType::MaxWidth,
+		750.0,
+		LengthUnit::Sp,
+	));
+	stacked.add_setter(&layout.split_box, "orientation", Some(&Orientation::Vertical.to_value()));
+	stacked.add_setter(&layout.split_box, "homogeneous", Some(&false.to_value()));
+	window.add_breakpoint(stacked);
+
+	let three_column = Breakpoint::new(BreakpointCondition::new_length(
+		BreakpointConditionLengthType::MinWidth,
+		1500.0,
+		LengthUnit::Sp,
+	));
+	three_column.add_setter(&layout.options_scroll, "visible", Some(&true.to_value()));
+	let apply_layout = layout.clone();
+	three_column.connect_apply(move |_| {
+		*apply_layout.three_column.borrow_mut() = true;
+		apply_layout.place_options_group();
+	});
+	let unapply_layout = layout.clone();
+	three_column.connect_unapply(move |_| {
+		*unapply_layout.three_column.borrow_mut() = false;
+		unapply_layout.place_options_group();
+	});
+	window.add_breakpoint(three_column);
 }
 
 #[cfg(test)]
