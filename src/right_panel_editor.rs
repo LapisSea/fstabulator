@@ -62,7 +62,7 @@ pub(crate) fn build_editor_panel(
 	list_box: &ListBox,
 	list_row: &gtk::ListBoxRow,
 	rebuild_editor: RebuildEditor,
-) {
+) -> PreferencesGroup {
 	let reset_btn = Button::with_label(i18n("Reset").as_str());
 	reset_btn.add_css_class("destructive-action");
 	reset_btn.set_sensitive(entry_ctx.entry().borrow().is_changed());
@@ -153,13 +153,16 @@ pub(crate) fn build_editor_panel(
 	);
 	editor_panel.append(&fsck_group);
 
-	let (list_box, list_row) = (list_box.clone(), list_row.clone());
-	let (options_group, device_row, entry_ctx_ref) = (options_group.clone(), device_row.clone(), entry_ctx.clone());
-	let mount_point_row = mount_point_row.clone();
-	reset_btn.connect_clicked(move |_| {
-		entry_ctx_ref.entry().borrow_mut().reset();
-		refresh_entry_editor(&entry_ctx_ref, &device_row, &options_group, &mount_point_row, &list_box, &list_row);
-	});
+	{
+		let (list_box, list_row) = (list_box.clone(), list_row.clone());
+		let (options_group, device_row, entry_ctx) = (options_group.clone(), device_row.clone(), entry_ctx.clone());
+		let mount_point_row = mount_point_row.clone();
+		reset_btn.connect_clicked(move |_| {
+			entry_ctx.entry().borrow_mut().reset();
+			refresh_entry_editor(&entry_ctx, &device_row, &options_group, &mount_point_row, &list_box, &list_row);
+		});
+	}
+	options_group
 }
 
 fn refresh_entry_editor(

@@ -329,3 +329,14 @@ impl ConfirmActionBuilder {
 		});
 	}
 }
+
+pub fn reparent(child: &impl IsA<gtk::Widget>, to: &GtkBox, anchor: Option<&gtk::Widget>) {
+	if child.parent().is_some() {
+		child.unparent();
+	}
+	if let Some(anchor) = anchor {
+		to.insert_child_after(child, Some(anchor));
+	} else {
+		to.append(child);
+	}
+}

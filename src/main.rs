@@ -24,11 +24,11 @@ use crate::problem_reports::ProblemLevel;
 use crate::right_panel_editor::build_editor_panel;
 use crate::search_picker::SearchPickerBuilder;
 use crate::stab_yurself::{StabEntry, StabFile};
-use crate::ui_commons::{ERROR_NAME, WARNING_NAME, activatable_row, clear_children, find_widget_with_class, query_matches, trash_button};
+use crate::ui_commons::{ERROR_NAME, WARNING_NAME, activatable_row, clear_children, find_widget_with_class, query_matches, reparent, trash_button};
 use adw::gdk::pango;
 use adw::gdk::{ContentProvider, DragAction};
 use adw::prelude::*;
-use adw::{ActionRow, Application, ApplicationWindow, Breakpoint, BreakpointCondition, HeaderBar, LengthUnit, Toast, ToastOverlay};
+use adw::{ActionRow, Application, ApplicationWindow, HeaderBar, PreferencesGroup, Toast, ToastOverlay};
 use anyhow::Context as _;
 use gtk::{
 	Align, Box as GtkBox, Button, DragSource, DropTarget, Image, ListBox, MenuButton, Orientation, ScrolledWindow, SelectionMode, Widget,
@@ -244,12 +244,36 @@ fn build_ui(application: &Application) {
 	left_panel.append(&wrap_scroll(&list_panel));
 	left_panel.append(&file_buttons_panel);
 
-	let split_box = build_split_layout(&left_panel, &wrap_scroll(&editor_panel));
+	let options_panel = GtkBox::builder().orientation(Orientation::Vertical).hexpand(true).vexpand(true).build();
+	let options_scroll = wrap_scroll(&options_panel);
+	options_scroll.set_visible(false);
+
+	let split_box = GtkBox::builder()
+		.hexpand(true)
+		.vexpand(true)
+		.orientation(Orientation::Horizontal)
+		.spacing(20)
+		.homogeneous(true)
+		.build();
+
+	split_box.append(&left_panel);
+	split_box.append(&wrap_scroll(&editor_panel));
+	split_box.append(&options_scroll);
+
+	let layout = LayoutState {
+		split_box: split_box.clone(),
+		editor_panel: editor_panel.clone(),
+		options_panel,
+		options_scroll,
+		options_group: GC::new(None),
+		mode: GC::new(None),
+	};
 
 	let rebuild_editor: RebuildEditor = GC::new(None);
 	{
 		let (editor_panel, list_panel_cb, stab_file) = (editor_panel.clone(), list_panel.clone(), stab_file.clone());
-		let (file_ctx, rebuild_editor) = (file_ctx.clone(), rebuild_editor.clone());
+		let (file_ctx, rebuild_editor, layout) = (file_ctx.clone(), rebuild_editor.clone(), layout.clone());
+		let title_window = title_window.clone();
 		list_panel.connect_row_selected(move |_, row| {
 			clear_children(&editor_panel);
 			let Some(row) = row else { return };
@@ -261,16 +285,19 @@ fn build_ui(application: &Application) {
 			};
 			let Ok(action_row) = row.clone().downcast::<ActionRow>() else { return };
 			let entry_ctx = file_ctx.entry(entry, &action_row);
-			build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, row, rebuild_editor.clone());
-			let builder: Rc<dyn Fn()> = Rc::new({
+			let rebuild: Rc<dyn Fn()> = Rc::new({
 				let (editor_panel, list_panel_cb, entry_ctx) = (editor_panel.clone(), list_panel_cb.clone(), entry_ctx.clone());
-				let (row, rebuild_editor) = (row.clone(), rebuild_editor.clone());
+				let (row, layout, rebuild_editor) = (row.clone(), layout.clone(), rebuild_editor.clone());
+				let title_window = title_window.clone();
 				move || {
 					clear_children(&editor_panel);
-					build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, &row, rebuild_editor.clone());
+					let group = build_editor_panel(&editor_panel, &entry_ctx, &list_panel_cb, &row, rebuild_editor.clone());
+					*layout.options_group.borrow_mut() = Some(group);
+					refresh_list_layout(&title_window, &layout);
 				}
 			});
-			*rebuild_editor.borrow_mut() = Some(builder);
+			rebuild();
+			*rebuild_editor.borrow_mut() = Some(rebuild);
 		});
 	}
 
@@ -313,7 +340,7 @@ fn build_ui(application: &Application) {
 		});
 	}
 
-	attach_responsive_breakpoint(&window, &split_box);
+	refresh_list_layout(&title_window, &layout);
 
 	let provider = gtk::CssProvider::new();
 	provider.load_from_string(
@@ -337,6 +364,13 @@ fn build_ui(application: &Application) {
 	}
 
 	window.present();
+	{
+		if let Some(surface) = window.surface() {
+			let (layout, window) = (layout.clone(), window.clone());
+			surface.connect_width_notify(move |_| layout.apply(layout_mode_for_width(&window)));
+		}
+		layout.apply(layout_mode_for_width(&window));
+	}
 }
 
 fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
@@ -740,29 +774,85 @@ fn add_delete_button(list_box: &ListBox, row: &ActionRow, file_ctx: &FileContext
 		.connect(on_confirm);
 }
 
-fn build_split_layout(list_panel: &impl IsA<gtk::Widget>, editor_panel: &impl IsA<gtk::Widget>) -> GtkBox {
-	let split_box = GtkBox::builder()
-		.hexpand(true)
-		.vexpand(true)
-		.orientation(Orientation::Horizontal)
-		.spacing(20)
-		.homogeneous(true)
-		.build();
-
-	split_box.append(list_panel);
-	split_box.append(editor_panel);
-
-	split_box
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum LayoutMode {
+	Stacked,
+	TwoColumn,
+	ThreeColumn,
 }
 
-fn attach_responsive_breakpoint(window: &adw::ApplicationWindow, split_box: &GtkBox) {
-	let condition = BreakpointCondition::new_length(adw::BreakpointConditionLengthType::MaxWidth, 700.0, LengthUnit::Sp);
+const STACKED_MAX_WIDTH_SP: f64 = 750.0;
+const THREE_COLUMN_MIN_WIDTH_SP: f64 = 1500.0;
 
-	let breakpoint = Breakpoint::new(condition);
-	breakpoint.add_setter(split_box, "orientation", Some(&Orientation::Vertical.to_value()));
-	breakpoint.add_setter(split_box, "homogeneous", Some(&false.to_value()));
+fn layout_mode_for_width(window: &ApplicationWindow) -> LayoutMode {
+	let scale = window.scale_factor().max(1) as f64;
+	// The surface width is current when `width-notify` fires, while the widget
+	// allocation lags it (stale in both directions), so prefer the surface.
+	let width = window
+		.surface()
+		.map(|surface| surface.width() as f64 / scale)
+		.unwrap_or(window.width() as f64);
 
-	window.add_breakpoint(breakpoint);
+	if width > THREE_COLUMN_MIN_WIDTH_SP {
+		LayoutMode::ThreeColumn
+	} else if width > STACKED_MAX_WIDTH_SP {
+		LayoutMode::TwoColumn
+	} else {
+		LayoutMode::Stacked
+	}
+}
+
+#[derive(Clone)]
+struct LayoutState {
+	split_box: GtkBox,
+	editor_panel: GtkBox,
+	options_panel: GtkBox,
+	options_scroll: ScrolledWindow,
+	options_group: GC<Option<PreferencesGroup>>,
+	mode: GC<Option<LayoutMode>>,
+}
+
+impl LayoutState {
+	fn refresh(&self, window: &ApplicationWindow) {
+		self.apply(layout_mode_for_width(window));
+	}
+
+	fn apply(&self, mode: LayoutMode) {
+		if *self.mode.borrow() != Some(mode) {
+			self.split_box.set_orientation(if mode == LayoutMode::Stacked {
+				Orientation::Vertical
+			} else {
+				Orientation::Horizontal
+			});
+			self.split_box.set_homogeneous(mode != LayoutMode::Stacked);
+			self.options_scroll.set_visible(mode == LayoutMode::ThreeColumn);
+			*self.mode.borrow_mut() = Some(mode);
+		}
+		self.place_options_group(mode);
+	}
+
+	fn place_options_group(&self, mode: LayoutMode) {
+		let Some(group) = self.options_group.borrow().clone() else {
+			return;
+		};
+		let in_options_panel = group.parent().as_ref() == Some(self.options_panel.upcast_ref::<gtk::Widget>());
+		if in_options_panel == (mode == LayoutMode::ThreeColumn) {
+			return;
+		}
+		if mode == LayoutMode::ThreeColumn {
+			clear_children(&self.options_panel);
+			reparent(&group, &self.options_panel, None);
+		} else {
+			reparent(&group, &self.editor_panel, self.editor_panel.first_child().as_ref());
+		}
+	}
+}
+
+fn refresh_list_layout(title_window: &GC<Option<ApplicationWindow>>, layout: &LayoutState) {
+	let Some(window) = title_window.borrow().clone() else {
+		return;
+	};
+	layout.refresh(&window);
 }
 
 #[cfg(test)]
