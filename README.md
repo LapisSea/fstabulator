@@ -1,34 +1,32 @@
 # FSTabulator
 
-# < image of the app icon here >
+<img src="./resources/fstabulator_icon.svg" width="256" alt="Icon" style="max-height: 300px">
 
-FSTabulator is a Linux GUI application for helping you permanently mount your drives, whether local or network.
+FSTabulator is a Linux GUI application for helping you permanently mount your drives, whether local or network drives.
 
-To do that, you normally have to edit the `/etc/fstab` file by hand, which is confusing and easy to mess up.
+To do that, you normally have to edit the `/etc/fstab` file by hand, which can be confusing and easy to mess up.
 FSTabulator helps you do that as easily as possible by showing you what can be done, what is probably wrong and doing the
-job of searching for exact info.
+job of searching for exact info you need.
 Hopefully, now you wont need to google how to find a drive you want every time you need to edit your mounts! ;)
 
-# < image of the main window with the entry list and editor panel here>
+<img src="./media/main.png" alt="main window with the entry list and editor panel">
 
-## Highlights
+## Main features
 
 - You can edit (or add) your mount properties (device, mount point, filesystem type, options...) through an accessible UI form
-- There is extensive (hopefully exhaustive) typed mount options for all file systems you might use.
+- There is extensive (hopefully exhaustive) typed mount options for all file systems you might use with carefully designed UI that helps you configure things correctly.
+  <br/><img src="./media/options.png" alt="options group" style="max-height: 300px">
 - Storage device picker with easy conversion between UUID, PARTUUID, LABEL, PARTLABEL to suite what you prefer
+  <br/><img src="./media/disk-picker.png" alt="disk picker" style="max-height: 300px">
 - Network mounts (SMB, NFS, sshfs) with an address editor, a live connection test, and easy credential saving
+  <br/><img src="./media/network-loc.png" alt="network location" style="max-height: 300px">
 - Btrfs subvolume browser straight from the filesystem so you don't doubt yourself
+  <br/><img src="./media/subvols.png" alt="subvolume picker" style="max-height: 300px">
 - Edit raw fstab entries with live validation (syntax errors block saving...)
+  <br/><img src="./media/text-edit.png" alt="entry text edit" style="max-height: 300px">
 - Easy reverts if you messed something up and fstab backup creation
+  <br/><img src="./media/restore.png" alt="restore backup" style="max-height: 300px">
 - Mount, remount and unmount from the app, next to a live mounted-status indicator
-
-## < image of the options group showing typed option editors here>
-
-## < image of the device picker dialog here>
-
-## < image of the network location editor with connection test here>
-
-## < image of the raw text editor with validation issues here>
 
 ## Safety first!
 
