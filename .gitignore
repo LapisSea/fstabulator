@@ -9,6 +9,7 @@
 !fstabulator.spec
 !org.lapissea.FSTabulator.json
 !README.md
+!.github/workflows/**
 !.rustfmt.toml
 
 !src/**

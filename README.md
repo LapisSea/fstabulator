@@ -36,9 +36,9 @@ It also helps you keep backups of your fstab (up to 3) and makes it easy to rest
 
 ## Installing
 
-Get it from **<... uhhh not sure yet>** or,
+You can get the prebuilt binaries from the github releases. (publishing to community repos is a todo)
 
-build from source. You'll need the Rust toolchain, the GTK4 and libadwaita and other development dependencies listed below.
+You can also build from source. You'll need the Rust toolchain, the GTK4 and libadwaita and other development dependencies listed below.
 
 ### Build it yourself & dependencies
 
@@ -55,13 +55,24 @@ sudo apt install cargo gcc pkg-config libgtk-4-dev libadwaita-1-dev gettext make
 sudo pacman -S rust pkgconf gtk4 libadwaita gettext base-devel make
 ```
 
-Then run:
+Then, if you just wanna try it, run:
 
 ```sh
 cargo build --release
 ```
 
-You can also run one of the rmp/deb/arch `install_to_*` scripts in the `./scripts` folder to get an installer file.
+If you want to fully install it, you can run one of the rpm/deb/arch `install_to_*` scripts in the `./scripts` folder to get an installer file.
+
+```sh
+# Fedora
+./scripts/install_to_rpm.sh --install
+
+# Debian / Ubuntu
+./scripts/install_to_deb.sh --install
+
+# Arch
+./scripts/install_to_arch.sh --install
+```
 
 **WARNING:** _flatpak is borked until I figure out how to work with the sandbox. Maybe it does not make sense at all to have a flatpak. (sorry)_
 

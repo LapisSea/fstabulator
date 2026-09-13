@@ -1,6 +1,5 @@
-# Binary-only spec: scripts/install_to_rpm.sh pre-builds the release binary
-# with cargo (embedding LOCALEDIR=/usr/share/locale) and passes
-# cargo_version / fstab_srcdir / fstab_locales via --define.
+# Binary-only spec: scripts/install_to_rpm.sh stages the payload and passes
+# cargo_version / fstab_payload via --define.
 Name:		fstabulator
 Version:	%{cargo_version}
 Release:	1%{?dist}
@@ -25,41 +24,11 @@ timestamped backups, and applies changes (mount, remount, unmount, swap)
 through a polkit-authenticated root helper.
 
 %install
-install -d %{buildroot}%{_bindir}
-install -m 0755 %{fstab_srcdir}/target/release/fstabulator %{buildroot}%{_bindir}/fstabulator
-
-install -d %{buildroot}%{_datadir}/applications
-install -m 0644 %{fstab_srcdir}/resources/org.lapissea.FSTabulator.desktop \
-	%{buildroot}%{_datadir}/applications/org.lapissea.FSTabulator.desktop
-
-install -d %{buildroot}%{_datadir}/icons/hicolor/scalable/apps
-install -m 0644 %{fstab_srcdir}/resources/fstabulator_icon.svg \
-	%{buildroot}%{_datadir}/icons/hicolor/scalable/apps/fstabulator.svg
-
-install -d %{buildroot}%{_datadir}/icons/Adwaita-dark/scalable/apps
-install -m 0644 %{fstab_srcdir}/resources/fstabulator_icon_dark.svg \
-	%{buildroot}%{_datadir}/icons/Adwaita-dark/scalable/apps/fstabulator.svg
-install -m 0644 %{fstab_srcdir}/resources/index.theme \
-	%{buildroot}%{_datadir}/icons/Adwaita-dark/index.theme
-
-install -d %{buildroot}%{_datadir}/polkit-1/actions
-install -m 0644 %{fstab_srcdir}/resources/org.lapissea.FSTabulator.root-helper.policy \
-	%{buildroot}%{_datadir}/polkit-1/actions/org.lapissea.FSTabulator.root-helper.policy
-
-install -d %{buildroot}%{_datadir}/license/%{name}
-install -m 0644 %{fstab_srcdir}/LICENSE %{buildroot}%{_datadir}/license/%{name}/LICENSE
-
-if [ -d %{fstab_locales} ]; then
-	for lang in %{fstab_locales}/*; do
-		[ -d "$lang/LC_MESSAGES" ] || continue
-		install -d %{buildroot}%{_datadir}/locale/$(basename "$lang")/LC_MESSAGES
-		install -m 0644 "$lang/LC_MESSAGES/fstabulator.mo" \
-			%{buildroot}%{_datadir}/locale/$(basename "$lang")/LC_MESSAGES/fstabulator.mo
-	done
-fi
+mkdir -p "%{buildroot}"
+cp -a "%{fstab_payload}/." "%{buildroot}/"
 
 %files
-%license %{_datadir}/license/%{name}/LICENSE
+%license %{_datadir}/licenses/%{name}/LICENSE
 %{_bindir}/fstabulator
 %{_datadir}/applications/org.lapissea.FSTabulator.desktop
 %{_datadir}/icons/hicolor/scalable/apps/fstabulator.svg

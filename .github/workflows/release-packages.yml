@@ -1,0 +1,113 @@
+name: Release packages
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-packages-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build ${{ matrix.package }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: rpm
+            image: fedora:44
+            artifact: dist/*.rpm
+          - package: deb
+            image: ubuntu:26.04
+            artifact: dist/*.deb
+          - package: arch
+            image: archlinux:base
+            artifact: dist/*.pkg.tar.zst
+    container:
+      image: ${{ matrix.image }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Install build dependencies
+        env:
+          PACKAGE: ${{ matrix.package }}
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          case "$PACKAGE" in
+            rpm)
+              dnf install -y git cargo rust gcc make pkgconf-pkg-config \
+                gtk4-devel libadwaita-devel gettext rpm-build
+              ;;
+            deb)
+              apt-get update
+              apt-get install -y --no-install-recommends git ca-certificates \
+                cargo rustc build-essential pkg-config libgtk-4-dev \
+                libadwaita-1-dev gettext dpkg-dev
+              ;;
+            arch)
+              pacman -Syu --noconfirm --needed git rust base-devel \
+                pkgconf gtk4 libadwaita gettext polkit
+              ;;
+          esac
+
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ github.event.release.tag_name }}
+          persist-credentials: false
+
+      - name: Check release version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version="$(sed -n 's/^version[[:space:]]*=[[:space:]]*"\(.*\)".*/\1/p' Cargo.toml | head -n1)"
+          if [[ -z "$version" || "${RELEASE_TAG#v}" != "$version" ]]; then
+            echo "::error::Release tag must be $version or v$version to match Cargo.toml"
+            exit 1
+          fi
+
+      - name: Build package
+        env:
+          PACKAGE: ${{ matrix.package }}
+          CARGO_TERM_COLOR: always
+        run: |
+          if [[ "$PACKAGE" == arch ]]; then
+            useradd --create-home builder
+            chown -R builder:builder "$GITHUB_WORKSPACE"
+            runuser -u builder -- bash scripts/install_to_arch.sh
+          else
+            bash "scripts/install_to_${PACKAGE}.sh"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: package-${{ matrix.package }}
+          path: ${{ matrix.artifact }}
+          if-no-files-found: error
+          retention-days: 7
+
+  upload:
+    name: Attach packages to release
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: package-*
+          merge-multiple: true
+          path: dist
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$RELEASE_TAG" dist/* --clobber
