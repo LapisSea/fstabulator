@@ -57,7 +57,7 @@ jobs:
               ;;
           esac
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: refs/tags/${{ github.event.release.tag_name }}
           persist-credentials: false
@@ -85,7 +85,7 @@ jobs:
             bash "scripts/install_to_${PACKAGE}.sh"
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: package-${{ matrix.package }}
           path: ${{ matrix.artifact }}
@@ -99,7 +99,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: package-*
           merge-multiple: true
