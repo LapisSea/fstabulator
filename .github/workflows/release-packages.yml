@@ -24,7 +24,7 @@ jobs:
             image: fedora:44
             artifact: dist/*.rpm
           - package: deb
-            image: ubuntu:26.04
+            image: ubuntu:24.04
             artifact: dist/*.deb
           - package: arch
             image: archlinux:base
@@ -47,8 +47,8 @@ jobs:
               ;;
             deb)
               apt-get update
-              apt-get install -y --no-install-recommends git ca-certificates \
-                cargo rustc build-essential pkg-config libgtk-4-dev \
+              apt-get install -y --no-install-recommends git ca-certificates curl \
+                build-essential pkg-config libgtk-4-dev \
                 libadwaita-1-dev gettext dpkg-dev
               ;;
             arch)
@@ -61,6 +61,13 @@ jobs:
         with:
           ref: refs/tags/${{ github.event.release.tag_name }}
           persist-credentials: false
+
+      - name: Install Rust for Ubuntu LTS
+        if: matrix.package == 'deb'
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup-init.sh
+          sh /tmp/rustup-init.sh -y --profile minimal --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
 
       - name: Check release version
         env:

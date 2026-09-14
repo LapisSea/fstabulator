@@ -21,7 +21,7 @@ pkgdesc='GTK4 GUI for editing /etc/fstab'
 arch=('x86_64' 'aarch64')
 url='https://github.com/LapisSea/fstabulator'
 license=('GPL-3.0-or-later')
-depends=('gtk4>=4.12' 'libadwaita>=1.9' 'glib2' 'polkit' 'util-linux')
+depends=('gtk4>=4.12' 'libadwaita>=1.5' 'glib2' 'polkit' 'util-linux')
 optdepends=('btrfs-progs: btrfs filesystem support')
 options=('!emptydirs' '!debug')
 source=()

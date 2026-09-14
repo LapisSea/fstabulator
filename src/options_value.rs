@@ -15,7 +15,7 @@ use std::rc::Rc;
 use std::time::Duration;
 
 pub fn build_options_group(group: &PreferencesGroup, entry_ctx: &EntryContext) {
-	while let Some(row) = group.row(0) {
+	for row in collect_preferences_rows(group.upcast_ref()) {
 		group.remove(&row);
 	}
 	let options = entry_ctx.entry().cloned(|w| &w.options);
@@ -28,6 +28,20 @@ pub fn build_options_group(group: &PreferencesGroup, entry_ctx: &EntryContext) {
 		});
 	}
 	add_add_option_row(ctx);
+}
+
+fn collect_preferences_rows(widget: &gtk::Widget) -> Vec<PreferencesRow> {
+	let mut rows = Vec::new();
+	let mut child = widget.first_child();
+	while let Some(current) = child {
+		child = current.next_sibling();
+		if let Some(row) = current.downcast_ref::<PreferencesRow>() {
+			rows.push(row.clone());
+		} else {
+			rows.extend(collect_preferences_rows(&current));
+		}
+	}
+	rows
 }
 
 #[derive(Clone)]
@@ -694,6 +708,41 @@ fn default_option_value(option: OptionSpec) -> FsOption {
 #[cfg(test)]
 mod tests {
 	use super::*;
+
+	#[gtk::test]
+	fn rebuilding_options_replaces_rows_and_preserves_heading() {
+		if gtk::gdk::Display::default().is_none() && gtk::gdk::Display::open(None).is_none() {
+			eprintln!("skipping UI test: no display available");
+			return;
+		}
+		let file_ctx = crate::context::FileContext::new(GC::new(crate::stab_yurself::StabFile::empty()), Rc::new(|| {}));
+		let entry = GC::new(crate::stab_yurself::StabEntry::from(0, "UUID=test / ext4 defaults,nofail 0 1").unwrap());
+		let entry_ctx = file_ctx.entry(entry.clone(), &ActionRow::new());
+		let group = PreferencesGroup::builder().title("Options").description("Mount options").build();
+		let header = gtk::Label::new(Some("Header"));
+		group.set_header_suffix(Some(&header));
+
+		build_options_group(&group, &entry_ctx);
+		let original = collect_preferences_rows(group.upcast_ref());
+		assert_eq!(original.len(), 3);
+		assert_eq!(original[0].title(), "defaults");
+		assert_eq!(original[1].title(), "nofail");
+
+		entry.borrow_mut().options = vec![FsOption::from_named("ro")];
+		build_options_group(&group, &entry_ctx);
+		assert!(original.iter().all(|row| row.parent().is_none()));
+		let rebuilt = collect_preferences_rows(group.upcast_ref());
+		assert_eq!(rebuilt.len(), 2);
+		assert_eq!(rebuilt[0].title(), "ro");
+
+		entry.borrow_mut().options.clear();
+		build_options_group(&group, &entry_ctx);
+		assert!(rebuilt.iter().all(|row| row.parent().is_none()));
+		assert_eq!(collect_preferences_rows(group.upcast_ref()).len(), 1);
+		assert_eq!(group.title(), "Options");
+		assert_eq!(group.description().as_deref(), Some("Mount options"));
+		assert_eq!(group.header_suffix().as_ref(), Some(header.upcast_ref()));
+	}
 
 	fn opt(value: OptionValue) -> OptionSpec {
 		OptionSpec {

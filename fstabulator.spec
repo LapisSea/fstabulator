@@ -10,7 +10,7 @@ URL:		https://github.com/LapisSea/fstabulator
 # libadwaita-devel, glib2-devel and gettext.
 
 Requires:	gtk4 >= 4.12
-Requires:	libadwaita >= 1.9
+Requires:	libadwaita >= 1.5
 Requires:	glib2
 Requires:	polkit
 Requires:	util-linux

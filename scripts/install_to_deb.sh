@@ -20,7 +20,7 @@ Priority: optional
 Architecture: $ARCH
 Installed-Size: ${SIZE:-0}
 Maintainer: LapisSea <lapisea@users.noreply.github.com>
-Depends: libgtk-4-1 (>= 4.12), libadwaita-1-0 (>= 1.9), libglib2.0-0, polkitd, pkexec, util-linux
+Depends: libgtk-4-1 (>= 4.12), libadwaita-1-0 (>= 1.5), libglib2.0-0, polkitd, pkexec, util-linux
 Suggests: btrfs-progs
 Description: GTK4 GUI for editing /etc/fstab
  FSTabulator is a GTK4/libadwaita front end for /etc/fstab. It lists the
