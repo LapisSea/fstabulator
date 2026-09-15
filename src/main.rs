@@ -81,10 +81,26 @@ const WINDOW_TITLE_MODIFIED: &str = "FSTabulator •";
 fn register_icon() -> anyhow::Result<()> {
 	gtk::gio::resources_register_include!("compiled.gresource").context("Failed to register app resources")?;
 	if let Some(display) = gtk::gdk::Display::default() {
-		gtk::IconTheme::for_display(&display).add_resource_path("/org/lapissea/FSTabulator/icons");
+		let theme = gtk::IconTheme::for_display(&display);
+		let style = adw::StyleManager::for_display(&display);
+		load_app_icon(&theme, style.is_dark());
+		style.connect_dark_notify(move |style| load_app_icon(&theme, style.is_dark()));
 	}
 	gtk::Window::set_default_icon_name("fstabulator");
 	Ok(())
+}
+
+fn load_app_icon(theme: &gtk::IconTheme, dark: bool) {
+	const LIGHT_PATH: &str = "/org/lapissea/FSTabulator/icons/light";
+	const DARK_PATH: &str = "/org/lapissea/FSTabulator/icons/dark";
+	let paths = theme.resource_path();
+	let mut paths: Vec<&str> = paths
+		.iter()
+		.map(|path| path.as_str())
+		.filter(|path| *path != LIGHT_PATH && *path != DARK_PATH)
+		.collect();
+	paths.push(if dark { DARK_PATH } else { LIGHT_PATH });
+	theme.set_resource_path(&paths);
 }
 
 fn main() -> gtk::glib::ExitCode {
@@ -316,7 +332,7 @@ fn build_ui(application: &Application) {
 	let content_scroll = wrap_scroll(&content_box);
 
 	let main_box = GtkBox::builder().orientation(Orientation::Vertical).build();
-	main_box.append(&HeaderBar::new());
+	main_box.append(&build_header_bar());
 	main_box.append(&content_scroll);
 
 	toast_overlay.set_child(Some(&main_box));
@@ -359,12 +375,32 @@ fn build_ui(application: &Application) {
 
 	if let Err(err) = load_fstab_file(Path::new("/etc/fstab"), &file_ctx, &list_panel, &editor_panel) {
 		let error_box = GtkBox::builder().orientation(Orientation::Vertical).build();
-		error_box.append(&HeaderBar::new());
+		error_box.append(&build_header_bar());
 		build_load_error(&error_box, err);
 		window.set_content(Some(&error_box));
 	}
 
 	window.present();
+}
+
+fn build_header_bar() -> HeaderBar {
+	let header = HeaderBar::new();
+	let about_button = Button::builder()
+		.icon_name("help-about-symbolic")
+		.tooltip_text(i18n("About FSTabulator"))
+		.build();
+	about_button.connect_clicked(|button| {
+		adw::AboutDialog::builder()
+			.application_name(WINDOW_TITLE)
+			.application_icon("fstabulator")
+			.version(env!("CARGO_PKG_VERSION"))
+			.website("https://github.com/LapisSea/fstabulator")
+			.issue_url("https://github.com/LapisSea/fstabulator/issues")
+			.build()
+			.present(Some(button));
+	});
+	header.pack_end(&about_button);
+	header
 }
 
 fn build_load_error(main_box: &GtkBox, err: anyhow::Error) {
