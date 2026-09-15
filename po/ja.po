@@ -367,6 +367,66 @@ msgstr "一般ユーザーによるファイルシステムのマウントを許
 msgid "Allow every user to mount and unmount the filesystem."
 msgstr "すべてのユーザーによるファイルシステムのマウントとアンマウントを許可します。"
 
+msgid "Mount the filesystem in the initrd and keep it mounted until final shutdown (systemd)."
+msgstr "initrd内でファイルシステムをマウントし、最終シャットダウンまでマウントを維持します（systemd）。"
+
+msgid "Mount after the given systemd unit or mount path without starting it."
+msgstr "指定されたsystemdユニットまたはマウントパスの後にマウントし、開始はしません。"
+
+msgid "Mount on first access via an automount unit, ignoring the auto and noauto options (systemd)."
+msgstr "automountユニット経由で最初のアクセス時にマウントし、autoオプションとnoautoオプションを無視します（systemd）。"
+
+msgid "Mount before the given systemd unit or mount path without starting it."
+msgstr "指定されたsystemdユニットまたはマウントパスの前にマウントし、開始はしません。"
+
+msgid "Bind the mount to its backing device lifetime so it stops when the device disappears, taking yes (also bare) or no."
+msgstr "マウントを基盤となるデバイスの寿命に紐付け、デバイスが消えると停止します。yes（bareでも可）またはnoを受け付けます。"
+
+msgid "Limit how long fstab waits for the device to appear, as seconds or a duration such as 30s."
+msgstr "fstabがデバイスの出現を待つ時間を制限します。秒、または30sのような期間で指定します。"
+
+msgid "Append a native kernel mount option only when the kernel supports it (systemd 258+)."
+msgstr "カーネルがサポートする場合のみ、ネイティブのカーネルマウントオプションを追加します（systemd 258+）。"
+
+msgid "Grow the filesystem to fill its block device when mounted, where supported (systemd)."
+msgstr "対応している場合、マウント時にファイルシステムをブロックデバイスいっぱいまで拡大します（systemd）。"
+
+msgid "Unmount an idle automount after a duration such as 5min, or pass 0 to disable the timeout."
+msgstr "アイドル状態のautomountを5minのような期間の後にアンマウントします。タイムアウトを無効にするには0を渡します。"
+
+msgid "Initialize a new filesystem on the device when it carries no existing signatures (systemd)."
+msgstr "デバイスに既存の署名がない場合に、新しいファイルシステムを初期化します（systemd）。"
+
+msgid "Limit how long the fstab mount command may run, as seconds, a duration such as 30s, or infinity."
+msgstr "fstabマウントコマンドの実行可能時間を制限します。秒、30sのような期間、またはinfinityで指定します。"
+
+msgid "Measure the mounted filesystem identity into TPM PCR 15 (systemd 253+)."
+msgstr "マウントされたファイルシステムの同一性をTPM PCR 15に計測します（systemd 253+）。"
+
+msgid "Make a unit require this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "ユニットにこのマウントを必須とさせます。デフォルトの依存関係を置き換えるため、順序の明示的な設定が必要になる場合があります。"
+
+msgid "Require the given systemd unit, device path, or mount path and mount after it."
+msgstr "指定されたsystemdユニット、デバイスパス、またはマウントパスを必須とし、その後にマウントします。"
+
+msgid "Require the mounts needed to reach an absolute path and mount after them."
+msgstr "絶対パスに到達するために必要なマウントを必須とし、その後にマウントします。"
+
+msgid "Fail immediately when a read-write mount fails instead of retrying read-only (systemd)."
+msgstr "読み書きマウントが失敗した際、読み取り専用での再試行ではなく即座に失敗します（systemd）。"
+
+msgid "Validate the mounted filesystem constraint metadata after mounting (systemd 258+)."
+msgstr "マウント後に、マウントされたファイルシステムの制約メタデータを検証します（systemd 258+）。"
+
+msgid "Make a unit want this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "ユニットがこのマウントを望むようにします。デフォルトの依存関係を置き換えるため、順序の明示的な設定が必要になる場合があります。"
+
+msgid "Want the given systemd unit and mount after it without requiring success (systemd 257+)."
+msgstr "指定されたsystemdユニットを望み、成功を要求せずにその後にマウントします（systemd 257+）。"
+
+msgid "Want the mounts needed to reach an absolute path and mount after them without requiring success."
+msgstr "絶対パスに到達するために必要なマウントを望み、成功を要求せずにその後にマウントします。"
+
 msgid "Restrict automatic filesystem detection to the listed types."
 msgstr "ファイルシステムの自動検出を、列挙された種類に限定します。"
 
@@ -2400,6 +2460,9 @@ msgstr "未保存の変更があります。今終了すると、それらは失
 
 msgid "Exit"
 msgstr "終了"
+
+msgid "About FSTabulator"
+msgstr "FSTabulatorについて"
 
 msgid "Error loading fstab file!"
 msgstr "fstab ファイルの読み込みエラー！"

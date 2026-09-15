@@ -367,6 +367,66 @@ msgstr "Permite a un usuario ordinario montar el sistema de archivos."
 msgid "Allow every user to mount and unmount the filesystem."
 msgstr "Permite a todos los usuarios montar y desmontar el sistema de archivos."
 
+msgid "Mount the filesystem in the initrd and keep it mounted until final shutdown (systemd)."
+msgstr "Monte el sistema de archivos en el initrd y manténgalo montado hasta el apagado final (systemd)."
+
+msgid "Mount after the given systemd unit or mount path without starting it."
+msgstr "Monte después de la unidad de systemd o la ruta de montaje especificada sin iniciarla."
+
+msgid "Mount on first access via an automount unit, ignoring the auto and noauto options (systemd)."
+msgstr "Monte en el primer acceso mediante una unidad de automontaje, ignorando las opciones auto y noauto (systemd)."
+
+msgid "Mount before the given systemd unit or mount path without starting it."
+msgstr "Monte antes de la unidad de systemd o la ruta de montaje especificada sin iniciarla."
+
+msgid "Bind the mount to its backing device lifetime so it stops when the device disappears, taking yes (also bare) or no."
+msgstr "Vincule el montaje a la vida útil de su dispositivo subyacente para que se detenga cuando el dispositivo desaparezca; acepta yes (también sin valor) o no."
+
+msgid "Limit how long fstab waits for the device to appear, as seconds or a duration such as 30s."
+msgstr "Limite cuánto tiempo espera fstab a que aparezca el dispositivo, en segundos o con una duración como 30s."
+
+msgid "Append a native kernel mount option only when the kernel supports it (systemd 258+)."
+msgstr "Añada una opción de montaje nativa del kernel solo cuando el kernel la admita (systemd 258+)."
+
+msgid "Grow the filesystem to fill its block device when mounted, where supported (systemd)."
+msgstr "Amplíe el sistema de archivos para que ocupe todo su dispositivo de bloque al montarlo, cuando sea compatible (systemd)."
+
+msgid "Unmount an idle automount after a duration such as 5min, or pass 0 to disable the timeout."
+msgstr "Desmonte un automontaje inactivo después de una duración como 5min, o pase 0 para desactivar el tiempo de espera."
+
+msgid "Initialize a new filesystem on the device when it carries no existing signatures (systemd)."
+msgstr "Inicialice un nuevo sistema de archivos en el dispositivo cuando este no contenga firmas existentes (systemd)."
+
+msgid "Limit how long the fstab mount command may run, as seconds, a duration such as 30s, or infinity."
+msgstr "Limite durante cuánto tiempo puede ejecutarse el comando de montaje de fstab, en segundos, con una duración como 30s, o con infinity."
+
+msgid "Measure the mounted filesystem identity into TPM PCR 15 (systemd 253+)."
+msgstr "Mida la identidad del sistema de archivos montado en el PCR 15 del TPM (systemd 253+)."
+
+msgid "Make a unit require this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "Haga que una unidad requiera este montaje, reemplazando las dependencias predeterminadas; quizá deba fijar el orden explícitamente."
+
+msgid "Require the given systemd unit, device path, or mount path and mount after it."
+msgstr "Requiera la unidad de systemd, la ruta de dispositivo o la ruta de montaje especificada y monte después de ella."
+
+msgid "Require the mounts needed to reach an absolute path and mount after them."
+msgstr "Requiera los montajes necesarios para alcanzar una ruta absoluta y monte después de ellos."
+
+msgid "Fail immediately when a read-write mount fails instead of retrying read-only (systemd)."
+msgstr "Falle de inmediato cuando un montaje de lectura-escritura falle en lugar de reintentar en modo de solo lectura (systemd)."
+
+msgid "Validate the mounted filesystem constraint metadata after mounting (systemd 258+)."
+msgstr "Valide los metadatos de restricción del sistema de archivos montado después del montaje (systemd 258+)."
+
+msgid "Make a unit want this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "Haga que una unidad quiera este montaje, reemplazando las dependencias predeterminadas; quizá deba fijar el orden explícitamente."
+
+msgid "Want the given systemd unit and mount after it without requiring success (systemd 257+)."
+msgstr "Quiera la unidad de systemd especificada y monte después de ella sin requerir éxito (systemd 257+)."
+
+msgid "Want the mounts needed to reach an absolute path and mount after them without requiring success."
+msgstr "Quiera los montajes necesarios para alcanzar una ruta absoluta y monte después de ellos sin requerir éxito."
+
 msgid "Restrict automatic filesystem detection to the listed types."
 msgstr "Limita la detección automática de sistemas de archivos a los tipos enumerados."
 
@@ -2400,6 +2460,9 @@ msgstr "Tienes cambios sin guardar. Se perderán si sales ahora."
 
 msgid "Exit"
 msgstr "Salir"
+
+msgid "About FSTabulator"
+msgstr "Acerca de FSTabulator"
 
 msgid "Error loading fstab file!"
 msgstr "¡Error al cargar el archivo fstab!"

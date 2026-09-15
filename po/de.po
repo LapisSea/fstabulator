@@ -367,6 +367,66 @@ msgstr "Einhängen des Dateisystems durch normale Benutzer zulassen."
 msgid "Allow every user to mount and unmount the filesystem."
 msgstr "Ein- und Aushängen des Dateisystems durch alle Benutzer zulassen."
 
+msgid "Mount the filesystem in the initrd and keep it mounted until final shutdown (systemd)."
+msgstr "Dateisystem in der Initrd einhängen und bis zum endgültigen Herunterfahren eingehängt lassen (systemd)."
+
+msgid "Mount after the given systemd unit or mount path without starting it."
+msgstr "Nach der angegebenen systemd-Unit oder dem Mount-Pfad einhängen, ohne diese zu starten."
+
+msgid "Mount on first access via an automount unit, ignoring the auto and noauto options (systemd)."
+msgstr "Beim ersten Zugriff über eine Automount-Unit einhängen, wobei die Optionen auto und noauto ignoriert werden (systemd)."
+
+msgid "Mount before the given systemd unit or mount path without starting it."
+msgstr "Vor der angegebenen systemd-Unit oder dem Mount-Pfad einhängen, ohne diese zu starten."
+
+msgid "Bind the mount to its backing device lifetime so it stops when the device disappears, taking yes (also bare) or no."
+msgstr "Den Einhang an die Lebensdauer des zugrunde liegenden Geräts binden, sodass er endet, wenn das Gerät verschwindet; akzeptiert yes (auch bare) oder no."
+
+msgid "Limit how long fstab waits for the device to appear, as seconds or a duration such as 30s."
+msgstr "Begrenzen, wie lange fstab auf das Erscheinen des Geräts wartet, in Sekunden oder als Dauer wie 30s."
+
+msgid "Append a native kernel mount option only when the kernel supports it (systemd 258+)."
+msgstr "Eine native Kernel-Mount-Option nur dann anhängen, wenn der Kernel sie unterstützt (systemd 258+)."
+
+msgid "Grow the filesystem to fill its block device when mounted, where supported (systemd)."
+msgstr "Das Dateisystem beim Einhängen vergrößern, um sein Blockgerät vollständig auszufüllen, sofern unterstützt (systemd)."
+
+msgid "Unmount an idle automount after a duration such as 5min, or pass 0 to disable the timeout."
+msgstr "Einen im Leerlauf befindlichen Automount nach einer Dauer wie 5min aushängen oder 0 übergeben, um das Timeout zu deaktivieren."
+
+msgid "Initialize a new filesystem on the device when it carries no existing signatures (systemd)."
+msgstr "Ein neues Dateisystem auf dem Gerät initialisieren, wenn es keine vorhandenen Signaturen trägt (systemd)."
+
+msgid "Limit how long the fstab mount command may run, as seconds, a duration such as 30s, or infinity."
+msgstr "Begrenzen, wie lange der fstab-Mount-Befehl laufen darf, in Sekunden, als Dauer wie 30s oder als infinity."
+
+msgid "Measure the mounted filesystem identity into TPM PCR 15 (systemd 253+)."
+msgstr "Die Identität des eingehängten Dateisystems in TPM-PCR 15 messen (systemd 253+)."
+
+msgid "Make a unit require this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "Eine Unit veranlassen, diesen Einhang zu verlangen; Standardabhängigkeiten werden ersetzt, sodass die Reihenfolge ggf. explizit festgelegt werden muss."
+
+msgid "Require the given systemd unit, device path, or mount path and mount after it."
+msgstr "Die angegebene systemd-Unit, den Gerätepfad oder den Mount-Pfad verlangen und danach einhängen."
+
+msgid "Require the mounts needed to reach an absolute path and mount after them."
+msgstr "Die zum Erreichen eines absoluten Pfads benötigten Einhänge verlangen und danach einhängen."
+
+msgid "Fail immediately when a read-write mount fails instead of retrying read-only (systemd)."
+msgstr "Sofort fehlschlagen, wenn ein Lese-/Schreib-Einhang fehlschlägt, statt nur lesend erneut zu versuchen (systemd)."
+
+msgid "Validate the mounted filesystem constraint metadata after mounting (systemd 258+)."
+msgstr "Nach dem Einhängen die Constraint-Metadaten des eingehängten Dateisystems validieren (systemd 258+)."
+
+msgid "Make a unit want this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "Eine Unit veranlassen, diesen Einhang zu wünschen; Standardabhängigkeiten werden ersetzt, sodass die Reihenfolge ggf. explizit festgelegt werden muss."
+
+msgid "Want the given systemd unit and mount after it without requiring success (systemd 257+)."
+msgstr "Die angegebene systemd-Unit wünschen und danach einhängen, ohne Erfolg zu verlangen (systemd 257+)."
+
+msgid "Want the mounts needed to reach an absolute path and mount after them without requiring success."
+msgstr "Die zum Erreichen eines absoluten Pfads benötigten Einhänge wünschen und danach einhängen, ohne Erfolg zu verlangen."
+
 msgid "Restrict automatic filesystem detection to the listed types."
 msgstr "Automatische Dateisystemerkennung auf die aufgelisteten Typen beschränken."
 
@@ -2400,6 +2460,9 @@ msgstr "Sie haben ungespeicherte Änderungen. Wenn Sie jetzt beenden, gehen dies
 
 msgid "Exit"
 msgstr "Beenden"
+
+msgid "About FSTabulator"
+msgstr "Über FSTabulator"
 
 msgid "Error loading fstab file!"
 msgstr "Fehler beim Laden der fstab-Datei!"

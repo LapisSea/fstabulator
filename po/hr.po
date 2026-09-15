@@ -368,6 +368,66 @@ msgstr "Dopušta običnome korisniku montiranje datotečnog sustava."
 msgid "Allow every user to mount and unmount the filesystem."
 msgstr "Dopušta svakome korisniku montiranje i odmontiranje datotečnog sustava."
 
+msgid "Mount the filesystem in the initrd and keep it mounted until final shutdown (systemd)."
+msgstr "Montiraj datotečni sustav u initrdu i zadrži ga montiranim do konačnog gašenja (systemd)."
+
+msgid "Mount after the given systemd unit or mount path without starting it."
+msgstr "Montiraj nakon zadanog systemd unita ili putanje montiranja bez pokretanja istog."
+
+msgid "Mount on first access via an automount unit, ignoring the auto and noauto options (systemd)."
+msgstr "Montiraj pri prvom pristupu putem automount unita, zanemarujući opcije auto i noauto (systemd)."
+
+msgid "Mount before the given systemd unit or mount path without starting it."
+msgstr "Montiraj prije zadanog systemd unita ili putanje montiranja bez pokretanja istog."
+
+msgid "Bind the mount to its backing device lifetime so it stops when the device disappears, taking yes (also bare) or no."
+msgstr "Veži montiranje za životni vijek njegovog podložnog uređaja tako da prestane kada uređaj nestane; prihvaća yes (također i bez vrijednosti) ili no."
+
+msgid "Limit how long fstab waits for the device to appear, as seconds or a duration such as 30s."
+msgstr "Ograniči koliko dugo fstab čeka da se uređaj pojavi, u sekundama ili trajanju poput 30s."
+
+msgid "Append a native kernel mount option only when the kernel supports it (systemd 258+)."
+msgstr "Dodaj izvornu opciju montiranja kernela samo kada ju kernel podržava (systemd 258+)."
+
+msgid "Grow the filesystem to fill its block device when mounted, where supported (systemd)."
+msgstr "Povećaj datotečni sustav da ispuni svoj blok-uređaj kada se montira, gdje je to podržano (systemd)."
+
+msgid "Unmount an idle automount after a duration such as 5min, or pass 0 to disable the timeout."
+msgstr "Demontiraj neaktivni automount nakon trajanja poput 5min ili proslijedi 0 za onemogućavanje vremenskog ograničenja."
+
+msgid "Initialize a new filesystem on the device when it carries no existing signatures (systemd)."
+msgstr "Inicijaliziraj novi datotečni sustav na uređaju kada ne nosi postojeće potpise (systemd)."
+
+msgid "Limit how long the fstab mount command may run, as seconds, a duration such as 30s, or infinity."
+msgstr "Ograniči koliko dugo naredba montiranja fstaba smije trajati, u sekundama, trajanju poput 30s ili infinity."
+
+msgid "Measure the mounted filesystem identity into TPM PCR 15 (systemd 253+)."
+msgstr "Izmjeri identitet montiranog datotečnog sustava u TPM PCR 15 (systemd 253+)."
+
+msgid "Make a unit require this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "Neka unit zahtijeva ovo montiranje, zamjenjujući zadane ovisnosti, pa poredak možda treba izrijekom postaviti."
+
+msgid "Require the given systemd unit, device path, or mount path and mount after it."
+msgstr "Zahtijevaj zadani systemd unit, putanju uređaja ili putanju montiranja i montiraj nakon njega."
+
+msgid "Require the mounts needed to reach an absolute path and mount after them."
+msgstr "Zahtijevaj montiranja potrebna za dosezanje apsolutne putanje i montiraj nakon njih."
+
+msgid "Fail immediately when a read-write mount fails instead of retrying read-only (systemd)."
+msgstr "Odmah javi neuspjeh kada montiranje za čitanje/pisanje ne uspije, umjesto ponovnog pokušaja samo za čitanje (systemd)."
+
+msgid "Validate the mounted filesystem constraint metadata after mounting (systemd 258+)."
+msgstr "Provjeri metapodatke ograničenja montiranog datotečnog sustava nakon montiranja (systemd 258+)."
+
+msgid "Make a unit want this mount, replacing default dependencies so ordering may need setting explicitly."
+msgstr "Neka unit želi ovo montiranje, zamjenjujući zadane ovisnosti, pa poredak možda treba izrijekom postaviti."
+
+msgid "Want the given systemd unit and mount after it without requiring success (systemd 257+)."
+msgstr "Želi zadani systemd unit i montiraj nakon njega bez zahtijevanja uspjeha (systemd 257+)."
+
+msgid "Want the mounts needed to reach an absolute path and mount after them without requiring success."
+msgstr "Želi montiranja potrebna za dosezanje apsolutne putanje i montiraj nakon njih bez zahtijevanja uspjeha."
+
 msgid "Restrict automatic filesystem detection to the listed types."
 msgstr "Ograničava automatsko prepoznavanje datotečnog sustava na navedene vrste."
 
@@ -2401,6 +2461,9 @@ msgstr "Imaš nespremljene promjene. One će biti izgubljene ako sada izađeš."
 
 msgid "Exit"
 msgstr "Izlaz"
+
+msgid "About FSTabulator"
+msgstr "O FSTabulatoru"
 
 msgid "Error loading fstab file!"
 msgstr "Pogreška pri učitavanju fstab datoteke!"

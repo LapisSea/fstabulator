@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: fstabulator 0.1.0\n"
+"Project-Id-Version: fstabulator 1.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/lapissea/fstabulator/issues\n"
-"POT-Creation-Date: 2026-08-31 10:38+0200\n"
+"POT-Creation-Date: 2026-09-15 02:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -367,6 +367,99 @@ msgid "Allow an ordinary user to mount the filesystem."
 msgstr ""
 
 msgid "Allow every user to mount and unmount the filesystem."
+msgstr ""
+
+msgid ""
+"Mount the filesystem in the initrd and keep it mounted until final shutdown "
+"(systemd)."
+msgstr ""
+
+msgid "Mount after the given systemd unit or mount path without starting it."
+msgstr ""
+
+msgid ""
+"Mount on first access via an automount unit, ignoring the auto and noauto "
+"options (systemd)."
+msgstr ""
+
+msgid "Mount before the given systemd unit or mount path without starting it."
+msgstr ""
+
+msgid ""
+"Bind the mount to its backing device lifetime so it stops when the device "
+"disappears, taking yes (also bare) or no."
+msgstr ""
+
+msgid ""
+"Limit how long fstab waits for the device to appear, as seconds or a "
+"duration such as 30s."
+msgstr ""
+
+msgid ""
+"Append a native kernel mount option only when the kernel supports it "
+"(systemd 258+)."
+msgstr ""
+
+msgid ""
+"Grow the filesystem to fill its block device when mounted, where supported "
+"(systemd)."
+msgstr ""
+
+msgid ""
+"Unmount an idle automount after a duration such as 5min, or pass 0 to "
+"disable the timeout."
+msgstr ""
+
+msgid ""
+"Initialize a new filesystem on the device when it carries no existing "
+"signatures (systemd)."
+msgstr ""
+
+msgid ""
+"Limit how long the fstab mount command may run, as seconds, a duration such "
+"as 30s, or infinity."
+msgstr ""
+
+msgid "Measure the mounted filesystem identity into TPM PCR 15 (systemd 253+)."
+msgstr ""
+
+msgid ""
+"Make a unit require this mount, replacing default dependencies so ordering "
+"may need setting explicitly."
+msgstr ""
+
+msgid ""
+"Require the given systemd unit, device path, or mount path and mount after "
+"it."
+msgstr ""
+
+msgid ""
+"Require the mounts needed to reach an absolute path and mount after them."
+msgstr ""
+
+msgid ""
+"Fail immediately when a read-write mount fails instead of retrying read-only "
+"(systemd)."
+msgstr ""
+
+msgid ""
+"Validate the mounted filesystem constraint metadata after mounting (systemd "
+"258+)."
+msgstr ""
+
+msgid ""
+"Make a unit want this mount, replacing default dependencies so ordering may "
+"need setting explicitly."
+msgstr ""
+
+msgid ""
+"Want the given systemd unit and mount after it without requiring success "
+"(systemd 257+)."
+msgstr ""
+
+msgid ""
+"Want the mounts needed to reach an absolute path and mount after them "
+"without requiring success."
 msgstr ""
 
 msgid "Restrict automatic filesystem detection to the listed types."
@@ -2436,6 +2529,9 @@ msgid "You have unsaved changes. They will be lost if you exit now."
 msgstr ""
 
 msgid "Exit"
+msgstr ""
+
+msgid "About FSTabulator"
 msgstr ""
 
 msgid "Error loading fstab file!"
